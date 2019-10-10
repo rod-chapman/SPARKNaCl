@@ -16,12 +16,8 @@ is
    S  : Verify_Result;
 begin
    Crypto_Sign_Keypair (PK, SK);
-   DH ("SK is ", SK);
-   DH ("PK is ", PK);
-   DH ("M is ", M);
 
    Crypto_Sign (SM, M, SK);
-   DH ("SM is ", SM);
 
    Crypto_Sign_Open (M2, S, ML, SM, PK);
    DH ("M2 is ", M2);

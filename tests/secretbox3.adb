@@ -33,6 +33,4 @@ begin
 exception
    when Assert_Failure =>
       Put_Line ("Precondition failure, Status is" & S'Img);
-      DH ("M is", M);
-
 end Secretbox3;
