@@ -1803,7 +1803,6 @@ is
 
          exit when LN < 256;
          pragma Assert (LN >= 128);
-         pragma Assert (CB + 128 <= I32'Last); -- POV and PAssert?
          CB := CB + 128; --  POV and UB here on final iteration?
          LN := LN - 128;
       end loop;
