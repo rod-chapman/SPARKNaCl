@@ -1,0 +1,26 @@
+with "../src/sparknacl.gpr";
+project Testall is
+
+   for Main use ("testall.adb");
+
+   package Compiler is
+      for Switches ("ada") use ("-g", "-gnatwae", "-gnaty", "-gnata", "-gnato", "-O0");
+   end Compiler;
+
+   package Prove is
+      for Switches use ("--proof=per_path", "-j8", "--no-global-generation", "--no-inlining", "--no-counterexample", "--no-loop-unrolling", "--level=3", "--report=all");
+   end Prove;
+
+   package Builder is
+      for Switches ("ada") use ("-s", "-g");
+   end Builder;
+
+   package Binder is
+      for Switches ("ada") use ("-E");
+   end Binder;
+
+   package Linker is
+      for Switches ("ada") use ("-g");
+   end Linker;
+
+end Testall;
