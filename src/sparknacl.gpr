@@ -1,23 +1,13 @@
+with "../sparknacl_common.gpr";
 library project SPARKNaCl is
 
    for Library_Name use "SPARKNaCl";
    for Object_Dir use ".";
    for Library_Dir use "../lib";
 
-   package Compiler is
-      for Switches ("ada") use ("-g", "-gnatwae", "-gnaty", "-gnata", "-gnato", "-O0");
-   end Compiler;
-
-   package Prove is
-      for Switches use ("--proof=per_path", "-j8", "--no-global-generation", "--no-inlining", "--no-counterexample", "--no-loop-unrolling", "--level=3", "--report=all");
-   end Prove;
-
-   package Builder is
-      for Switches ("ada") use ("-s", "-g");
-   end Builder;
-
-   package Binder is
-      for Switches ("ada") use ("-E");
-   end Binder;
+   package Compiler renames SPARKNaCl_Common.Compiler;
+   package Prove renames SPARKNaCl_Common.Prove;
+   package Builder renames SPARKNaCl_Common.Builder;
+   package Binder renames SPARKNaCl_Common.Binder;
 
 end SPARKNaCl;
