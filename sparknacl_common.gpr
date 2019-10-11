@@ -20,14 +20,14 @@ project SPARKNaCl_Common is
    end Compiler;
 
    package Prove is
-      for Switches use ("--proof=per_path",
-                        "-j8",
-                        "--no-global-generation",
-                        "--no-inlining",
-                        "--no-counterexample",
-                        "--no-loop-unrolling",
-                        "--level=3",
-                        "--report=all");
+      for Proof_Switches ("Ada") use ("--proof=per_path",
+                                      "-j8",
+                                      "--no-global-generation",
+                                      "--no-inlining",
+                                      "--no-counterexample",
+                                      "--no-loop-unrolling",
+                                      "--level=3",
+                                      "--report=all");
    end Prove;
 
    package Builder is
