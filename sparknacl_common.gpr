@@ -1,0 +1,55 @@
+project SPARKNaCl_Common is
+
+   for Languages use ("Ada");
+
+   type Build_Type is ("debug", "fast");
+
+   Build : Build_Type := external("build", "debug");
+
+   Cargs := ("-gnatwae", "-gnaty", "-gnata");
+
+   for Source_Files use ();
+
+   package Compiler is
+      case Build is
+         when "debug" =>
+            for Default_Switches ("Ada") use Cargs & ("-g", "-gnato", "-O0");
+         when "fast" =>
+            for Default_Switches ("Ada") use Cargs & ("-gnatp", "-O3");
+      end case;
+   end Compiler;
+
+   package Prove is
+      for Switches use ("--proof=per_path",
+                        "-j8",
+                        "--no-global-generation",
+                        "--no-inlining",
+                        "--no-counterexample",
+                        "--no-loop-unrolling",
+                        "--level=3",
+                        "--report=all");
+   end Prove;
+
+   package Builder is
+      case Build is
+         when "debug" =>
+            for Switches ("ada") use Cargs & ("-g", "-s");
+         when "fast" =>
+            for Switches ("ada") use Cargs & ("-s");
+      end case;
+   end Builder;
+
+   package Binder is
+      for Switches ("ada") use ("-E");
+   end Binder;
+
+   package Linker is
+      case Build is
+         when "debug" =>
+            for Switches ("ada") use Cargs & ("-g");
+         when "fast" =>
+            for Switches ("ada") use Cargs & ("");
+      end case;
+   end Linker;
+
+end SPARKNaCl_Common;
