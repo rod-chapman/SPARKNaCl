@@ -5,7 +5,7 @@ SPARK 2014 re-implementation of the TweetNaCl crypto library
 
 An incomplete list of ideas:
 
-1. Complete type safety proofs
+1. Complete type safety proofs. Requires detailed understanding of the invariant properties of each "limb" of a GF object. (50 marks)
 2. Strengthen types in sparknacl.ads - for example use different named types for each distinct flavour of key and nonce to prevent them being confused.
 3. Re-implement body using more Ada idioms, including:
   - Redeclare the arithmetic operators on GF, so we can use functional infix "A * B" style rather than "M (A, B)".
