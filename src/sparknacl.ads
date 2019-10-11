@@ -72,7 +72,7 @@ is
           Pre => M'First   = 0 and
                  SM'First  = 0 and
                  SM'Length = M'Length + 64 and
-                 SM'Last   = M'Last + 64;
+                 SM'Last   = M'Last + 64; --  POV problem here - remove?
 
    procedure Crypto_Sign_Open (M      :    out Byte_Seq;
                                Status :    out Verify_Result;
@@ -173,7 +173,7 @@ is
                     C'First = 0 and
                     C'Last  = M'Last and
                     M'Length >= 32 and
-                    M (0 .. 31) = Zero_Bytes_32,
+                    M (0 .. 31) = Zero_Bytes_32, --  PRange? M'Last >= 31
           Post   => C (0 .. 15) = Zero_Bytes_16;
 
 
@@ -188,7 +188,7 @@ is
                     C'First = 0 and
                     M'Last  = C'Last and
                     C'Length >= 32 and
-                    C (0 .. 15) = Zero_Bytes_16,
+                    C (0 .. 15) = Zero_Bytes_16, --  PRange? M'Last >= 31
           Post   => M (0 .. 31) = Zero_Bytes_32;
 
 
@@ -222,7 +222,7 @@ is
                     C'First = 0 and
                     C'Last  = M'Last and
                     M'Length >= 32 and
-                    M (0 .. 31) = Zero_Bytes_32,
+                    M (0 .. 31) = Zero_Bytes_32, --  PRange? M'Last >= 31
           Post   => C (0 .. 15) = Zero_Bytes_16;
 
    procedure Crypto_Box_Open_AfterNM
@@ -236,7 +236,7 @@ is
                     C'First = 0 and
                     M'Last  = C'Last and
                     C'Length >= 32 and
-                    C (0 .. 15) = Zero_Bytes_16,
+                    C (0 .. 15) = Zero_Bytes_16, --  PRange? C'Last >= 15
           Post   => M (0 .. 31) = Zero_Bytes_32;
 
    procedure Crypto_Box (C      :    out Byte_Seq;
@@ -249,7 +249,7 @@ is
                     C'First = 0 and
                     C'Last  = M'Last and
                     M'Length >= 32 and
-                    M (0 .. 31) = Zero_Bytes_32,
+                    M (0 .. 31) = Zero_Bytes_32, --  PRange? M'Last >= 31
           Post   => C (0 .. 15) = Zero_Bytes_16;
 
 
@@ -263,7 +263,7 @@ is
                     C'First = 0 and
                     M'Last  = C'Last and
                     C'Length >= 32 and
-                    C (0 .. 15) = Zero_Bytes_16,
+                    C (0 .. 15) = Zero_Bytes_16, --  PRange? C'Last >= 15
           Post   => M (0 .. 31) = Zero_Bytes_32;
 
 
