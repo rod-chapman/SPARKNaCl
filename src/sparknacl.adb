@@ -86,15 +86,21 @@ is
 
    --  returns equivalent of X >> 16 in C, doing an arithmetic
    --  shift right when X is negative
-   function ASR_16 (X : in I64) return I64;
+   function ASR_16 (X : in I64) return I64
+     with Post => ASR_16'Result >= -2**47 and
+                  ASR_16'Result <= (2**47) - 1;
 
    --  returns equivalent of X >> 8 in C, doing an arithmetic
    --  shift right when X is negative
-   function ASR_8 (X : in I64) return I64;
+   function ASR_8 (X : in I64) return I64
+     with Post => ASR_8'Result >= -2**55 and
+                  ASR_8'Result <= (2**55) - 1;
 
    --  returns equivalent of X >> 4 in C, doing an arithmetic
    --  shift right when X is negative
-   function ASR_4 (X : in I64) return I64;
+   function ASR_4 (X : in I64) return I64
+     with Post => ASR_4'Result >= -2**59 and
+                  ASR_4'Result <= (2**59) - 1;
 
    --  Assignment
    procedure Set_25519 (R :    out GF;
@@ -339,6 +345,9 @@ is
          --  for negative c according to C standard 6.5.7 (4).
          --  TweetNaCl appears to depend on this being equivalent
          --  to sign-preserving multiplication by 65536.
+         pragma Assert (C >= -2**47);
+         pragma Assert (C <= (2**47) - 1);
+
          O (I) := O (I) - (C * 65536); --  POV on - and *
       end loop;
 
