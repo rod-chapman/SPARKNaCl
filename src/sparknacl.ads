@@ -69,10 +69,11 @@ is
                           M  : in     Byte_Seq;
                           SK : in     Bytes_64)
      with Global => null,
-          Pre => M'First   = 0 and
-                 SM'First  = 0 and
-                 SM'Length = M'Length + 64 and
-                 SM'Last   = M'Last + 64; --  POV problem here - remove?
+          Pre => (M'First   = 0 and
+                  SM'First  = 0 and
+                  M'Last   <= N32'Last - 64) and then
+                 (SM'Length = M'Length + 64 and
+                  SM'Last   = M'Last + 64);
 
    procedure Crypto_Sign_Open (M      :    out Byte_Seq;
                                Status :    out Verify_Result;
@@ -169,11 +170,11 @@ is
                                N      : in     Bytes_24;
                                K      : in     Bytes_32)
      with Global => null,
-          Pre    => M'First = 0 and
-                    C'First = 0 and
-                    C'Last  = M'Last and
-                    M'Length >= 32 and
-                    M (0 .. 31) = Zero_Bytes_32, --  PRange? M'Last >= 31
+          Pre    => (M'First = 0 and
+                     C'First = 0 and
+                     C'Last  = M'Last and
+                     M'Length >= 32) and then
+                    M (0 .. 31) = Zero_Bytes_32,
           Post   => C (0 .. 15) = Zero_Bytes_16;
 
 
@@ -184,11 +185,11 @@ is
       N      : in     Bytes_24; --  Nonce
       K      : in     Bytes_32) --  Key)
      with Global => null,
-          Pre    => M'First = 0 and
-                    C'First = 0 and
-                    M'Last  = C'Last and
-                    C'Length >= 32 and
-                    C (0 .. 15) = Zero_Bytes_16, --  PRange? M'Last >= 31
+          Pre    => (M'First = 0 and
+                     C'First = 0 and
+                     M'Last  = C'Last and
+                     C'Length >= 32) and then
+                    C (0 .. 15) = Zero_Bytes_16,
           Post   => M (0 .. 31) = Zero_Bytes_32;
 
 
@@ -218,11 +219,11 @@ is
                                  N      : in     Bytes_24;
                                  K      : in     Bytes_32)
      with Global => null,
-          Pre    => M'First = 0 and
-                    C'First = 0 and
-                    C'Last  = M'Last and
-                    M'Length >= 32 and
-                    M (0 .. 31) = Zero_Bytes_32, --  PRange? M'Last >= 31
+          Pre    => (M'First = 0 and
+                     C'First = 0 and
+                     C'Last  = M'Last and
+                     M'Length >= 32) and then
+                    M (0 .. 31) = Zero_Bytes_32,
           Post   => C (0 .. 15) = Zero_Bytes_16;
 
    procedure Crypto_Box_Open_AfterNM
@@ -232,11 +233,11 @@ is
       N      : in     Bytes_24; --  Nonce
       K      : in     Bytes_32) --  Key)
      with Global => null,
-          Pre    => M'First = 0 and
-                    C'First = 0 and
-                    M'Last  = C'Last and
-                    C'Length >= 32 and
-                    C (0 .. 15) = Zero_Bytes_16, --  PRange? C'Last >= 15
+          Pre    => (M'First = 0 and
+                     C'First = 0 and
+                     M'Last  = C'Last and
+                     C'Length >= 32) and then
+                    C (0 .. 15) = Zero_Bytes_16,
           Post   => M (0 .. 31) = Zero_Bytes_32;
 
    procedure Crypto_Box (C      :    out Byte_Seq;
@@ -245,11 +246,11 @@ is
                          N      : in     Bytes_24;
                          Y, X   : in     Bytes_32)
      with Global => null,
-          Pre    => M'First = 0 and
-                    C'First = 0 and
-                    C'Last  = M'Last and
-                    M'Length >= 32 and
-                    M (0 .. 31) = Zero_Bytes_32, --  PRange? M'Last >= 31
+          Pre    => (M'First = 0 and
+                     C'First = 0 and
+                     C'Last  = M'Last and
+                     M'Length >= 32) and then
+                    M (0 .. 31) = Zero_Bytes_32,
           Post   => C (0 .. 15) = Zero_Bytes_16;
 
 
@@ -259,11 +260,11 @@ is
                               N      : in     Bytes_24;
                               Y, X   : in     Bytes_32)
      with Global => null,
-          Pre    => M'First = 0 and
-                    C'First = 0 and
-                    M'Last  = C'Last and
-                    C'Length >= 32 and
-                    C (0 .. 15) = Zero_Bytes_16, --  PRange? C'Last >= 15
+          Pre    => (M'First = 0 and
+                     C'First = 0 and
+                     M'Last  = C'Last and
+                     C'Length >= 32) and then
+                    C (0 .. 15) = Zero_Bytes_16,
           Post   => M (0 .. 31) = Zero_Bytes_32;
 
 
