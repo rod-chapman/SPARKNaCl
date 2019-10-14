@@ -86,15 +86,15 @@ is
 
    --  returns equivalent of X >> 16 in C, doing an arithmetic
    --  shift right when X is negative
-   function SShift_16 (X : in I64) return I64;
+   function ASR_16 (X : in I64) return I64;
 
    --  returns equivalent of X >> 8 in C, doing an arithmetic
    --  shift right when X is negative
-   function SShift_8 (X : in I64) return I64;
+   function ASR_8 (X : in I64) return I64;
 
    --  returns equivalent of X >> 4 in C, doing an arithmetic
    --  shift right when X is negative
-   function SShift_4 (X : in I64) return I64;
+   function ASR_4 (X : in I64) return I64;
 
    --  Assignment
    procedure Set_25519 (R :    out GF;
@@ -273,25 +273,25 @@ is
    end Random_Bytes;
 
    --  POK
-   function SShift_16 (X : in I64) return I64
+   function ASR_16 (X : in I64) return I64
    is
    begin
       return To_I64 (Shift_Right_Arithmetic (To_U64 (X), 16));
-   end SShift_16;
+   end ASR_16;
 
    --  POK
-   function SShift_8 (X : in I64) return I64
+   function ASR_8 (X : in I64) return I64
    is
    begin
       return To_I64 (Shift_Right_Arithmetic (To_U64 (X), 8));
-   end SShift_8;
+   end ASR_8;
 
    --  POK
-   function SShift_4 (X : in I64) return I64
+   function ASR_4 (X : in I64) return I64
    is
    begin
       return To_I64 (Shift_Right_Arithmetic (To_U64 (X), 4));
-   end SShift_4;
+   end ASR_4;
 
    --  POK
    procedure Set_25519 (R :    out GF;
@@ -324,31 +324,30 @@ is
 
    procedure Car_25519 (O : in out GF)
    is
-      J          : Index_16;
-      C, I_Is_15 : I64;
+      C : I64;
    begin
-      for I in Index_16 loop
+      --  In SPARK, we unroll the final (I = 15)'th iteration
+      --  of this loop below. This removes the need for
+      --  a conditional statement or expression inside the loop
+      --  body.
+      for I in Index_16 range 0 .. 14 loop
          O (I) := O (I) + 2#1_0000_0000_0000_0000#; --  POV
+         C := ASR_16 (O (I));
+         O (I + 1) := O (I + 1) + C - 1; --  POV on second + and -
 
-         C := SShift_16 (O (I));
-
-         --  case I is
-         --     when 0 .. 14 =>
-         --        O (I + 1) := O (I + 1) + C - 1;
-         --     when 15 =>
-         --        O (0) := O (0) + C - 1 + 37 * (C - 1);
-         --  end case;
-
-         I_Is_15 := Boolean'Pos (I = 15); -- 0 for False, 1 for True
-         J := (I + 1) mod 16;
-         O (J) := O (J) + C - 1 + (37 * (C - 1) * I_Is_15); --  POV * 5
-
-         --  pragma Assert (C >= 0);
-         --  RCC << undefined for C negative?
-         O (I) := O (I) - (C * 65536); --  POV * 2
+         --  The C code here uses (c << 16) which is UNDEFINED
+         --  for negative c according to C standard 6.5.7 (4).
+         --  TweetNaCl appears to depend on this being equivalent
+         --  to sign-preserving multiplication by 65536.
+         O (I) := O (I) - (C * 65536); --  POV on - and *
       end loop;
-   end Car_25519;
 
+      --  Final iteration, as would be when I = 15
+      O (15) := O (15) + 2#1_0000_0000_0000_0000#; --  POV
+      C := ASR_16 (O (15));
+      O (0) := O (0) + C - 1 + 37 * (C - 1); --  POV on 5 binary ops!
+      O (15) := O (15) - (C * 65536); --  POV on - and *
+   end Car_25519;
 
    --  P?
    procedure Pack_25519 (O :    out Bytes_32;
@@ -370,13 +369,13 @@ is
 
             M (I) := T (I) -
                      16#FFFF# -
-                     (SShift_16 (M (I - 1)) mod 2); --  POV * 2
+                     (ASR_16 (M (I - 1)) mod 2); --  POV * 2
 
             M (I - 1) := M (I - 1) mod 65536;
          end loop;
-         M (15) := T (15) - 16#7FFF# - (SShift_16 (M (14)) mod 2); --  POV * 2
+         M (15) := T (15) - 16#7FFF# - (ASR_16 (M (14)) mod 2); --  POV * 2
 
-         B := Bit (SShift_16 (M (15)) mod 2);
+         B := Bit (ASR_16 (M (15)) mod 2);
 
          M (14) := M (14) mod 65536;
          Sel_25519 (T, M, 1 - B);
@@ -769,7 +768,7 @@ is
          Carry := 0;
          for J in I32 range (I - 32) .. (I - 13) loop
             X (J) := X (J) + Carry - 16 * X (I) * L (J - (I - 32)); --  POV * 4
-            Carry := SShift_8 (X (J) + 128); --  POV
+            Carry := ASR_8 (X (J) + 128); --  POV
             X (J) := X (J) - (Carry * 256); --  POV * 2
          end loop;
          X (I - 12) := X (I - 12) + Carry; --  POV
@@ -778,8 +777,8 @@ is
       Carry := 0;
 
       for J in Index_32 loop
-         X (J) := X (J) + (Carry - SShift_4 (X (31)) * L (J)); -- POV * 3
-         Carry := SShift_8 (X (J));
+         X (J) := X (J) + (Carry - ASR_4 (X (31)) * L (J)); -- POV * 3
+         Carry := ASR_8 (X (J));
          X (J) := X (J) mod 256;
       end loop;
 
@@ -790,7 +789,7 @@ is
       --  R is 64 bytes, this this only sets
       --  the first 32...
       for I in Index_32 loop
-         X (I + 1) := X (I + 1) + SShift_8 (X (I)); --  POV
+         X (I + 1) := X (I + 1) + ASR_8 (X (I)); --  POV
          R (I) := Byte (X (I) mod 256);
       end loop;
 
@@ -1007,7 +1006,8 @@ is
 
       for I in Index_32 loop
          for J in Index_32 loop
-            X (I + J) := X (I + J) + I64 (U64 (H (I)) * U64 (D (J))); --  POV on +
+            X (I + J) := X (I + J) +
+              I64 (U64 (H (I)) * U64 (D (J))); --  POV on +
          end loop;
       end loop;
 
@@ -1263,7 +1263,8 @@ is
 
          for I in Index_64 loop
             C (C_Offset + I) := --  POV and PIndex?
-              (if Xor_M then M (M_Offset + I) else 0) xor X (I); --  POV on + and PIndex?
+              (if Xor_M then
+                 M (M_Offset + I) else 0) xor X (I); --  POV on + and PIndex?
          end loop;
 
          U := 1;
@@ -1284,7 +1285,8 @@ is
 
          for I in I32 range 0 .. (B - 1) loop
             C (C_Offset + I) := --  POV on + and PIndex?
-              (if Xor_M then M (M_Offset + I) else 0) xor X (I); --  POV on + and PIndex?
+              (if Xor_M then
+                 M (M_Offset + I) else 0) xor X (I); --  POV on + and PIndex?
          end loop;
       end if;
    end Crypto_Stream_Salsa20_Xor_Local;
