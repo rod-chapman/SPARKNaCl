@@ -328,15 +328,10 @@ is
       C, I_Is_15 : I64;
    begin
       for I in Index_16 loop
-         --    o[i]+=(1LL<<16);
          O (I) := O (I) + 2#1_0000_0000_0000_0000#; --  POV
 
-         --  RCC this is implementaion-defined in C for signed integers.
-         --  a bug???
-         --    c=o[i]>>16;
          C := SShift_16 (O (I));
 
-         --    o[(i+1)*(i<15)]+=c-1+37*(c-1)*(i==15);
          --  case I is
          --     when 0 .. 14 =>
          --        O (I + 1) := O (I + 1) + C - 1;
@@ -348,8 +343,8 @@ is
          J := (I + 1) mod 16;
          O (J) := O (J) + C - 1 + (37 * (C - 1) * I_Is_15); --  POV * 5
 
-         --    o[i]-=c<<16;
-         --  RCC << undefined for C negative???
+         --  pragma Assert (C >= 0);
+         --  RCC << undefined for C negative?
          O (I) := O (I) - (C * 65536); --  POV * 2
       end loop;
    end Car_25519;
@@ -359,58 +354,40 @@ is
    procedure Pack_25519 (O :    out Bytes_32;
                          N : in    GF)
    is
-      --  int i,j,b;
       B : Bit;
-      --  gf m,t;
       M, T : GF;
    begin
       M := (others => 0);
-      --  FOR(i,16) t[i]=n[i];
       T := N;
 
-      --  car25519(t);
-      --  car25519(t);
-      --  car25519(t);
       Car_25519 (T);
       Car_25519 (T);
       Car_25519 (T);
 
-      --  FOR(j,2) {
       for J in I32 range 0 .. 1 loop
-         --  m[0]=t[0]-0xffed;
          M (0) := T (0) - 16#FFED#; --  POV
-         --  for(i=1;i<15;i++) {
          for I in I32 range 1 .. 14 loop
 
-            --  m[i]=t[i]-0xffff-((m[i-1]>>16)&1);
             M (I) := T (I) -
                      16#FFFF# -
                      (SShift_16 (M (I - 1)) mod 2); --  POV * 2
 
-            --  m[i-1]&=0xffff;
             M (I - 1) := M (I - 1) mod 65536;
          end loop;
-         --  m[15]=t[15]-0x7fff-((m[14]>>16)&1);
          M (15) := T (15) - 16#7FFF# - (SShift_16 (M (14)) mod 2); --  POV * 2
 
-         --  b=(m[15]>>16)&1;
          B := Bit (SShift_16 (M (15)) mod 2);
 
-         --  m[14]&=0xffff;
          M (14) := M (14) mod 65536;
-         --  sel25519(t,m,1-b);
          Sel_25519 (T, M, 1 - B);
       end loop;
 
       O := (others => 0);
-      --  FOR(i,16) {
       for I in Index_16 loop
          pragma Assert (T (I) >= 0); --  PAssert? Depends on post of above loop
          pragma Assert (T (I) <= 65535); --  PAssert?
 
-         --  o[2*i]=t[i]&0xff;
          O (2 * I) := Byte (T (I) mod 256);
-         --  o[2*i+1]=t[i]>>8;
          O (2 * I + 1) := Byte ((T (I) / 256) mod 256);
       end loop;
    end Pack_25519;
@@ -422,13 +399,10 @@ is
    is
 
    begin
-      --  FOR(i,16) o[i]=n[2*i]+((i64)n[2*i+1]<<8);
       for I in Index_16 loop
          O (I) := I64 (N (2 * I)) + (I64 (N (2 * I + 1)) * 256);
       end loop;
-      --  o[15]&=0x7fff;
       O (15) := O (15) mod 32768;
-
    end Unpack_25519;
 
 
@@ -442,18 +416,14 @@ is
    end Par_25519;
 
 
-
    procedure M (O    :    out GF;
                 A, B : in     GF)
    is
-      --  i64 i,j,t[31];
       subtype TA is I64_Seq (Index_31);
       T : TA;
    begin
-      --  FOR(i,31) t[i]=0;
       T := (others => 0);
 
-      --  FOR(i,16) FOR(j,16) t[i+j]+=a[i]*b[j];
       for I in Index_16 loop
          for J in Index_16 loop
             T (I + J) := T (I + J) + (A (I) * B (J)); --  POV * 2
@@ -465,16 +435,12 @@ is
       --  here T(I) >= 0 and T(I) <= N*(65535**2), where N ranges
       --  from 1 (for I = 0 and I = 30) up to 16 (for I = 15)
 
-      --  FOR(i,15) t[i]+=38*t[i+16];
       for I in Index_15 loop
          T (I) := T (I) + 38 * T (I + 16); --  POV * 2
       end loop;
 
-      --  FOR(i,16) o[i]=t[i];
       O := T (0 .. 15);
 
-      --  car25519(o);
-      --  car25519(o);
       Car_25519 (O);
       Car_25519 (O);
    end M;
@@ -526,16 +492,9 @@ is
    is
       U : U32;
    begin
-      --  u32 u = x[3];
       U := U32 (X (3));
-
-      --  u = (u<<8)|x[2];
       U := Shift_Left (U, 8) or U32 (X (2));
-
-      --  u = (u<<8)|x[1];
       U := Shift_Left (U, 8) or U32 (X (1));
-
-      --  return (u<<8)|x[0];
       return Shift_Left (U, 8) or U32 (X (0));
    end LD32;
 
@@ -545,7 +504,6 @@ is
    is
       T : U32 := U;
    begin
-      --  FOR(i,4) { x[i] = u; u >>= 8; }
       for I in X'Range loop
          X (I) := Byte (T mod 256);
          T := Shift_Right (T, 8);
@@ -555,14 +513,11 @@ is
    --  POK
    function DL64 (X : in Bytes_8) return U64
    is
-      --  u64 i,u=0;
       U : U64 := 0;
    begin
-      --  FOR(i,8) u=(u<<8)|x[i];
       for I in X'Range loop
          U := Shift_Left (U, 8) or U64 (X (I));
       end loop;
-      --  return u;
       return U;
    end DL64;
 
@@ -573,7 +528,6 @@ is
    is
       T : U64 := U;
    begin
-      --  for (i = 7;i >= 0;--i) { x[i] = u; u >>= 8; }
       for I in reverse Index_8 loop
          X (I) := Byte (T mod 256);
          T := Shift_Right (T, 8);
@@ -586,13 +540,8 @@ is
    is
       C, C2 : GF;
    begin
-      --  FOR(a,16) c[a]=i[a];
       C := I;
 
-      --  for(a=253;a>=0;a--) {
-      --    S(c,c);
-      --    if(a!=2&&a!=4) M(c,c,i);
-      --  }
       for A in reverse 0 .. 253 loop
          --  Need C2 here to avoid aliasing C with C via pass by reference
          S (C2, C);
@@ -603,7 +552,6 @@ is
          end if;
       end loop;
 
-      --  FOR(a,16) o[a]=c[a];
       O := C;
    end Inv_25519;
 
@@ -754,7 +702,6 @@ is
                         OK :    out Verify_Result;
                         P  : in     Bytes_32)
    is
-      --  gf t, chk, num, den, den2, den4, den6;
       T1, T2, T3, T4, T5, T6, T7, Chk, Chk1, Num,
       R_1_Squared, Den0, Den1, Den2, Den4, Den6 : GF;
    begin
@@ -765,7 +712,7 @@ is
       S (R_1_Squared, R (1));
       M (Den0, R_1_Squared, GF_D);
       Z (Num, R_1_Squared, R (2));
-      A (Den1, R (2), Den0); --  OK
+      A (Den1, R (2), Den0);
 
       S (Den2, Den1);
       S (Den4, Den2);
@@ -802,7 +749,6 @@ is
 
       M (R (3), R (0), R (1));
       OK := 0;
-
    end Unpackneg;
 
 
@@ -859,7 +805,7 @@ is
          X (I) := I64 (R (I));
       end loop;
       R := (others => 0);
-      --  Ineffective assignment to X here
+      --  Ineffective assignment to X here expected
       ModL (R, X);
       pragma Unreferenced (X);
    end Reduce;
@@ -880,7 +826,6 @@ is
             3 => GF_0);
 
       for I in reverse U32 range 0 .. 255 loop
-         --  u8 b = (s[i/8]>>(i&7))&1;
          CB := S (I32 (Shift_Right (I, 3)));
          B  := Bit (Shift_Right (CB, Natural (I and 7)) and 1);
 
@@ -904,7 +849,7 @@ is
             2 => GF_1,
             3 => GF_0); -- just to complete aggregate
 
-      --  RCC - Why recompute X * Y here each time - surely it's constant?
+      --  RCC? Why recompute X * Y here each time - surely it's constant?
       M (Q (3), GF_X, GF_Y);
 
       Scalarmult (P, Q, S);
@@ -948,13 +893,10 @@ is
       D  (0) := 1;
 
       for I in reverse U32 range 0 .. 254 loop
-         --  r=(z[i>>3]>>(i&7))&1;
          CB := Z2 (I32 (Shift_Right (I, 3)));
          Shift := Natural (I and 7);
          R := Bit (Shift_Right (CB, Shift) and 1);
 
-         --  sel25519(a,b,r);
-         --  sel25519(c,d,r);
          Sel_25519 (A2, B, R);
          Sel_25519 (C, D, R);
 
@@ -1483,8 +1425,6 @@ is
          H (P) := H (P) xor (S and (G (P) xor H (P)));
       end loop;
 
-      --  FOR(j,16) c[j] = k[j + 16];
-      --  c[16] = 0;
       C := (U32 (K (16)), U32 (K (17)), U32 (K (18)), U32 (K (19)),
             U32 (K (20)), U32 (K (21)), U32 (K (22)), U32 (K (23)),
             U32 (K (24)), U32 (K (25)), U32 (K (26)), U32 (K (27)),
@@ -1573,8 +1513,6 @@ is
 
       Crypto_Stream (X, N, K);
 
-      --  if (crypto_onetimeauth_verify(c + 16,c + 32,d - 32,x) != 0)
-      --     return -1;
       declare
          subtype M_Array is Byte_Seq (0 .. (C'Last - 32));
       begin
@@ -1743,7 +1681,7 @@ is
       while (LN >= 128) loop
          pragma Warnings (Off, "lower bound test*");
          pragma Loop_Invariant
-           ((LN + I64 (CB) = I64 (M'Last) + 1) and --  PInvMaint?
+           ((LN + I64 (CB) = I64 (M'Last) + 1) and
               (LN in 128 .. M'Length) and
               (CB in M'First .. (M'Last - 127)));
 
@@ -1803,7 +1741,7 @@ is
 
          exit when LN < 256;
          pragma Assert (LN >= 128);
-         CB := CB + 128; --  POV and UB here on final iteration?
+         CB := CB + 128;
          LN := LN - 128;
       end loop;
 
@@ -1881,16 +1819,13 @@ is
    is
       D : Byte := 0;
    begin
-      --  FOR(i,n) d |= x[i]^y[i];
       for I in X'Range loop
          D := D or (X (I) xor Y (I));
       end loop;
       --  D = 0         iff X and Y are equal
       --  D in 1 .. 255 iff X and Y are not equal
 
-      --  return (1 & ((d - 1) >> 8)) - 1;
       return Boolean_To_Verify_Result (D = 0);
-
    end Crypto_Verify_16;
 
    --  POK
@@ -1898,14 +1833,12 @@ is
    is
       D : Byte := 0;
    begin
-      --  FOR(i,n) d |= x[i]^y[i];
       for I in X'Range loop
          D := D or (X (I) xor Y (I));
       end loop;
       --  D = 0         iff X and Y are equal
       --  D in 1 .. 255 iff X and Y are not equal
 
-      --  return (1 & ((d - 1) >> 8)) - 1;
       return Boolean_To_Verify_Result (D = 0);
    end Crypto_Verify_32;
 
