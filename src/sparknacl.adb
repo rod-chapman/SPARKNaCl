@@ -355,7 +355,7 @@ is
    end Car_25519;
 
 
-
+   --  P?
    procedure Pack_25519 (O :    out Bytes_32;
                          N : in    GF)
    is
@@ -405,8 +405,8 @@ is
       O := (others => 0);
       --  FOR(i,16) {
       for I in Index_16 loop
-         pragma Assert (T (I) >= 0); --  P?
-         pragma Assert (T (I) <= 65535); --  P?
+         pragma Assert (T (I) >= 0); --  PAssert? Depends on post of above loop
+         pragma Assert (T (I) <= 65535); --  PAssert?
 
          --  o[2*i]=t[i]&0xff;
          O (2 * I) := Byte (T (I) mod 256);
@@ -824,7 +824,7 @@ is
          for J in I32 range (I - 32) .. (I - 13) loop
             X (J) := X (J) + Carry - 16 * X (I) * L (J - (I - 32)); --  POV * 4
             Carry := SShift_8 (X (J) + 128); --  POV
-            X (J) := X (J) - (Carry * 256);
+            X (J) := X (J) - (Carry * 256); --  POV * 2
          end loop;
          X (I - 12) := X (I - 12) + Carry; --  POV
          X (I) := 0;
@@ -838,7 +838,7 @@ is
       end loop;
 
       for J in Index_32 loop
-         X (J) := X (J) - Carry * L (J); --  POV
+         X (J) := X (J) - Carry * L (J); --  POV * 2
       end loop;
 
       --  R is 64 bytes, this this only sets
@@ -1065,11 +1065,11 @@ is
 
       for I in Index_32 loop
          for J in Index_32 loop
-            X (I + J) := X (I + J) + I64 (U64 (H (I)) * U64 (D (J))); --  POV
+            X (I + J) := X (I + J) + I64 (U64 (H (I)) * U64 (D (J))); --  POV on +
          end loop;
       end loop;
 
-      ModL (Bytes_64 (SM (32 .. 95)), X); --  PRange?
+      ModL (Bytes_64 (SM (32 .. 95)), X); --  PRange? Need pre on range of SM?
       pragma Unreferenced (X);
    end Crypto_Sign;
 
@@ -1320,8 +1320,8 @@ is
          Crypto_Core_Salsa20 (X, Z, K, Sigma);
 
          for I in Index_64 loop
-            C (C_Offset + I) :=
-              (if Xor_M then M (M_Offset + I) else 0) xor X (I);
+            C (C_Offset + I) := --  POV and PIndex?
+              (if Xor_M then M (M_Offset + I) else 0) xor X (I); --  POV on + and PIndex?
          end loop;
 
          U := 1;
@@ -1332,8 +1332,8 @@ is
          end loop;
 
          B := B - 64;
-         C_Offset := C_Offset + 64;
-         M_Offset := M_Offset + 64;
+         C_Offset := C_Offset + 64; --  POV?
+         M_Offset := M_Offset + 64; --  POV?
 
       end loop;
 
@@ -1341,14 +1341,14 @@ is
          Crypto_Core_Salsa20 (X, Z, K, Sigma);
 
          for I in I32 range 0 .. (B - 1) loop
-            C (C_Offset + I) :=
-              (if Xor_M then M (M_Offset + I) else 0) xor X (I);
+            C (C_Offset + I) := --  POV on + and PIndex?
+              (if Xor_M then M (M_Offset + I) else 0) xor X (I); --  POV on + and PIndex?
          end loop;
       end if;
    end Crypto_Stream_Salsa20_Xor_Local;
 
 
-   --  ???
+   --  POK
    procedure Crypto_Stream_Salsa20_Xor (C :    out Byte_Seq; --  Output stream
                                         M : in     Byte_Seq; --  Input message
                                         N : in     Bytes_8;  --  Nonce
@@ -1358,7 +1358,7 @@ is
       Crypto_Stream_Salsa20_Xor_Local (C, M, True, N, K);
    end Crypto_Stream_Salsa20_Xor;
 
-   --  ???
+   --  POK
    procedure Crypto_Stream_Xor (C :    out Byte_Seq; --  Output ciphertext
                                 M : in     Byte_Seq; --  Input message
                                 N : in     Bytes_24; --  Nonce
@@ -1370,7 +1370,7 @@ is
       Crypto_Stream_Salsa20_Xor_Local (C, M, True, N (16 .. 23), S);
    end Crypto_Stream_Xor;
 
-   --  ???
+   --  POK
    procedure Crypto_Stream_Salsa20 (C :    out Byte_Seq; --  Output stream
                                     N : in     Bytes_8;  --  Nonce
                                     K : in     Bytes_32) --  Key
@@ -1433,7 +1433,7 @@ is
 
          J := 0;
          while  ((J < 16) and (J < N)) loop
-            C (J) := U32 (M (M_Offset + J)); --  PIndex * 2, POV
+            C (J) := U32 (M (M_Offset + J)); --  PIndex * 2, POV on +
             J := J + 1;
          end loop;
 
