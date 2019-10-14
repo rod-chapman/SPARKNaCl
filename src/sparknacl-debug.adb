@@ -61,6 +61,17 @@ is
       end if;
    end DH;
 
+   procedure DHH  (S : in String; D : in I64)
+   is
+   begin
+      if On then
+         Put_Line (S);
+         I64IO.Put (D, Width => 0, Base => 16);
+         New_Line;
+      end if;
+   end DHH;
+
+
    procedure DHS (S : in String; D : in I64_Seq_64)
    is
    begin
