@@ -8,7 +8,8 @@ is
    N : Bytes_24;
    S, S2 : Verify_Result;
 begin
-   for MLen in N32 range 0 .. 999 loop
+--   for MLen in N32 range 0 .. 999 loop
+   for MLen in N32 range 0 .. 99 loop
       Crypto_Box_Keypair (AlicePK, AliceSK);
       Crypto_Box_Keypair (BobPK, BobSK);
       Random_Bytes (N);

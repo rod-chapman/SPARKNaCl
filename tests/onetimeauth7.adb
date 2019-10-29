@@ -15,7 +15,8 @@ is
 begin
    RB.Reset (RBG);
    RBI16.Reset (RBI16G);
-   for I in N32 range 0 .. 9999 loop
+--   for I in N32 range 0 .. 9999 loop
+   for I in N32 range 0 .. 99 loop
       declare
          subtype C_Index is N32 range 0 .. I;
          subtype CT is Byte_Seq (C_Index);
