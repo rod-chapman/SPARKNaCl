@@ -102,11 +102,6 @@ is
      with Post => ASR_4'Result >= -2**59 and
                   ASR_4'Result <= (2**59) - 1;
 
-   --  Assignment
-   procedure Set_25519 (R :    out GF;
-                        A : in     GF)
-     with Global => null;
-
    --  Constant time conditional swap of P and Q.
    --  If B = 0 then don't swap
    --  If B = 1 then swap
@@ -132,9 +127,6 @@ is
 
    procedure Inv_25519 (O : out    GF;
                         I :     in GF)
-     with Global => null;
-
-   function Neq_25519 (A, B : in GF) return Verify_Result
      with Global => null;
 
    procedure Pack (R :    out Bytes_32;
@@ -164,11 +156,13 @@ is
    --  Rotate Left 32
    function RL32 (X : in U32;
                   C : in Natural) return U32
+   is (Rotate_Left (X, C))
      with Global => null;
 
    --  Rotate right 64
    function RR64 (X : in U64;
                   C : in Natural) return U64
+   is (Rotate_Right (X, C))
      with Global => null;
 
    function LD32 (X : in Bytes_4) return U32
@@ -178,17 +172,8 @@ is
                    U : in     U32)
      with Global => null;
 
-   function DL64 (X : in Bytes_8) return U64
-     with Global => null;
-
    procedure TS64 (X :    out Bytes_8;
                    U : in     U64)
-     with Global => null;
-
-   function Ch (X, Y, Z : in U64) return U64
-     with Global => null;
-
-   function Maj (X, Y, Z : in U64) return U64
      with Global => null;
 
    --  Sigma0 with an upper-case S!
@@ -298,14 +283,6 @@ is
    begin
       return To_I64 (Shift_Right_Arithmetic (To_U64 (X), 4));
    end ASR_4;
-
-   --  POK
-   procedure Set_25519 (R :    out GF;
-                        A : in     GF)
-   is
-   begin
-      R := A;
-   end Set_25519;
 
    --  POK
    procedure Sel_25519 (P : in out GF;
@@ -480,22 +457,6 @@ is
    end S;
 
    --  POK
-   function RL32 (X : in U32;
-                 C : in Natural) return U32
-   is
-   begin
-      return Rotate_Left (X, C);
-   end RL32;
-
-   --  POK
-   function RR64 (X : in U64;
-                  C : in Natural) return U64
-   is
-   begin
-      return Rotate_Right (X, C);
-   end RR64;
-
-   --  POK
    function LD32 (X : in Bytes_4) return U32
    is
       U : U32;
@@ -517,17 +478,6 @@ is
          T := Shift_Right (T, 8);
       end loop;
    end ST32;
-
-   --  POK
-   function DL64 (X : in Bytes_8) return U64
-   is
-      U : U64 := 0;
-   begin
-      for I in X'Range loop
-         U := Shift_Left (U, 8) or U64 (X (I));
-      end loop;
-      return U;
-   end DL64;
 
    --  POK
    procedure TS64 (X :    out Bytes_8;
@@ -564,16 +514,6 @@ is
    end Inv_25519;
 
    --  POK
-   function Neq_25519 (A, B : in GF) return Verify_Result
-   is
-      C, D : Bytes_32;
-   begin
-      Pack_25519 (C, A);
-      Pack_25519 (D, B);
-      return Crypto_Verify_32 (C, D);
-   end Neq_25519;
-
-   --  POK
    procedure Pack (R :    out Bytes_32;
                    P : in     GF_Vector_4)
    is
@@ -586,20 +526,6 @@ is
       R (31) := R (31) xor (Byte (Par_25519 (TX)) * 128);
    end Pack;
 
-
-   --  POK
-   function Ch (X, Y, Z : in U64) return U64
-   is
-   begin
-      return (X and Y) xor ((not X) and Z);
-   end Ch;
-
-   --  POK
-   function Maj (X, Y, Z : in U64) return U64
-   is
-   begin
-      return (X and Y) xor (X and Z) xor (Y and Z);
-   end Maj;
 
    --  POK
    function UC_Sigma0 (X : in U64) return U64
@@ -712,10 +638,27 @@ is
    is
       T1, T2, T3, T4, T5, T6, T7, Chk, Chk1, Num,
       R_1_Squared, Den0, Den1, Den2, Den4, Den6 : GF;
+
+      --  POK
+      --  RCC - remove formals and access globals
+      --        Chk1 and Num directly?
+      function Neq_25519 (A, B : in GF) return Verify_Result
+        with Global => null;
+
+      function Neq_25519 (A, B : in GF) return Verify_Result
+      is
+         C, D : Bytes_32;
+      begin
+         Pack_25519 (C, A);
+         Pack_25519 (D, B);
+         return Crypto_Verify_32 (C, D);
+      end Neq_25519;
+
    begin
       R := (others => GF_0);
 
-      Set_25519 (R (2), GF_1);
+      --  Call to Set_25519 replaced with assignment here
+      R (2) := GF_1;
       Unpack_25519 (R (1), P);
       S (R_1_Squared, R (1));
       M (Den0, R_1_Squared, GF_D);
@@ -1675,6 +1618,43 @@ is
       T       : U64;
       LN      : I64;
       CB      : I32;
+
+      --  RCC replace formals with globals?
+      function Ch (X, Y, Z : in U64) return U64
+        with Global => null;
+
+      --  RCC replace formals with globals?
+      function Maj (X, Y, Z : in U64) return U64
+        with Global => null;
+
+      function DL64 (X : in Bytes_8) return U64
+        with Global => null;
+
+      --  POK
+      function Ch (X, Y, Z : in U64) return U64
+      is
+      begin
+         return (X and Y) xor ((not X) and Z);
+      end Ch;
+
+      --  POK
+      function Maj (X, Y, Z : in U64) return U64
+      is
+      begin
+         return (X and Y) xor (X and Z) xor (Y and Z);
+      end Maj;
+
+      --  POK
+      function DL64 (X : in Bytes_8) return U64
+      is
+         U : U64 := 0;
+      begin
+         for I in X'Range loop
+            U := Shift_Left (U, 8) or U64 (X (I));
+         end loop;
+         return U;
+      end DL64;
+
    begin
       A := (0 => DL64 (Bytes_8 (X (0 .. 7))),
             1 => DL64 (Bytes_8 (X (8 .. 15))),
