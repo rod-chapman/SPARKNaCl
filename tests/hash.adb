@@ -1,7 +1,8 @@
-with SPARKNaCl_Types; use SPARKNaCl_Types;
-with SPARKNaCl;       use SPARKNaCl;
-with SPARKNaCl.Debug; use SPARKNaCl.Debug;
-with Interfaces;      use Interfaces;
+with SPARKNaCl_Types;   use SPARKNaCl_Types;
+with SPARKNaCl;         use SPARKNaCl;
+with SPARKNaCl.Debug;   use SPARKNaCl.Debug;
+with SPARKNaCl.Hashing; use SPARKNaCl.Hashing;
+with Interfaces;        use Interfaces;
 procedure Hash
 is
    R1 : Bytes_64;
@@ -18,9 +19,9 @@ begin
       M4 (I) := Character'Pos (M3 (Integer (I + 1)));
    end loop;
 
-   Crypto_Hash (R1, M4);
+   Hash (R1, M4);
    DH ("Hash is", R1);
 
-   Crypto_Hash (R1, M5);
+   Hash (R1, M5);
    DH ("Hash is", R1);
 end Hash;

@@ -1,6 +1,7 @@
-with SPARKNaCl_Types; use SPARKNaCl_Types;
-with SPARKNaCl;       use SPARKNaCl;
-with SPARKNaCl.Debug; use SPARKNaCl.Debug;
+with SPARKNaCl_Types;    use SPARKNaCl_Types;
+with SPARKNaCl;          use SPARKNaCl;
+with SPARKNaCl.Debug;    use SPARKNaCl.Debug;
+with SPARKNaCl.Hashing;  use SPARKNaCl.Hashing;
 procedure Stream
 is
    Firstkey : constant Bytes_32 :=
@@ -18,6 +19,6 @@ is
    H : Bytes_64;
 begin
    Crypto_Stream (Output, Nonce, Firstkey);
-   Crypto_Hash (H, Output);
+   Hash (H, Output);
    DH ("H is", H);
 end Stream;

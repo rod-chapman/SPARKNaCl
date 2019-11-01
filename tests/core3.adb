@@ -1,7 +1,8 @@
-with SPARKNaCl_Types; use SPARKNaCl_Types;
-with SPARKNaCl;       use SPARKNaCl;
-with SPARKNaCl.Debug; use SPARKNaCl.Debug;
-with Interfaces;      use Interfaces;
+with SPARKNaCl_Types;    use SPARKNaCl_Types;
+with SPARKNaCl;          use SPARKNaCl;
+with SPARKNaCl.Debug;    use SPARKNaCl.Debug;
+with SPARKNaCl.Hashing;  use SPARKNaCl.Hashing;
+with Interfaces;         use Interfaces;
 procedure Core3
 is
    Second_Key : constant Bytes_32 :=
@@ -39,6 +40,6 @@ begin
       Input (9) := Input (9) + 1;
       exit when Input (9) = 0;
    end loop;
-   Crypto_Hash (H, Output);
+   Hash (H, Output);
    DH ("Hash is", H);
 end Core3;

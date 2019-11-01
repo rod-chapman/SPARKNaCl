@@ -27,6 +27,8 @@
 --  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ------------------------------------------------------------------------------
 
+with Ada.Unchecked_Conversion;
+
 with Interfaces;      use Interfaces;
 with SPARKNaCl_Types; use SPARKNaCl_Types;
 with SPARKNaCl_Random;
@@ -269,19 +271,6 @@ is
 
 
    --------------------------------------------------------
-   --  Hashing
-   --------------------------------------------------------
-
-   procedure Crypto_Hashblocks
-     (X : in out Bytes_64; -- 512 bits
-      M : in     Byte_Seq)
-     with Global => null;
-
-   procedure Crypto_Hash (Output :    out Bytes_64; -- 512 bits
-                          M      : in     Byte_Seq)
-     with Global => null;
-
-   --------------------------------------------------------
    --  Constant time equality tests
    --------------------------------------------------------
 
@@ -290,5 +279,90 @@ is
 
    function Crypto_Verify_32 (X, Y : in Bytes_32) return Verify_Result
      with Global => null;
+
+private
+   --===============
+   --  Local types
+   --===============
+
+   subtype Bit  is Byte range 0 .. 1;
+   subtype Index_4  is I32 range 0 .. 3;
+   subtype Index_15 is I32 range 0 .. 14;
+   subtype Index_17 is I32 range 0 .. 16;
+   subtype Index_20 is I32 range 0 .. 19;
+   subtype Index_31 is I32 range 0 .. 30;
+
+   subtype Bytes_4  is Byte_Seq (Index_4);
+
+   subtype U32_Seq_4   is U32_Seq (Index_4);
+   subtype U32_Seq_16  is U32_Seq (Index_16);
+   subtype Poly_1305_F is U32_Seq (Index_17);
+
+   subtype I64_Seq_32 is I64_Seq (Index_32);
+
+   subtype U64_Seq_16 is U64_Seq (Index_16);
+   subtype U64_Seq_8  is U64_Seq (Index_8);
+
+   type GF_Vector_4 is array (Index_4) of GF;
+
+   --  Local types for expressing a "Normalized" GF with
+   --  all limbs in the range 0 .. 65535
+   --
+   --   subtype GF_Limb is I64 range 0 .. 65535;
+   --   type GF_Normalized is new GF
+   --     with Dynamic_Predicate => (for all I in Index_16 =>
+   --                                  GF_Normalized (I) in GF_Limb);
+
+
+   --===============================
+   --  Local expression functions
+   --===============================
+
+   function To_U64 is new Ada.Unchecked_Conversion (I64, U64);
+   function To_I64 is new Ada.Unchecked_Conversion (U64, I64);
+
+   --  returns equivalent of X >> 16 in C, doing an arithmetic
+   --  shift right when X is negative
+   function ASR_16 (X : in I64) return I64
+   is (To_I64 (Shift_Right_Arithmetic (To_U64 (X), 16)))
+     with Post => ASR_16'Result >= -2**47 and
+                  ASR_16'Result <= (2**47) - 1;
+
+   --  returns equivalent of X >> 8 in C, doing an arithmetic
+   --  shift right when X is negative
+   function ASR_8 (X : in I64) return I64
+   is (To_I64 (Shift_Right_Arithmetic (To_U64 (X), 8)))
+     with Post => ASR_8'Result >= -2**55 and
+                  ASR_8'Result <= (2**55) - 1;
+
+   --  returns equivalent of X >> 4 in C, doing an arithmetic
+   --  shift right when X is negative
+   function ASR_4 (X : in I64) return I64
+   is (To_I64 (Shift_Right_Arithmetic (To_U64 (X), 4)))
+     with Post => ASR_4'Result >= -2**59 and
+                  ASR_4'Result <= (2**59) - 1;
+
+   --  Rotate Left 32
+   function RL32 (X : in U32;
+                  C : in Natural) return U32
+   is (Rotate_Left (X, C))
+     with Global => null;
+
+   --  Rotate right 64
+   function RR64 (X : in U64;
+                  C : in Natural) return U64
+   is (Rotate_Right (X, C))
+     with Global => null;
+
+   --===============================
+   --  Local subprogram declarations
+   --===============================
+
+   procedure TS64 (X :    out Bytes_8;
+                   U : in     U64)
+     with Global => null;
+
+
+
 
 end SPARKNaCl;
