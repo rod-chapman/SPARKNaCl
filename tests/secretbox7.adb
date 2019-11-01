@@ -1,4 +1,3 @@
-with SPARKNaCl_Types; use SPARKNaCl_Types;
 with SPARKNaCl;       use SPARKNaCl;
 with Ada.Text_IO;     use Ada.Text_IO;
 with Interfaces;      use Interfaces;

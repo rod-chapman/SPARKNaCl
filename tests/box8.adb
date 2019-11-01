@@ -1,4 +1,3 @@
-with SPARKNaCl_Types; use SPARKNaCl_Types;
 with SPARKNaCl_Random;
 with SPARKNaCl;       use SPARKNaCl;
 

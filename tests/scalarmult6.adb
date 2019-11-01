@@ -1,4 +1,3 @@
-with SPARKNaCl_Types; use SPARKNaCl_Types;
 with SPARKNaCl;       use SPARKNaCl;
 with SPARKNaCl.Debug; use SPARKNaCl.Debug;
 procedure Scalarmult6
