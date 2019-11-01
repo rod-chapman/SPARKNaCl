@@ -1,6 +1,7 @@
-with SPARKNaCl;       use SPARKNaCl;
-with Ada.Text_IO;     use Ada.Text_IO;
-with Interfaces;      use Interfaces;
+with SPARKNaCl;        use SPARKNaCl;
+with SPARKNaCl.Random; use SPARKNaCl.Random;
+with Ada.Text_IO;      use Ada.Text_IO;
+with Interfaces;       use Interfaces;
 procedure Secretbox7
 is
    K : Bytes_32;

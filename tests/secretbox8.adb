@@ -1,8 +1,7 @@
-with SPARKNaCl_Random;
-with SPARKNaCl;       use SPARKNaCl;
-
-with Ada.Text_IO;     use Ada.Text_IO;
-with Interfaces;      use Interfaces;
+with SPARKNaCl;        use SPARKNaCl;
+with SPARKNaCl.Random; use SPARKNaCl.Random;
+with Ada.Text_IO;      use Ada.Text_IO;
+with Interfaces;       use Interfaces;
 with Ada.Numerics.Discrete_Random;
 
 procedure Secretbox8
@@ -33,7 +32,7 @@ begin
 
          if S = 0 then
             while (Caught < 10) loop
-               C (RI.Random (G)) := SPARKNaCl_Random.Random_Byte;
+               C (RI.Random (G)) := Random_Byte;
                Crypto_Secretbox_Open (M2, S2, C, N, K);
                if S2 = 0 then
                   if M /= M2 then

@@ -1,9 +1,9 @@
-with SPARKNaCl_Random;
-with SPARKNaCl;       use SPARKNaCl;
+with SPARKNaCl;        use SPARKNaCl;
+with SPARKNaCl.Random; use SPARKNaCl.Random;
 
-with Ada.Text_IO;     use Ada.Text_IO;
+with Ada.Text_IO;      use Ada.Text_IO;
 with Ada.Numerics.Discrete_Random;
-with Interfaces;      use Interfaces;
+with Interfaces;       use Interfaces;
 
 procedure Box8
 is
@@ -32,7 +32,7 @@ begin
          Random_Bytes (M (Crypto_Box_Plaintext_Zero_Bytes .. M'Last));
          Crypto_Box (C, S, M, N, BobPK, AliceSK);
          if S = 0 then
-            C (RI.Random (G)) := SPARKNaCl_Random.Random_Byte;
+            C (RI.Random (G)) := Random_Byte;
             Crypto_Box_Open (M2, S2, C, N, AlicePK, BobSK);
             if S2 = 0 then
                if M /= M2 then

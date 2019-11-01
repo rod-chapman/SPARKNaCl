@@ -1,4 +1,5 @@
 with SPARKNaCl.Hashing;
+with SPARKNaCl.Random;
 
 package body SPARKNaCl
   with SPARK_Mode => On
@@ -150,19 +151,10 @@ is
       Result : Bytes_32;
    begin
       for I in Result'Range loop
-         Result (I) := SPARKNaCl_Random.Random_Byte;
+         Result (I) := Random.Random_Byte;
       end loop;
       return Result;
    end Random_Bytes_32;
-
-   --  POK, 1 FA
-   procedure Random_Bytes (R : out Byte_Seq)
-   is
-   begin
-      for I in R'Range loop
-         R (I) := SPARKNaCl_Random.Random_Byte;
-      end loop;
-   end Random_Bytes;
 
    --  POK
    procedure Sel_25519 (P : in out GF;

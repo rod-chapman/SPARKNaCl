@@ -78,13 +78,6 @@ is
    --  -1 == "strings are not equal" or "verification failed"
    subtype Verify_Result is I32 range -1 .. 0;
 
-   --===========================
-   --  Exported subprograms
-   --===========================
-
-   procedure Random_Bytes (R : out Byte_Seq)
-     with Global => SPARKNaCl_Random.Entropy;
-
    --------------------------------------------------------
    --  Scalar multiplication
    --------------------------------------------------------
