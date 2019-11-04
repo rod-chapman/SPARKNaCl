@@ -5,7 +5,7 @@ procedure Secretbox7
 is
    K : Bytes_32;
    N : Bytes_24;
-   S, S2 : Verify_Result;
+   S, S2 : Boolean;
 begin
    for MLen in N32 range 0 .. 999 loop
       Random_Bytes (K);
@@ -19,9 +19,9 @@ begin
       begin
          Random_Bytes (M (Crypto_Secretbox_Zero_Bytes .. M'Last));
          Crypto_Secretbox (C, S, M, N, K);
-         if S = 0 then
+         if S then
             Crypto_Secretbox_Open (M2, S2, C, N, K);
-            if S2 = 0 then
+            if S2 then
                if not Equal (M, M2) then
                   Put_Line ("bad decryption");
                   exit;

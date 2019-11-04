@@ -61,15 +61,15 @@ is
 
    C : Byte_Seq (0 .. 162);
    M2 : Byte_Seq (0 .. 162);
-   Status : Verify_Result;
+   Status : Boolean;
 begin
    DH ("M is", M);
 
    Crypto_Box (C, Status, M, Nonce, BobPK, AliceSK);
-   Put_Line ("Status is" & Status'Img);
+   Put_Line ("Status is " & Status'Img);
    DH ("C is", C);
 
    Crypto_Box_Open (M2, Status, C, Nonce, AlicePK, BobSK);
-   Put_Line ("Status is" & Status'Img);
+   Put_Line ("Status is " & Status'Img);
    DH ("M recovered is", M2);
 end Box;

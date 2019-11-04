@@ -61,6 +61,16 @@ is
       end if;
    end DH;
 
+   procedure DH  (S : in String; D : in Boolean)
+   is
+   begin
+      if On then
+         Put_Line (S);
+         Put (Boolean'Image (D));
+         New_Line;
+      end if;
+   end DH;
+
    procedure DHH  (S : in String; D : in I64)
    is
    begin

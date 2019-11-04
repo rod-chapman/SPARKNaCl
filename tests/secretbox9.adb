@@ -22,7 +22,7 @@ is
       0,    0,    0,    0,    0,    0,    0,    0);
 
    C : Byte_Seq (0 .. 162) := (others => 0);
-   S : Verify_Result := 0;
+   S : Boolean;
 begin
    Crypto_Secretbox (C, S, M, Nonce, Firstkey);
 

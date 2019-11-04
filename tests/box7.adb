@@ -5,7 +5,7 @@ procedure Box7
 is
    AliceSK, AlicePK, BobSK, BobPK : Bytes_32;
    N : Bytes_24;
-   S, S2 : Verify_Result;
+   S, S2 : Boolean;
 begin
 --   for MLen in N32 range 0 .. 999 loop
    for MLen in N32 range 0 .. 99 loop
@@ -20,9 +20,9 @@ begin
       begin
          Random_Bytes (M (Crypto_Box_Plaintext_Zero_Bytes .. M'Last));
          Crypto_Box (C, S, M, N, BobPK, AliceSK);
-         if S = 0 then
+         if S then
             Crypto_Box_Open (M2, S2, C, N, AlicePK, BobSK);
-            if S2 = 0 then
+            if S2 then
                if not Equal (M, M2) then
                   Put_Line ("bad decryption");
                   exit;

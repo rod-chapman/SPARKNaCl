@@ -30,14 +30,14 @@ begin
          Random_Bytes (C);
          Random_Bytes (K);
          Crypto_Onetimeauth (A, C, K);
-         if Crypto_Onetimeauth_Verify (A, C, K) /= 0 then
+         if not Crypto_Onetimeauth_Verify (A, C, K) then
             DH ("Fail ", I64 (I));
             return;
          end if;
          R1 := RCI.Random (RCIG);
          R2 := RB.Random (RBG) mod 255;
          C (R1) := C (R1) + 1 + R2;
-         if Crypto_Onetimeauth_Verify (A, C, K) = 0 then
+         if Crypto_Onetimeauth_Verify (A, C, K) then
             DH ("Forgery", I64 (I));
             return;
          end if;
@@ -45,7 +45,7 @@ begin
          R2 := RB.Random (RBG) mod 255;
          R3 := RBI16.Random (RBI16G);
          A (R3) := A (R3) + 1 + R2;
-         if Crypto_Onetimeauth_Verify (A, C, K) = 0 then
+         if Crypto_Onetimeauth_Verify (A, C, K) then
             DH ("Forgery", I64 (I));
             return;
          end if;

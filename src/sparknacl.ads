@@ -80,19 +80,10 @@ is
    Zero_Bytes_32 : constant Bytes_32 := (others => 0);
 
    --------------------------------------------------------
-   --  Constant time equality tests
+   --  Constant time equality test
    --------------------------------------------------------
 
-   --   0 == "strings are equal" or "verified OK"
-   --  -1 == "strings are not equal" or "verification failed"
-   subtype Verify_Result is I32 range -1 .. 0;
-
    function Equal (X, Y : in Byte_Seq) return Boolean
-     with Global => null,
-          Pre    => X'First = Y'First and
-                    X'Last  = Y'Last;
-
-   function Equal (X, Y : in Byte_Seq) return Verify_Result
      with Global => null,
           Pre    => X'First = Y'First and
                     X'Last  = Y'Last;
@@ -132,7 +123,7 @@ is
                   SM'Last   = M'Last + 64);
 
    procedure Crypto_Sign_Open (M      :    out Byte_Seq;
-                               Status :    out Verify_Result;
+                               Status :    out Boolean;
                                MLen   :    out I32;
                                SM     : in     Byte_Seq;
                                PK     : in     Bytes_32)
@@ -192,7 +183,7 @@ is
 
    function Crypto_Onetimeauth_Verify (H : in Bytes_16;
                                        M : in Byte_Seq;
-                                       K : in Bytes_32) return Verify_Result
+                                       K : in Bytes_32) return Boolean
      with Global => null,
           Pre    => M'First = 0;
 
@@ -205,7 +196,7 @@ is
    Crypto_Secretbox_Zero_Bytes  : constant := 32;
 
    procedure Crypto_Secretbox (C      :    out Byte_Seq;
-                               Status :    out Verify_Result;
+                               Status :    out Boolean;
                                M      : in     Byte_Seq;
                                N      : in     Bytes_24;
                                K      : in     Bytes_32)
@@ -220,7 +211,7 @@ is
 
    procedure Crypto_Secretbox_Open
      (M      :    out Byte_Seq; --  Output plaintext
-      Status :    out Verify_Result;
+      Status :    out Boolean;
       C      : in     Byte_Seq; --  Input ciphertext
       N      : in     Bytes_24; --  Nonce
       K      : in     Bytes_32) --  Key)
@@ -254,7 +245,7 @@ is
 
 
    procedure Crypto_Box_AfterNM (C      :    out Byte_Seq;
-                                 Status :    out Verify_Result;
+                                 Status :    out Boolean;
                                  M      : in     Byte_Seq;
                                  N      : in     Bytes_24;
                                  K      : in     Bytes_32)
@@ -268,7 +259,7 @@ is
 
    procedure Crypto_Box_Open_AfterNM
      (M      :    out Byte_Seq; --  Output plaintext
-      Status :    out Verify_Result;
+      Status :    out Boolean;
       C      : in     Byte_Seq; --  Input ciphertext
       N      : in     Bytes_24; --  Nonce
       K      : in     Bytes_32) --  Key)
@@ -281,7 +272,7 @@ is
           Post   => Equal (M (0 .. 31), Zero_Bytes_32);
 
    procedure Crypto_Box (C      :    out Byte_Seq;
-                         Status :    out Verify_Result;
+                         Status :    out Boolean;
                          M      : in     Byte_Seq;
                          N      : in     Bytes_24;
                          Y, X   : in     Bytes_32)
@@ -295,7 +286,7 @@ is
 
 
    procedure Crypto_Box_Open (M      :    out Byte_Seq;
-                              Status :    out Verify_Result;
+                              Status :    out Boolean;
                               C      : in     Byte_Seq;
                               N      : in     Bytes_24;
                               Y, X   : in     Bytes_32)

@@ -22,14 +22,14 @@ is
       16#00#, 16#00#, 16#00#, 16#00#, 16#00#, 16#00#, 16#00#, 16#00#);
 
    M : Byte_Seq (0 .. 15);
-   S : Verify_Result;
+   S : Boolean;
 begin
    Crypto_Secretbox_Open (M, S, C, Nonce, Firstkey);
 
-   Put_Line ("Status is" & S'Img);
+   Put_Line ("Status is " & S'Img);
    DH ("M is", M);
 
 exception
    when Assert_Failure =>
-      Put_Line ("Precondition failure, Status is" & S'Img);
+      Put_Line ("Precondition failure, Status is " & S'Img);
 end Secretbox3;

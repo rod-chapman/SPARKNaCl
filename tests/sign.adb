@@ -12,7 +12,7 @@ is
    M2 : Byte_Seq (0 .. 319) := (others => 0);
 
    ML : I32;
-   S  : Verify_Result;
+   S  : Boolean;
 begin
    Crypto_Sign_Keypair (PK, SK);
 

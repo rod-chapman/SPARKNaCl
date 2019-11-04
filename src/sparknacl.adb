@@ -105,7 +105,7 @@ is
 
 
    procedure Unpackneg (R  :    out GF_Vector_4;
-                        OK :    out Verify_Result;
+                        OK :    out Boolean;
                         P  : in     Bytes_32)
      with Global => null;
 
@@ -402,7 +402,7 @@ is
 
    --  POK
    procedure Unpackneg (R  :    out GF_Vector_4;
-                        OK :    out Verify_Result;
+                        OK :    out Boolean;
                         P  : in     Bytes_32)
    is
       T1, T2, T3, T4, T5, T6, T7, Chk, Chk1, Num,
@@ -410,7 +410,7 @@ is
 
       --  RCC - remove formals and access globals
       --        Chk1 and Num directly?
-      function Neq_25519 (A, B : in GF) return Verify_Result
+      function Eq_25519 (A, B : in GF) return Boolean
         with Global => null;
 
       --  RCC - remove formals and access globals
@@ -420,14 +420,14 @@ is
         with Global => null;
 
       --  POK
-      function Neq_25519 (A, B : in GF) return Verify_Result
+      function Eq_25519 (A, B : in GF) return Boolean
       is
          C, D : Bytes_32;
       begin
          Pack_25519 (C, A);
          Pack_25519 (D, B);
          return Equal (C, D);
-      end Neq_25519;
+      end Eq_25519;
 
       --  POK
       procedure Pow_2523 (O :    out GF;
@@ -475,7 +475,7 @@ is
 
       S (Chk, R (0));
       M (Chk1, Chk, Den1);
-      if (Neq_25519 (Chk1, Num) = -1) then
+      if (not Eq_25519 (Chk1, Num)) then
          M (T7, R (0), GF_I);
          R (0) := T7;
       end if;
@@ -483,8 +483,8 @@ is
       S (Chk, R (0));
       M (Chk1, Chk, Den1);
 
-      if (Neq_25519 (Chk1, Num) = -1) then
-         OK := -1;
+      if (not Eq_25519 (Chk1, Num)) then
+         OK := False;
          return;
       end if;
 
@@ -494,7 +494,7 @@ is
       end if;
 
       M (R (3), R (0), R (1));
-      OK := 0;
+      OK := True;
    end Unpackneg;
 
 
@@ -627,11 +627,6 @@ is
    --  Constant time equality tests
    --------------------------------------------------------
 
-   type Boolean_To_Verify_Result_Table is array (Boolean) of Verify_Result;
-   Boolean_To_Verify_Result : constant Boolean_To_Verify_Result_Table :=
-     (False => -1,
-      True  => 0);
-
    --  POK
    function Equal (X, Y : in Byte_Seq) return Boolean
    is
@@ -644,14 +639,6 @@ is
       --  D in 1 .. 255 iff X and Y are not equal
 
       return (D = 0);
-   end Equal;
-
-   --  POK
-   function Equal (X, Y : in Byte_Seq) return Verify_Result
-   is
-
-   begin
-      return Boolean_To_Verify_Result (Equal (X, Y));
    end Equal;
 
    --------------------------------------------------------
@@ -811,7 +798,7 @@ is
 
    --  POK
    procedure Crypto_Sign_Open (M      :    out Byte_Seq;
-                               Status :    out Verify_Result;
+                               Status :    out Boolean;
                                MLen   :    out I32;
                                SM     : in     Byte_Seq;
                                PK     : in     Bytes_32)
@@ -824,12 +811,12 @@ is
       MLen := -1;
       if SM'Length < 64 then
          M := (others => 0);
-         Status := -1;
+         Status := False;
          return;
       end if;
 
       Unpackneg (Q, Status, PK);
-      if Status = -1 then
+      if not Status then
          M := (others => 0);
          return;
       end if;
@@ -851,13 +838,13 @@ is
 
       if not Equal (SM (0 .. 31), T) then
          M := (others => 0);
-         Status := -1;
+         Status := False;
          return;
       end if;
 
       M (0 .. LN - 1) := SM (64 .. LN + 63);
       MLen := LN;
-      Status := 0;
+      Status := True;
       return;
    end Crypto_Sign_Open;
 
@@ -1117,7 +1104,7 @@ is
    --  POK
    function Crypto_Onetimeauth_Verify (H : in Bytes_16;
                                        M : in Byte_Seq;
-                                       K : in Bytes_32) return Verify_Result
+                                       K : in Bytes_32) return Boolean
    is
       X : Bytes_16;
    begin
@@ -1131,7 +1118,7 @@ is
    --------------------------------------------------------
 
    procedure Crypto_Secretbox (C      :    out Byte_Seq;
-                               Status :    out Verify_Result;
+                               Status :    out Boolean;
                                M      : in     Byte_Seq;
                                N      : in     Bytes_24;
                                K      : in     Bytes_32)
@@ -1142,7 +1129,7 @@ is
    begin
       D := M'Length; --  PRange?
       if D < 32 then
-         Status := -1;
+         Status := False;
          C := (others => 0);
          return;
       end if;
@@ -1165,22 +1152,22 @@ is
 
       C (16 .. 31) := R;
       C (0 .. 15) := Zero_Bytes_16;
-      Status := 0;
+      Status := True;
    end Crypto_Secretbox;
 
    --  POK
    procedure Crypto_Secretbox_Open
      (M      :    out Byte_Seq; --  Output plaintext
-      Status :    out Verify_Result;
+      Status :    out Boolean;
       C      : in     Byte_Seq; --  Input ciphertext
       N      : in     Bytes_24; --  Nonce
       K      : in     Bytes_32) --  Key)
    is
       X : Bytes_32;
    begin
-      Status := 0;
+      Status := True;
       if C'Length < 32 then
-         Status := -1;
+         Status := False;
          M := (others => 0);
          return;
       end if;
@@ -1192,12 +1179,13 @@ is
       declare
          subtype M_Array is Byte_Seq (0 .. (C'Last - 32));
       begin
-         if Crypto_Onetimeauth_Verify (H => C (16 .. 31),
-                                       --  Slide and slide so that M'First = 0
-                                       M => M_Array (C (32 .. C'Last)),
-                                       K => X) /= 0
+         if not Crypto_Onetimeauth_Verify
+           (H => C (16 .. 31),
+            --  Slide and slide so that M'First = 0
+            M => M_Array (C (32 .. C'Last)),
+            K => X)
          then
-            Status := -1;
+            Status := False;
             M := (others => 0);
             return;
          end if;
@@ -1224,7 +1212,7 @@ is
 
    --  POK
    procedure Crypto_Box_AfterNM (C      :    out Byte_Seq;
-                                 Status :    out Verify_Result;
+                                 Status :    out Boolean;
                                  M      : in     Byte_Seq;
                                  N      : in     Bytes_24;
                                  K      : in     Bytes_32)
@@ -1236,7 +1224,7 @@ is
    --  POK
    procedure Crypto_Box_Open_AfterNM
      (M      :    out Byte_Seq; --  Output plaintext
-      Status :    out Verify_Result;
+      Status :    out Boolean;
       C      : in     Byte_Seq; --  Input ciphertext
       N      : in     Bytes_24; --  Nonce
       K      : in     Bytes_32) --  Key)
@@ -1247,7 +1235,7 @@ is
 
    --  POK
    procedure Crypto_Box (C      :    out Byte_Seq;
-                         Status :    out Verify_Result;
+                         Status :    out Boolean;
                          M      : in     Byte_Seq;
                          N      : in     Bytes_24;
                          Y, X   : in     Bytes_32)
@@ -1260,7 +1248,7 @@ is
 
    --  POK
    procedure Crypto_Box_Open (M      :    out Byte_Seq;
-                              Status :    out Verify_Result;
+                              Status :    out Boolean;
                               C      : in     Byte_Seq;
                               N      : in     Bytes_24;
                               Y, X   : in     Bytes_32)

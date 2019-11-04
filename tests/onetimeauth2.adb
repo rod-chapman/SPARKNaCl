@@ -32,8 +32,8 @@ is
      (16#f3#, 16#ff#, 16#c7#, 16#70#, 16#3f#, 16#94#, 16#00#, 16#e5#,
       16#2a#, 16#7d#, 16#fb#, 16#4b#, 16#3d#, 16#33#, 16#05#, 16#d9#);
 
-   R : Verify_Result;
+   R : Boolean;
 begin
    R := Crypto_Onetimeauth_Verify (A, C, RS);
-   DH ("R is", I64 (R));
+   DH ("R is", R);
 end Onetimeauth2;

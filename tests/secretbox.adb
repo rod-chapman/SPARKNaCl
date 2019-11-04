@@ -38,10 +38,10 @@ is
       16#5e#, 16#07#, 16#05#);
 
    C : Byte_Seq (0 .. 162);
-   S : Verify_Result;
+   S : Boolean;
 begin
    Crypto_Secretbox (C, S, M, Nonce, Firstkey);
 
-   Put_Line ("Status is" & S'Img);
+   Put_Line ("Status is " & S'Img);
    DH ("C is", C);
 end Secretbox;
