@@ -1,0 +1,8 @@
+**/*.o
+**/*.adb.stderr
+**/*.adb.stdout
+**/*.ali
+**/*.bexch
+**/*.cswi
+**/*.lexch
+gnatinspect.db
