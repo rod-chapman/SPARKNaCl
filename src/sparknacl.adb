@@ -150,15 +150,6 @@ is
    end Random_Bytes_32;
 
    --  POK
-   procedure Random_Bytes (R : out Byte_Seq)
-   is
-   begin
-      for I in R'Range loop
-         R (I) := Random.Random_Byte;
-      end loop;
-   end Random_Bytes;
-
-   --  POK
    procedure Sel_25519 (P : in out GF;
                         Q : in out GF;
                         B : in     Bit)
@@ -1302,5 +1293,14 @@ is
       return Boolean_To_Verify_Result (D = 0);
    end Crypto_Verify_32;
 
+
+   --  POK
+   procedure Random_Bytes (R : out Byte_Seq)
+   is
+   begin
+      for I in R'Range loop
+         R (I) := Random.Random_Byte;
+      end loop;
+   end Random_Bytes;
 
 end SPARKNaCl;
