@@ -23,7 +23,7 @@ begin
          if S = 0 then
             Crypto_Box_Open (M2, S2, C, N, AlicePK, BobSK);
             if S2 = 0 then
-               if M /= M2 then
+               if not Equal (M, M2) then
                   Put_Line ("bad decryption");
                   exit;
                else

@@ -35,7 +35,7 @@ begin
                C (RI.Random (G)) := Random_Byte;
                Crypto_Secretbox_Open (M2, S2, C, N, K);
                if S2 = 0 then
-                  if M /= M2 then
+                  if not Equal (M, M2) then
                      Put (" forgery!");
                      exit;
                   end if;

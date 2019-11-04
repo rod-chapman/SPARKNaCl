@@ -54,6 +54,10 @@ is
    type I64_Seq  is array (N32 range <>) of I64;
    type Byte_Seq is array (N32 range <>) of Byte;
 
+   --  Remove predefined "=" for Byte_Seq (and all subtypes thereof) since it
+   --  is not guaranteed to be constant-time. See function Equal below.
+   function "=" (Left, Right : in Byte_Seq) return Boolean is abstract;
+
    subtype Index_8  is I32 range 0 .. 7;
    subtype Index_16 is I32 range 0 .. 15;
    subtype Index_24 is I32 range 0 .. 23;
@@ -75,9 +79,23 @@ is
    Zero_Bytes_16 : constant Bytes_16 := (others => 0);
    Zero_Bytes_32 : constant Bytes_32 := (others => 0);
 
+   --------------------------------------------------------
+   --  Constant time equality tests
+   --------------------------------------------------------
+
    --   0 == "strings are equal" or "verified OK"
    --  -1 == "strings are not equal" or "verification failed"
    subtype Verify_Result is I32 range -1 .. 0;
+
+   function Equal (X, Y : in Byte_Seq) return Boolean
+     with Global => null,
+          Pre    => X'First = Y'First and
+                    X'Last  = Y'Last;
+
+   function Equal (X, Y : in Byte_Seq) return Verify_Result
+     with Global => null,
+          Pre    => X'First = Y'First and
+                    X'Last  = Y'Last;
 
    --------------------------------------------------------
    --  Scalar multiplication
@@ -196,8 +214,8 @@ is
                      C'First = 0 and
                      C'Last  = M'Last and
                      M'Length >= 32) and then
-                    M (0 .. 31) = Zero_Bytes_32,
-          Post   => C (0 .. 15) = Zero_Bytes_16;
+                    Equal (M (0 .. 31), Zero_Bytes_32),
+          Post   => Equal (C (0 .. 15), Zero_Bytes_16);
 
 
    procedure Crypto_Secretbox_Open
@@ -211,8 +229,8 @@ is
                      C'First = 0 and
                      M'Last  = C'Last and
                      C'Length >= 32) and then
-                    C (0 .. 15) = Zero_Bytes_16,
-          Post   => M (0 .. 31) = Zero_Bytes_32;
+                    Equal (C (0 .. 15), Zero_Bytes_16),
+          Post   => Equal (M (0 .. 31), Zero_Bytes_32);
 
 
    --------------------------------------------------------
@@ -245,8 +263,8 @@ is
                      C'First = 0 and
                      C'Last  = M'Last and
                      M'Length >= 32) and then
-                    M (0 .. 31) = Zero_Bytes_32,
-          Post   => C (0 .. 15) = Zero_Bytes_16;
+                    Equal (M (0 .. 31), Zero_Bytes_32),
+          Post   => Equal (C (0 .. 15), Zero_Bytes_16);
 
    procedure Crypto_Box_Open_AfterNM
      (M      :    out Byte_Seq; --  Output plaintext
@@ -259,8 +277,8 @@ is
                      C'First = 0 and
                      M'Last  = C'Last and
                      C'Length >= 32) and then
-                    C (0 .. 15) = Zero_Bytes_16,
-          Post   => M (0 .. 31) = Zero_Bytes_32;
+                    Equal (C (0 .. 15), Zero_Bytes_16),
+          Post   => Equal (M (0 .. 31), Zero_Bytes_32);
 
    procedure Crypto_Box (C      :    out Byte_Seq;
                          Status :    out Verify_Result;
@@ -272,8 +290,8 @@ is
                      C'First = 0 and
                      C'Last  = M'Last and
                      M'Length >= 32) and then
-                    M (0 .. 31) = Zero_Bytes_32,
-          Post   => C (0 .. 15) = Zero_Bytes_16;
+                    Equal (M (0 .. 31), Zero_Bytes_32),
+          Post   => Equal (C (0 .. 15), Zero_Bytes_16);
 
 
    procedure Crypto_Box_Open (M      :    out Byte_Seq;
@@ -286,19 +304,8 @@ is
                      C'First = 0 and
                      M'Last  = C'Last and
                      C'Length >= 32) and then
-                    C (0 .. 15) = Zero_Bytes_16,
-          Post   => M (0 .. 31) = Zero_Bytes_32;
-
-
-   --------------------------------------------------------
-   --  Constant time equality tests
-   --------------------------------------------------------
-
-   function Crypto_Verify_16 (X, Y : in Bytes_16) return Verify_Result
-     with Global => null;
-
-   function Crypto_Verify_32 (X, Y : in Bytes_32) return Verify_Result
-     with Global => null;
+                    Equal (C (0 .. 15), Zero_Bytes_16),
+          Post   => Equal (M (0 .. 31), Zero_Bytes_32);
 
    --------------------------------------------------------
    --  RNG

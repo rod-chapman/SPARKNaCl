@@ -426,7 +426,7 @@ is
       begin
          Pack_25519 (C, A);
          Pack_25519 (D, B);
-         return Crypto_Verify_32 (C, D);
+         return Equal (C, D);
       end Neq_25519;
 
       --  POK
@@ -624,6 +624,37 @@ is
    --===============================
 
    --------------------------------------------------------
+   --  Constant time equality tests
+   --------------------------------------------------------
+
+   type Boolean_To_Verify_Result_Table is array (Boolean) of Verify_Result;
+   Boolean_To_Verify_Result : constant Boolean_To_Verify_Result_Table :=
+     (False => -1,
+      True  => 0);
+
+   --  POK
+   function Equal (X, Y : in Byte_Seq) return Boolean
+   is
+      D : Byte := 0;
+   begin
+      for I in X'Range loop
+         D := D or (X (I) xor Y (I));
+      end loop;
+      --  D = 0         iff X and Y are equal
+      --  D in 1 .. 255 iff X and Y are not equal
+
+      return (D = 0);
+   end Equal;
+
+   --  POK
+   function Equal (X, Y : in Byte_Seq) return Verify_Result
+   is
+
+   begin
+      return Boolean_To_Verify_Result (Equal (X, Y));
+   end Equal;
+
+   --------------------------------------------------------
    --  Scalar multiplication
    --------------------------------------------------------
 
@@ -818,7 +849,7 @@ is
 
       LN := I32 (I64 (SM'Length) - 64);
 
-      if Crypto_Verify_32 (SM (0 .. 31), T) = -1 then
+      if not Equal (SM (0 .. 31), T) then
          M := (others => 0);
          Status := -1;
          return;
@@ -1091,7 +1122,7 @@ is
       X : Bytes_16;
    begin
       Crypto_Onetimeauth (X, M, K);
-      return Crypto_Verify_16 (H, X);
+      return Equal (H, X);
    end Crypto_Onetimeauth_Verify;
 
 
@@ -1254,44 +1285,6 @@ is
    --------------------------------------------------------
 
 
-
-
-   --------------------------------------------------------
-   --  Constant time equality tests
-   --------------------------------------------------------
-
-   type Boolean_To_Verify_Result_Table is array (Boolean) of Verify_Result;
-   Boolean_To_Verify_Result : constant Boolean_To_Verify_Result_Table :=
-     (False => -1,
-      True  => 0);
-
-   --  POK
-   function Crypto_Verify_16 (X, Y : in Bytes_16) return Verify_Result
-   is
-      D : Byte := 0;
-   begin
-      for I in X'Range loop
-         D := D or (X (I) xor Y (I));
-      end loop;
-      --  D = 0         iff X and Y are equal
-      --  D in 1 .. 255 iff X and Y are not equal
-
-      return Boolean_To_Verify_Result (D = 0);
-   end Crypto_Verify_16;
-
-   --  POK
-   function Crypto_Verify_32 (X, Y : in Bytes_32) return Verify_Result
-   is
-      D : Byte := 0;
-   begin
-      for I in X'Range loop
-         D := D or (X (I) xor Y (I));
-      end loop;
-      --  D = 0         iff X and Y are equal
-      --  D in 1 .. 255 iff X and Y are not equal
-
-      return Boolean_To_Verify_Result (D = 0);
-   end Crypto_Verify_32;
 
 
    --  POK
