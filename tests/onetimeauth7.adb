@@ -1,5 +1,4 @@
 with SPARKNaCl;        use SPARKNaCl;
-with SPARKNaCl.Random; use SPARKNaCl.Random;
 with SPARKNaCl.Debug;  use SPARKNaCl.Debug;
 
 with Interfaces;      use Interfaces;

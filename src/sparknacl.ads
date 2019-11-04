@@ -30,7 +30,8 @@
 with Ada.Unchecked_Conversion;
 
 with Interfaces;      use Interfaces;
-with SPARKNaCl_Random;
+
+with Random;
 
 package SPARKNaCl
   with SPARK_Mode => On
@@ -99,7 +100,7 @@ is
    --  key generation
    procedure Crypto_Sign_Keypair (PK : out Bytes_32;
                                   SK : out Bytes_64)
-     with Global => SPARKNaCl_Random.Entropy;
+     with Global => Random.Entropy;
 
 
    procedure Crypto_Sign (SM :    out Byte_Seq;
@@ -242,7 +243,7 @@ is
 
    --  Key generation
    procedure Crypto_Box_Keypair (Y, X : out Bytes_32)
-     with Global => SPARKNaCl_Random.Entropy;
+     with Global => Random.Entropy;
 
    --  Precomputation
    procedure Crypto_Box_BeforeNM (K    :    out Bytes_32;
@@ -314,6 +315,13 @@ is
 
    function Crypto_Verify_32 (X, Y : in Bytes_32) return Verify_Result
      with Global => null;
+
+   --------------------------------------------------------
+   --  RNG
+   --------------------------------------------------------
+
+   procedure Random_Bytes (R : out Byte_Seq)
+     with Global => Random.Entropy;
 
 private
    --===============
@@ -396,8 +404,6 @@ private
    procedure TS64 (X :    out Bytes_8;
                    U : in     U64)
      with Global => null;
-
-
 
 
 end SPARKNaCl;

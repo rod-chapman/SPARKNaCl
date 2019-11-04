@@ -1,7 +1,7 @@
-with SPARKNaCl;        use SPARKNaCl;
-with SPARKNaCl.Random; use SPARKNaCl.Random;
-with Ada.Text_IO;      use Ada.Text_IO;
-with Interfaces;       use Interfaces;
+with SPARKNaCl;   use SPARKNaCl;
+with Random;      use Random;
+with Ada.Text_IO; use Ada.Text_IO;
+with Interfaces;  use Interfaces;
 with Ada.Numerics.Discrete_Random;
 
 procedure Secretbox8

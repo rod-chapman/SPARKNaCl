@@ -1,5 +1,4 @@
 with SPARKNaCl.Hashing;
-with SPARKNaCl.Random;
 
 package body SPARKNaCl
   with SPARK_Mode => On
@@ -45,7 +44,7 @@ is
    --===============================
 
    function Random_Bytes_32 return Bytes_32
-     with Global => SPARKNaCl_Random.Entropy,
+     with Global => Random.Entropy,
           Volatile_Function;
 
    --  Constant time conditional swap of P and Q.
@@ -155,6 +154,15 @@ is
       end loop;
       return Result;
    end Random_Bytes_32;
+
+   --  POK
+   procedure Random_Bytes (R : out Byte_Seq)
+   is
+   begin
+      for I in R'Range loop
+         R (I) := Random.Random_Byte;
+      end loop;
+   end Random_Bytes;
 
    --  POK
    procedure Sel_25519 (P : in out GF;

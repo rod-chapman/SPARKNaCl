@@ -1,8 +1,8 @@
 with SPARKNaCl;        use SPARKNaCl;
-with SPARKNaCl.Random; use SPARKNaCl.Random;
+with Random;           use Random;
 
-with Ada.Text_IO;      use Ada.Text_IO;
 with Ada.Numerics.Discrete_Random;
+with Ada.Text_IO;      use Ada.Text_IO;
 with Interfaces;       use Interfaces;
 
 procedure Box8
