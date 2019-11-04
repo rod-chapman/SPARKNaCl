@@ -89,20 +89,6 @@ is
                     X'Last  = Y'Last;
 
    --------------------------------------------------------
-   --  Scalar multiplication
-   --------------------------------------------------------
-
-   procedure Crypto_Scalarmult (Q :    out Bytes_32;
-                                N : in     Bytes_32;
-                                P : in     Bytes_32)
-     with Global => null;
-
-   procedure Crypto_Scalarmult_Base (Q :    out Bytes_32;
-                                     N : in     Bytes_32)
-     with Global => null;
-
-
-   --------------------------------------------------------
    --  Public key signatures
    --------------------------------------------------------
 
@@ -320,6 +306,9 @@ private
       14 => Character'Pos (' '),
       15 => Character'Pos ('k'));
 
+   GF_0      : constant GF := (others => 0);
+   GF_1      : constant GF := (1, others => 0);
+
 
 
    --===============================
@@ -370,5 +359,45 @@ private
                    U : in     U64)
      with Global => null;
 
+   procedure Unpack_25519 (O :    out GF;
+                           N : in     Bytes_32)
+     with Global => null;
+
+   --  Constant time conditional swap of P and Q.
+   --  If B = 0 then don't swap
+   --  If B = 1 then swap
+   procedure Sel_25519 (P : in out GF;
+                        Q : in out GF;
+                        B : in     Bit)
+     with Global => null;
+
+   procedure Pack_25519 (O :    out Bytes_32;
+                         N : in    GF)
+     with Global => null;
+
+   procedure Inv_25519 (O : out    GF;
+                        I :     in GF)
+     with Global => null;
+
+
+   --  Multiply
+   procedure M (O    :    out GF;
+                A, B : in     GF)
+     with Global => null;
+
+   --  Add
+   procedure A (O    :    out GF;
+                A, B : in     GF)
+     with Global => null;
+
+   --  Subtract
+   procedure Z (O    :    out GF;
+                A, B : in     GF)
+     with Global => null;
+
+   --  Square
+   procedure S (O :    out GF;
+                A : in     GF)
+     with Global => null;
 
 end SPARKNaCl;

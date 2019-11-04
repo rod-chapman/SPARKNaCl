@@ -1,4 +1,5 @@
 package body SPARKNaCl.Hashing
+  with SPARK_Mode => On
 is
 
    subtype Index_80 is I32 range 0 .. 79;

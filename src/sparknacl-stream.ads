@@ -1,4 +1,5 @@
 package SPARKNaCl.Stream
+  with SPARK_Mode => On
 is
    --------------------------------------------------------
    --  Secret key encryption (not authenticated)

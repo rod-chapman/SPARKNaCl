@@ -1,4 +1,5 @@
 package SPARKNaCl.Core
+  with SPARK_Mode => On
 is
 
    --------------------------------------------------------

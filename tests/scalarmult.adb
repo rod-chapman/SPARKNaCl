@@ -1,5 +1,6 @@
-with SPARKNaCl;       use SPARKNaCl;
-with SPARKNaCl.Debug; use SPARKNaCl.Debug;
+with SPARKNaCl;        use SPARKNaCl;
+with SPARKNaCl.Debug;  use SPARKNaCl.Debug;
+with SPARKNaCl.Scalar; use SPARKNaCl.Scalar;
 procedure Scalarmult
 is
    AliceSK : constant Bytes_32 :=
@@ -9,6 +10,6 @@ is
       16#b1#, 16#77#, 16#fb#, 16#a5#, 16#1d#, 16#b9#, 16#2c#, 16#2a#);
    AlicePK : Bytes_32;
 begin
-   Crypto_Scalarmult_Base (AlicePK, AliceSK);
+   Mult_Base (AlicePK, AliceSK);
    DH ("AlicePK is", AlicePK);
 end Scalarmult;

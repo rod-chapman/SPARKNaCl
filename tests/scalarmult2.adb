@@ -1,5 +1,6 @@
-with SPARKNaCl;       use SPARKNaCl;
-with SPARKNaCl.Debug; use SPARKNaCl.Debug;
+with SPARKNaCl;        use SPARKNaCl;
+with SPARKNaCl.Debug;  use SPARKNaCl.Debug;
+with SPARKNaCl.Scalar; use SPARKNaCl.Scalar;
 procedure Scalarmult2
 is
    BobSK : constant Bytes_32 :=
@@ -9,6 +10,6 @@ is
       16#1c#, 16#2f#, 16#8b#, 16#27#, 16#ff#, 16#88#, 16#e0#, 16#eb#);
    BobPK : Bytes_32;
 begin
-   Crypto_Scalarmult_Base (BobPK, BobSK);
+   Mult_Base (BobPK, BobSK);
    DH ("BobPK is", BobPK);
 end Scalarmult2;

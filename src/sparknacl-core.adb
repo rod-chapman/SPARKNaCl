@@ -1,4 +1,5 @@
 package body SPARKNaCl.Core
+  with SPARK_Mode => On
 is
 
    procedure ST32 (X :    out Bytes_4;

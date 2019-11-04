@@ -1,6 +1,7 @@
 with SPARKNaCl.Hashing;
 with SPARKNaCl.Core;
 with SPARKNaCl.Stream;
+with SPARKNaCl.Scalar;
 
 package body SPARKNaCl
   with SPARK_Mode => On
@@ -10,11 +11,6 @@ is
    --===================
 
    Zero : constant Bytes_16 := (others => 0);
-   Nine : constant Bytes_32 := (9, others => 0);
-
-   GF_0      : constant GF := (others => 0);
-   GF_1      : constant GF := (1, others => 0);
-   GF_121665 : constant GF := (16#DB41#, 1, others => 0);
 
    GF_D  : constant GF := (16#78a3#, 16#1359#, 16#4dca#, 16#75eb#,
                            16#d8ab#, 16#4141#, 16#0a4d#, 16#0070#,
@@ -49,22 +45,6 @@ is
      with Global => Random.Entropy,
           Volatile_Function;
 
-   --  Constant time conditional swap of P and Q.
-   --  If B = 0 then don't swap
-   --  If B = 1 then swap
-   procedure Sel_25519 (P : in out GF;
-                        Q : in out GF;
-                        B : in     Bit)
-     with Global => null;
-
-   procedure Pack_25519 (O :    out Bytes_32;
-                         N : in    GF)
-     with Global => null;
-
-   procedure Unpack_25519 (O :    out GF;
-                           N : in     Bytes_32)
-     with Global => null;
-
    function Par_25519 (A : in GF) return Bit
      with Global => null;
 
@@ -72,32 +52,8 @@ is
    procedure Car_25519 (O : in out GF)
      with Global => null;
 
-   procedure Inv_25519 (O : out    GF;
-                        I :     in GF)
-     with Global => null;
-
    procedure Pack (R :    out Bytes_32;
                    P : in     GF_Vector_4)
-     with Global => null;
-
-   --  Multiply
-   procedure M (O    :    out GF;
-                A, B : in     GF)
-     with Global => null;
-
-   --  Add
-   procedure A (O    :    out GF;
-                A, B : in     GF)
-     with Global => null;
-
-   --  Subtract
-   procedure Z (O    :    out GF;
-                A, B : in     GF)
-     with Global => null;
-
-   --  Square
-   procedure S (O :    out GF;
-                A : in     GF)
      with Global => null;
 
    procedure Add (P : in out GF_Vector_4;
@@ -634,92 +590,6 @@ is
    end Equal;
 
    --------------------------------------------------------
-   --  Scalar multiplication
-   --------------------------------------------------------
-
-   --  POK
-   procedure Crypto_Scalarmult (Q :    out Bytes_32;
-                                N : in     Bytes_32;
-                                P : in     Bytes_32)
-   is
-      Z2 : Bytes_32;
-      X : GF;
-      R : Bit;
-
-      A2, A3, B, B2, C, C2, D, E, F, T1, T2 : GF;
-      CB    : Byte;
-      Shift : Natural;
-   begin
-      Z2 := N;
-      Z2 (31) := (N (31) and 127) or 64;
-      Z2 (0) := Z2 (0) and 248;
-
-      Unpack_25519 (X, P);
-
-      B  := X;
-      C  := GF_0;
-      A2 := GF_0;
-      D  := GF_0;
-
-      A2 (0) := 1;
-      D  (0) := 1;
-
-      for I in reverse U32 range 0 .. 254 loop
-         CB := Z2 (I32 (Shift_Right (I, 3)));
-         Shift := Natural (I and 7);
-         R := Bit (Shift_Right (CB, Shift) and 1);
-
-         Sel_25519 (A2, B, R);
-         Sel_25519 (C, D, R);
-
-         A (E, A2, C);
-
-         Z (A3, A2, C);
-
-         A (C, B, D);
-
-         Z (B2, B, D);
-
-         S (D, E);
-         S (F, A3);
-
-         M (A2, C, A3);
-         M (C, B2, E);
-         A (E, A2, C);
-
-         Z (A3, A2, C);
-         S (B, A3);
-         Z (C, D, F);
-
-         M (A2, C, GF_121665);
-         A (A3, A2, D);
-
-         C2 := C;
-         M (C, C2, A3);
-
-         M (A2, D, F);
-         M (D, B, X);
-         S (B, E);
-
-         Sel_25519 (A2, B, R);
-         Sel_25519 (C, D, R);
-      end loop;
-
-      Inv_25519 (T1, C);
-      M (T2, A2, T1);
-      Pack_25519 (Q, T2);
-
-   end Crypto_Scalarmult;
-
-   --  POK
-   procedure Crypto_Scalarmult_Base (Q :    out Bytes_32;
-                                     N : in     Bytes_32)
-   is
-   begin
-      Crypto_Scalarmult (Q, N, Nine);
-   end Crypto_Scalarmult_Base;
-
-   --------------------------------------------------------
    --  Public key signatures
    --------------------------------------------------------
 
@@ -1069,7 +939,7 @@ is
    is
       S : Bytes_32;
    begin
-      Crypto_Scalarmult (S, X, Y);
+      Scalar.Mult (S, X, Y);
       Core.HSalsa20 (K, Zero, S, Sigma);
    end Crypto_Box_BeforeNM;
 
@@ -1127,7 +997,7 @@ is
    is
    begin
       X := Random_Bytes_32;
-      Crypto_Scalarmult_Base (Y, X);
+      Scalar.Mult_Base (Y, X);
    end Crypto_Box_Keypair;
 
 

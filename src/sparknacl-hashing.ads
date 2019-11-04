@@ -1,4 +1,5 @@
 package SPARKNaCl.Hashing
+  with SPARK_Mode => On
 is
 
    procedure Hashblocks
