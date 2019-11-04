@@ -1,4 +1,5 @@
 with SPARKNaCl;       use SPARKNaCl;
+with SPARKNaCl.Core;  use SPARKNaCl.Core;
 with SPARKNaCl.Debug; use SPARKNaCl.Debug;
 procedure Core1
 is
@@ -16,6 +17,6 @@ is
 
    FirstKey : Bytes_32;
 begin
-   Crypto_Core_HSalsa20 (FirstKey, Zero, Shared, C);
+   HSalsa20 (FirstKey, Zero, Shared, C);
    DH ("FirstKey is", FirstKey);
 end Core1;

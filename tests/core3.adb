@@ -1,4 +1,5 @@
 with SPARKNaCl;          use SPARKNaCl;
+with SPARKNaCl.Core;     use SPARKNaCl.Core;
 with SPARKNaCl.Debug;    use SPARKNaCl.Debug;
 with SPARKNaCl.Hashing;  use SPARKNaCl.Hashing;
 with Interfaces;         use Interfaces;
@@ -28,10 +29,10 @@ begin
    Pos := 0;
    loop
       loop
-         Crypto_Core_Salsa20 (Output (Pos .. Pos + 63),
-                              Input,
-                              Second_Key,
-                              C);
+         Salsa20 (Output (Pos .. Pos + 63),
+                  Input,
+                  Second_Key,
+                  C);
          Pos := Pos + 64;
          Input (8) := Input (8) + 1;
          exit when Input (8) = 0;
