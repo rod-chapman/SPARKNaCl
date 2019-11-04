@@ -1,5 +1,6 @@
-with SPARKNaCl;       use SPARKNaCl;
-with SPARKNaCl.Debug; use SPARKNaCl.Debug;
+with SPARKNaCl;        use SPARKNaCl;
+with SPARKNaCl.Debug;  use SPARKNaCl.Debug;
+with SPARKNaCl.Stream; use SPARKNaCl.Stream;
 procedure Stream3
 is
    Firstkey : constant Bytes_32 :=
@@ -15,6 +16,6 @@ is
 
    RS : Bytes_32;
 begin
-   Crypto_Stream (RS, Nonce, Firstkey);
+   HSalsa20 (RS, Nonce, Firstkey);
    DH ("RS is", RS);
 end Stream3;

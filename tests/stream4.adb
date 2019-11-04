@@ -1,5 +1,6 @@
-with SPARKNaCl;       use SPARKNaCl;
-with SPARKNaCl.Debug; use SPARKNaCl.Debug;
+with SPARKNaCl;        use SPARKNaCl;
+with SPARKNaCl.Debug;  use SPARKNaCl.Debug;
+with SPARKNaCl.Stream; use SPARKNaCl.Stream;
 procedure Stream4
 is
    Firstkey : constant Bytes_32 :=
@@ -41,10 +42,10 @@ is
 
    C : Byte_Seq (0 .. 162);
 begin
-   Crypto_Stream_Xor (C, M, Nonce, Firstkey);
+   HSalsa20_Xor (C, M, Nonce, Firstkey);
    DH ("C is", C);
 
    --  RCC adds this case to gain coverage of...
-   Crypto_Stream_Salsa20_Xor (C, M, Nonce8, Firstkey);
+   Salsa20_Xor (C, M, Nonce8, Firstkey);
    DH ("C2 is", C);
 end Stream4;

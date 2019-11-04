@@ -1,5 +1,6 @@
 with SPARKNaCl;          use SPARKNaCl;
 with SPARKNaCl.Debug;    use SPARKNaCl.Debug;
+with SPARKNaCl.Stream;   use SPARKNaCl.Stream;
 with SPARKNaCl.Hashing;  use SPARKNaCl.Hashing;
 procedure Stream
 is
@@ -17,7 +18,7 @@ is
    Output : Byte_Seq (0 .. 4_194_303);
    H : Bytes_64;
 begin
-   Crypto_Stream (Output, Nonce, Firstkey);
+   HSalsa20 (Output, Nonce, Firstkey);
    Hash (H, Output);
    DH ("H is", H);
 end Stream;

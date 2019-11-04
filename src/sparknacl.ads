@@ -136,42 +136,6 @@ is
 
 
    --------------------------------------------------------
-   --  Secret key encryption (not authenticated)
-   --------------------------------------------------------
-
-   procedure Crypto_Stream (C :    out Byte_Seq; --  Output stream
-                            N : in     Bytes_24; --  Nonce
-                            K : in     Bytes_32) --  Key
-     with Global => null,
-          Pre    => C'First = 0;
-
-
-   procedure Crypto_Stream_Xor (C :    out Byte_Seq; --  Output ciphertext
-                                M : in     Byte_Seq; --  Input message
-                                N : in     Bytes_24; --  Nonce
-                                K : in     Bytes_32) --  Key
-     with Global => null,
-          Pre    => M'First = 0 and
-                    C'First = M'First and
-                    C'Last  = M'Last;
-
-   procedure Crypto_Stream_Salsa20_Xor (C :    out Byte_Seq; --  Output stream
-                                        M : in     Byte_Seq; --  Input message
-                                        N : in     Bytes_8;  --  Nonce
-                                        K : in     Bytes_32) --  Key
-     with Global => null,
-          Pre    => M'First = 0 and
-                    C'First = M'First and
-                    C'Last  = M'Last;
-
-
-   procedure Crypto_Stream_Salsa20 (C :    out Byte_Seq; --  Output stream
-                                    N : in     Bytes_8;  --  Nonce
-                                    K : in     Bytes_32) --  Key
-     with Global => null,
-          Pre    => C'First = 0;
-
-   --------------------------------------------------------
    --  One-time authentication
    --------------------------------------------------------
 
@@ -337,6 +301,25 @@ private
    --   type GF_Normalized is new GF
    --     with Dynamic_Predicate => (for all I in Index_16 =>
    --                                  GF_Normalized (I) in GF_Limb);
+
+   Sigma : constant Bytes_16 :=
+     (0  => Character'Pos ('e'),
+      1  => Character'Pos ('x'),
+      2  => Character'Pos ('p'),
+      3  => Character'Pos ('a'),
+      4  => Character'Pos ('n'),
+      5  => Character'Pos ('d'),
+      6  => Character'Pos (' '),
+      7  => Character'Pos ('3'),
+      8  => Character'Pos ('2'),
+      9  => Character'Pos ('-'),
+      10 => Character'Pos ('b'),
+      11 => Character'Pos ('y'),
+      12 => Character'Pos ('t'),
+      13 => Character'Pos ('e'),
+      14 => Character'Pos (' '),
+      15 => Character'Pos ('k'));
+
 
 
    --===============================

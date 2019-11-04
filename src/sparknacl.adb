@@ -1,5 +1,6 @@
 with SPARKNaCl.Hashing;
 with SPARKNaCl.Core;
+with SPARKNaCl.Stream;
 
 package body SPARKNaCl
   with SPARK_Mode => On
@@ -123,15 +124,6 @@ is
 
    procedure Scalarbase (P :    out GF_Vector_4;
                          S : in     Bytes_32)
-     with Global => null;
-
-   procedure Crypto_Stream_Salsa20_Xor_Local
-     (C     :    out Byte_Seq;
-      M     : in     Byte_Seq;
-      Xor_M : in     Boolean; --  If True then xor M against Stream
-                              --  If False then return Stream unmodified
-      N     : in     Bytes_8;
-      K     : in     Bytes_32)
      with Global => null;
 
    --===============================
@@ -850,135 +842,6 @@ is
 
 
    --------------------------------------------------------
-   --  Secret key encryption (not authenticated)
-   --------------------------------------------------------
-
-   Sigma : constant Bytes_16 :=
-     (0  => Character'Pos ('e'),
-      1  => Character'Pos ('x'),
-      2  => Character'Pos ('p'),
-      3  => Character'Pos ('a'),
-      4  => Character'Pos ('n'),
-      5  => Character'Pos ('d'),
-      6  => Character'Pos (' '),
-      7  => Character'Pos ('3'),
-      8  => Character'Pos ('2'),
-      9  => Character'Pos ('-'),
-      10 => Character'Pos ('b'),
-      11 => Character'Pos ('y'),
-      12 => Character'Pos ('t'),
-      13 => Character'Pos ('e'),
-      14 => Character'Pos (' '),
-      15 => Character'Pos ('k'));
-
-
-   --  ???
-   procedure Crypto_Stream_Salsa20_Xor_Local
-     (C     :    out Byte_Seq;
-      M     : in     Byte_Seq;
-      Xor_M : in     Boolean; --  If True then xor M against Stream
-                              --  If False then return Stream unmodified
-      N     : in     Bytes_8;
-      K     : in     Bytes_32)
-   is
-      Z : Bytes_16;
-      X : Bytes_64;
-      U : U32;
-      B : I32;
-      C_Offset : I32;
-      M_Offset : I32;
-   begin
-      B := C'Length; --  PRange?
-      C := (others => 0);
-      if B = 0 then
-         return;
-      end if;
-
-      C_Offset := 0;
-      M_Offset := 0;
-      Z := (others => 0);
-      Z (0 .. 7) := N;
-
-      while (B >= 64) loop
-
-         Core.Salsa20 (X, Z, K, Sigma);
-
-         for I in Index_64 loop
-            C (C_Offset + I) := --  POV and PIndex?
-              (if Xor_M then
-                 M (M_Offset + I) else 0) xor X (I); --  POV on + and PIndex?
-         end loop;
-
-         U := 1;
-         for I in I32 range 8 .. 15 loop
-            U := U + U32 (Z (I));
-            Z (I) := Byte (U mod 256);
-            U := Shift_Right (U, 8);
-         end loop;
-
-         B := B - 64;
-         C_Offset := C_Offset + 64; --  POV?
-         M_Offset := M_Offset + 64; --  POV?
-
-      end loop;
-
-      if B > 0 then
-         Core.Salsa20 (X, Z, K, Sigma);
-
-         for I in I32 range 0 .. (B - 1) loop
-            C (C_Offset + I) := --  POV on + and PIndex?
-              (if Xor_M then
-                 M (M_Offset + I) else 0) xor X (I); --  POV on + and PIndex?
-         end loop;
-      end if;
-   end Crypto_Stream_Salsa20_Xor_Local;
-
-
-   --  POK
-   procedure Crypto_Stream_Salsa20_Xor (C :    out Byte_Seq; --  Output stream
-                                        M : in     Byte_Seq; --  Input message
-                                        N : in     Bytes_8;  --  Nonce
-                                        K : in     Bytes_32) --  Key
-   is
-   begin
-      Crypto_Stream_Salsa20_Xor_Local (C, M, True, N, K);
-   end Crypto_Stream_Salsa20_Xor;
-
-   --  POK
-   procedure Crypto_Stream_Xor (C :    out Byte_Seq; --  Output ciphertext
-                                M : in     Byte_Seq; --  Input message
-                                N : in     Bytes_24; --  Nonce
-                                K : in     Bytes_32) --  Key
-   is
-      S : Bytes_32;
-   begin
-      Core.HSalsa20 (S, N (0 .. 15), K, Sigma);
-      Crypto_Stream_Salsa20_Xor_Local (C, M, True, N (16 .. 23), S);
-   end Crypto_Stream_Xor;
-
-   --  POK
-   procedure Crypto_Stream_Salsa20 (C :    out Byte_Seq; --  Output stream
-                                    N : in     Bytes_8;  --  Nonce
-                                    K : in     Bytes_32) --  Key
-   is
-      Null_M : Byte_Seq (0 .. 0);
-   begin
-      Null_M := (others => 0);
-      Crypto_Stream_Salsa20_Xor_Local (C, Null_M, False, N, K);
-   end Crypto_Stream_Salsa20;
-
-   --  POK
-   procedure Crypto_Stream (C :    out Byte_Seq; --  Output stream
-                            N : in     Bytes_24; --  Nonce
-                            K : in     Bytes_32) --  Key
-   is
-      S : Bytes_32;
-   begin
-      Core.HSalsa20 (S, N (0 .. 15), K, Sigma);
-      Crypto_Stream_Salsa20 (C, N (16 .. 23), S);
-   end Crypto_Stream;
-
-   --------------------------------------------------------
    --  One-time authentication
    --------------------------------------------------------
 
@@ -1136,7 +999,7 @@ is
 
       pragma Assert (D >= 32);
 
-      Crypto_Stream_Xor (C, M, N, K);
+      Stream.HSalsa20_Xor (C, M, N, K);
 
       K2 := C (0 .. 31);
 
@@ -1174,7 +1037,7 @@ is
 
       pragma Assert (C'Length >= 32);
 
-      Crypto_Stream (X, N, K);
+      Stream.HSalsa20 (X, N, K);
 
       declare
          subtype M_Array is Byte_Seq (0 .. (C'Last - 32));
@@ -1191,7 +1054,7 @@ is
          end if;
       end;
 
-      Crypto_Stream_Xor (C => M, M => C, N => N, K => K);
+      Stream.HSalsa20_Xor (C => M, M => C, N => N, K => K);
       M (0 .. 31) := Zero_Bytes_32;
    end Crypto_Secretbox_Open;
 
