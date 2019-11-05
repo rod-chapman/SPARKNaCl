@@ -1,6 +1,7 @@
-with SPARKNaCl;       use SPARKNaCl;
-with SPARKNaCl.Debug; use SPARKNaCl.Debug;
-with Ada.Text_IO;     use Ada.Text_IO;
+with SPARKNaCl;           use SPARKNaCl;
+with SPARKNaCl.Debug;     use SPARKNaCl.Debug;
+with SPARKNaCl.Secretbox; use SPARKNaCl.Secretbox;
+with Ada.Text_IO;         use Ada.Text_IO;
 procedure Secretbox
 is
    Firstkey : constant Bytes_32 :=
@@ -40,7 +41,7 @@ is
    C : Byte_Seq (0 .. 162);
    S : Boolean;
 begin
-   Crypto_Secretbox (C, S, M, Nonce, Firstkey);
+   Create (C, S, M, Nonce, Firstkey);
 
    Put_Line ("Status is " & S'Img);
    DH ("C is", C);

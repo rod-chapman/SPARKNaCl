@@ -1,6 +1,7 @@
-with SPARKNaCl;   use SPARKNaCl;
-with Ada.Text_IO; use Ada.Text_IO;
-with Interfaces;  use Interfaces;
+with SPARKNaCl;           use SPARKNaCl;
+with SPARKNaCl.Secretbox; use SPARKNaCl.Secretbox;
+with Ada.Text_IO;         use Ada.Text_IO;
+with Interfaces;          use Interfaces;
 procedure Secretbox7
 is
    K : Bytes_32;
@@ -14,13 +15,13 @@ begin
 
       declare
          subtype Text is
-           Byte_Seq (0 .. Crypto_Secretbox_Zero_Bytes + MLen - 1);
+           Byte_Seq (0 .. Secretbox_Zero_Bytes + MLen - 1);
          M, C, M2 : Text := (others => 0);
       begin
-         Random_Bytes (M (Crypto_Secretbox_Zero_Bytes .. M'Last));
-         Crypto_Secretbox (C, S, M, N, K);
+         Random_Bytes (M (Secretbox_Zero_Bytes .. M'Last));
+         Create (C, S, M, N, K);
          if S then
-            Crypto_Secretbox_Open (M2, S2, C, N, K);
+            Open (M2, S2, C, N, K);
             if S2 then
                if not Equal (M, M2) then
                   Put_Line ("bad decryption");

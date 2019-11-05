@@ -1,7 +1,8 @@
-with SPARKNaCl;   use SPARKNaCl;
-with Random;      use Random;
-with Ada.Text_IO; use Ada.Text_IO;
-with Interfaces;  use Interfaces;
+with SPARKNaCl;           use SPARKNaCl;
+with SPARKNaCl.Secretbox; use SPARKNaCl.Secretbox;
+with Random;              use Random;
+with Ada.Text_IO;         use Ada.Text_IO;
+with Interfaces;          use Interfaces;
 with Ada.Numerics.Discrete_Random;
 
 procedure Secretbox8
@@ -28,12 +29,12 @@ begin
       begin
          RI.Reset (G);
          Random_Bytes (M (Crypto_Box_Plaintext_Zero_Bytes .. M'Last));
-         Crypto_Secretbox (C, S, M, N, K);
+         Create (C, S, M, N, K);
 
          if S then
             while (Caught < 10) loop
                C (RI.Random (G)) := Random_Byte;
-               Crypto_Secretbox_Open (M2, S2, C, N, K);
+               Open (M2, S2, C, N, K);
                if S2 then
                   if not Equal (M, M2) then
                      Put (" forgery!");
