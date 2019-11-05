@@ -1,5 +1,6 @@
 with SPARKNaCl;       use SPARKNaCl;
 with SPARKNaCl.Debug; use SPARKNaCl.Debug;
+with SPARKNaCl.Sign;  use SPARKNaCl.Sign;
 with Ada.Text_IO;     use Ada.Text_IO;
 procedure Sign
 is
@@ -14,11 +15,11 @@ is
    ML : I32;
    S  : Boolean;
 begin
-   Crypto_Sign_Keypair (PK, SK);
+   Keypair (PK, SK);
 
-   Crypto_Sign (SM, M, SK);
+   Sign (SM, M, SK);
 
-   Crypto_Sign_Open (M2, S, ML, SM, PK);
+   Open (M2, S, ML, SM, PK);
    DH ("M2 is ", M2);
    Put_Line ("Status is " & S'Img);
    Put_Line ("ML is " & ML'Img);
