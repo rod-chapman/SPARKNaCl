@@ -11,8 +11,6 @@ is
    --  Local constants
    --===================
 
-   Zero : constant Bytes_16 := (others => 0);
-
    GF_D  : constant GF := (16#78a3#, 16#1359#, 16#4dca#, 16#75eb#,
                            16#d8ab#, 16#4141#, 16#0a4d#, 16#0070#,
                            16#e898#, 16#7779#, 16#4079#, 16#8cc7#,
@@ -806,7 +804,7 @@ is
       S : Bytes_32;
    begin
       Scalar.Mult (S, X, Y);
-      Core.HSalsa20 (K, Zero, S, Sigma);
+      Core.HSalsa20 (K, Zero_Bytes_16, S, Sigma);
    end Crypto_Box_BeforeNM;
 
    --  POK
