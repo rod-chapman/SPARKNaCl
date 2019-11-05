@@ -1,4 +1,5 @@
 with SPARKNaCl;       use SPARKNaCl;
+with SPARKNaCl.MAC;   use SPARKNaCl.MAC;
 with SPARKNaCl.Debug; use SPARKNaCl.Debug;
 procedure Onetimeauth2
 is
@@ -34,6 +35,6 @@ is
 
    R : Boolean;
 begin
-   R := Crypto_Onetimeauth_Verify (A, C, RS);
+   R := Onetimeauth_Verify (A, C, RS);
    DH ("R is", R);
 end Onetimeauth2;

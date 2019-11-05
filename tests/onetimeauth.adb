@@ -1,5 +1,6 @@
-with SPARKNaCl;        use SPARKNaCl;
-with SPARKNaCl.Debug;  use SPARKNaCl.Debug;
+with SPARKNaCl;       use SPARKNaCl;
+with SPARKNaCl.MAC;   use SPARKNaCl.MAC;
+with SPARKNaCl.Debug; use SPARKNaCl.Debug;
 procedure Onetimeauth
 is
    RS : constant Bytes_32 :=
@@ -30,6 +31,6 @@ is
 
    A : Bytes_16;
 begin
-   Crypto_Onetimeauth (A, C, RS);
+   Onetimeauth (A, C, RS);
    DH ("A is", A);
 end Onetimeauth;

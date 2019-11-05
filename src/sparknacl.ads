@@ -122,24 +122,6 @@ is
 
 
    --------------------------------------------------------
-   --  One-time authentication
-   --------------------------------------------------------
-
-   procedure Crypto_Onetimeauth (Output :    out Bytes_16;
-                                 M      : in     Byte_Seq;
-                                 K      : in     Bytes_32)
-     with Global => null,
-          Pre    => M'First = 0;
-
-   function Crypto_Onetimeauth_Verify (H : in Bytes_16;
-                                       M : in Byte_Seq;
-                                       K : in Bytes_32) return Boolean
-     with Global => null,
-          Pre    => M'First = 0;
-
-
-
-   --------------------------------------------------------
    --  Secret Key Authenticated Encryption - "SecretBox" --
    --------------------------------------------------------
 
@@ -263,7 +245,6 @@ private
    subtype Bit  is Byte range 0 .. 1;
    subtype Index_4  is I32 range 0 .. 3;
    subtype Index_15 is I32 range 0 .. 14;
-   subtype Index_17 is I32 range 0 .. 16;
    subtype Index_20 is I32 range 0 .. 19;
    subtype Index_31 is I32 range 0 .. 30;
 
@@ -271,7 +252,6 @@ private
 
    subtype U32_Seq_4   is U32_Seq (Index_4);
    subtype U32_Seq_16  is U32_Seq (Index_16);
-   subtype Poly_1305_F is U32_Seq (Index_17);
 
    subtype I64_Seq_32 is I64_Seq (Index_32);
 
