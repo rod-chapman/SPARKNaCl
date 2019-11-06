@@ -28,9 +28,7 @@
 ------------------------------------------------------------------------------
 
 with Ada.Unchecked_Conversion;
-
 with Interfaces;      use Interfaces;
-
 with Random;
 
 package SPARKNaCl
@@ -38,20 +36,15 @@ package SPARKNaCl
 is
    --==============================
    --  Exported types and constants
+   --  or needed by specifications
+   --  of child packages
    --==============================
 
    subtype Byte is Unsigned_8;
-
    subtype I32 is Integer_32;
    subtype N32 is I32 range 0 .. I32'Last;
-
    subtype I64 is Integer_64;
-   subtype U32 is Unsigned_32;
-   subtype U64 is Unsigned_64;
 
-   type U32_Seq  is array (N32 range <>) of U32;
-   type U64_Seq  is array (N32 range <>) of U64;
-   type I64_Seq  is array (N32 range <>) of I64;
    type Byte_Seq is array (N32 range <>) of Byte;
 
    --  Remove predefined "=" for Byte_Seq (and all subtypes thereof) since it
@@ -63,18 +56,17 @@ is
    subtype Index_24 is I32 range 0 .. 23;
    subtype Index_32 is I32 range 0 .. 31;
    subtype Index_64 is I32 range 0 .. 63;
-   subtype Index_256 is I32 range 0 .. 255;
+
+   type I64_Seq  is array (N32 range <>) of I64;
+   subtype GF         is I64_Seq (Index_16);
 
    subtype Bytes_8  is Byte_Seq (Index_8);
    subtype Bytes_16 is Byte_Seq (Index_16);
    subtype Bytes_24 is Byte_Seq (Index_24);
    subtype Bytes_32 is Byte_Seq (Index_32);
    subtype Bytes_64 is Byte_Seq (Index_64);
-   subtype Bytes_256 is Byte_Seq (Index_256);
 
    subtype I64_Seq_64 is I64_Seq (Index_64);
-
-   subtype GF         is I64_Seq (Index_16);
 
    Zero_Bytes_16 : constant Bytes_16 := (others => 0);
    Zero_Bytes_32 : constant Bytes_32 := (others => 0);
@@ -100,13 +92,21 @@ private
    --  Local types
    --===============
 
+   subtype U32 is Unsigned_32;
+   subtype U64 is Unsigned_64;
+
    subtype Bit  is Byte range 0 .. 1;
    subtype Index_4  is I32 range 0 .. 3;
    subtype Index_15 is I32 range 0 .. 14;
    subtype Index_20 is I32 range 0 .. 19;
    subtype Index_31 is I32 range 0 .. 30;
+   subtype Index_256 is I32 range 0 .. 255;
 
    subtype Bytes_4  is Byte_Seq (Index_4);
+   subtype Bytes_256 is Byte_Seq (Index_256);
+
+   type U32_Seq  is array (N32 range <>) of U32;
+   type U64_Seq  is array (N32 range <>) of U64;
 
    subtype U32_Seq_4   is U32_Seq (Index_4);
    subtype U32_Seq_16  is U32_Seq (Index_16);

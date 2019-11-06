@@ -1,8 +1,10 @@
-SPARK_Bodies := sparknacl.adb sparknacl-core.adb sparknacl-stream.adb sparknacl-hashing.adb sparknacl-scalar.adb sparknacl-mac.adb
+SPARK_Bodies := sparknacl.adb sparknacl-core.adb sparknacl-stream.adb sparknacl-hashing.adb sparknacl-scalar.adb sparknacl-mac.adb sparknacl-secretbox.adb sparknacl-cryptobox.adb sparknacl-sign.adb
+
+Non_SPARK_Bodies := sparknacl-debug.adb
 
 all: build
 
-build: $(SPARK_Bodies) *.ads
+build: $(SPARK_Bodies) $(Non_SPARK_Bodies) *.ads
 	gprbuild
 
 flow: $(SPARK_Bodies)

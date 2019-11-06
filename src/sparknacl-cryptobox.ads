@@ -17,15 +17,15 @@ is
 
    --  Precomputation
    procedure BeforeNM (K    :    out Bytes_32;
-                                  Y, X : in     Bytes_32)
+                       Y, X : in     Bytes_32)
      with Global => null;
 
 
    procedure AfterNM (C      :    out Byte_Seq;
-                                 Status :    out Boolean;
-                                 M      : in     Byte_Seq;
-                                 N      : in     Bytes_24;
-                                 K      : in     Bytes_32)
+                      Status :    out Boolean;
+                      M      : in     Byte_Seq;
+                      N      : in     Bytes_24;
+                      K      : in     Bytes_32)
      with Global => null,
           Pre    => (M'First = 0 and
                      C'First = 0 and

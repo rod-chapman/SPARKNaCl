@@ -7,7 +7,7 @@ is
    PK : Bytes_32;
    SK : Bytes_64;
 
-   M : constant Bytes_256 := (0 => 16#55#, others => 16#aa#);
+   M : constant Byte_Seq (0 .. 255) := (0 => 16#55#, others => 16#aa#);
 
    SM : Byte_Seq (0 .. 319) := (others => 0);
    M2 : Byte_Seq (0 .. 319) := (others => 0);
