@@ -18,6 +18,17 @@ is
    function LD32 (X : in Bytes_4) return U32
      with Global => null;
 
+   --  Derives intermediate values X and Y from Input, K and C.
+   --  Common to both Salsa20 and HSalsa20
+   procedure Core_Common
+     (Input  : in     Bytes_16;
+      K      : in     Bytes_32;
+      C      : in     Bytes_16;
+      X      :    out U32_Seq_16;
+      Y      :    out U32_Seq_16)
+     with Global => null;
+
+
    --===============================
    --  Local subprogram bodies
    --===============================
@@ -45,18 +56,16 @@ is
       return Shift_Left (U, 8) or U32 (X (0));
    end LD32;
 
-   --------------------------------------------------------
-   --  Salsa20 Core functions
-   --------------------------------------------------------
-
    --  POK
-   procedure Salsa20 (Output :    out Bytes_64;
-                      Input  : in     Bytes_16;
-                      K      : in     Bytes_32;
-                      C      : in     Bytes_16)
+   procedure Core_Common
+     (Input  : in     Bytes_16;
+      K      : in     Bytes_32;
+      C      : in     Bytes_16;
+      X      :    out U32_Seq_16;
+      Y      :    out U32_Seq_16)
    is
-      W, X, Y : U32_Seq_16;
-      T       : U32_Seq_4;
+      W : U32_Seq_16;
+      T : U32_Seq_4;
    begin
       W := (others => 0);
       --  In C this is a loop, but we unroll and make single
@@ -102,6 +111,21 @@ is
          end loop;
          X := W;
       end loop;
+   end Core_Common;
+
+   --------------------------------------------------------
+   --  Salsa20 Core functions
+   --------------------------------------------------------
+
+   --  POK
+   procedure Salsa20 (Output :    out Bytes_64;
+                      Input  : in     Bytes_16;
+                      K      : in     Bytes_32;
+                      C      : in     Bytes_16)
+   is
+      X, Y : U32_Seq_16;
+   begin
+      Core_Common (Input, K, C, X, Y);
 
       --  Salsa20 Output stage
       --  derives Output from X, Y
@@ -117,53 +141,9 @@ is
                        K      : in     Bytes_32;
                        C      : in     Bytes_16)
    is
-      W, X, Y : U32_Seq_16;
-      T       : U32_Seq_4;
+      X, Y : U32_Seq_16;
    begin
-      W := (others => 0);
-      --  In C this is a loop, but we unroll and make single
-      --  aggregate assignment to initialize the whole of X.
-      X := (0  => LD32 (C (0 .. 3)),
-            1  => LD32 (K (0 .. 3)),
-            6  => LD32 (Input (0 .. 3)),
-            11 => LD32 (K (16 .. 19)),
-
-            5  => LD32 (C (4 .. 7)),
-            2  => LD32 (K (4 .. 7)),
-            7  => LD32 (Input (4 .. 7)),
-            12 => LD32 (K (20 .. 23)),
-
-            10 => LD32 (C (8 .. 11)),
-            3  => LD32 (K (8 .. 11)),
-            8  => LD32 (Input (8 .. 11)),
-            13 => LD32 (K (24 .. 27)),
-
-            15 => LD32 (C (12 .. 15)),
-            4  => LD32 (K (12 .. 15)),
-            9  => LD32 (Input (12 .. 15)),
-            14 => LD32 (K (28 .. 31)));
-
-      Y := X;
-
-      for I in Index_20 loop
-         for J in Index_4 loop
-            T := (0 => X ((5 * J) mod 16),
-                  1 => X ((5 * J + 4) mod 16),
-                  2 => X ((5 * J + 8) mod 16),
-                  3 => X ((5 * J + 12) mod 16));
-
-            T (1) := T (1) xor RL32 (T (0) + T (3), 7);
-            T (2) := T (2) xor RL32 (T (1) + T (0), 9);
-            T (3) := T (3) xor RL32 (T (2) + T (1), 13);
-            T (0) := T (0) xor RL32 (T (3) + T (2), 18);
-
-            W (4 * J + ((J + 0) mod 4)) := T (0);
-            W (4 * J + ((J + 1) mod 4)) := T (1);
-            W (4 * J + ((J + 2) mod 4)) := T (2);
-            W (4 * J + ((J + 3) mod 4)) := T (3);
-         end loop;
-         X := W;
-      end loop;
+      Core_Common (Input, K, C, X, Y);
 
       --  HSalsa20 output stage
       --  derives Output from X, Y, C, Input
@@ -181,7 +161,6 @@ is
          ST32 (Output (4 * I .. 4 * I + 3), X (5 * I));
          ST32 (Output (4 * I + 16 .. 4 * I + 19), X (6 + I));
       end loop;
-
    end HSalsa20;
 
 

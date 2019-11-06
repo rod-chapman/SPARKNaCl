@@ -127,6 +127,8 @@ private
    --     with Dynamic_Predicate => (for all I in Index_16 =>
    --                                  GF_Normalized (I) in GF_Limb);
 
+   --  Constant Sigma used for initialization of Core Salsa20
+   --  function in both Stream and Cryptobox packages
    Sigma : constant Bytes_16 :=
      (0  => Character'Pos ('e'),
       1  => Character'Pos ('x'),

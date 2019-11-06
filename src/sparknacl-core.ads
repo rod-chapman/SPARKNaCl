@@ -7,15 +7,15 @@ is
    --------------------------------------------------------
 
    procedure Salsa20 (Output :    out Bytes_64;
-                      Input  : in     Bytes_16;
-                      K      : in     Bytes_32;
-                      C      : in     Bytes_16)
+                      Input  : in     Bytes_16; --  ??
+                      K      : in     Bytes_32; --  Key
+                      C      : in     Bytes_16) --  Counter
      with Global => null;
 
    procedure HSalsa20 (Output :    out Bytes_32;
-                       Input  : in     Bytes_16;
-                       K      : in     Bytes_32;
-                       C      : in     Bytes_16)
+                       Input  : in     Bytes_16; --  ??
+                       K      : in     Bytes_32; --  Key
+                       C      : in     Bytes_16) --  Counter
      with Global => null;
 
 end SPARKNaCl.Core;
