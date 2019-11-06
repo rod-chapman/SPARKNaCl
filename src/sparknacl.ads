@@ -178,18 +178,6 @@ private
      with Post => ASR_4'Result >= -2**59 and
                   ASR_4'Result <= (2**59) - 1;
 
-   --  Rotate Left 32
-   function RL32 (X : in U32;
-                  C : in Natural) return U32
-   is (Rotate_Left (X, C))
-     with Global => null;
-
-   --  Rotate right 64
-   function RR64 (X : in U64;
-                  C : in Natural) return U64
-   is (Rotate_Right (X, C))
-     with Global => null;
-
    --===============================
    --  Local subprogram declarations
    --===============================

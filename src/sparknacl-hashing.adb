@@ -58,6 +58,10 @@ is
       LN      : I64;
       CB      : I32;
 
+      function RR64 (X : in U64;
+                     C : in Natural) return U64
+        renames Rotate_Right;
+
       --  RCC replace formals with globals?
       function Ch (X, Y, Z : in U64) return U64
       is ((X and Y) xor ((not X) and Z))

@@ -2,12 +2,25 @@ package body SPARKNaCl.Core
   with SPARK_Mode => On
 is
 
+   --===============================
+   --  Local subprogram declarations
+   --  and renamings
+   --===============================
+
+   function RL32 (X : in U32;
+                  C : in Natural) return U32
+     renames Rotate_Left;
+
    procedure ST32 (X :    out Bytes_4;
                    U : in     U32)
      with Global => null;
 
    function LD32 (X : in Bytes_4) return U32
      with Global => null;
+
+   --===============================
+   --  Local subprogram bodies
+   --===============================
 
    --  POK
    procedure ST32 (X :    out Bytes_4;
