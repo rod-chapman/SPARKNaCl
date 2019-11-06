@@ -11,3 +11,4 @@ testall: *.adb ../src/*.adb
 
 clean:
 	gprclean -r
+	rm -f new
