@@ -88,9 +88,10 @@ is
      with Global => Random.Entropy;
 
 private
-   --===============
-   --  Local types
-   --===============
+   --==============================================
+   --  Local types - visible below, in this package
+   --  body and in the bodies of child packages
+   --==============================================
 
    subtype U32 is Unsigned_32;
    subtype U64 is Unsigned_64;
