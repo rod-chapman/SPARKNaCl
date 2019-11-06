@@ -1,6 +1,7 @@
-with SPARKNaCl;       use SPARKNaCl;
-with SPARKNaCl.Debug; use SPARKNaCl.Debug;
-with Ada.Text_IO;     use Ada.Text_IO;
+with SPARKNaCl;           use SPARKNaCl;
+with SPARKNaCl.Cryptobox; use SPARKNaCl.Cryptobox;
+with SPARKNaCl.Debug;     use SPARKNaCl.Debug;
+with Ada.Text_IO;         use Ada.Text_IO;
 
 procedure Box
 
@@ -65,11 +66,11 @@ is
 begin
    DH ("M is", M);
 
-   Crypto_Box (C, Status, M, Nonce, BobPK, AliceSK);
+   Create (C, Status, M, Nonce, BobPK, AliceSK);
    Put_Line ("Status is " & Status'Img);
    DH ("C is", C);
 
-   Crypto_Box_Open (M2, Status, C, Nonce, AlicePK, BobSK);
+   Open (M2, Status, C, Nonce, AlicePK, BobSK);
    Put_Line ("Status is " & Status'Img);
    DH ("M recovered is", M2);
 end Box;

@@ -1,5 +1,6 @@
-with SPARKNaCl;        use SPARKNaCl;
-with Random;           use Random;
+with SPARKNaCl;           use SPARKNaCl;
+with SPARKNaCl.Cryptobox; use SPARKNaCl.Cryptobox;
+with Random;              use Random;
 
 with Ada.Numerics.Discrete_Random;
 with Ada.Text_IO;      use Ada.Text_IO;
@@ -13,15 +14,15 @@ is
 begin
 --   for MLen in N32 range 0 .. 999 loop
    for MLen in N32 range 0 .. 99 loop
-      Crypto_Box_Keypair (AlicePK, AliceSK);
-      Crypto_Box_Keypair (BobPK, BobSK);
+      Keypair (AlicePK, AliceSK);
+      Keypair (BobPK, BobSK);
       Random_Bytes (N);
       Put ("Box8 - iteration" & MLen'Img);
       declare
          subtype Index is
-           N32 range 0 .. Crypto_Box_Plaintext_Zero_Bytes + MLen - 1;
+           N32 range 0 .. Plaintext_Zero_Bytes + MLen - 1;
          subtype CIndex is
-           N32 range Crypto_Box_Ciphertext_Zero_Bytes .. Index'Last;
+           N32 range Ciphertext_Zero_Bytes .. Index'Last;
          subtype Text is
            Byte_Seq (Index);
          package RI is new Ada.Numerics.Discrete_Random (CIndex);
@@ -29,11 +30,11 @@ begin
          M, C, M2 : Text := (others => 0);
       begin
          RI.Reset (G);
-         Random_Bytes (M (Crypto_Box_Plaintext_Zero_Bytes .. M'Last));
-         Crypto_Box (C, S, M, N, BobPK, AliceSK);
+         Random_Bytes (M (Plaintext_Zero_Bytes .. M'Last));
+         Create (C, S, M, N, BobPK, AliceSK);
          if S then
             C (RI.Random (G)) := Random_Byte;
-            Crypto_Box_Open (M2, S2, C, N, AlicePK, BobSK);
+            Open (M2, S2, C, N, AlicePK, BobSK);
             if S2 then
                if not Equal (M, M2) then
                   Put_Line (" forgery!");

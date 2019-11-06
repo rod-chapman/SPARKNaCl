@@ -1,5 +1,6 @@
 with SPARKNaCl;           use SPARKNaCl;
 with SPARKNaCl.Secretbox; use SPARKNaCl.Secretbox;
+with SPARKNaCl.Cryptobox;
 with Random;              use Random;
 with Ada.Text_IO;         use Ada.Text_IO;
 with Interfaces;          use Interfaces;
@@ -17,9 +18,9 @@ begin
       Put ("Secretbox8 - iteration" & MLen'Img);
       declare
          subtype Index is
-           N32 range 0 .. Crypto_Box_Plaintext_Zero_Bytes + MLen - 1;
+           N32 range 0 .. Cryptobox.Plaintext_Zero_Bytes + MLen - 1;
          subtype CIndex is
-           N32 range Crypto_Box_Ciphertext_Zero_Bytes .. Index'Last;
+           N32 range Cryptobox.Ciphertext_Zero_Bytes .. Index'Last;
          subtype Text is
            Byte_Seq (Index);
          package RI is new Ada.Numerics.Discrete_Random (CIndex);
@@ -28,7 +29,7 @@ begin
          Caught : Integer := 0;
       begin
          RI.Reset (G);
-         Random_Bytes (M (Crypto_Box_Plaintext_Zero_Bytes .. M'Last));
+         Random_Bytes (M (Cryptobox.Plaintext_Zero_Bytes .. M'Last));
          Create (C, S, M, N, K);
 
          if S then

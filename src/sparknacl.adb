@@ -1,7 +1,3 @@
-with SPARKNaCl.Core;
-with SPARKNaCl.Scalar;
-with SPARKNaCl.Secretbox;
-
 package body SPARKNaCl
   with SPARK_Mode => On
 is
@@ -229,7 +225,7 @@ is
    --===============================
 
    --------------------------------------------------------
-   --  Constant time equality tests
+   --  Constant time equality test
    --------------------------------------------------------
 
    --  POK
@@ -247,83 +243,8 @@ is
    end Equal;
 
    --------------------------------------------------------
-   --  Public Key Authenticated Encryption - "Crypto Box" --
+   --  RNG
    --------------------------------------------------------
-
-   --  POK
-   procedure Crypto_Box_BeforeNM (K    :    out Bytes_32;
-                                  Y, X : in     Bytes_32)
-   is
-      S : Bytes_32;
-   begin
-      Scalar.Mult (S, X, Y);
-      Core.HSalsa20 (K, Zero_Bytes_16, S, Sigma);
-   end Crypto_Box_BeforeNM;
-
-   --  POK
-   procedure Crypto_Box_AfterNM (C      :    out Byte_Seq;
-                                 Status :    out Boolean;
-                                 M      : in     Byte_Seq;
-                                 N      : in     Bytes_24;
-                                 K      : in     Bytes_32)
-   is
-   begin
-      Secretbox.Create (C, Status, M, N, K);
-   end Crypto_Box_AfterNM;
-
-   --  POK
-   procedure Crypto_Box_Open_AfterNM
-     (M      :    out Byte_Seq; --  Output plaintext
-      Status :    out Boolean;
-      C      : in     Byte_Seq; --  Input ciphertext
-      N      : in     Bytes_24; --  Nonce
-      K      : in     Bytes_32) --  Key)
-   is
-   begin
-      Secretbox.Open (M, Status, C, N, K);
-   end Crypto_Box_Open_AfterNM;
-
-   --  POK
-   procedure Crypto_Box (C      :    out Byte_Seq;
-                         Status :    out Boolean;
-                         M      : in     Byte_Seq;
-                         N      : in     Bytes_24;
-                         Y, X   : in     Bytes_32)
-   is
-      K : Bytes_32;
-   begin
-      Crypto_Box_BeforeNM (K, Y, X);
-      Crypto_Box_AfterNM (C, Status, M, N, K);
-   end Crypto_Box;
-
-   --  POK
-   procedure Crypto_Box_Open (M      :    out Byte_Seq;
-                              Status :    out Boolean;
-                              C      : in     Byte_Seq;
-                              N      : in     Bytes_24;
-                              Y, X   : in     Bytes_32)
-   is
-      K : Bytes_32;
-   begin
-      Crypto_Box_BeforeNM (K, Y, X);
-      Crypto_Box_Open_AfterNM (M, Status, C, N, K);
-   end Crypto_Box_Open;
-
-   --  POK
-   procedure Crypto_Box_Keypair (Y, X : out Bytes_32)
-   is
-   begin
-      X := Random_Bytes_32;
-      Scalar.Mult_Base (Y, X);
-   end Crypto_Box_Keypair;
-
-
-   --------------------------------------------------------
-   --  Hashing
-   --------------------------------------------------------
-
-
-
 
    --  POK
    procedure Random_Bytes (R : out Byte_Seq)
