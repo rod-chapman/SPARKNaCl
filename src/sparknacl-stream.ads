@@ -1,6 +1,12 @@
 package SPARKNaCl.Stream
   with SPARK_Mode => On
 is
+   type Salsa20_Key    is new Bytes_32;
+--     with Volatile; -- TBD
+
+--   type HSalsa20_Nonce is new Bytes_24;
+--     with Volatile; -- TBD
+
    --------------------------------------------------------
    --  Secret key encryption (not authenticated)
    --------------------------------------------------------
