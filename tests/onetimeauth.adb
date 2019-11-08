@@ -3,7 +3,7 @@ with SPARKNaCl.MAC;   use SPARKNaCl.MAC;
 with SPARKNaCl.Debug; use SPARKNaCl.Debug;
 procedure Onetimeauth
 is
-   RS : constant Bytes_32 :=
+   RS : constant Poly_1305_Key :=
      (16#ee#, 16#a6#, 16#a7#, 16#25#, 16#1c#, 16#1e#, 16#72#, 16#91#,
       16#6d#, 16#11#, 16#c2#, 16#cb#, 16#21#, 16#4d#, 16#3c#, 16#25#,
       16#25#, 16#39#, 16#12#, 16#1d#, 16#8e#, 16#23#, 16#4e#, 16#65#,

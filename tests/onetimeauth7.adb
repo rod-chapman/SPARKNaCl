@@ -6,7 +6,7 @@ with Interfaces;      use Interfaces;
 with Ada.Numerics.Discrete_Random;
 procedure Onetimeauth7
 is
-   K : Bytes_32;
+   K : Poly_1305_Key;
    A : Bytes_16;
    package RB is new Ada.Numerics.Discrete_Random (Byte);
    package RBI16 is new Ada.Numerics.Discrete_Random (Index_16);

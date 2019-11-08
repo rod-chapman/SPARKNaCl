@@ -11,7 +11,7 @@ is
 
    procedure Onetimeauth (Output :    out Bytes_16;
                           M      : in     Byte_Seq;
-                          K      : in     Bytes_32)
+                          K      : in     Poly_1305_Key)
    is
       S, U           : U32;
       J, N, M_Offset : I32;
@@ -131,7 +131,7 @@ is
 
    function Onetimeauth_Verify (H : in Bytes_16;
                                 M : in Byte_Seq;
-                                K : in Bytes_32) return Boolean
+                                K : in Poly_1305_Key) return Boolean
    is
       X : Bytes_16;
    begin
