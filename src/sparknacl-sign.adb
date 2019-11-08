@@ -1,5 +1,4 @@
 with SPARKNaCl.Hashing;
-
 package body SPARKNaCl.Sign
   with SPARK_Mode => On
 is
@@ -28,12 +27,21 @@ is
                            16#6666#, 16#6666#, 16#6666#, 16#6666#,
                            16#6666#, 16#6666#, 16#6666#, 16#6666#);
 
+   --  RCC adds this
+   GF_XY : constant GF := (16#DD90#, 16#A5B7#, 16#8AB3#, 16#6DDE#,
+                           16#52F5#, 16#7751#, 16#9F80#, 16#20F0#,
+                           16#E37D#, 16#64AB#, 16#4E8E#, 16#66EA#,
+                           16#7665#, 16#D78B#, 16#5F0F#, 16#E787#);
+
    GF_D2 : constant GF := (16#f159#, 16#26b2#, 16#9b94#, 16#ebd6#,
                            16#b156#, 16#8283#, 16#149a#, 16#00e0#,
                            16#d130#, 16#eef3#, 16#80f2#, 16#198e#,
                            16#fce7#, 16#56df#, 16#d9dc#, 16#2406#);
 
 
+   --============================================
+   --  Local subprogram declarations
+   --============================================
 
    procedure Scalarmult (P :    out GF_Vector_4;
                          Q : in out GF_Vector_4;
@@ -68,7 +76,9 @@ is
                         P  : in     Bytes_32)
      with Global => null;
 
-   --==================================================
+   --============================================
+   --  Local subprogram bodies
+   --============================================
 
    --  POK
    procedure Scalarmult (P :    out GF_Vector_4;
@@ -119,13 +129,12 @@ is
    is
       Q : GF_Vector_4;
    begin
+      --  Original TweetNaCl code computes Q(3) by multiplying GF_X by GF_Y,
+      --  but this is a constant (now called GF_XY), so that's used below.
       Q := (0 => GF_X,
             1 => GF_Y,
             2 => GF_1,
-            3 => GF_0); -- just to complete aggregate
-
-      --  RCC? Why recompute X * Y here each time - surely it's constant?
-      M (Q (3), GF_X, GF_Y);
+            3 => GF_XY);
 
       Scalarmult (P, Q, S);
 
@@ -349,6 +358,8 @@ is
 
 
    --============================================
+   --  Exported subprogram bodies
+   --============================================
 
    --  POK
    procedure Keypair (PK : out Signing_PK;
@@ -473,7 +484,16 @@ is
       return;
    end Open;
 
+   procedure Sanitize (R : out Signing_PK)
+   is
+   begin
+      SPARKNaCl.Sanitize (Bytes_32 (R));
+   end Sanitize;
 
-
+   procedure Sanitize (R : out Signing_SK)
+   is
+   begin
+      SPARKNaCl.Sanitize (Bytes_64 (R));
+   end Sanitize;
 
 end SPARKNaCl.Sign;

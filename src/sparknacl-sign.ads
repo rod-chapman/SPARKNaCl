@@ -35,6 +35,12 @@ is
                  SM'Last   = M'Last and
                  SM'Length >= 64;
 
+   procedure Sanitize (R : out Signing_PK)
+     with Global => null;
+
+   procedure Sanitize (R : out Signing_SK)
+     with Global => null;
+
 private
    type Signing_PK is new Bytes_32;
    type Signing_SK is new Bytes_64;
