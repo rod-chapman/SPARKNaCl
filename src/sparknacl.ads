@@ -87,6 +87,13 @@ is
    procedure Random_Bytes (R : out Byte_Seq)
      with Global => Random.Entropy;
 
+   --------------------------------------------------------
+   --  Data sanitization
+   --------------------------------------------------------
+
+   procedure Sanitize (R : out Byte_Seq)
+     with Global => null;
+
 private
    --==============================================
    --  Local types - visible below, in this package

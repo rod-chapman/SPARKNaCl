@@ -255,4 +255,10 @@ is
       end loop;
    end Random_Bytes;
 
+   --------------------------------------------------------
+   --  Data sanitization
+   --------------------------------------------------------
+
+   procedure Sanitize (R : out Byte_Seq) is separate;
+
 end SPARKNaCl;
