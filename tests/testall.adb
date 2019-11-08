@@ -24,6 +24,8 @@ with Stream3;
 with Stream4;
 
 with Ada.Text_IO; use Ada.Text_IO;
+with Ada.Exceptions; use Ada.Exceptions;
+with GNAT.Traceback.Symbolic; use GNAT.Traceback.Symbolic;
 
 procedure Testall
 is
@@ -76,4 +78,9 @@ begin
    Stream3;
    Put_Line ("Stream4");
    Stream4;
+exception
+   when E : others =>
+      Put_Line (Exception_Message (E));
+      Put_Line (Exception_Information (E));
+      Put_Line (Symbolic_Traceback (E));
 end Testall;
