@@ -4,8 +4,8 @@ with SPARKNaCl.Sign;  use SPARKNaCl.Sign;
 with Ada.Text_IO;     use Ada.Text_IO;
 procedure Sign
 is
-   PK : Bytes_32;
-   SK : Bytes_64;
+   PK : Signing_PK;
+   SK : Signing_SK;
 
    M : constant Byte_Seq (0 .. 255) := (0 => 16#55#, others => 16#aa#);
 

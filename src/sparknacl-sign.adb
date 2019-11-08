@@ -351,35 +351,41 @@ is
    --============================================
 
    --  POK
-   procedure Keypair (PK : out Bytes_32;
-                      SK : out Bytes_64)
+   procedure Keypair (PK : out Signing_PK;
+                      SK : out Signing_SK)
    is
-      D : Bytes_64;
-      P : GF_Vector_4;
+      D   : Bytes_64;
+      P   : GF_Vector_4;
+      LSK : Bytes_64;
+      LPK : Bytes_32;
    begin
-      SK := (others => 0);
-      SK (0 .. 31) := Random_Bytes_32;
+      LSK := (others => 0);
+      LSK (0 .. 31) := Random_Bytes_32;
 
-      Hashing.Hash (D, SK (0 .. 31));
+      Hashing.Hash (D, LSK (0 .. 31));
       D (0)  := D (0) and 248;
       D (31) := D (31) and 127;
       D (31) := D (31) or 64;
 
       Scalarbase (P, D (0 .. 31));
-      Pack (PK, P);
+      Pack (LPK, P);
 
-      SK (32 .. 63) := PK;
+      LSK (32 .. 63) := LPK;
+
+      PK := Signing_PK (LPK);
+      SK := Signing_SK (LSK);
+      --  RCC - Sanitize all local vars here?
    end Keypair;
 
-   procedure Sign (SM : out Byte_Seq;
-                   M  : in Byte_Seq;
-                   SK : in Bytes_64)
+   procedure Sign (SM :    out Byte_Seq;
+                   M  : in     Byte_Seq;
+                   SK : in     Signing_SK)
    is
       D, H, R : Bytes_64;
       X       : I64_Seq_64;
       P       : GF_Vector_4;
    begin
-      Hashing.Hash (D, SK (0 .. 31));
+      Hashing.Hash (D, Bytes_32 (SK (0 .. 31)));
       D (0) := D (0) and 248;
       D (31) := D (31) and 127;
       D (31) := D (31) or 64;
@@ -395,7 +401,7 @@ is
       Scalarbase (P, R (0 .. 31));
       Pack (SM (0 .. 31), P);
 
-      SM (32 .. 63) := SK (32 .. 63);
+      SM (32 .. 63) := Bytes_32 (SK (32 .. 63));
       Hashing.Hash (H, SM);
       Reduce (H);
 
@@ -420,7 +426,7 @@ is
                    Status :    out Boolean;
                    MLen   :    out I32;
                    SM     : in     Byte_Seq;
-                   PK     : in     Bytes_32)
+                   PK     : in     Signing_PK)
    is
       T : Bytes_32;
       H : Bytes_64;
@@ -434,14 +440,14 @@ is
          return;
       end if;
 
-      Unpackneg (Q, Status, PK);
+      Unpackneg (Q, Status, Bytes_32 (PK));
       if not Status then
          M := (others => 0);
          return;
       end if;
 
       M := SM; -- precondition ensures lengths match
-      M (32 .. 63) := PK;
+      M (32 .. 63) := Bytes_32 (PK);
 
       Hashing.Hash (H, M);
       Reduce (H);
