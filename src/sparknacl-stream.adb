@@ -12,8 +12,8 @@ is
       M     : in     Byte_Seq;
       Xor_M : in     Boolean; --  If True then xor M against Stream
                               --  If False then return Stream unmodified
-      N     : in     Bytes_8;
-      K     : in     Bytes_32)
+      N     : in     Salsa20_Nonce; --  Nonce
+      K     : in     Salsa20_Key)   --  Key
      with Global => null;
 
    --------------------------------------------------------
@@ -26,8 +26,8 @@ is
       M     : in     Byte_Seq;
       Xor_M : in     Boolean; --  If True then xor M against Stream
                               --  If False then return Stream unmodified
-      N     : in     Bytes_8;
-      K     : in     Bytes_32)
+      N     : in     Salsa20_Nonce; --  Nonce
+      K     : in     Salsa20_Key)   --  Key
    is
       Z : Bytes_16;
       X : Bytes_64;
@@ -87,8 +87,8 @@ is
 
    --  POK
    procedure Salsa20 (C :    out Byte_Seq; --  Output stream
-                             N : in     Bytes_8;  --  Nonce
-                             K : in     Bytes_32) --  Key
+                      N : in     Salsa20_Nonce; --  Nonce
+                      K : in     Salsa20_Key)    --  Key
    is
       Null_M : Byte_Seq (0 .. 0);
    begin
@@ -99,8 +99,8 @@ is
    --  POK
    procedure Salsa20_Xor (C :    out Byte_Seq; --  Output stream
                           M : in     Byte_Seq; --  Input message
-                          N : in     Bytes_8;  --  Nonce
-                          K : in     Bytes_32) --  Key
+                          N : in     Salsa20_Nonce; --  Nonce
+                          K : in     Salsa20_Key)    --  Key
    is
    begin
       Salsa20_Xor_Local (C, M, True, N, K);
@@ -109,9 +109,9 @@ is
 
 
    --  POK
-   procedure HSalsa20 (C :    out Byte_Seq; --  Output stream
-                       N : in     Bytes_24; --  Nonce
-                       K : in     Bytes_32) --  Key
+   procedure HSalsa20 (C :    out Byte_Seq;       --  Output stream
+                       N : in     HSalsa20_Nonce; --  Nonce
+                       K : in     Salsa20_Key)    --  Key
    is
       S : Bytes_32;
    begin
@@ -122,8 +122,8 @@ is
    --  POK
    procedure HSalsa20_Xor (C :    out Byte_Seq; --  Output ciphertext
                            M : in     Byte_Seq; --  Input message
-                           N : in     Bytes_24; --  Nonce
-                           K : in     Bytes_32) --  Key
+                           N : in     HSalsa20_Nonce; --  Nonce
+                           K : in     Salsa20_Key)    --  Key
    is
       S : Bytes_32;
    begin
