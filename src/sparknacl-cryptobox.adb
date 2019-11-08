@@ -16,7 +16,7 @@ is
 
    --  POK
    procedure BeforeNM (K    :    out Bytes_32;
-                                  Y, X : in     Bytes_32)
+                       Y, X : in     Bytes_32)
    is
       S : Bytes_32;
    begin
