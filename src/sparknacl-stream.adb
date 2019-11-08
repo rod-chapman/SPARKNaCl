@@ -1,5 +1,3 @@
-with SPARKNaCl.Core;
-
 package body SPARKNaCl.Stream
   with SPARK_Mode => On
 is

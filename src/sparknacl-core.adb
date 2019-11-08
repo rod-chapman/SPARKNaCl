@@ -22,7 +22,7 @@ is
    --  Common to both Salsa20 and HSalsa20
    procedure Core_Common
      (Input  : in     Bytes_16;
-      K      : in     Bytes_32;
+      K      : in     Salsa20_Key;
       C      : in     Bytes_16;
       X      :    out U32_Seq_16;
       Y      :    out U32_Seq_16)
@@ -59,7 +59,7 @@ is
    --  POK
    procedure Core_Common
      (Input  : in     Bytes_16;
-      K      : in     Bytes_32;
+      K      : in     Salsa20_Key;
       C      : in     Bytes_16;
       X      :    out U32_Seq_16;
       Y      :    out U32_Seq_16)
@@ -120,7 +120,7 @@ is
    --  POK
    procedure Salsa20 (Output :    out Bytes_64;
                       Input  : in     Bytes_16;
-                      K      : in     Bytes_32;
+                      K      : in     Salsa20_Key;
                       C      : in     Bytes_16)
    is
       X, Y : U32_Seq_16;
@@ -138,7 +138,7 @@ is
    --  POK
    procedure HSalsa20 (Output :    out Bytes_32;
                        Input  : in     Bytes_16;
-                       K      : in     Bytes_32;
+                       K      : in     Salsa20_Key;
                        C      : in     Bytes_16)
    is
       X, Y : U32_Seq_16;

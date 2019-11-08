@@ -1,4 +1,5 @@
 with SPARKNaCl;        use SPARKNaCl;
+with SPARKNaCl.Core;   use SPARKNaCl.Core;
 with SPARKNaCl.Debug;  use SPARKNaCl.Debug;
 with SPARKNaCl.Stream; use SPARKNaCl.Stream;
 procedure Stream3

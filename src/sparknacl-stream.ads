@@ -1,16 +1,9 @@
+with SPARKNaCl.Core; use SPARKNaCl.Core;
 package SPARKNaCl.Stream
   with SPARK_Mode => On
 is
-   subtype Salsa20_Key    is Bytes_32;
    subtype HSalsa20_Nonce is Bytes_24;
    subtype Salsa20_Nonce  is Bytes_8;
-
-   --  Should be - pending bug SB07-035
---   type Salsa20_Key is new Bytes_32;
---     with Volatile; -- TBD
-
---   type HSalsa20_Nonce is new Bytes_24;
---     with Volatile; -- TBD
 
    --------------------------------------------------------
    --  Secret key encryption (not authenticated)
