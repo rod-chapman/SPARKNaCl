@@ -61,6 +61,8 @@ is
                    P : in     GF_Vector_4)
      with Global => null;
 
+   subtype Bit is Byte range 0 .. 1;
+
    function Par_25519 (A : in GF) return Bit
      with Global => null;
 
@@ -176,6 +178,15 @@ is
    end Add;
 
    --  POK
+   function Par_25519 (A : in GF) return Bit
+   is
+      D : Bytes_32;
+   begin
+      Pack_25519 (D, A);
+      return (D (0) mod 2);
+   end Par_25519;
+
+   --  POK
    procedure Pack (R :    out Bytes_32;
                    P : in     GF_Vector_4)
    is
@@ -185,18 +196,8 @@ is
       M (TX, P (0), ZI);
       M (TY, P (1), ZI);
       Pack_25519 (R, TY);
-      R (31) := R (31) xor (Byte (Par_25519 (TX)) * 128);
+      R (31) := R (31) xor (Par_25519 (TX) * 128);
    end Pack;
-
-   --  POK
-   function Par_25519 (A : in GF) return Bit
-   is
-      D : Bytes_32;
-   begin
-      Pack_25519 (D, A);
-      return (D (0) mod 2);
-   end Par_25519;
-
 
    procedure ModL (R : in out Bytes_64;
                    X : in out I64_Seq_64)

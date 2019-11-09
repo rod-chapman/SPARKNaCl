@@ -103,7 +103,6 @@ private
    subtype U32 is Unsigned_32;
    subtype U64 is Unsigned_64;
 
-   subtype Bit  is Byte range 0 .. 1;
    subtype Index_4  is I32 range 0 .. 3;
    subtype Index_15 is I32 range 0 .. 14;
    subtype Index_20 is I32 range 0 .. 19;
