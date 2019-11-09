@@ -15,9 +15,9 @@ is
                    N : in     Bytes_32;
                    P : in     Bytes_32)
    is
-      Z2 : Bytes_32;
-      X : GF;
-      R : Bit;
+      Z2   : Bytes_32;
+      X    : GF;
+      Swap : Boolean;
 
       A2, A3, B, B2, C, C2, D, E, F, T1, T2 : GF;
       CB    : Byte;
@@ -40,10 +40,10 @@ is
       for I in reverse U32 range 0 .. 254 loop
          CB := Z2 (I32 (Shift_Right (I, 3)));
          Shift := Natural (I and 7);
-         R := Bit (Shift_Right (CB, Shift) and 1);
+         Swap := Boolean'Val (Shift_Right (CB, Shift) and 1);
 
-         Sel_25519 (A2, B, R);
-         Sel_25519 (C, D, R);
+         Sel_25519 (A2, B, Swap);
+         Sel_25519 (C, D, Swap);
 
          A (E, A2, C);
 
@@ -74,8 +74,8 @@ is
          M (D, B, X);
          S (B, E);
 
-         Sel_25519 (A2, B, R);
-         Sel_25519 (C, D, R);
+         Sel_25519 (A2, B, Swap);
+         Sel_25519 (C, D, Swap);
       end loop;
 
       Inv_25519 (T1, C);
@@ -86,7 +86,7 @@ is
 
    --  POK
    procedure Mult_Base (Q :    out Bytes_32;
-                                     N : in     Bytes_32)
+                        N : in     Bytes_32)
    is
    begin
       Mult (Q, N, Nine);

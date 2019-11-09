@@ -85,22 +85,22 @@ is
                          Q : in out GF_Vector_4;
                          S : in     Bytes_32)
    is
-      CB : Byte;
-      B  : Bit;
-      P2 : GF_Vector_4;
+      CB   : Byte;
+      Swap : Boolean;
+      P2   : GF_Vector_4;
 
       --  RCC Remove formals for globals?
       procedure CSwap (P, Q : in out GF_Vector_4;
-                       B    : in     Bit)
+                       Swap : in     Boolean)
         with Global => null;
 
       --  POK
       procedure CSwap (P, Q : in out GF_Vector_4;
-                       B    : in     Bit)
+                       Swap : in     Boolean)
       is
       begin
          for I in Index_4 loop
-            Sel_25519 (P (I), Q (I), B);
+            Sel_25519 (P (I), Q (I), Swap);
          end loop;
       end CSwap;
 
@@ -111,14 +111,14 @@ is
             3 => GF_0);
 
       for I in reverse U32 range 0 .. 255 loop
-         CB := S (I32 (Shift_Right (I, 3)));
-         B  := Bit (Shift_Right (CB, Natural (I and 7)) and 1);
+         CB   := S (I32 (Shift_Right (I, 3)));
+         Swap := Boolean'Val (Shift_Right (CB, Natural (I and 7)) and 1);
 
-         CSwap (P, Q, B);
+         CSwap (P, Q, Swap);
          Add (P => Q, Q => P);
          P2 := P;
          Add (P, P2);
-         CSwap (P, Q, B);
+         CSwap (P, Q, Swap);
       end loop;
 
    end Scalarmult;

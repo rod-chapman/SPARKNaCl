@@ -24,18 +24,18 @@ is
       return Result;
    end Random_Bytes_32;
 
-   --  POK
-   procedure Sel_25519 (P : in out GF;
-                        Q : in out GF;
-                        B : in     Bit)
-   is
-      type Bit_To_Swapmask_Table is array (Bit) of U64;
-      Bit_To_Swapmask : constant Bit_To_Swapmask_Table :=
-        (0 => 16#0000_0000_0000_0000#,
-         1 => 16#FFFF_FFFF_FFFF_FFFF#);
+   type Bit_To_Swapmask_Table is array (Boolean) of U64;
+   Bit_To_Swapmask : constant Bit_To_Swapmask_Table :=
+     (False => 16#0000_0000_0000_0000#,
+      True  => 16#FFFF_FFFF_FFFF_FFFF#);
 
+   --  POK
+   procedure Sel_25519 (P    : in out GF;
+                        Q    : in out GF;
+                        Swap : in     Boolean)
+   is
       T : U64;
-      C : constant U64 := Bit_To_Swapmask (B);
+      C : constant U64 := Bit_To_Swapmask (Swap);
    begin
       for I in Index_16 loop
          T := C and (To_U64 (P (I)) xor To_U64 (Q (I)));
@@ -79,7 +79,7 @@ is
    procedure Pack_25519 (O :    out Bytes_32;
                          N : in    GF)
    is
-      B : Bit;
+      Swap : Boolean;
       M, T : GF;
    begin
       M := (others => 0);
@@ -108,10 +108,10 @@ is
          end loop;
          M (15) := T (15) - 16#7FFF# - (ASR_16 (M (14)) mod 2); --  POV * 2
 
-         B := Bit (ASR_16 (M (15)) mod 2);
+         Swap := Boolean'Val (ASR_16 (M (15)) mod 2);
 
          M (14) := M (14) mod 65536;
-         Sel_25519 (T, M, 1 - B);
+         Sel_25519 (T, M, not Swap);
       end loop;
 
       O := (others => 0);

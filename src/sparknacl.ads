@@ -204,11 +204,9 @@ private
      with Global => null;
 
    --  Constant time conditional swap of P and Q.
-   --  If B = 0 then don't swap
-   --  If B = 1 then swap
-   procedure Sel_25519 (P : in out GF;
-                        Q : in out GF;
-                        B : in     Bit)
+   procedure Sel_25519 (P    : in out GF;
+                        Q    : in out GF;
+                        Swap : in     Boolean)
      with Global => null;
 
    procedure Pack_25519 (O :    out Bytes_32;
