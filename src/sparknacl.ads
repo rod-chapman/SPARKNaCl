@@ -194,13 +194,26 @@ private
      with Global => Random.Entropy,
           Volatile_Function;
 
+   --  RCC could be a function
    procedure TS64 (X :    out Bytes_8;
                    U : in     U64)
      with Global => null;
 
+   --  RCC could be a function
+   procedure Pack_25519 (O :    out Bytes_32;
+                         N : in    GF)
+     with Global => null;
+
+   --  RCC could be a function
+   procedure Inv_25519 (O : out    GF;
+                        I :     in GF)
+     with Global => null;
+
+   --  RCC could be a function
    procedure Unpack_25519 (O :    out GF;
                            N : in     Bytes_32)
      with Global => null;
+
 
    --  Constant time conditional swap of P and Q.
    procedure Sel_25519 (P    : in out GF;
@@ -208,31 +221,26 @@ private
                         Swap : in     Boolean)
      with Global => null;
 
-   procedure Pack_25519 (O :    out Bytes_32;
-                         N : in    GF)
-     with Global => null;
-
-   procedure Inv_25519 (O : out    GF;
-                        I :     in GF)
-     with Global => null;
-
-
    --  Multiply
+   --  RCC could be an operator
    procedure M (O    :    out GF;
                 A, B : in     GF)
      with Global => null;
 
    --  Add
+   --  RCC could be an operator
    procedure A (O    :    out GF;
                 A, B : in     GF)
      with Global => null;
 
    --  Subtract
+   --  RCC could be an operator
    procedure Z (O    :    out GF;
                 A, B : in     GF)
      with Global => null;
 
    --  Square
+   --  RCC could be a function
    procedure S (O :    out GF;
                 A : in     GF)
      with Global => null;
