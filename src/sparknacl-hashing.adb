@@ -46,6 +46,23 @@ is
       16#4cc5d4becb3e42b6#, 16#597f299cfc657e2a#,
       16#5fcb6fab3ad6faec#, 16#6c44198c4a475817#);
 
+   --  RCC could be a function
+   function TS64 (U : in U64) return Bytes_8
+     with Global => null;
+
+   --  POK
+   function TS64 (U : in U64) return Bytes_8
+   is
+      X : Bytes_8 := (others => 0);
+      T : U64 := U;
+   begin
+      for I in reverse Index_8 loop
+         X (I) := Byte (T mod 256);
+         T := Shift_Right (T, 8);
+      end loop;
+      return X;
+   end TS64;
+
 
    --  POK
    procedure Hashblocks
@@ -193,7 +210,7 @@ is
 
 
       for I in Index_8 loop
-         TS64 (X (8 * I .. (8 * I + 7)), Z (I));
+         X (8 * I .. (8 * I + 7)) := TS64 (Z (I));
       end loop;
 
    end Hashblocks;
@@ -239,11 +256,11 @@ is
       ML_LSBs := U64 (M'Length) * 8;
       if B < 112 then
          X (119) := ML_MSB;
-         TS64 (X (120 .. 127), ML_LSBs);
+         X (120 .. 127) := TS64 (ML_LSBs);
          Hashblocks (H, X (0 .. 127));
       else
          X (247) := ML_MSB;
-         TS64 (X (248 .. 255), ML_LSBs);
+         X (248 .. 255) := TS64 (ML_LSBs);
          Hashblocks (H, X);
       end if;
 

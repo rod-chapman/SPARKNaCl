@@ -263,19 +263,6 @@ is
    end S;
 
    --  POK
-   procedure TS64 (X :    out Bytes_8;
-                   U : in     U64)
-
-   is
-      T : U64 := U;
-   begin
-      for I in reverse Index_8 loop
-         X (I) := Byte (T mod 256);
-         T := Shift_Right (T, 8);
-      end loop;
-   end TS64;
-
-   --  POK
    procedure Inv_25519 (O : out    GF;
                         I :     in GF)
    is

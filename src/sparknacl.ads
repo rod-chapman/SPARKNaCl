@@ -195,11 +195,6 @@ private
           Volatile_Function;
 
    --  RCC could be a function
-   procedure TS64 (X :    out Bytes_8;
-                   U : in     U64)
-     with Global => null;
-
-   --  RCC could be a function
    procedure Pack_25519 (O :    out Bytes_32;
                          N : in    GF)
      with Global => null;
