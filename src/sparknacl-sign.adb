@@ -305,11 +305,11 @@ is
       end Pow_2523;
 
    begin
-      R := (others => GF_0);
+      R := (0 => GF_0,
+            1 => Unpack_25519 (P),
+            2 => GF_1,
+            3 => GF_0);
 
-      --  Call to Set_25519 replaced with assignment here
-      R (2) := GF_1;
-      Unpack_25519 (R (1), P);
       S (R_1_Squared, R (1));
       M (Den0, R_1_Squared, GF_D);
       Z (Num, R_1_Squared, R (2));

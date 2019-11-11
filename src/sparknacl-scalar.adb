@@ -27,7 +27,7 @@ is
       Z2 (31) := (N (31) and 127) or 64;
       Z2 (0) := Z2 (0) and 248;
 
-      Unpack_25519 (X, P);
+      X := Unpack_25519 (P);
 
       B  := X;
       C  := GF_0;

@@ -127,15 +127,15 @@ is
 
 
    --  POK
-   procedure Unpack_25519 (O :    out GF;
-                           N : in     Bytes_32)
+   function Unpack_25519 (N : in Bytes_32) return GF
    is
-
+      O : GF;
    begin
       for I in Index_16 loop
          O (I) := I64 (N (2 * I)) + (I64 (N (2 * I + 1)) * 256);
       end loop;
       O (15) := O (15) mod 32768;
+      return O;
    end Unpack_25519;
 
 

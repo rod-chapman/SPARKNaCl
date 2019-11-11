@@ -200,9 +200,7 @@ private
    function Inv_25519 (I : in GF) return GF
      with Global => null;
 
-   --  RCC could be a function
-   procedure Unpack_25519 (O :    out GF;
-                           N : in     Bytes_32)
+   function Unpack_25519 (N : in Bytes_32) return GF
      with Global => null;
 
 
