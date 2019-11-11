@@ -2,8 +2,8 @@ with SPARKNaCl.Core; use SPARKNaCl.Core;
 package SPARKNaCl.Stream
   with SPARK_Mode => On
 is
-   subtype HSalsa20_Nonce is Bytes_24;
---   type HSalsa20_Nonce is new Bytes_24;
+   type HSalsa20_Nonce is new Bytes_24;
+
    subtype Salsa20_Nonce  is Bytes_8;
 
    --------------------------------------------------------

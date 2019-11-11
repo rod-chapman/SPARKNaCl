@@ -1,6 +1,7 @@
 with SPARKNaCl;           use SPARKNaCl;
 with SPARKNaCl.Debug;     use SPARKNaCl.Debug;
 with SPARKNaCl.Secretbox; use SPARKNaCl.Secretbox;
+with SPARKNaCl.Stream;
 with Ada.Text_IO;         use Ada.Text_IO;
 procedure Secretbox2
 is
@@ -10,7 +11,7 @@ is
       16#60#, 16#09#, 16#54#, 16#9e#, 16#ac#, 16#64#, 16#74#, 16#f2#,
       16#06#, 16#c4#, 16#ee#, 16#08#, 16#44#, 16#f6#, 16#83#, 16#89#);
 
-   Nonce : constant Bytes_24 :=
+   Nonce : constant Stream.HSalsa20_Nonce :=
      (16#69#, 16#69#, 16#6e#, 16#e9#, 16#55#, 16#b6#, 16#2b#, 16#73#,
       16#cd#, 16#62#, 16#bd#, 16#a8#, 16#75#, 16#fc#, 16#73#, 16#d6#,
       16#82#, 16#19#, 16#e0#, 16#03#, 16#6b#, 16#7a#, 16#0b#, 16#37#);

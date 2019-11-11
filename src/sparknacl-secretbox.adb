@@ -1,4 +1,3 @@
-with SPARKNaCl.Stream;
 with SPARKNaCl.MAC;
 
 package body SPARKNaCl.Secretbox
@@ -11,7 +10,7 @@ is
    procedure Create (C      :    out Byte_Seq;
                      Status :    out Boolean;
                      M      : in     Byte_Seq;
-                     N      : in     Bytes_24;
+                     N      : in     Stream.HSalsa20_Nonce;
                      K      : in     Bytes_32)
    is
       D : I32;
@@ -51,7 +50,7 @@ is
      (M      :    out Byte_Seq; --  Output plaintext
       Status :    out Boolean;
       C      : in     Byte_Seq; --  Input ciphertext
-      N      : in     Bytes_24; --  Nonce
+      N      : in     Stream.HSalsa20_Nonce;
       K      : in     Bytes_32) --  Key)
    is
       X : Bytes_32;

@@ -1,6 +1,7 @@
 with SPARKNaCl;           use SPARKNaCl;
 with SPARKNaCl.Cryptobox; use SPARKNaCl.Cryptobox;
 with SPARKNaCl.Debug;     use SPARKNaCl.Debug;
+with SPARKNaCl.Stream;
 with Ada.Text_IO;         use Ada.Text_IO;
 
 procedure Box
@@ -30,7 +31,7 @@ is
       16#6f#, 16#3b#, 16#b1#, 16#29#, 16#26#, 16#18#, 16#b6#, 16#fd#,
       16#1c#, 16#2f#, 16#8b#, 16#27#, 16#ff#, 16#88#, 16#e0#, 16#eb#);
 
-   Nonce : constant Bytes_24 :=
+   Nonce : constant Stream.HSalsa20_Nonce :=
      (16#69#, 16#69#, 16#6e#, 16#e9#, 16#55#, 16#b6#, 16#2b#, 16#73#,
       16#cd#, 16#62#, 16#bd#, 16#a8#, 16#75#, 16#fc#, 16#73#, 16#d6#,
       16#82#, 16#19#, 16#e0#, 16#03#, 16#6b#, 16#7a#, 16#0b#, 16#37#);

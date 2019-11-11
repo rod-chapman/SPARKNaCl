@@ -1,16 +1,17 @@
 with SPARKNaCl;           use SPARKNaCl;
 with SPARKNaCl.Secretbox; use SPARKNaCl.Secretbox;
+with SPARKNaCl.Stream;
 with Ada.Text_IO;         use Ada.Text_IO;
 with Interfaces;          use Interfaces;
 procedure Secretbox7
 is
    K : Bytes_32;
-   N : Bytes_24;
+   N : Stream.HSalsa20_Nonce;
    S, S2 : Boolean;
 begin
    for MLen in N32 range 0 .. 999 loop
       Random_Bytes (K);
-      Random_Bytes (N);
+      Random_Bytes (Bytes_24 (N));
       Put ("Secretbox7 - iteration" & MLen'Img);
 
       declare

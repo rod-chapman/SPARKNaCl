@@ -1,5 +1,6 @@
 with SPARKNaCl;           use SPARKNaCl;
 with SPARKNaCl.Cryptobox; use SPARKNaCl.Cryptobox;
+with SPARKNaCl.Stream;
 with Random;              use Random;
 
 with Ada.Numerics.Discrete_Random;
@@ -9,14 +10,14 @@ with Interfaces;       use Interfaces;
 procedure Box8
 is
    AliceSK, AlicePK, BobSK, BobPK : Bytes_32;
-   N : Bytes_24;
+   N : Stream.HSalsa20_Nonce;
    S, S2 : Boolean;
 begin
 --   for MLen in N32 range 0 .. 999 loop
    for MLen in N32 range 0 .. 99 loop
       Keypair (AlicePK, AliceSK);
       Keypair (BobPK, BobSK);
-      Random_Bytes (N);
+      Random_Bytes (Bytes_24 (N));
       Put ("Box8 - iteration" & MLen'Img);
       declare
          subtype Index is
