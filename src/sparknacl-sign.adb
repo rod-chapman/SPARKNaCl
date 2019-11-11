@@ -182,7 +182,7 @@ is
    is
       D : Bytes_32;
    begin
-      Pack_25519 (D, A);
+      D := Pack_25519 (A);
       return (D (0) mod 2);
    end Par_25519;
 
@@ -195,7 +195,7 @@ is
       Inv_25519 (ZI, P (2));
       M (TX, P (0), ZI);
       M (TY, P (1), ZI);
-      Pack_25519 (R, TY);
+      R := Pack_25519 (TY);
       R (31) := R (31) xor (Par_25519 (TX) * 128);
    end Pack;
 
@@ -273,24 +273,20 @@ is
         with Global => null;
 
       --  RCC - remove formals and access globals
-      --        T2 and T3 directly? Or make a function?
-      procedure Pow_2523 (O :    out GF;
-                          I : in     GF)
+      --        T2 and T3 directly?
+      function Pow_2523 (I : in GF) return GF
         with Global => null;
 
       --  POK
       function Eq_25519 (A, B : in GF) return Boolean
       is
-         C, D : Bytes_32;
       begin
-         Pack_25519 (C, A);
-         Pack_25519 (D, B);
-         return Equal (C, D);
+         return Equal (Bytes_32'(Pack_25519 (A)),
+                       Bytes_32'(Pack_25519 (B)));
       end Eq_25519;
 
       --  POK
-      procedure Pow_2523 (O :    out GF;
-                          I : in     GF)
+      function Pow_2523 (I : in GF) return GF
       is
          C, C2 : GF;
       begin
@@ -305,7 +301,7 @@ is
                M (C, C2, I);
             end if;
          end loop;
-         O := C;
+         return C;
       end Pow_2523;
 
    begin
@@ -325,7 +321,7 @@ is
       M (T1, Den6, Num);
       M (T2, T1, Den1);
 
-      Pow_2523 (T3, T2);
+      T3 := Pow_2523 (T2);
 
       M (T4, T3, Num);
       M (T5, T4, Den1);

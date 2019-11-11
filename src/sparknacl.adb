@@ -76,11 +76,11 @@ is
    end Car_25519;
 
    --  P?
-   procedure Pack_25519 (O :    out Bytes_32;
-                         N : in    GF)
+   function Pack_25519 (N : in GF) return Bytes_32
    is
       Swap : Boolean;
       M, T : GF;
+      O    : Bytes_32;
    begin
       M := (others => 0);
       T := N;
@@ -119,9 +119,10 @@ is
          pragma Assert (T (I) >= 0); --  PAssert? Depends on post of above loop
          pragma Assert (T (I) <= 65535); --  PAssert?
 
-         O (2 * I) := Byte (T (I) mod 256);
+         O (2 * I)     := Byte (T (I) mod 256);
          O (2 * I + 1) := Byte ((T (I) / 256) mod 256);
       end loop;
+      return O;
    end Pack_25519;
 
 

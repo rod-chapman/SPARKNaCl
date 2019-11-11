@@ -194,9 +194,7 @@ private
      with Global => Random.Entropy,
           Volatile_Function;
 
-   --  RCC could be a function
-   procedure Pack_25519 (O :    out Bytes_32;
-                         N : in    GF)
+   function Pack_25519 (N : in GF) return Bytes_32
      with Global => null;
 
    --  RCC could be a function

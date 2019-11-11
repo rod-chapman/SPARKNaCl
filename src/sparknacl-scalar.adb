@@ -80,7 +80,7 @@ is
 
       Inv_25519 (T1, C);
       M (T2, A2, T1);
-      Pack_25519 (Q, T2);
+      Q := Pack_25519 (T2);
 
    end Mult;
 
