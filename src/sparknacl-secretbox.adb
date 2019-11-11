@@ -13,36 +13,40 @@ is
                      N      : in     Stream.HSalsa20_Nonce;
                      K      : in     Core.Salsa20_Key)
    is
-      D : I32;
       K2 : Bytes_32;
       R  : Bytes_16;
    begin
-      D := M'Length; --  PRange?
-      if D < 32 then
-         Status := False;
+      --  Defensive - re-check precondition
+      if (M'First = 0 and then
+            C'First = 0 and then
+            C'Last  = M'Last and then
+            M'Length >= 32 and then
+            Equal (M (0 .. 31), Zero_Bytes_32))
+      then
+
+         --  All OK
+         Stream.HSalsa20_Xor (C, M, N, K);
+
+         K2 := C (0 .. 31);
+
+         declare
+            subtype M_Array is Byte_Seq (0 .. (C'Last - 32));
+         begin
+            MAC.Onetimeauth (R,
+                             --  Slice and slide to make the index value
+                             --  meet the precondition
+                             M_Array (C (32 .. C'Last)),
+                             K2);
+         end;
+
+         C  (0 .. 15) := Zero_Bytes_16;
+         C (16 .. 31) := R;
+         Status := True;
+      else
+         --  Precondition violated
          C := (others => 0);
-         return;
+         Status := False;
       end if;
-
-      pragma Assert (D >= 32);
-
-      Stream.HSalsa20_Xor (C, M, N, K);
-
-      K2 := C (0 .. 31);
-
-      declare
-         subtype M_Array is Byte_Seq (0 .. (C'Last - 32));
-      begin
-         MAC.Onetimeauth (R,
-                          --  Slice and slide to make the index value
-                          --  meet the precondition
-                          M_Array (C (32 .. C'Last)),
-                          K2);
-      end;
-
-      C (16 .. 31) := R;
-      C (0 .. 15) := Zero_Bytes_16;
-      Status := True;
    end Create;
 
    --  POK
@@ -55,34 +59,41 @@ is
    is
       X : Bytes_32;
    begin
-      Status := True;
-      if C'Length < 32 then
-         Status := False;
+      --  Defensive - re-check precondition
+      if (M'First = 0 and then
+            C'First = 0 and then
+            M'Last  = C'Last and then
+            C'Length >= 32 and then
+            Equal (C (0 .. 15), Zero_Bytes_16))
+      then
+         --  All OK
+         Stream.HSalsa20 (X, N, K);
+
+         declare
+            subtype M_Array is Byte_Seq (0 .. (C'Last - 32));
+         begin
+            if MAC.Onetimeauth_Verify
+              (H => C (16 .. 31),
+               --  Slide and slide so that M'First = 0
+               M => M_Array (C (32 .. C'Last)),
+               K => X)
+            then
+               --  MAC verifies OK, so decrypt payload
+               Stream.HSalsa20_Xor (C => M, M => C, N => N, K => K);
+               M (0 .. 31) := Zero_Bytes_32;
+               Status := True;
+            else
+               --  MAC verification failed
+               M := (others => 0);
+               Status := False;
+            end if;
+         end;
+
+      else
+         --  Precondition violated
          M := (others => 0);
-         return;
+         Status := False;
       end if;
-
-      pragma Assert (C'Length >= 32);
-
-      Stream.HSalsa20 (X, N, K);
-
-      declare
-         subtype M_Array is Byte_Seq (0 .. (C'Last - 32));
-      begin
-         if not MAC.Onetimeauth_Verify
-           (H => C (16 .. 31),
-            --  Slide and slide so that M'First = 0
-            M => M_Array (C (32 .. C'Last)),
-            K => X)
-         then
-            Status := False;
-            M := (others => 0);
-            return;
-         end if;
-      end;
-
-      Stream.HSalsa20_Xor (C => M, M => C, N => N, K => K);
-      M (0 .. 31) := Zero_Bytes_32;
    end Open;
 
 end SPARKNaCl.Secretbox;
