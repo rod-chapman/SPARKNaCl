@@ -190,19 +190,9 @@ private
    --  Local subprogram declarations
    --===============================
 
-   function Random_Bytes_32 return Bytes_32
-     with Global => Random.Entropy,
-          Volatile_Function;
-
-   function Pack_25519 (N : in GF) return Bytes_32
+   --  Carry reduction of all elements of O
+   procedure Car_25519 (O : in out GF)
      with Global => null;
-
-   function Inv_25519 (I : in GF) return GF
-     with Global => null;
-
-   function Unpack_25519 (N : in Bytes_32) return GF
-     with Global => null;
-
 
    --  Constant time conditional swap of P and Q.
    procedure Sel_25519 (P    : in out GF;

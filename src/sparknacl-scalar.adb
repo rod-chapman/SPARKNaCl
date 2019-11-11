@@ -1,3 +1,4 @@
+with SPARKNaCl.Utils;
 package body SPARKNaCl.Scalar
   with SPARK_Mode => On
 is
@@ -27,7 +28,7 @@ is
       Z2 (31) := (N (31) and 127) or 64;
       Z2 (0) := Z2 (0) and 248;
 
-      X := Unpack_25519 (P);
+      X := Utils.Unpack_25519 (P);
 
       B  := X;
       C  := GF_0;
@@ -78,9 +79,9 @@ is
          Sel_25519 (C, D, Swap);
       end loop;
 
-      T1 := Inv_25519 (C);
+      T1 := Utils.Inv_25519 (C);
       M (T2, A2, T1);
-      Q := Pack_25519 (T2);
+      Q := Utils.Pack_25519 (T2);
 
    end Mult;
 

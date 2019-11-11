@@ -1,4 +1,5 @@
 with SPARKNaCl.Core;
+with SPARKNaCl.Utils;
 with SPARKNaCl.Scalar;
 with SPARKNaCl.Secretbox;
 
@@ -10,7 +11,7 @@ is
    procedure Keypair (Y, X : out Bytes_32)
    is
    begin
-      X := Random_Bytes_32;
+      X := Utils.Random_Bytes_32;
       Scalar.Mult_Base (Y, X);
    end Keypair;
 

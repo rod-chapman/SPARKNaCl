@@ -6,7 +6,7 @@ testdiff: new
 new: testall
 	./testall >new
 
-testall: *.adb ../src/*.adb
+testall: *.adb ../src/*.adb ../src/*.ads
 	gprbuild
 
 clean:

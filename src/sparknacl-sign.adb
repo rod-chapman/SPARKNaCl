@@ -1,3 +1,4 @@
+with SPARKNaCl.Utils;
 with SPARKNaCl.Hashing;
 package body SPARKNaCl.Sign
   with SPARK_Mode => On
@@ -182,7 +183,7 @@ is
    is
       D : Bytes_32;
    begin
-      D := Pack_25519 (A);
+      D := Utils.Pack_25519 (A);
       return (D (0) mod 2);
    end Par_25519;
 
@@ -192,10 +193,10 @@ is
    is
       TX, TY, ZI : GF;
    begin
-      ZI := Inv_25519 (P (2));
+      ZI := Utils.Inv_25519 (P (2));
       M (TX, P (0), ZI);
       M (TY, P (1), ZI);
-      R := Pack_25519 (TY);
+      R := Utils.Pack_25519 (TY);
       R (31) := R (31) xor (Par_25519 (TX) * 128);
    end Pack;
 
@@ -281,8 +282,8 @@ is
       function Eq_25519 (A, B : in GF) return Boolean
       is
       begin
-         return Equal (Bytes_32'(Pack_25519 (A)),
-                       Bytes_32'(Pack_25519 (B)));
+         return Equal (Bytes_32'(Utils.Pack_25519 (A)),
+                       Bytes_32'(Utils.Pack_25519 (B)));
       end Eq_25519;
 
       --  POK
@@ -306,7 +307,7 @@ is
 
    begin
       R := (0 => GF_0,
-            1 => Unpack_25519 (P),
+            1 => Utils.Unpack_25519 (P),
             2 => GF_1,
             3 => GF_0);
 
@@ -368,7 +369,7 @@ is
       LPK : Bytes_32;
    begin
       LSK := (others => 0);
-      LSK (0 .. 31) := Random_Bytes_32;
+      LSK (0 .. 31) := Utils.Random_Bytes_32;
 
       Hashing.Hash (D, LSK (0 .. 31));
       D (0)  := D (0) and 248;
