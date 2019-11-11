@@ -9,6 +9,7 @@ is
 
    type Secret_Key is new Bytes_32;
    type Public_Key is new Bytes_32;
+
    Plaintext_Zero_Bytes  : constant := 32;
    Ciphertext_Zero_Bytes : constant := 16;
 
