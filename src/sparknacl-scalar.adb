@@ -78,7 +78,7 @@ is
          Sel_25519 (C, D, Swap);
       end loop;
 
-      Inv_25519 (T1, C);
+      T1 := Inv_25519 (C);
       M (T2, A2, T1);
       Q := Pack_25519 (T2);
 

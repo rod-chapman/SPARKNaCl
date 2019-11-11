@@ -53,7 +53,7 @@ is
    --  POK
    function TS64 (U : in U64) return Bytes_8
    is
-      X : Bytes_8 := (others => 0);
+      X : Bytes_8;
       T : U64 := U;
    begin
       for I in reverse Index_8 loop

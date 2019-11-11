@@ -197,9 +197,7 @@ private
    function Pack_25519 (N : in GF) return Bytes_32
      with Global => null;
 
-   --  RCC could be a function
-   procedure Inv_25519 (O : out    GF;
-                        I :     in GF)
+   function Inv_25519 (I : in GF) return GF
      with Global => null;
 
    --  RCC could be a function

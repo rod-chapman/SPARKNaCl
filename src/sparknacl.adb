@@ -264,8 +264,7 @@ is
    end S;
 
    --  POK
-   procedure Inv_25519 (O : out    GF;
-                        I :     in GF)
+   function Inv_25519 (I : in GF) return GF
    is
       C, C2 : GF;
    begin
@@ -281,7 +280,7 @@ is
          end if;
       end loop;
 
-      O := C;
+      return C;
    end Inv_25519;
 
    --===============================

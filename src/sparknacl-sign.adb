@@ -192,7 +192,7 @@ is
    is
       TX, TY, ZI : GF;
    begin
-      Inv_25519 (ZI, P (2));
+      ZI := Inv_25519 (P (2));
       M (TX, P (0), ZI);
       M (TY, P (1), ZI);
       R := Pack_25519 (TY);
