@@ -1,11 +1,12 @@
 with SPARKNaCl;           use SPARKNaCl;
+with SPARKNaCl.Core;
 with SPARKNaCl.Debug;     use SPARKNaCl.Debug;
 with SPARKNaCl.Secretbox; use SPARKNaCl.Secretbox;
 with SPARKNaCl.Stream;
 with Ada.Text_IO;         use Ada.Text_IO;
 procedure Secretbox2
 is
-   Firstkey : constant Bytes_32 :=
+   Firstkey : constant Core.Salsa20_Key :=
      (16#1b#, 16#27#, 16#55#, 16#64#, 16#73#, 16#e9#, 16#85#, 16#d4#,
       16#62#, 16#cd#, 16#51#, 16#19#, 16#7a#, 16#9a#, 16#46#, 16#c7#,
       16#60#, 16#09#, 16#54#, 16#9e#, 16#ac#, 16#64#, 16#74#, 16#f2#,

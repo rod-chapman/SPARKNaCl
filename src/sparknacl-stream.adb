@@ -114,7 +114,7 @@ is
       S : Bytes_32;
    begin
       Core.HSalsa20 (S, Bytes_16 (N (0 .. 15)), K, Sigma);
-      Salsa20 (C, Bytes_8 (N (16 .. 23)), S);
+      Salsa20 (C, Salsa20_Nonce (N (16 .. 23)), Salsa20_Key (S));
    end HSalsa20;
 
    --  POK
@@ -126,7 +126,11 @@ is
       S : Bytes_32;
    begin
       Core.HSalsa20 (S, Bytes_16 (N (0 .. 15)), K, Sigma);
-      Salsa20_Xor_Local (C, M, True, Bytes_8 (N (16 .. 23)), S);
+      Salsa20_Xor_Local (C     => C,
+                         M     => M,
+                         Xor_M => True,
+                         N     => Salsa20_Nonce (N (16 .. 23)),
+                         K     => Salsa20_Key (S));
    end HSalsa20_Xor;
 
 end SPARKNaCl.Stream;

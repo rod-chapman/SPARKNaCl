@@ -1,4 +1,5 @@
 with SPARKNaCl.Stream;
+with SPARKNaCl.Core;
 package SPARKNaCl.Secretbox
   with SPARK_Mode => On
 is
@@ -12,7 +13,7 @@ is
                      Status :    out Boolean;
                      M      : in     Byte_Seq;
                      N      : in     Stream.HSalsa20_Nonce;
-                     K      : in     Bytes_32)
+                     K      : in     Core.Salsa20_Key)
      with Global => null,
           Pre    => (M'First = 0 and
                      C'First = 0 and
@@ -27,7 +28,7 @@ is
       Status :    out Boolean;
       C      : in     Byte_Seq; --  Input ciphertext
       N      : in     Stream.HSalsa20_Nonce;
-      K      : in     Bytes_32) --  Key)
+      K      : in     Core.Salsa20_Key)
      with Global => null,
           Pre    => (M'First = 0 and
                      C'First = 0 and

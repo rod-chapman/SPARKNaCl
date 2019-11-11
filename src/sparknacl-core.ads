@@ -2,10 +2,7 @@ package SPARKNaCl.Core
   with SPARK_Mode => On
 is
 
-   subtype Salsa20_Key    is Bytes_32;
-   --  Should be - pending bug SB07-035
---   type Salsa20_Key is new Bytes_32;
---     with Volatile; -- TBD
+   type Salsa20_Key is new Bytes_32;
 
    --------------------------------------------------------
    --  Salsa20 Core functions

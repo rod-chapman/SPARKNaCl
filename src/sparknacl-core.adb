@@ -71,24 +71,24 @@ is
       --  In C this is a loop, but we unroll and make single
       --  aggregate assignment to initialize the whole of X.
       X := (0  => LD32 (C (0 .. 3)),
-            1  => LD32 (K (0 .. 3)),
+            1  => LD32 (Bytes_4 (K (0 .. 3))),
             6  => LD32 (Input (0 .. 3)),
-            11 => LD32 (K (16 .. 19)),
+            11 => LD32 (Bytes_4 (K (16 .. 19))),
 
             5  => LD32 (C (4 .. 7)),
-            2  => LD32 (K (4 .. 7)),
+            2  => LD32 (Bytes_4 (K (4 .. 7))),
             7  => LD32 (Input (4 .. 7)),
-            12 => LD32 (K (20 .. 23)),
+            12 => LD32 (Bytes_4 (K (20 .. 23))),
 
             10 => LD32 (C (8 .. 11)),
-            3  => LD32 (K (8 .. 11)),
+            3  => LD32 (Bytes_4 (K (8 .. 11))),
             8  => LD32 (Input (8 .. 11)),
-            13 => LD32 (K (24 .. 27)),
+            13 => LD32 (Bytes_4 (K (24 .. 27))),
 
             15 => LD32 (C (12 .. 15)),
-            4  => LD32 (K (12 .. 15)),
+            4  => LD32 (Bytes_4 (K (12 .. 15))),
             9  => LD32 (Input (12 .. 15)),
-            14 => LD32 (K (28 .. 31)));
+            14 => LD32 (Bytes_4 (K (28 .. 31))));
 
       Y := X;
 

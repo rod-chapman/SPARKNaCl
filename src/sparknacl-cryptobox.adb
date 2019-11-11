@@ -1,4 +1,3 @@
-with SPARKNaCl.Core;
 with SPARKNaCl.Utils;
 with SPARKNaCl.Scalar;
 with SPARKNaCl.Secretbox;
@@ -16,13 +15,16 @@ is
    end Keypair;
 
    --  POK
-   procedure BeforeNM (K    :    out Bytes_32;
+   procedure BeforeNM (K    :    out Core.Salsa20_Key;
                        Y, X : in     Bytes_32)
    is
-      S : Bytes_32;
+      S  : Bytes_32;
    begin
       Scalar.Mult (S, X, Y);
-      Core.HSalsa20 (K, Zero_Bytes_16, S, Sigma);
+      Core.HSalsa20 (Output => Bytes_32 (K),
+                     Input  => Zero_Bytes_16,
+                     K      => Core.Salsa20_Key (S),
+                     C      => Sigma);
    end BeforeNM;
 
    --  POK
@@ -30,7 +32,7 @@ is
                       Status :    out Boolean;
                       M      : in     Byte_Seq;
                       N      : in     Stream.HSalsa20_Nonce;
-                      K      : in     Bytes_32)
+                      K      : in     Core.Salsa20_Key)
    is
    begin
       Secretbox.Create (C, Status, M, N, K);
@@ -42,7 +44,7 @@ is
       Status :    out Boolean;
       C      : in     Byte_Seq; --  Input ciphertext
       N      : in     Stream.HSalsa20_Nonce;
-      K      : in     Bytes_32) --  Key)
+      K      : in     Core.Salsa20_Key)
    is
    begin
       Secretbox.Open (M, Status, C, N, K);
@@ -55,7 +57,7 @@ is
                      N      : in     Stream.HSalsa20_Nonce;
                      Y, X   : in     Bytes_32)
    is
-      K : Bytes_32;
+      K : Core.Salsa20_Key;
    begin
       BeforeNM (K, Y, X);
       AfterNM (C, Status, M, N, K);
@@ -68,7 +70,7 @@ is
                    N      : in     Stream.HSalsa20_Nonce;
                    Y, X   : in     Bytes_32)
    is
-      K : Bytes_32;
+      K : Core.Salsa20_Key;
    begin
       BeforeNM (K, Y, X);
       Open_AfterNM (M, Status, C, N, K);

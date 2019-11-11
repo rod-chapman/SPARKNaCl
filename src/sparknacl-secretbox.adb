@@ -11,7 +11,7 @@ is
                      Status :    out Boolean;
                      M      : in     Byte_Seq;
                      N      : in     Stream.HSalsa20_Nonce;
-                     K      : in     Bytes_32)
+                     K      : in     Core.Salsa20_Key)
    is
       D : I32;
       K2 : Bytes_32;
@@ -51,7 +51,7 @@ is
       Status :    out Boolean;
       C      : in     Byte_Seq; --  Input ciphertext
       N      : in     Stream.HSalsa20_Nonce;
-      K      : in     Bytes_32) --  Key)
+      K      : in     Core.Salsa20_Key)
    is
       X : Bytes_32;
    begin

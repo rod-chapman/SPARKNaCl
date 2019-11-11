@@ -5,7 +5,7 @@ with SPARKNaCl.Hashing;  use SPARKNaCl.Hashing;
 with Interfaces;         use Interfaces;
 procedure Core3
 is
-   Second_Key : constant Bytes_32 :=
+   Second_Key : constant Salsa20_Key :=
      (16#dc#, 16#90#, 16#8d#, 16#da#, 16#0b#, 16#93#, 16#44#, 16#a9#,
       16#53#, 16#62#, 16#9b#, 16#73#, 16#38#, 16#20#, 16#77#, 16#88#,
       16#80#, 16#f3#, 16#ce#, 16#b4#, 16#21#, 16#bb#, 16#61#, 16#b9#,
