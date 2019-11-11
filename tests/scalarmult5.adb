@@ -19,6 +19,6 @@ is
    K : Bytes_32;
 
 begin
-   Mult (K, AliceSK, BobPK);
+   K := Mult (AliceSK, BobPK);
    DH ("K is", K);
 end Scalarmult5;

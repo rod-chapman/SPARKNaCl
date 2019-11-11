@@ -18,6 +18,6 @@ is
 
    K : Bytes_32;
 begin
-   Mult (K, BobSK, AlicePK);
+   K := Mult (BobSK, AlicePK);
    DH ("K is", K);
 end Scalarmult6;

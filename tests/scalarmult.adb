@@ -10,6 +10,6 @@ is
       16#b1#, 16#77#, 16#fb#, 16#a5#, 16#1d#, 16#b9#, 16#2c#, 16#2a#);
    AlicePK : Bytes_32;
 begin
-   Mult_Base (AlicePK, AliceSK);
+   AlicePK := Mult_Base (AliceSK);
    DH ("AlicePK is", AlicePK);
 end Scalarmult;

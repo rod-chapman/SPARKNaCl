@@ -10,6 +10,6 @@ is
       16#1c#, 16#2f#, 16#8b#, 16#27#, 16#ff#, 16#88#, 16#e0#, 16#eb#);
    BobPK : Bytes_32;
 begin
-   Mult_Base (BobPK, BobSK);
+   BobPK := Mult_Base (BobSK);
    DH ("BobPK is", BobPK);
 end Scalarmult2;

@@ -12,9 +12,8 @@ is
    --------------------------------------------------------
 
    --  POK
-   procedure Mult (Q :    out Bytes_32;
-                   N : in     Bytes_32;
-                   P : in     Bytes_32)
+   function Mult (N : in Bytes_32;
+                  P : in Bytes_32) return Bytes_32
    is
       Z2   : Bytes_32;
       X    : GF;
@@ -81,16 +80,15 @@ is
 
       T1 := Utils.Inv_25519 (C);
       M (T2, A2, T1);
-      Q := Utils.Pack_25519 (T2);
 
+      return Utils.Pack_25519 (T2);
    end Mult;
 
    --  POK
-   procedure Mult_Base (Q :    out Bytes_32;
-                        N : in     Bytes_32)
+   function Mult_Base (N : in Bytes_32) return Bytes_32
    is
    begin
-      Mult (Q, N, Nine);
+      return Mult (N, Nine);
    end Mult_Base;
 
 
