@@ -7,20 +7,22 @@ package body SPARKNaCl.Cryptobox
 is
 
    --  POK
-   procedure Keypair (Y, X : out Bytes_32)
+   procedure Keypair (PK : out Public_Key;
+                      SK : out Secret_Key)
    is
    begin
-      X := Utils.Random_Bytes_32;
-      Scalar.Mult_Base (Y, X);
+      SK := Utils.Random_Bytes_32;
+      Scalar.Mult_Base (PK, SK);
    end Keypair;
 
    --  POK
-   procedure BeforeNM (K    :    out Core.Salsa20_Key;
-                       Y, X : in     Bytes_32)
+   procedure BeforeNM (K  :    out Core.Salsa20_Key;
+                       PK : in     Public_Key;
+                       SK : in     Secret_Key)
    is
       S  : Bytes_32;
    begin
-      Scalar.Mult (S, X, Y);
+      Scalar.Mult (S, SK, PK);
       Core.HSalsa20 (Output => Bytes_32 (K),
                      Input  => Zero_Bytes_16,
                      K      => Core.Salsa20_Key (S),
@@ -51,28 +53,30 @@ is
    end Open_AfterNM;
 
    --  POK
-   procedure Create (C      :    out Byte_Seq;
-                     Status :    out Boolean;
-                     M      : in     Byte_Seq;
-                     N      : in     Stream.HSalsa20_Nonce;
-                     Y, X   : in     Bytes_32)
+   procedure Create (C            :    out Byte_Seq;
+                     Status       :    out Boolean;
+                     M            : in     Byte_Seq;
+                     N            : in     Stream.HSalsa20_Nonce;
+                     Recipient_PK : in     Public_Key;
+                     Sender_SK    : in     Secret_Key)
    is
       K : Core.Salsa20_Key;
    begin
-      BeforeNM (K, Y, X);
+      BeforeNM (K, Recipient_PK, Sender_SK);
       AfterNM (C, Status, M, N, K);
    end Create;
 
    --  POK
-   procedure Open (M      :    out Byte_Seq;
-                   Status :    out Boolean;
-                   C      : in     Byte_Seq;
-                   N      : in     Stream.HSalsa20_Nonce;
-                   Y, X   : in     Bytes_32)
+   procedure Open (M            :    out Byte_Seq;
+                   Status       :    out Boolean;
+                   C            : in     Byte_Seq;
+                   N            : in     Stream.HSalsa20_Nonce;
+                   Sender_PK    : in     Public_Key;
+                   Recipient_SK : in     Secret_Key)
    is
       K : Core.Salsa20_Key;
    begin
-      BeforeNM (K, Y, X);
+      BeforeNM (K, Sender_PK, Recipient_SK);
       Open_AfterNM (M, Status, C, N, K);
    end Open;
 

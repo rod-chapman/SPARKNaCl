@@ -7,22 +7,24 @@ is
    --  Public Key Authenticated Encryption - "Crypto Box" --
    --------------------------------------------------------
 
-   subtype Crypto_Box_Nonce      is Bytes_24;
-   subtype Crypto_Box_Secret_Key is Bytes_32;
-   subtype Crypto_Box_Public_Key is Bytes_32;
+   subtype Secret_Key is Bytes_32;
+   subtype Public_Key is Bytes_32;
    Plaintext_Zero_Bytes  : constant := 32;
    Ciphertext_Zero_Bytes : constant := 16;
 
    --  Key generation
-   procedure Keypair (Y, X : out Bytes_32)
+   procedure Keypair (PK : out Public_Key;
+                      SK : out Secret_Key)
      with Global => Random.Entropy;
 
    --  Precomputation
-   procedure BeforeNM (K    :    out Core.Salsa20_Key;
-                       Y, X : in     Bytes_32)
+   procedure BeforeNM (K  :    out Core.Salsa20_Key;
+                       PK : in     Public_Key;
+                       SK : in     Secret_Key)
      with Global => null;
 
 
+   --  Postcomputation for Create
    procedure AfterNM (C      :    out Byte_Seq;
                       Status :    out Boolean;
                       M      : in     Byte_Seq;
@@ -36,6 +38,7 @@ is
                     Equal (M (0 .. 31), Zero_Bytes_32),
           Post   => Equal (C (0 .. 15), Zero_Bytes_16);
 
+   --  Postcomputation for Open
    procedure Open_AfterNM
      (M      :    out Byte_Seq; --  Output plaintext
       Status :    out Boolean;
@@ -50,11 +53,13 @@ is
                     Equal (C (0 .. 15), Zero_Bytes_16),
           Post   => Equal (M (0 .. 31), Zero_Bytes_32);
 
-   procedure Create (C      :    out Byte_Seq;
-                     Status :    out Boolean;
-                     M      : in     Byte_Seq;
-                     N      : in     Stream.HSalsa20_Nonce;
-                     Y, X   : in     Bytes_32)
+   --  Top-level all-in-one Create operation
+   procedure Create (C            :    out Byte_Seq;
+                     Status       :    out Boolean;
+                     M            : in     Byte_Seq;
+                     N            : in     Stream.HSalsa20_Nonce;
+                     Recipient_PK : in     Public_Key;
+                     Sender_SK    : in     Secret_Key)
      with Global => null,
           Pre    => (M'First = 0 and
                      C'First = 0 and
@@ -64,11 +69,13 @@ is
           Post   => Equal (C (0 .. 15), Zero_Bytes_16);
 
 
-   procedure Open (M      :    out Byte_Seq;
-                   Status :    out Boolean;
-                   C      : in     Byte_Seq;
-                   N      : in     Stream.HSalsa20_Nonce;
-                   Y, X   : in     Bytes_32)
+   --  Top-level all-in-one Open operation
+   procedure Open (M            :    out Byte_Seq;
+                   Status       :    out Boolean;
+                   C            : in     Byte_Seq;
+                   N            : in     Stream.HSalsa20_Nonce;
+                   Sender_PK    : in     Public_Key;
+                   Recipient_SK : in     Secret_Key)
      with Global => null,
           Pre    => (M'First = 0 and
                      C'First = 0 and
