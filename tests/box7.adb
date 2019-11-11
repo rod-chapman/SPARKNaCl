@@ -5,7 +5,8 @@ with Ada.Text_IO;         use Ada.Text_IO;
 with Interfaces;          use Interfaces;
 procedure Box7
 is
-   AliceSK, AlicePK, BobSK, BobPK : Bytes_32;
+   AliceSK, BobSK : Secret_Key;
+   AlicePK, BobPK : Public_Key;
    N : Stream.HSalsa20_Nonce;
    S, S2 : Boolean;
 begin

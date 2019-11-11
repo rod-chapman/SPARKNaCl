@@ -7,8 +7,8 @@ is
    --  Public Key Authenticated Encryption - "Crypto Box" --
    --------------------------------------------------------
 
-   subtype Secret_Key is Bytes_32;
-   subtype Public_Key is Bytes_32;
+   type Secret_Key is new Bytes_32;
+   type Public_Key is new Bytes_32;
    Plaintext_Zero_Bytes  : constant := 32;
    Ciphertext_Zero_Bytes : constant := 16;
 

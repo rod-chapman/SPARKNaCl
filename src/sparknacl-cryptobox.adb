@@ -11,8 +11,8 @@ is
                       SK : out Secret_Key)
    is
    begin
-      SK := Utils.Random_Bytes_32;
-      Scalar.Mult_Base (PK, SK);
+      SK := Secret_Key (Utils.Random_Bytes_32);
+      PK := Public_Key (Scalar.Mult_Base (Bytes_32 (SK)));
    end Keypair;
 
    --  POK
@@ -22,7 +22,7 @@ is
    is
       S  : Bytes_32;
    begin
-      Scalar.Mult (S, SK, PK);
+      S := Scalar.Mult (Bytes_32 (SK), Bytes_32 (PK));
       Core.HSalsa20 (Output => Bytes_32 (K),
                      Input  => Zero_Bytes_16,
                      K      => Core.Salsa20_Key (S),
