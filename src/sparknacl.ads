@@ -190,16 +190,6 @@ private
    --  Local subprogram declarations
    --===============================
 
-   --  Carry reduction of all elements of O
-   procedure Car_25519 (O : in out GF)
-     with Global => null;
-
-   --  Constant time conditional swap of P and Q.
-   procedure Sel_25519 (P    : in out GF;
-                        Q    : in out GF;
-                        Swap : in     Boolean)
-     with Global => null;
-
    --  Multiply
    --  RCC could be an operator
    procedure M (O    :    out GF;

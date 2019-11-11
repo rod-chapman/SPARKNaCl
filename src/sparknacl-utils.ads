@@ -11,9 +11,15 @@ is
    --  public children of SPARKNaCl.
    --===================================================
 
-   function Random_Bytes_32 return Bytes_32
-     with Global => Random.Entropy,
-          Volatile_Function;
+   --  Carry reduction of all elements of O
+   procedure Car_25519 (O : in out GF)
+     with Global => null;
+
+   --  Constant time conditional swap of P and Q.
+   procedure Sel_25519 (P    : in out GF;
+                        Q    : in out GF;
+                        Swap : in     Boolean)
+     with Global => null;
 
    function Pack_25519 (N : in GF) return Bytes_32
      with Global => null;
@@ -23,5 +29,10 @@ is
 
    function Unpack_25519 (N : in Bytes_32) return GF
      with Global => null;
+
+
+   function Random_Bytes_32 return Bytes_32
+     with Global => Random.Entropy,
+          Volatile_Function;
 
 end SPARKNaCl.Utils;

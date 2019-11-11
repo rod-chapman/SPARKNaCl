@@ -1,16 +1,57 @@
 package body SPARKNaCl.Utils
   with SPARK_Mode => On
 is
+
+   type Bit_To_Swapmask_Table is array (Boolean) of U64;
+   Bit_To_Swapmask : constant Bit_To_Swapmask_Table :=
+     (False => 16#0000_0000_0000_0000#,
+      True  => 16#FFFF_FFFF_FFFF_FFFF#);
+
    --  POK
-   function Random_Bytes_32 return Bytes_32
+   procedure Sel_25519 (P    : in out GF;
+                        Q    : in out GF;
+                        Swap : in     Boolean)
    is
-      Result : Bytes_32;
+      T : U64;
+      C : constant U64 := Bit_To_Swapmask (Swap);
    begin
-      for I in Result'Range loop
-         Result (I) := Random.Random_Byte;
+      for I in Index_16 loop
+         T := C and (To_U64 (P (I)) xor To_U64 (Q (I)));
+         P (I) := To_I64 (To_U64 (P (I)) xor T);
+         Q (I) := To_I64 (To_U64 (Q (I)) xor T);
       end loop;
-      return Result;
-   end Random_Bytes_32;
+   end Sel_25519;
+
+
+   procedure Car_25519 (O : in out GF)
+   is
+      C : I64;
+   begin
+      --  In SPARK, we unroll the final (I = 15)'th iteration
+      --  of this loop below. This removes the need for
+      --  a conditional statement or expression inside the loop
+      --  body.
+      for I in Index_16 range 0 .. 14 loop
+         O (I) := O (I) + 2#1_0000_0000_0000_0000#; --  POV
+         C := ASR_16 (O (I));
+         O (I + 1) := O (I + 1) + C - 1; --  POV on second + and -
+
+         --  The C code here uses (c << 16) which is UNDEFINED
+         --  for negative c according to C standard 6.5.7 (4).
+         --  TweetNaCl appears to depend on this being equivalent
+         --  to sign-preserving multiplication by 65536.
+         pragma Assert (C >= -2**47);
+         pragma Assert (C <= (2**47) - 1);
+
+         O (I) := O (I) - (C * 65536); --  POV on - and *
+      end loop;
+
+      --  Final iteration, as would be when I = 15
+      O (15) := O (15) + 2#1_0000_0000_0000_0000#; --  POV
+      C := ASR_16 (O (15));
+      O (0) := O (0) + C - 1 + 37 * (C - 1); --  POV on 5 binary ops!
+      O (15) := O (15) - (C * 65536); --  POV on - and *
+   end Car_25519;
 
 
    --  P?
@@ -97,5 +138,15 @@ is
    end Inv_25519;
 
 
+   --  POK
+   function Random_Bytes_32 return Bytes_32
+   is
+      Result : Bytes_32;
+   begin
+      for I in Result'Range loop
+         Result (I) := Random.Random_Byte;
+      end loop;
+      return Result;
+   end Random_Bytes_32;
 
 end SPARKNaCl.Utils;

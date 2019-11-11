@@ -43,8 +43,8 @@ is
          Shift := Natural (I and 7);
          Swap := Boolean'Val (Shift_Right (CB, Shift) and 1);
 
-         Sel_25519 (A2, B, Swap);
-         Sel_25519 (C, D, Swap);
+         Utils.Sel_25519 (A2, B, Swap);
+         Utils.Sel_25519 (C, D, Swap);
 
          A (E, A2, C);
 
@@ -75,8 +75,8 @@ is
          M (D, B, X);
          S (B, E);
 
-         Sel_25519 (A2, B, Swap);
-         Sel_25519 (C, D, Swap);
+         Utils.Sel_25519 (A2, B, Swap);
+         Utils.Sel_25519 (C, D, Swap);
       end loop;
 
       T1 := Utils.Inv_25519 (C);
