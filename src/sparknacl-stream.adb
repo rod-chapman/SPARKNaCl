@@ -43,7 +43,7 @@ is
       C_Offset := 0;
       M_Offset := 0;
       Z := (others => 0);
-      Z (0 .. 7) := N;
+      Z (0 .. 7) := Bytes_8 (N);
 
       while (B >= 64) loop
 

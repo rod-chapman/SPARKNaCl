@@ -3,8 +3,7 @@ package SPARKNaCl.Stream
   with SPARK_Mode => On
 is
    type HSalsa20_Nonce is new Bytes_24;
-
-   subtype Salsa20_Nonce  is Bytes_8;
+   type Salsa20_Nonce  is new Bytes_8;
 
    --------------------------------------------------------
    --  Secret key encryption (not authenticated)
