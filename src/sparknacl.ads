@@ -190,10 +190,7 @@ private
    --  Local subprogram declarations
    --===============================
 
-   --  Multiply
-   --  RCC could be an operator
-   procedure M (O    :    out GF;
-                A, B : in     GF)
+   function "*" (Left, Right : in GF) return GF
      with Global => null;
 
    function "+" (Left, Right : in GF) return GF

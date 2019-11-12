@@ -56,22 +56,22 @@ is
          D := Square (E);
          F := Square (A3);
 
-         M (A2, C, A3);
-         M (C, B2, E);
+         A2 := C * A3;
+         C  := B2 * E;
          E := A2 + C;
 
          A3 := A2 - C;
          B := Square (A3);
          C := D - F;
 
-         M (A2, C, GF_121665);
+         A2 := C * GF_121665;
          A3 := A2 + D;
 
          C2 := C;
-         M (C, C2, A3);
+         C := C2 * A3;
 
-         M (A2, D, F);
-         M (D, B, X);
+         A2 := D * F;
+         D := B * X;
          B := Square (E);
 
          Utils.Sel_25519 (A2, B, Swap);
@@ -79,7 +79,7 @@ is
       end loop;
 
       T1 := Utils.Inv_25519 (C);
-      M (T2, A2, T1);
+      T2 := A2 * T1;
 
       return Utils.Pack_25519 (T2);
    end Mult;

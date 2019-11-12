@@ -6,28 +6,28 @@ is
    --  Local subprogram bodies
    --===============================
 
-   procedure M (O    :    out GF;
-                A, B : in     GF)
+   function "*" (Left, Right : in GF) return GF
    is
       subtype TA is I64_Seq (Index_31);
       T : TA;
+      O : GF;
    begin
-      pragma Assert ((for all I in Index_16 => A (I) >= -65535),
-                     "M input A - limb too negative");
-      pragma Assert ((for all I in Index_16 => A (I) <= 196605),
-                     "M input A - limb too big");
+      pragma Assert ((for all I in Index_16 => Left (I) >= -65535),
+                     "* input A - limb too negative");
+      pragma Assert ((for all I in Index_16 => Left (I) <= 196605),
+                     "* input A - limb too big");
 
-      pragma Assert ((for all I in Index_16 => B (I) >= -65535),
-                     "M input B - limb too negative");
-      pragma Assert ((for all I in Index_16 => B (I) <= 196605),
-                     "M input B - limb too big");
+      pragma Assert ((for all I in Index_16 => Right (I) >= -65535),
+                     "* input B - limb too negative");
+      pragma Assert ((for all I in Index_16 => Right (I) <= 196605),
+                     "* input B - limb too big");
 
 
       T := (others => 0);
 
       for I in Index_16 loop
          for J in Index_16 loop
-            T (I + J) := T (I + J) + (A (I) * B (J)); --  POV * 2
+            T (I + J) := T (I + J) + (Left (I) * Right (J)); --  POV * 2
          end loop;
       end loop;
 
@@ -36,9 +36,9 @@ is
       --  less than 2**38)
 
       pragma Assert ((for all I in Index_31 => T (I) >= -2**38),
-                     "M output 0 - limb too negative");
+                     "* output 0 - limb too negative");
       pragma Assert ((for all I in Index_31 => T (I) <= 2**38),
-                     "M output 0 - limb too large");
+                     "* output 0 - limb too large");
 
 
       for I in Index_15 loop
@@ -49,20 +49,22 @@ is
 
       pragma Assert ((for all I in Index_16 =>
                         O (I) >= -(2**38 + (38 * 2**38))),
-                     "M output 1 - limb too negative");
+                     "* output 1 - limb too negative");
       pragma Assert ((for all I in Index_16 =>
                         O (I) <= (2**38 + (38 * 2**38))),
-                     "M output 1 - limb too large");
+                     "* output 1 - limb too large");
 
       Utils.Car_25519 (O);
       Utils.Car_25519 (O);
 
       --  Check that O is normalized
       pragma Assert ((for all I in Index_16 => O (I) >= 0),
-                     "M output 3 - limb too negative");
+                     "* output 3 - limb too negative");
       pragma Assert ((for all I in Index_16 => O (I) <= 65535),
-                     "M output 3 - limb too large");
-   end M;
+                     "* output 3 - limb too large");
+      return O;
+   end "*";
+
 
    function "+" (Left, Right : in GF) return GF
    is
@@ -124,7 +126,7 @@ is
       pragma Assert ((for all I in Index_16 => A (I) <= 131070),
                      "S input A - limb too big");
 
-      M (O, A, A);
+      O := A * A;
 
       pragma Assert ((for all I in Index_16 => O (I) >= 0),
                      "S output - limb too negative");

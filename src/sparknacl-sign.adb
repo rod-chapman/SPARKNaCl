@@ -155,26 +155,31 @@ is
    begin
       A1 := P (1) - P (0);
       T  := Q (1) - Q (0);
-      M (A2, A1, T);
+      A2 := A1 * T;
 
       B1 := P (0) + P (1);
       T  := Q (0) + Q (1);
-      M (B2, B1, T);
+      B2 := B1 * T;
 
-      M (C1, P (3), Q (3));
-      M (C2, C1, GF_D2);
-      M (D1, P (2), Q (2));
+      C1 := P (3) * Q (3);
+      C2 := C1 * GF_D2;
+      D1 := P (2) * Q (2);
 
       D2 := D1 + D1;
-      E := B2 - A2;
-      F := D2 - C2;
-      G := D2 + C2;
-      H := B2 + A2;
+      E  := B2 - A2;
+      F  := D2 - C2;
+      G  := D2 + C2;
+      H  := B2 + A2;
 
-      M (P (0), E, F);
-      M (P (1), H, G);
-      M (P (2), G, F);
-      M (P (3), E, H);
+      P := (0 => E * F,
+            1 => H * G,
+            2 => G * F,
+            3 => E * H);
+
+--      P (0), E, F);
+--      P (1), H, G);
+--      P (2), G, F);
+--      P (3), E, H);
 
    end Add;
 
@@ -194,8 +199,8 @@ is
       TX, TY, ZI : GF;
    begin
       ZI := Utils.Inv_25519 (P (2));
-      M (TX, P (0), ZI);
-      M (TY, P (1), ZI);
+      TX := P (0) * ZI;
+      TY := P (1) * ZI;
       R := Utils.Pack_25519 (TY);
       R (31) := R (31) xor (Par_25519 (TX) * 128);
    end Pack;
@@ -299,7 +304,7 @@ is
             if A = 1 then
                C := C2;
             else
-               M (C, C2, I);
+               C := C2 * I;
             end if;
          end loop;
          return C;
@@ -312,32 +317,33 @@ is
             3 => GF_0);
 
       R_1_Squared := Square (R (1));
-      M (Den0, R_1_Squared, GF_D);
+      Den0 := R_1_Squared * GF_D;
       Num := R_1_Squared - R (2);
       Den1 := R (2) + Den0;
 
       Den2 := Square (Den1);
       Den4 := Square (Den2);
-      M (Den6, Den4, Den2);
-      M (T1, Den6, Num);
-      M (T2, T1, Den1);
+
+      Den6 := Den4 * Den2;
+      T1   := Den6 * Num;
+      T2   := T1 * Den1;
 
       T3 := Pow_2523 (T2);
 
-      M (T4, T3, Num);
-      M (T5, T4, Den1);
-      M (T6, T5, Den1);
-      M (R (0), T6, Den1);
+      T4 := T3 * Num;
+      T5 := T4 * Den1;
+      T6 := T5 * Den1;
+      R (0) := T6 * Den1;
 
       Chk := Square (R (0));
-      M (Chk1, Chk, Den1);
+      Chk1 := Chk * Den1;
       if (not Eq_25519 (Chk1, Num)) then
-         M (T7, R (0), GF_I);
+         T7 := R (0) * GF_I;
          R (0) := T7;
       end if;
 
       Chk := Square (R (0));
-      M (Chk1, Chk, Den1);
+      Chk1 := Chk * Den1;
 
       if (not Eq_25519 (Chk1, Num)) then
          OK := False;
@@ -349,7 +355,7 @@ is
          R (0) := T7;
       end if;
 
-      M (R (3), R (0), R (1));
+      R (3) := R (0) * R (1);
       OK := True;
    end Unpackneg;
 

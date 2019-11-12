@@ -128,7 +128,7 @@ is
          --  Need C2 here to avoid aliasing C with C via pass by reference
          C2 := Square (C);
          if (A /= 2 and A /= 4) then
-            M (C, C2, I);
+            C := C2 * I;
          else
             C := C2;
          end if;
