@@ -14,11 +14,11 @@ An incomplete list of ideas:
 4. Split into one child package for each major functional area, so SPARKNaCl.Secret_Box.Open instead of SPARKNaCl.Crypto_Secretbox_Open for example. (Done 6/11/2019)
 
 5. Re-implement body using more Ada idioms, including:
-  - Redeclare the arithmetic operators on GF, so we can use functional infix "C := A * B" style rather than "M (C, A, B)".
+  - Redeclare the arithmetic operators on GF, so we can use functional infix "C := A * B" style rather than "M (C, A, B)". (Done 12/11/19)
 
   - Ditto for procedures that return a single "out" parameter of a composite type. Make it a function! (Done 12/11/2019)
 
-  - Introduce nesting of local subprograms, particularly those with only one calling subprogram.
+  - Introduce nesting of local subprograms, particularly those with only one calling subprogram. (Done 12/11/19)
 
 6. Full performance test against tweetnacl.c
 

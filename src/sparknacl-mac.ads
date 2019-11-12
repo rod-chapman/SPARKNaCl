@@ -1,7 +1,7 @@
 package SPARKNaCl.MAC
   with SPARK_Mode => On
 is
-   subtype Poly_1305_Key is Bytes_32;
+   type Poly_1305_Key is new Bytes_32;
 
    --------------------------------------------------------
    --  One-time authentication

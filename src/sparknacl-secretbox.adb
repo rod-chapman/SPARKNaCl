@@ -13,7 +13,7 @@ is
                      N      : in     Stream.HSalsa20_Nonce;
                      K      : in     Core.Salsa20_Key)
    is
-      K2 : Bytes_32;
+      K2 : MAC.Poly_1305_Key;
       R  : Bytes_16;
    begin
       --  Defensive - re-check precondition
@@ -27,7 +27,7 @@ is
          --  All OK
          Stream.HSalsa20_Xor (C, M, N, K);
 
-         K2 := C (0 .. 31);
+         K2 := MAC.Poly_1305_Key (C (0 .. 31));
 
          declare
             subtype M_Array is Byte_Seq (0 .. (C'Last - 32));
@@ -76,7 +76,7 @@ is
               (H => C (16 .. 31),
                --  Slide and slide so that M'First = 0
                M => M_Array (C (32 .. C'Last)),
-               K => X)
+               K => MAC.Poly_1305_Key (X))
             then
                --  MAC verifies OK, so decrypt payload
                Stream.HSalsa20_Xor (C => M, M => C, N => N, K => K);
