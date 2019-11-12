@@ -89,29 +89,30 @@ is
       return O;
    end "+";
 
-   procedure Z (O    :    out GF;
-                A, B : in     GF)
+   function "-" (Left, Right : in GF) return GF
    is
+      O : GF;
    begin
-      pragma Assert ((for all I in Index_16 => A (I) >= 0),
-                     "Z input A - limb negative");
-      pragma Assert ((for all I in Index_16 => A (I) <= 131070),
-                     "Z input A - limb too big");
+      pragma Assert ((for all I in Index_16 => Left (I) >= 0),
+                     "- input Left - limb negative");
+      pragma Assert ((for all I in Index_16 => Left (I) <= 131070),
+                     "- input Left - limb too big");
 
-      pragma Assert ((for all I in Index_16 => B (I) >= -65535),
-                     "Z input B - limb too negative");
-      pragma Assert ((for all I in Index_16 => B (I) <= 65535),
-                     "Z input B - limb too big");
+      pragma Assert ((for all I in Index_16 => Right (I) >= -65535),
+                     "- input Right - limb too negative");
+      pragma Assert ((for all I in Index_16 => Right (I) <= 65535),
+                     "- input Right - limb too big");
 
       for I in Index_16 loop
-         O (I) := A (I) - B (I); --  POV
+         O (I) := Left (I) - Right (I); --  POV
       end loop;
 
       pragma Assert ((for all I in Index_16 => O (I) >= -65535),
-                     "Z output O - limb too negative");
+                     "- output O - limb too negative");
       pragma Assert ((for all I in Index_16 => O (I) <= 131070),
-                     "Z output O - limb too large");
-   end Z;
+                     "- output O - limb too large");
+      return O;
+   end "-";
 
    --  POK
    function Square (A : in GF) return GF

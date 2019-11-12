@@ -153,8 +153,8 @@ is
    is
       A1, A2, B1, B2, C1, C2, D1, D2, T, E, F, G, H : GF;
    begin
-      Z (A1, P (1), P (0));
-      Z (T, Q (1), Q (0));
+      A1 := P (1) - P (0);
+      T  := Q (1) - Q (0);
       M (A2, A1, T);
 
       B1 := P (0) + P (1);
@@ -166,9 +166,9 @@ is
       M (D1, P (2), Q (2));
 
       D2 := D1 + D1;
-      Z (E, B2, A2);
-      Z (F, D2, C2);
-      G := D2 + C2; --  RCC ??
+      E := B2 - A2;
+      F := D2 - C2;
+      G := D2 + C2;
       H := B2 + A2;
 
       M (P (0), E, F);
@@ -313,7 +313,7 @@ is
 
       R_1_Squared := Square (R (1));
       M (Den0, R_1_Squared, GF_D);
-      Z (Num, R_1_Squared, R (2));
+      Num := R_1_Squared - R (2);
       Den1 := R (2) + Den0;
 
       Den2 := Square (Den1);
@@ -345,7 +345,7 @@ is
       end if;
 
       if Par_25519 (R (0)) = (P (31) / 128) then
-         Z (T7, GF_0, R (0));
+         T7 := GF_0 - R (0);
          R (0) := T7;
       end if;
 

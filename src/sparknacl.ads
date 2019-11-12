@@ -199,10 +199,7 @@ private
    function "+" (Left, Right : in GF) return GF
      with Global => null;
 
-   --  Subtract
-   --  RCC could be an operator
-   procedure Z (O    :    out GF;
-                A, B : in     GF)
+   function "-" (Left, Right : in GF) return GF
      with Global => null;
 
    function Square (A : in GF) return GF

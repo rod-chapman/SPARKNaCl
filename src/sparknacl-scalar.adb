@@ -47,11 +47,11 @@ is
 
          E := A2 + C;
 
-         Z (A3, A2, C);
+         A3 := A2 - C;
 
          C := B + D;
 
-         Z (B2, B, D);
+         B2 := B - D;
 
          D := Square (E);
          F := Square (A3);
@@ -60,9 +60,9 @@ is
          M (C, B2, E);
          E := A2 + C;
 
-         Z (A3, A2, C);
+         A3 := A2 - C;
          B := Square (A3);
-         Z (C, D, F);
+         C := D - F;
 
          M (A2, C, GF_121665);
          A3 := A2 + D;
