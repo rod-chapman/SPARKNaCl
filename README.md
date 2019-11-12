@@ -7,7 +7,7 @@ An incomplete list of ideas:
 
 1. Complete type safety proofs. Requires detailed understanding of the invariant properties of each "limb" of a GF object. (50 marks)
 
-2. Strengthen types in sparknacl.ads - for example use different named types for each distinct flavour of key and nonce to prevent them being confused.
+2. Strengthen types in sparknacl.ads - for example use different named types for each distinct flavour of key and nonce to prevent them being confused. (Done 12/11/19)
 
 3. Use limited-private, volatile types for keys and nonces, and provide an explicit "Sanitize" procedure for them.
 
