@@ -145,42 +145,30 @@ is
    end Scalarbase;
 
 
-
-
    --  POK
    procedure Add (P : in out GF_Vector_4;
                   Q : in     GF_Vector_4)
    is
-      A1, A2, B1, B2, C1, C2, D1, D2, T, E, F, G, H : GF;
+      A, B, C, D, E, F, G, H, T : GF;
    begin
-      A1 := P (1) - P (0);
-      T  := Q (1) - Q (0);
-      A2 := A1 * T;
+      A := (P (1) - P (0)) * (Q (1) - Q (0));
 
-      B1 := P (0) + P (1);
-      T  := Q (0) + Q (1);
-      B2 := B1 * T;
+      B := (P (0) + P (1)) * (Q (0) + Q (1));
 
-      C1 := P (3) * Q (3);
-      C2 := C1 * GF_D2;
-      D1 := P (2) * Q (2);
+      C := (P (3) * Q (3)) * GF_D2;
 
-      D2 := D1 + D1;
-      E  := B2 - A2;
-      F  := D2 - C2;
-      G  := D2 + C2;
-      H  := B2 + A2;
+      T := P (2) * Q (2);
+      D := T + T;
+
+      E  := B - A;
+      F  := D - C;
+      G  := D + C;
+      H  := B + A;
 
       P := (0 => E * F,
             1 => H * G,
             2 => G * F,
             3 => E * H);
-
---      P (0), E, F);
---      P (1), H, G);
---      P (2), G, F);
---      P (3), E, H);
-
    end Add;
 
    --  POK
