@@ -126,7 +126,7 @@ is
 
       for A in reverse 0 .. 253 loop
          --  Need C2 here to avoid aliasing C with C via pass by reference
-         S (C2, C);
+         C2 := Square (C);
          if (A /= 2 and A /= 4) then
             M (C, C2, I);
          else

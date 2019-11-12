@@ -295,7 +295,7 @@ is
          --  Note that 2**252 - 3 = 16#1111_1111 .. 1101#
          --  with only "bit 1" set to 0
          for A in reverse 0 .. 250 loop
-            S (C2, C);
+            C2 := Square (C);
             if A = 1 then
                C := C2;
             else
@@ -311,13 +311,13 @@ is
             2 => GF_1,
             3 => GF_0);
 
-      S (R_1_Squared, R (1));
+      R_1_Squared := Square (R (1));
       M (Den0, R_1_Squared, GF_D);
       Z (Num, R_1_Squared, R (2));
       A (Den1, R (2), Den0);
 
-      S (Den2, Den1);
-      S (Den4, Den2);
+      Den2 := Square (Den1);
+      Den4 := Square (Den2);
       M (Den6, Den4, Den2);
       M (T1, Den6, Num);
       M (T2, T1, Den1);
@@ -329,14 +329,14 @@ is
       M (T6, T5, Den1);
       M (R (0), T6, Den1);
 
-      S (Chk, R (0));
+      Chk := Square (R (0));
       M (Chk1, Chk, Den1);
       if (not Eq_25519 (Chk1, Num)) then
          M (T7, R (0), GF_I);
          R (0) := T7;
       end if;
 
-      S (Chk, R (0));
+      Chk := Square (R (0));
       M (Chk1, Chk, Den1);
 
       if (not Eq_25519 (Chk1, Num)) then

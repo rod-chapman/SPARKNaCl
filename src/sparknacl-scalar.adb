@@ -53,15 +53,15 @@ is
 
          Z (B2, B, D);
 
-         S (D, E);
-         S (F, A3);
+         D := Square (E);
+         F := Square (A3);
 
          M (A2, C, A3);
          M (C, B2, E);
          A (E, A2, C);
 
          Z (A3, A2, C);
-         S (B, A3);
+         B := Square (A3);
          Z (C, D, F);
 
          M (A2, C, GF_121665);
@@ -72,7 +72,7 @@ is
 
          M (A2, D, F);
          M (D, B, X);
-         S (B, E);
+         B := Square (E);
 
          Utils.Sel_25519 (A2, B, Swap);
          Utils.Sel_25519 (C, D, Swap);

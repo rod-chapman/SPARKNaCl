@@ -208,10 +208,7 @@ private
                 A, B : in     GF)
      with Global => null;
 
-   --  Square
-   --  RCC could be a function
-   procedure S (O :    out GF;
-                A : in     GF)
+   function Square (A : in GF) return GF
      with Global => null;
 
 end SPARKNaCl;

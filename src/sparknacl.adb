@@ -113,9 +113,9 @@ is
    end Z;
 
    --  POK
-   procedure S (O :    out GF;
-                A : in     GF)
+   function Square (A : in GF) return GF
    is
+      O : GF;
    begin
       pragma Assert ((for all I in Index_16 => A (I) >= -65535),
                      "S input A - limb too negative");
@@ -128,7 +128,8 @@ is
                      "S output - limb too negative");
       pragma Assert ((for all I in Index_16 => O (I) <= 65535),
                      "S output - limb too large");
-   end S;
+      return O;
+   end Square;
 
    --===============================
    --  Exported subprogram bodies
