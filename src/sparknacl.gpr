@@ -5,7 +5,18 @@ library project SPARKNaCl is
    for Object_Dir use ".";
    for Library_Dir use "../lib";
 
-   package Compiler renames SPARKNaCl_Common.Compiler;
+   package Compiler is
+      for Default_Switches ("Ada") use
+         SPARKNaCl_Common.Compiler'Default_Switches ("Ada");
+
+      for Switches ("sparknacl*.adb") use
+         SPARKNaCl_Common.Compiler'Default_Switches ("Ada") & ("-gnatwae");
+
+      -- All library code must be compatible with ZFP runtime
+      for Local_Configuration_Pragmas use "sparknacl.adc";
+
+   end Compiler;
+
    package Prove renames SPARKNaCl_Common.Prove;
    package Builder renames SPARKNaCl_Common.Builder;
    package Binder renames SPARKNaCl_Common.Binder;

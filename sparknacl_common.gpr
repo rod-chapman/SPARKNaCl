@@ -6,7 +6,7 @@ project SPARKNaCl_Common is
 
    Build : Build_Type := external("build", "debug");
 
-   Cargs := ("-gnatwae", "-gnaty", "-gnata");
+   Cargs := ("-gnatwa", "-gnaty", "-gnata");
 
    for Source_Files use ();
 
@@ -17,6 +17,7 @@ project SPARKNaCl_Common is
          when "fast" =>
             for Default_Switches ("Ada") use Cargs & ("-gnatp", "-O3");
       end case;
+
    end Compiler;
 
    package Prove is
