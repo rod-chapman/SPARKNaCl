@@ -190,6 +190,12 @@ private
    --  Local subprogram declarations
    --===============================
 
+   --  Remove predefined "=" for GF since it is not time-constant.
+   --
+   --  See Sign.Unpackneg.Eq_25519 which declares a time-constant
+   --  algorithm where it is needed.
+   function "=" (Left, Right : in GF) return Boolean is abstract;
+
    function "*" (Left, Right : in GF) return GF
      with Global => null;
 

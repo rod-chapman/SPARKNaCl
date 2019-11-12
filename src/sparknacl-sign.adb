@@ -261,23 +261,21 @@ is
       T1, T2, T3, T4, T5, T6, T7, Chk, Chk1, Num,
       R_1_Squared, Den0, Den1, Den2, Den4, Den6 : GF;
 
-      --  RCC - remove formals and access globals
-      --        Chk1 and Num directly?
-      function Eq_25519 (A, B : in GF) return Boolean
+      --  Local, time-constant equality test for GF
+      --  In the original TweetNaCl sources, this is called eq25519
+      function "=" (Left, Right : in GF) return Boolean
         with Global => null;
 
-      --  RCC - remove formals and access globals
-      --        T2 and T3 directly?
       function Pow_2523 (I : in GF) return GF
         with Global => null;
 
       --  POK
-      function Eq_25519 (A, B : in GF) return Boolean
+      function "=" (Left, Right : in GF) return Boolean
       is
       begin
-         return Equal (Bytes_32'(Utils.Pack_25519 (A)),
-                       Bytes_32'(Utils.Pack_25519 (B)));
-      end Eq_25519;
+         return Equal (Bytes_32'(Utils.Pack_25519 (Left)),
+                       Bytes_32'(Utils.Pack_25519 (Right)));
+      end "=";
 
       --  POK
       function Pow_2523 (I : in GF) return GF
@@ -325,7 +323,8 @@ is
 
       Chk := Square (R (0));
       Chk1 := Chk * Den1;
-      if (not Eq_25519 (Chk1, Num)) then
+
+      if Chk1 /= Num then
          T7 := R (0) * GF_I;
          R (0) := T7;
       end if;
@@ -333,7 +332,7 @@ is
       Chk := Square (R (0));
       Chk1 := Chk * Den1;
 
-      if (not Eq_25519 (Chk1, Num)) then
+      if Chk1 /= Num then
          OK := False;
          return;
       end if;
