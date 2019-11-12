@@ -43,14 +43,14 @@ is
          pragma Assert (C >= -2**47);
          pragma Assert (C <= (2**47) - 1);
 
-         O (I) := O (I) - (C * 65536); --  POV on - and *
+         O (I) := O (I) - (C * 65536); --  POV on -
       end loop;
 
       --  Final iteration, as would be when I = 15
       O (15) := O (15) + 2#1_0000_0000_0000_0000#; --  POV
       C := ASR_16 (O (15));
-      O (0) := O (0) + C - 1 + 37 * (C - 1); --  POV on 5 binary ops!
-      O (15) := O (15) - (C * 65536); --  POV on - and *
+      O (0) := O (0) + C - 1 + 37 * (C - 1); --  POV on first 3 ops
+      O (15) := O (15) - (C * 65536); --  POV on -
    end Car_25519;
 
 
@@ -70,9 +70,9 @@ is
       Car_25519 (T);
 
       --  Check that T is normalized now
-      pragma Assert ((for all I in Index_16 => T (I) >= 0),
+      pragma Assert ((for all I in Index_16 => T (I) >= 0), --  PAssert
                      "Pack_25519 - limb too negative");
-      pragma Assert ((for all I in Index_16 => T (I) <= 65535),
+      pragma Assert ((for all I in Index_16 => T (I) <= 65535), --  PAssert
                      "Pack_25519 - limb too large");
 
       for J in I32 range 0 .. 1 loop
@@ -81,7 +81,7 @@ is
 
             M (I) := T (I) -
                      16#FFFF# -
-                     (ASR_16 (M (I - 1)) mod 2); --  POV * 2
+                     (ASR_16 (M (I - 1)) mod 2); --  POV on first 2 -
 
             M (I - 1) := M (I - 1) mod 65536;
          end loop;

@@ -17,7 +17,6 @@ is
       J, N, M_Offset : I32;
       X, R, H, C, G  : Poly_1305_F;
 
-      --  RCC Replace formals with globals?
       procedure Add_1305 (H : in out Poly_1305_F;
                           C : in     Poly_1305_F)
         with Global => null;
@@ -129,6 +128,7 @@ is
    end Onetimeauth;
 
 
+   --  POK
    function Onetimeauth_Verify (H : in Bytes_16;
                                 M : in Byte_Seq;
                                 K : in Poly_1305_Key) return Boolean

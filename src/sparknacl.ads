@@ -78,7 +78,9 @@ is
    function Equal (X, Y : in Byte_Seq) return Boolean
      with Global => null,
           Pre    => X'First = Y'First and
-                    X'Last  = Y'Last;
+                    X'Last  = Y'Last,
+          Post   => Equal'Result =
+                      (for all I in X'Range => X (I) = Y (I));
 
    --------------------------------------------------------
    --  RNG

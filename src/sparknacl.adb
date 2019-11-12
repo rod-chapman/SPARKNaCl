@@ -146,15 +146,15 @@ is
    --  POK
    function Equal (X, Y : in Byte_Seq) return Boolean
    is
-      D : Byte := 0;
+      D : Boolean := True;
    begin
-      for I in X'Range loop
-         D := D or (X (I) xor Y (I));
+      for I in N32 range X'Range loop
+         D := D and (X (I) = Y (I));
+         pragma Loop_Invariant
+           (D = (for all J in N32 range X'First .. I => X (J) = Y (J)));
       end loop;
-      --  D = 0         iff X and Y are equal
-      --  D in 1 .. 255 iff X and Y are not equal
 
-      return (D = 0);
+      return D;
    end Equal;
 
    --------------------------------------------------------

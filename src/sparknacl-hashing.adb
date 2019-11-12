@@ -46,7 +46,6 @@ is
       16#4cc5d4becb3e42b6#, 16#597f299cfc657e2a#,
       16#5fcb6fab3ad6faec#, 16#6c44198c4a475817#);
 
-   --  RCC could be a function
    function TS64 (U : in U64) return Bytes_8
      with Global => null;
 

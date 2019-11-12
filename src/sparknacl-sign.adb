@@ -115,7 +115,7 @@ is
 
       for I in reverse U32 range 0 .. 255 loop
          CB   := S (I32 (Shift_Right (I, 3)));
-         Swap := Boolean'Val (Shift_Right (CB, Natural (I and 7)) and 1);
+         Swap := Boolean'Val (Shift_Right (CB, Natural (I and 7)) mod 2);
 
          CSwap (P, Q, Swap);
          Add (P => Q, Q => P);
@@ -211,9 +211,9 @@ is
          for J in I32 range (I - 32) .. (I - 13) loop
             X (J) := X (J) + Carry - 16 * X (I) * L (J - (I - 32)); --  POV * 4
             Carry := ASR_8 (X (J) + 128); --  POV
-            X (J) := X (J) - (Carry * 256); --  POV * 2
+            X (J) := X (J) - (Carry * 256); --  POV on -
          end loop;
-         X (I - 12) := X (I - 12) + Carry; --  POV
+         X (I - 12) := X (I - 12) + Carry; --  POV on +
          X (I) := 0;
       end loop;
       Carry := 0;
@@ -225,20 +225,20 @@ is
       end loop;
 
       for J in Index_32 loop
-         X (J) := X (J) - Carry * L (J); --  POV * 2
+         X (J) := X (J) - Carry * L (J); --  POV on -
       end loop;
 
       --  R is 64 bytes, this this only sets
       --  the first 32...
       for I in Index_32 loop
-         X (I + 1) := X (I + 1) + ASR_8 (X (I)); --  POV
+         X (I + 1) := X (I + 1) + ASR_8 (X (I)); --  POV on RHS 2nd +
          R (I) := Byte (X (I) mod 256);
       end loop;
 
    end ModL;
 
 
-   --  POV
+   --  POK
    procedure Reduce (R : in out Bytes_64)
    is
       X : I64_Seq_64;
@@ -415,7 +415,7 @@ is
       for I in Index_32 loop
          for J in Index_32 loop
             X (I + J) := X (I + J) +
-              I64 (U64 (H (I)) * U64 (D (J))); --  POV on +
+              I64 (U64 (H (I)) * U64 (D (J))); --  POV on RHS +
          end loop;
       end loop;
 

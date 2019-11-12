@@ -40,7 +40,7 @@ is
       for I in reverse U32 range 0 .. 254 loop
          CB := Z2 (I32 (Shift_Right (I, 3)));
          Shift := Natural (I and 7);
-         Swap := Boolean'Val (Shift_Right (CB, Shift) and 1);
+         Swap  := Boolean'Val (Shift_Right (CB, Shift) mod 2);
 
          Utils.Sel_25519 (A2, B, Swap);
          Utils.Sel_25519 (C, D, Swap);

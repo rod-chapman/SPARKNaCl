@@ -1,5 +1,6 @@
 with Ada.Text_IO; use Ada.Text_IO;
 package body SPARKNaCl.Debug
+  with SPARK_Mode => Off
 is
    On : constant Boolean := True;
 
