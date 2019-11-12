@@ -45,11 +45,11 @@ is
          Utils.Sel_25519 (A2, B, Swap);
          Utils.Sel_25519 (C, D, Swap);
 
-         A (E, A2, C);
+         E := A2 + C;
 
          Z (A3, A2, C);
 
-         A (C, B, D);
+         C := B + D;
 
          Z (B2, B, D);
 
@@ -58,14 +58,14 @@ is
 
          M (A2, C, A3);
          M (C, B2, E);
-         A (E, A2, C);
+         E := A2 + C;
 
          Z (A3, A2, C);
          B := Square (A3);
          Z (C, D, F);
 
          M (A2, C, GF_121665);
-         A (A3, A2, D);
+         A3 := A2 + D;
 
          C2 := C;
          M (C, C2, A3);

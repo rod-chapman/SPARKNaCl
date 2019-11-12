@@ -64,29 +64,30 @@ is
                      "M output 3 - limb too large");
    end M;
 
-   procedure A (O    :    out GF;
-                A, B : in     GF)
+   function "+" (Left, Right : in GF) return GF
    is
+      O : GF;
    begin
-      pragma Assert ((for all I in Index_16 => A (I) >= -65535),
-                     "A input A - limb too negative");
-      pragma Assert ((for all I in Index_16 => A (I) <= 131070),
-                     "A input A - limb too big");
+      pragma Assert ((for all I in Index_16 => Left (I) >= -65535),
+                     "+ input Left - limb too negative");
+      pragma Assert ((for all I in Index_16 => Left (I) <= 131070),
+                     "+ input Left - limb too big");
 
-      pragma Assert ((for all I in Index_16 => B (I) >= -65535),
-                     "A input B - limb too negative");
-      pragma Assert ((for all I in Index_16 => B (I) <= 65535),
-                     "A input B - limb too big");
+      pragma Assert ((for all I in Index_16 => Right (I) >= -65535),
+                     "+ input Right - limb too negative");
+      pragma Assert ((for all I in Index_16 => Right (I) <= 65535),
+                     "+ input Right - limb too big");
 
 
       for I in Index_16 loop
-         O (I) := A (I) + B (I); --  POV
+         O (I) := Left (I) + Right (I); --  POV
       end loop;
       pragma Assert ((for all I in Index_16 => O (I) >= -65535),
-                     "A output - limb too negative");
+                     "+ output - limb too negative");
       pragma Assert ((for all I in Index_16 => O (I) <= 196605),
-                     "A output - limb too large");
-   end A;
+                     "+ output - limb too large");
+      return O;
+   end "+";
 
    procedure Z (O    :    out GF;
                 A, B : in     GF)

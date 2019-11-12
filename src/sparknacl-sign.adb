@@ -157,19 +157,19 @@ is
       Z (T, Q (1), Q (0));
       M (A2, A1, T);
 
-      A (B1, P (0), P (1));
-      A (T, Q (0), Q (1));
+      B1 := P (0) + P (1);
+      T  := Q (0) + Q (1);
       M (B2, B1, T);
 
       M (C1, P (3), Q (3));
       M (C2, C1, GF_D2);
       M (D1, P (2), Q (2));
 
-      A (D2, D1, D1);
+      D2 := D1 + D1;
       Z (E, B2, A2);
       Z (F, D2, C2);
-      A (G, D2, C2);
-      A (H, B2, A2);
+      G := D2 + C2; --  RCC ??
+      H := B2 + A2;
 
       M (P (0), E, F);
       M (P (1), H, G);
@@ -314,7 +314,7 @@ is
       R_1_Squared := Square (R (1));
       M (Den0, R_1_Squared, GF_D);
       Z (Num, R_1_Squared, R (2));
-      A (Den1, R (2), Den0);
+      Den1 := R (2) + Den0;
 
       Den2 := Square (Den1);
       Den4 := Square (Den2);

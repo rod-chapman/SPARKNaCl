@@ -196,10 +196,7 @@ private
                 A, B : in     GF)
      with Global => null;
 
-   --  Add
-   --  RCC could be an operator
-   procedure A (O    :    out GF;
-                A, B : in     GF)
+   function "+" (Left, Right : in GF) return GF
      with Global => null;
 
    --  Subtract
