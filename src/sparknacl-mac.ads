@@ -1,6 +1,8 @@
 package SPARKNaCl.MAC
   with SPARK_Mode => On
 is
+   --  Distinct from Bytes_32, but inherits Equal,
+   --  Random_Bytes, and Sanitize primitive operations.
    type Poly_1305_Key is new Bytes_32;
 
    --------------------------------------------------------

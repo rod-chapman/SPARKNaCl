@@ -1,6 +1,7 @@
 package SPARKNaCl.Sign
   with SPARK_Mode => On
 is
+   --  Limited, so no predefined equality or assignment
    type Signing_PK is limited private;
    type Signing_SK is limited private;
 

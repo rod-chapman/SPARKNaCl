@@ -2,6 +2,8 @@ with SPARKNaCl.Core; use SPARKNaCl.Core;
 package SPARKNaCl.Stream
   with SPARK_Mode => On
 is
+   --  Distinct from Bytes_32, but both inherit Equal,
+   --  Random_Bytes, and Sanitize primitive operations.
    type HSalsa20_Nonce is new Bytes_24;
    type Salsa20_Nonce  is new Bytes_8;
 

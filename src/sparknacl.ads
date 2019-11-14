@@ -76,6 +76,7 @@ is
    --  Constant time equality test
    --------------------------------------------------------
 
+   --  Primitive operation of Byte_Seq, so inheritable
    function Equal (X, Y : in Byte_Seq) return Boolean
      with Global => null,
           Pre    => X'First = Y'First and
@@ -87,6 +88,7 @@ is
    --  RNG
    --------------------------------------------------------
 
+   --  Primitive operation of Byte_Seq, so inheritable
    procedure Random_Bytes (R : out Byte_Seq)
      with Global => Random.Entropy;
 
@@ -94,6 +96,7 @@ is
    --  Data sanitization
    --------------------------------------------------------
 
+   --  Primitive operation of Byte_Seq, so inheritable
    procedure Sanitize (R : out Byte_Seq)
      with Global => null;
 
@@ -159,14 +162,12 @@ private
    GF_0      : constant GF := (others => 0);
    GF_1      : constant GF := (1, others => 0);
 
-
+   function To_U64 is new Ada.Unchecked_Conversion (I64, U64);
+   function To_I64 is new Ada.Unchecked_Conversion (U64, I64);
 
    --===============================
    --  Local expression functions
    --===============================
-
-   function To_U64 is new Ada.Unchecked_Conversion (I64, U64);
-   function To_I64 is new Ada.Unchecked_Conversion (U64, I64);
 
    --  returns equivalent of X >> 16 in C, doing an arithmetic
    --  shift right when X is negative

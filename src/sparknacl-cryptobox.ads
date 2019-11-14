@@ -7,6 +7,8 @@ is
    --  Public Key Authenticated Encryption - "Crypto Box" --
    --------------------------------------------------------
 
+   --  Distinct from Bytes_32, but both inherit Equal,
+   --  Random_Bytes, and Sanitize primitive operations.
    type Secret_Key is new Bytes_32;
    type Public_Key is new Bytes_32;
 
