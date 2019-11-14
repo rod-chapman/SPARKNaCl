@@ -22,7 +22,7 @@ is
                            K : in     Salsa20_Key)    --  Key
      with Global => null,
           Pre    => M'First = 0 and
-                    C'First = M'First and
+                    C'First = 0 and
                     C'Last  = M'Last;
 
 
@@ -39,7 +39,7 @@ is
                           K : in     Salsa20_Key)    --  Key
      with Global => null,
           Pre    => M'First = 0 and
-                    C'First = M'First and
+                    C'First = 0 and
                     C'Last  = M'Last;
 
 

@@ -12,13 +12,17 @@ is
                               --  If False then return Stream unmodified
       N     : in     Salsa20_Nonce; --  Nonce
       K     : in     Salsa20_Key)   --  Key
-     with Global => null;
+     with Global => null,
+          Pre    => M'First = 0 and then
+                    C'First = 0 and then
+                    (if Xor_M then (C'Last  = M'Last)) and then
+                    (if not Xor_M then M'Last = 0);
 
    --------------------------------------------------------
    --  Local subprogram bodies
    --------------------------------------------------------
 
-   --  ???
+   --  POK
    procedure Salsa20_Xor_Local
      (C     :    out Byte_Seq;
       M     : in     Byte_Seq;
@@ -27,54 +31,88 @@ is
       N     : in     Salsa20_Nonce; --  Nonce
       K     : in     Salsa20_Key)   --  Key
    is
+      Full_Block_Count : constant I32 := C'Last / 64;
+      subtype Offset_Range is I32 range 0 .. (Full_Block_Count * 64);
+      Offset : Offset_Range;
+
+      Final_Offset : I32;
       Z : Bytes_16;
       X : Bytes_64;
       U : U32;
-      B : I32;
-      C_Offset : I32;
-      M_Offset : I32;
+      B : N64;
    begin
-      B := C'Length; --  PRange?
+      B := C'Length;
       C := (others => 0);
       if B = 0 then
          return;
       end if;
 
-      C_Offset := 0;
-      M_Offset := 0;
+      Offset := 0;
       Z := (others => 0);
       Z (0 .. 7) := Bytes_8 (N);
 
-      while (B >= 64) loop
+      if B >= 64 then
+         loop
+            pragma Loop_Invariant
+              ((B + I64 (Offset) = C'Length) and then
+               (I64 (Offset) <= (C'Length - B)) and then
+               ((C'Length - B) <= I64 (C'Last) - 63));
 
-         Core.Salsa20 (X, Z, K, Sigma);
+            Core.Salsa20 (X, Z, K, Sigma);
 
-         for I in Index_64 loop
-            C (C_Offset + I) := --  POV and PIndex?
-              (if Xor_M then
-                 M (M_Offset + I) else 0) xor X (I); --  POV on + and PIndex?
+            for I in Index_64 loop
+               pragma Loop_Invariant
+                 ((Offset + I) in C'Range and
+                    (if Xor_M then (Offset + I) in M'Range));
+
+               C (Offset + I) :=
+                 (if Xor_M then M (Offset + I) else 0) xor
+                   X (I);
+            end loop;
+
+            U := 1;
+            for I in I32 range 8 .. 15 loop
+               U := U + U32 (Z (I));
+               Z (I) := Byte (U mod 256);
+               U := Shift_Right (U, 8);
+            end loop;
+
+            B := B - 64;
+
+            --  Exit here to prevent subsequent overflow of Offset + 64
+            --  on the final iteration
+            exit when B < 64;
+
+            Offset := Offset + 64;
          end loop;
 
-         U := 1;
-         for I in I32 range 8 .. 15 loop
-            U := U + U32 (Z (I));
-            Z (I) := Byte (U mod 256);
-            U := Shift_Right (U, 8);
-         end loop;
-
-         B := B - 64;
-         C_Offset := C_Offset + 64; --  POV?
-         M_Offset := M_Offset + 64; --  POV?
-
-      end loop;
+         if B > 0 then
+            --  Final block is non-empty but incomplete. It starts
+            --  at Offset C'Length - B
+            Final_Offset := I32 (C'Length - B);
+         else
+            --  B = 0 so final block is empty, so nothing more to do.
+            --  Set Final_Offset here to avoid a data-flow error.
+            Final_Offset := 0;
+         end if;
+      else
+         --  Only a single, incomplete block to process, so it must
+         --  start at Offset 0
+         Final_Offset := 0;
+      end if;
 
       if B > 0 then
          Core.Salsa20 (X, Z, K, Sigma);
 
-         for I in I32 range 0 .. (B - 1) loop
-            C (C_Offset + I) := --  POV on + and PIndex?
+         for I in I32 range 0 .. I32 (B - 1) loop
+            pragma Loop_Invariant
+              ((Final_Offset + I) in C'Range and
+                 (if Xor_M then (Final_Offset + I) in M'Range));
+
+            C (Final_Offset + I) :=
               (if Xor_M then
-                 M (M_Offset + I) else 0) xor X (I); --  POV on + and PIndex?
+              M (Final_Offset + I) else 0) xor
+                X (I);
          end loop;
       end if;
    end Salsa20_Xor_Local;
