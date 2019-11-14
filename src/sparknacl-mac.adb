@@ -14,7 +14,9 @@ is
                           K      : in     Poly_1305_Key)
    is
       S, U           : U32;
-      J, N, M_Offset : I32;
+      J              : Index_17;
+      N              : I64; --  Because M'Length can be > I32'Last
+      M_Offset       : N32;
       X, R, H, C, G  : Poly_1305_F;
 
       procedure Add_1305 (H : in out Poly_1305_F;
@@ -56,7 +58,7 @@ is
             15 => U32 (K (15)) and 15,
             16 => 0);
 
-      N := M'Length; --  PRange?
+      N := M'Length;
       M_Offset := 0;
 
       while (N > 0) loop
@@ -64,14 +66,31 @@ is
          C := (others => 0);
 
          J := 0;
-         while  ((J < 16) and (J < N)) loop
-            C (J) := U32 (M (M_Offset + J)); --  PIndex * 2, POV on +
+
+         pragma Loop_Invariant
+           (N + I64 (M_Offset) = M'Length);
+
+         while  ((J < 16) and (I64 (J) < N)) loop
+            pragma Loop_Invariant
+              (N + I64 (M_Offset) = M'Length and
+                 M_Offset + J in M'Range);
+
+            C (J) := U32 (M (M_Offset + J));
             J := J + 1;
          end loop;
 
          C (J) := 1;
-         M_Offset := M_Offset + J;
-         N := N - J;
+
+
+         N := N - I64 (J);
+         --  If N > 0 now, then there at least one more block to process.
+         --  If N = 0, then this is the final loop iteration, so no need to
+         --  increment M_Offset. This also protects against overflow
+         --  when M'Last is at or near N32'Last
+         if N > 0 then
+            M_Offset := M_Offset + J; -- POV
+         end if;
+
          Add_1305 (H, C);
 
          for I in Index_17 loop
