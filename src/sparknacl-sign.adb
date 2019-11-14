@@ -67,10 +67,12 @@ is
    function Par_25519 (A : in GF) return Bit
      with Global => null;
 
-   procedure ModL (R : in out Bytes_64; -- this is odd!
-                   X : in out I64_Seq_64)
+   --  RCC Make this a function?
+   procedure ModL (R :    out Bytes_32;
+                   X : in     I64_Seq_64)
      with Global => null;
 
+   --  RCC Make this a function from Bytes_64 to Bytes_32?
    procedure Reduce (R : in out Bytes_64)
      with Global => null;
 
@@ -193,46 +195,49 @@ is
       R (31) := R (31) xor (Par_25519 (TX) * 128);
    end Pack;
 
-   procedure ModL (R : in out Bytes_64;
-                   X : in out I64_Seq_64)
+   L : constant I64_Seq_32 := (16#ed#, 16#d3#, 16#f5#, 16#5c#,
+                               16#1a#, 16#63#, 16#12#, 16#58#,
+                               16#d6#, 16#9c#, 16#f7#, 16#a2#,
+                               16#de#, 16#f9#, 16#de#, 16#14#,
+                               16#00#, 16#00#, 16#00#, 16#00#,
+                               16#00#, 16#00#, 16#00#, 16#00#,
+                               16#00#, 16#00#, 16#00#, 16#00#,
+                               16#00#, 16#00#, 16#00#, 16#10#);
+
+   procedure ModL (R :    out Bytes_32;
+                   X : in     I64_Seq_64)
    is
-      L : constant I64_Seq_32 := (16#ed#, 16#d3#, 16#f5#, 16#5c#,
-                                  16#1a#, 16#63#, 16#12#, 16#58#,
-                                  16#d6#, 16#9c#, 16#f7#, 16#a2#,
-                                  16#de#, 16#f9#, 16#de#, 16#14#,
-                                  16#00#, 16#00#, 16#00#, 16#00#,
-                                  16#00#, 16#00#, 16#00#, 16#00#,
-                                  16#00#, 16#00#, 16#00#, 16#00#,
-                                  16#00#, 16#00#, 16#00#, 16#10#);
       Carry : I64;
+      XL    : I64_Seq_64 := X;
    begin
       for I in reverse I32 range 32 .. 63 loop
          Carry := 0;
          for J in I32 range (I - 32) .. (I - 13) loop
-            X (J) := X (J) + Carry - 16 * X (I) * L (J - (I - 32)); --  POV * 4
-            Carry := ASR_8 (X (J) + 128); --  POV
-            X (J) := X (J) - (Carry * 256); --  POV on -
+            XL (J) := XL (J) +
+              Carry - 16 * XL (I) * L (J - (I - 32)); --  POV * 4
+            Carry := ASR_8 (XL (J) + 128); --  POV
+            XL (J) := XL (J) - (Carry * 256); --  POV on -
          end loop;
-         X (I - 12) := X (I - 12) + Carry; --  POV on +
-         X (I) := 0;
+         XL (I - 12) := XL (I - 12) + Carry; --  POV on +
+         XL (I) := 0;
       end loop;
       Carry := 0;
 
       for J in Index_32 loop
-         X (J) := X (J) + (Carry - ASR_4 (X (31)) * L (J)); -- POV * 3
-         Carry := ASR_8 (X (J));
-         X (J) := X (J) mod 256;
+         XL (J) := XL (J) + (Carry - ASR_4 (XL (31)) * L (J)); -- POV * 3
+         Carry := ASR_8 (XL (J));
+         XL (J) := XL (J) mod 256;
       end loop;
 
       for J in Index_32 loop
-         X (J) := X (J) - Carry * L (J); --  POV on -
+         XL (J) := XL (J) - Carry * L (J); --  POV on -
       end loop;
 
       --  R is 64 bytes, this this only sets
       --  the first 32...
       for I in Index_32 loop
-         X (I + 1) := X (I + 1) + ASR_8 (X (I)); --  POV on RHS 2nd +
-         R (I) := Byte (X (I) mod 256);
+         XL (I + 1) := XL (I + 1) + ASR_8 (XL (I)); --  POV on RHS 2nd +
+         R (I) := Byte (XL (I) mod 256);
       end loop;
 
    end ModL;
@@ -247,9 +252,7 @@ is
          X (I) := I64 (R (I));
       end loop;
       R := (others => 0);
-      --  Ineffective assignment to X here expected
-      ModL (R, X);
-      pragma Unreferenced (X);
+      ModL (R (0 .. 31), X);
    end Reduce;
 
 
@@ -419,8 +422,7 @@ is
          end loop;
       end loop;
 
-      ModL (Bytes_64 (SM (32 .. 95)), X); --  PRange? Need pre on range of SM?
-      pragma Unreferenced (X);
+      ModL (Bytes_32 (SM (32 .. 63)), X); --  PRange? Need pre on range of SM?
    end Sign;
 
    --  POK
