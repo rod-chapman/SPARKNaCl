@@ -67,13 +67,12 @@ is
    function Par_25519 (A : in GF) return Bit
      with Global => null;
 
-   --  RCC Make this a function?
-   procedure ModL (R :    out Bytes_32;
-                   X : in     I64_Seq_64)
+   function ModL (X : in I64_Seq_64) return Bytes_32
      with Global => null;
 
-   --  RCC Make this a function from Bytes_64 to Bytes_32?
-   procedure Reduce (R : in out Bytes_64)
+   --  RCC introduces this function to combine Hash and Reduce into
+   --  a single call. Former procedure Reduce removed.
+   function Hash_Reduce (M : in Byte_Seq) return Bytes_32
      with Global => null;
 
    procedure Unpackneg (R  :    out GF_Vector_4;
@@ -204,19 +203,19 @@ is
                                16#00#, 16#00#, 16#00#, 16#00#,
                                16#00#, 16#00#, 16#00#, 16#10#);
 
-   procedure ModL (R :    out Bytes_32;
-                   X : in     I64_Seq_64)
+   function ModL (X : in I64_Seq_64) return Bytes_32
    is
       Carry : I64;
       XL    : I64_Seq_64 := X;
+      R     : Bytes_32;
    begin
       for I in reverse I32 range 32 .. 63 loop
          Carry := 0;
          for J in I32 range (I - 32) .. (I - 13) loop
             XL (J) := XL (J) +
               Carry - 16 * XL (I) * L (J - (I - 32)); --  POV * 4
-            Carry := ASR_8 (XL (J) + 128); --  POV
-            XL (J) := XL (J) - (Carry * 256); --  POV on -
+            Carry := ASR_8 (XL (J) + 128); --  POV on +
+            XL (J) := XL (J) - (Carry * 256); --  POV on - and *
          end loop;
          XL (I - 12) := XL (I - 12) + Carry; --  POV on +
          XL (I) := 0;
@@ -233,27 +232,25 @@ is
          XL (J) := XL (J) - Carry * L (J); --  POV on -
       end loop;
 
-      --  R is 64 bytes, this this only sets
-      --  the first 32...
       for I in Index_32 loop
          XL (I + 1) := XL (I + 1) + ASR_8 (XL (I)); --  POV on RHS 2nd +
          R (I) := Byte (XL (I) mod 256);
       end loop;
-
+      return R;
    end ModL;
 
-
    --  POK
-   procedure Reduce (R : in out Bytes_64)
+   function Hash_Reduce (M : in Byte_Seq) return Bytes_32
    is
+      R : Hashing.Digest;
       X : I64_Seq_64;
    begin
+      Hashing.Hash (R, M);
       for I in Index_64 loop
          X (I) := I64 (R (I));
       end loop;
-      R := (others => 0);
-      ModL (R (0 .. 31), X);
-   end Reduce;
+      return ModL (X);
+   end Hash_Reduce;
 
 
    --  POK
@@ -386,9 +383,10 @@ is
                    M  : in     Byte_Seq;
                    SK : in     Signing_SK)
    is
-      D, H, R : Bytes_64;
-      X       : I64_Seq_64;
-      P       : GF_Vector_4;
+      D    : Bytes_64;
+      H, R : Bytes_32;
+      X    : I64_Seq_64;
+      P    : GF_Vector_4;
    begin
       Hashing.Hash (D, Bytes_32 (SK (0 .. 31)));
       D (0) := D (0) and 248;
@@ -399,16 +397,15 @@ is
       SM (64 .. SM'Last) := M;
       SM (32 .. 63) := D (32 .. 63);
 
-      Hashing.Hash (R, SM (32 .. SM'Last));
+      R := Hash_Reduce (SM (32 .. SM'Last));
 
-      Reduce (R);
+      Scalarbase (P, R);
 
-      Scalarbase (P, R (0 .. 31));
       Pack (SM (0 .. 31), P);
 
       SM (32 .. 63) := Bytes_32 (SK (32 .. 63));
-      Hashing.Hash (H, SM);
-      Reduce (H);
+
+      H := Hash_Reduce (SM);
 
       X := (others => 0);
       for I in Index_32 loop
@@ -417,12 +414,12 @@ is
 
       for I in Index_32 loop
          for J in Index_32 loop
-            X (I + J) := X (I + J) +
-              I64 (U64 (H (I)) * U64 (D (J))); --  POV on RHS +
+            X (I + J) := X (I + J) +  --  POV on RHS +
+              I64 (U64 (H (I)) * U64 (D (J)));
          end loop;
       end loop;
 
-      ModL (Bytes_32 (SM (32 .. 63)), X); --  PRange? Need pre on range of SM?
+      SM (32 .. 63) := ModL (X);
    end Sign;
 
    --  POK
@@ -432,8 +429,7 @@ is
                    SM     : in     Byte_Seq;
                    PK     : in     Signing_PK)
    is
-      T : Bytes_32;
-      H : Bytes_64;
+      H, T : Bytes_32;
       P, Q : GF_Vector_4;
       LN   : I32;
    begin
@@ -453,11 +449,10 @@ is
       M := SM; -- precondition ensures lengths match
       M (32 .. 63) := Bytes_32 (PK);
 
-      Hashing.Hash (H, M);
-      Reduce (H);
+      H := Hash_Reduce (M);
 
       pragma Warnings (Off, "unused assignment to ""Q""");
-      Scalarmult (P, Q, H (0 .. 31));
+      Scalarmult (P, Q, H);
 
       Scalarbase (Q, SM (32 .. 63));
       Add (P, Q);
