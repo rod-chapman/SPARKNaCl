@@ -258,9 +258,6 @@ is
                         OK :    out Boolean;
                         P  : in     Bytes_32)
    is
-      T1, T2, T3, T4, T5, T6, T7, Chk, Chk1, Num,
-      R_1_Squared, Den0, Den1, Den2, Den4, Den6 : GF;
-
       --  Local, time-constant equality test for GF
       --  In the original TweetNaCl sources, this is called eq25519
       function "=" (Left, Right : in GF) return Boolean
@@ -296,53 +293,44 @@ is
          return C;
       end Pow_2523;
 
+      Check : GF;
+
+      R0 : GF;
+      R2 : GF renames GF_1;
+
+      R1          : constant GF := Utils.Unpack_25519 (P);
+      R1_Squared  : constant GF := Square (R1);
+      Num         : constant GF := R1_Squared - R2;
+      Den         : constant GF := R2 + (R1_Squared * GF_D);
+      Den_Power_2 : constant GF := Square (Den);
+      Den_Power_6 : constant GF := Square (Den_Power_2) * Den_Power_2;
+      Num_Den     : constant GF := Num * Den;
    begin
-      R := (0 => GF_0,
-            1 => Utils.Unpack_25519 (P),
-            2 => GF_1,
-            3 => GF_0);
+      R0 :=
+        Pow_2523 ((Den_Power_6 * Num_Den)) * Num_Den * Den_Power_2;
 
-      R_1_Squared := Square (R (1));
-      Den0 := R_1_Squared * GF_D;
-      Num := R_1_Squared - R (2);
-      Den1 := R (2) + Den0;
+      Check := Square (R0) * Den;
 
-      Den2 := Square (Den1);
-      Den4 := Square (Den2);
-
-      Den6 := Den4 * Den2;
-      T1   := Den6 * Num;
-      T2   := T1 * Den1;
-
-      T3 := Pow_2523 (T2);
-
-      T4 := T3 * Num;
-      T5 := T4 * Den1;
-      T6 := T5 * Den1;
-      R (0) := T6 * Den1;
-
-      Chk := Square (R (0));
-      Chk1 := Chk * Den1;
-
-      if Chk1 /= Num then
-         T7 := R (0) * GF_I;
-         R (0) := T7;
+      if Check /= Num then
+         R0 := R0 * GF_I;
       end if;
 
-      Chk := Square (R (0));
-      Chk1 := Chk * Den1;
+      Check := Square (R0) * Den;
 
-      if Chk1 /= Num then
+      if Check /= Num then
+         R  := (others => GF_0);
          OK := False;
          return;
       end if;
 
-      if Par_25519 (R (0)) = (P (31) / 128) then
-         T7 := GF_0 - R (0);
-         R (0) := T7;
+      if Par_25519 (R0) = (P (31) / 128) then
+         R0 := GF_0 - R0;
       end if;
 
-      R (3) := R (0) * R (1);
+      R := (0 => R0,
+            1 => R1,
+            2 => R2,
+            3 => R0 * R1);
       OK := True;
    end Unpackneg;
 
