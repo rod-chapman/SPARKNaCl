@@ -293,22 +293,23 @@ is
          return C;
       end Pow_2523;
 
-      Check : GF;
 
-      R0 : GF;
-      R2 : GF renames GF_1;
-
+      --  Note: refactoring here to functional/SSA form reduces the
+      --  number of calls to "*" from 8 in the original TweetNaCl code
+      --  to 5 from here until the initialization of R0, but only if
+      --  "*" on GF is commutative.
       R1          : constant GF := Utils.Unpack_25519 (P);
+      R2          :          GF renames GF_1;
       R1_Squared  : constant GF := Square (R1);
       Num         : constant GF := R1_Squared - R2;
       Den         : constant GF := R2 + (R1_Squared * GF_D);
       Den_Power_2 : constant GF := Square (Den);
-      Den_Power_6 : constant GF := Square (Den_Power_2) * Den_Power_2;
-      Num_Den     : constant GF := Num * Den;
-   begin
-      R0 :=
-        Pow_2523 ((Den_Power_6 * Num_Den)) * Num_Den * Den_Power_2;
+      Den_Power_4 : constant GF := Square (Den_Power_2);
+      Num_Den2    : constant GF := (Num * Den) * Den_Power_2;
 
+      R0    : GF := Pow_2523 ((Den_Power_4 * Num_Den2)) * Num_Den2;
+      Check : GF;
+   begin
       Check := Square (R0) * Den;
 
       if Check /= Num then
