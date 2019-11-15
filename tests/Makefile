@@ -1,14 +1,14 @@
 all: testdiff
 
-testdiff: new
-	diff ref new
+testdiff: new_test_results
+	diff expected_test_results new_test_results
 
-new: testall
-	./testall >new
+new_test_results: testall
+	./testall >new_test_results
 
 testall: *.adb ../src/*.adb ../src/*.ads
 	gprbuild
 
 clean:
 	gprclean -r
-	rm -f new
+	rm -f new_test_results
