@@ -65,7 +65,7 @@ is
 
    --  POK
    procedure Hashblocks
-     (X : in out Bytes_64; -- 512 bits
+     (X : in out Digest;
       M : in     Byte_Seq)
    is
       Z, B, A : U64_Seq_8;
@@ -226,7 +226,7 @@ is
       16#5b#, 16#e0#, 16#cd#, 16#19#, 16#13#, 16#7e#, 16#21#, 16#79#);
 
    --  POK
-   procedure Hash (Output :    out Bytes_64;
+   procedure Hash (Output :    out Digest;
                    M      : in     Byte_Seq)
    is
       subtype Final_Block_Length is I32 range 0 .. 127;
