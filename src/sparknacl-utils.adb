@@ -25,32 +25,24 @@ is
 
    procedure Car_25519 (O : in out GF)
    is
-      C : I64;
    begin
       --  In SPARK, we unroll the final (I = 15)'th iteration
       --  of this loop below. This removes the need for
       --  a conditional statement or expression inside the loop
-      --  body.
+      --  body. This implementation differs from that in the
+      --  TweetNaCl sources, as suggested by Jason Donenfeld,
+      --  and further simplified by Benoit Viguier as a result
+      --  of formal verification of this algorithm with Coq.
+      --
+      --  This implementation also avoids the use of the <<
+      --  operator on a signed integer which is undefined
+      --  behaviour in C.
       for I in Index_16 range 0 .. 14 loop
-         O (I) := O (I) + 2#1_0000_0000_0000_0000#; --  POV
-         C := ASR_16 (O (I));
-         O (I + 1) := O (I + 1) + C - 1; --  POV on second + and -
-
-         --  The C code here uses (c << 16) which is UNDEFINED
-         --  for negative c according to C standard 6.5.7 (4).
-         --  TweetNaCl appears to depend on this being equivalent
-         --  to sign-preserving multiplication by 65536.
-         pragma Assert (C >= -2**47);
-         pragma Assert (C <= (2**47) - 1);
-
-         O (I) := O (I) - (C * 65536); --  POV on -
+         O (I + 1) := O (I + 1) + ASR_16 (O (I)); --  POV on RHS 2nd +
+         O (I) := O (I) mod 65536;
       end loop;
-
-      --  Final iteration, as would be when I = 15
-      O (15) := O (15) + 2#1_0000_0000_0000_0000#; --  POV
-      C := ASR_16 (O (15));
-      O (0) := O (0) + C - 1 + 37 * (C - 1); --  POV on first 3 ops
-      O (15) := O (15) - (C * 65536); --  POV on -
+      O (0) := O (0) + 38 * ASR_16 (O (15)); --  POV on +
+      O (15) := O (15) mod 65536;
    end Car_25519;
 
 
