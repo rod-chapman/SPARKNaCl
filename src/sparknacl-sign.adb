@@ -44,20 +44,23 @@ is
    --  Local subprogram declarations
    --============================================
 
+   --  RCC - Q appears unref'd on return, so make this a function?
    procedure Scalarmult (P :    out GF_Vector_4;
                          Q : in out GF_Vector_4;
                          S : in     Bytes_32)
      with Global => null;
 
+   --  RCC - make this a function?
    procedure Scalarbase (P :    out GF_Vector_4;
                          S : in     Bytes_32)
      with Global => null;
 
+   --  RCC - make this a function?
    procedure Add (P : in out GF_Vector_4;
                   Q : in     GF_Vector_4)
      with Global => null;
 
-
+   --  RCC - make this a function?
    procedure Pack (R :    out Bytes_32;
                    P : in     GF_Vector_4)
      with Global => null;
