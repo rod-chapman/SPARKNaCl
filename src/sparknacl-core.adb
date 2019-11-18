@@ -71,24 +71,24 @@ is
       --  In C this is a loop, but we unroll and make single
       --  aggregate assignment to initialize the whole of X.
       X := (0  => LD32 (C (0 .. 3)),
-            1  => LD32 (Bytes_4 (K (0 .. 3))),
+            1  => LD32 (Bytes_4 (K.F (0 .. 3))),
             6  => LD32 (Input (0 .. 3)),
-            11 => LD32 (Bytes_4 (K (16 .. 19))),
+            11 => LD32 (Bytes_4 (K.F (16 .. 19))),
 
             5  => LD32 (C (4 .. 7)),
-            2  => LD32 (Bytes_4 (K (4 .. 7))),
+            2  => LD32 (Bytes_4 (K.F (4 .. 7))),
             7  => LD32 (Input (4 .. 7)),
-            12 => LD32 (Bytes_4 (K (20 .. 23))),
+            12 => LD32 (Bytes_4 (K.F (20 .. 23))),
 
             10 => LD32 (C (8 .. 11)),
-            3  => LD32 (Bytes_4 (K (8 .. 11))),
+            3  => LD32 (Bytes_4 (K.F (8 .. 11))),
             8  => LD32 (Input (8 .. 11)),
-            13 => LD32 (Bytes_4 (K (24 .. 27))),
+            13 => LD32 (Bytes_4 (K.F (24 .. 27))),
 
             15 => LD32 (C (12 .. 15)),
-            4  => LD32 (Bytes_4 (K (12 .. 15))),
+            4  => LD32 (Bytes_4 (K.F (12 .. 15))),
             9  => LD32 (Input (12 .. 15)),
-            14 => LD32 (Bytes_4 (K (28 .. 31))));
+            14 => LD32 (Bytes_4 (K.F (28 .. 31))));
 
       Y := X;
 
@@ -114,7 +114,36 @@ is
    end Core_Common;
 
    --------------------------------------------------------
-   --  Salsa20 Core functions
+   --  Exported suprogram bodies
+   --------------------------------------------------------
+
+   function Construct (K : in Bytes_32) return Salsa20_Key
+   is
+   begin
+      return Salsa20_Key'(F => K);
+   end Construct;
+
+   procedure Construct (K :    out Salsa20_Key;
+                        X : in     Bytes_32)
+   is
+   begin
+      K.F := X;
+   end Construct;
+
+   function Serialize (K : in Salsa20_Key) return Bytes_32
+   is
+   begin
+      return K.F;
+   end Serialize;
+
+   procedure Sanitize (K : out Salsa20_Key)
+   is
+   begin
+      Sanitize (K.F);
+   end Sanitize;
+
+   --------------------------------------------------------
+   --  Salsa20 Core subprograms
    --------------------------------------------------------
 
    --  POK

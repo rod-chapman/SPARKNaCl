@@ -21,12 +21,14 @@ is
                        SK : in     Secret_Key)
    is
       S  : Bytes_32;
+      LK : Bytes_32;
    begin
       S := Scalar.Mult (Bytes_32 (SK), Bytes_32 (PK));
-      Core.HSalsa20 (Output => Bytes_32 (K),
+      Core.HSalsa20 (Output => LK,
                      Input  => Zero_Bytes_16,
-                     K      => Core.Salsa20_Key (S),
+                     K      => Core.Construct (S),
                      C      => Sigma);
+      Core.Construct (K, LK);
    end BeforeNM;
 
    --  POK

@@ -6,12 +6,14 @@ with Ada.Text_IO;         use Ada.Text_IO;
 with Interfaces;          use Interfaces;
 procedure Secretbox7
 is
-   K : Core.Salsa20_Key;
-   N : Stream.HSalsa20_Nonce;
+   RK    : Bytes_32;
+   K     : Core.Salsa20_Key;
+   N     : Stream.HSalsa20_Nonce;
    S, S2 : Boolean;
 begin
    for MLen in N32 range 0 .. 999 loop
-      Random_Bytes (Bytes_32 (K));
+      Random_Bytes (RK);
+      Core.Construct (K, RK);
       Random_Bytes (Bytes_24 (N));
       Put ("Secretbox7 - iteration" & MLen'Img);
 

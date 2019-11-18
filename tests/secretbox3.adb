@@ -1,5 +1,5 @@
 with SPARKNaCl;           use SPARKNaCl;
-with SPARKNaCl.Core;
+with SPARKNaCl.Core;      use SPARKNaCl.Core;
 with SPARKNaCl.Debug;     use SPARKNaCl.Debug;
 with SPARKNaCl.Secretbox; use SPARKNaCl.Secretbox;
 with SPARKNaCl.Stream;
@@ -9,10 +9,14 @@ with System.Assertions; use System.Assertions;
 procedure Secretbox3
 is
    Firstkey : constant Core.Salsa20_Key :=
-     (16#1b#, 16#27#, 16#55#, 16#64#, 16#73#, 16#e9#, 16#85#, 16#d4#,
-      16#62#, 16#cd#, 16#51#, 16#19#, 16#7a#, 16#9a#, 16#46#, 16#c7#,
-      16#60#, 16#09#, 16#54#, 16#9e#, 16#ac#, 16#64#, 16#74#, 16#f2#,
-      16#06#, 16#c4#, 16#ee#, 16#08#, 16#44#, 16#f6#, 16#83#, 16#89#);
+     Construct ((16#1b#, 16#27#, 16#55#, 16#64#,
+                 16#73#, 16#e9#, 16#85#, 16#d4#,
+                 16#62#, 16#cd#, 16#51#, 16#19#,
+                 16#7a#, 16#9a#, 16#46#, 16#c7#,
+                 16#60#, 16#09#, 16#54#, 16#9e#,
+                 16#ac#, 16#64#, 16#74#, 16#f2#,
+                 16#06#, 16#c4#, 16#ee#, 16#08#,
+                 16#44#, 16#f6#, 16#83#, 16#89#));
 
    Nonce : constant Stream.HSalsa20_Nonce :=
      (16#69#, 16#69#, 16#6e#, 16#e9#, 16#55#, 16#b6#, 16#2b#, 16#73#,

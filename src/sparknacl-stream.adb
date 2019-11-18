@@ -152,7 +152,7 @@ is
       S : Bytes_32;
    begin
       Core.HSalsa20 (S, Bytes_16 (N (0 .. 15)), K, Sigma);
-      Salsa20 (C, Salsa20_Nonce (N (16 .. 23)), Salsa20_Key (S));
+      Salsa20 (C, Salsa20_Nonce (N (16 .. 23)), Core.Construct (S));
    end HSalsa20;
 
    --  POK
@@ -168,7 +168,7 @@ is
                          M     => M,
                          Xor_M => True,
                          N     => Salsa20_Nonce (N (16 .. 23)),
-                         K     => Salsa20_Key (S));
+                         K     => Core.Construct (S));
    end HSalsa20_Xor;
 
 end SPARKNaCl.Stream;
