@@ -36,7 +36,7 @@ is
 
 private
    --  Note - also limited here in the full view to ensure
-   --  pass-by-reference in the body.
+   --  no assignment and pass-by-reference in the body.
    type Salsa20_Key is limited record
       F : Bytes_32;
    end record;

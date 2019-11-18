@@ -27,7 +27,7 @@ is
          --  All OK
          Stream.HSalsa20_Xor (C, M, N, K);
 
-         K2 := MAC.Poly_1305_Key (C (0 .. 31));
+         MAC.Construct (K2, C (0 .. 31));
 
          declare
             subtype M_Array is Byte_Seq (0 .. (C'Last - 32));
@@ -71,12 +71,13 @@ is
 
          declare
             subtype M_Array is Byte_Seq (0 .. (C'Last - 32));
+            MAC_Key : constant MAC.Poly_1305_Key := MAC.Construct (X);
          begin
             if MAC.Onetimeauth_Verify
               (H => C (16 .. 31),
                --  Slide and slide so that M'First = 0
                M => M_Array (C (32 .. C'Last)),
-               K => MAC.Poly_1305_Key (X))
+               K => MAC_Key)
             then
                --  MAC verifies OK, so decrypt payload
                Stream.HSalsa20_Xor (C => M, M => C, N => N, K => K);

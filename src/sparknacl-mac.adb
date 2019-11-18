@@ -8,6 +8,31 @@ is
    MinusP : constant Poly_1305_F :=
      (5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 252);
 
+   function Construct (K : in Bytes_32) return Poly_1305_Key
+   is
+   begin
+      return Poly_1305_Key'(F => K);
+   end Construct;
+
+   procedure Construct (K :    out Poly_1305_Key;
+                        X : in     Bytes_32)
+   is
+   begin
+      K.F := X;
+   end Construct;
+
+
+   function Serialize (K : in Poly_1305_Key) return Bytes_32
+   is
+   begin
+      return K.F;
+   end Serialize;
+
+   procedure Sanitize (K : out Poly_1305_Key)
+   is
+   begin
+      Sanitize (K.F);
+   end Sanitize;
 
    procedure Onetimeauth (Output :    out Bytes_16;
                           M      : in     Byte_Seq;
@@ -40,22 +65,22 @@ is
       H := (others => 0);
       X := (others => 0);
 
-      R := (0  => U32 (K (0)),
-            1  => U32 (K (1)),
-            2  => U32 (K (2)),
-            3  => U32 (K (3)) and 15,
-            4  => U32 (K (4)) and 252,
-            5  => U32 (K (5)),
-            6  => U32 (K (6)),
-            7  => U32 (K (7)) and 15,
-            8  => U32 (K (8)) and 252,
-            9  => U32 (K (9)),
-            10 => U32 (K (10)),
-            11 => U32 (K (11)) and 15,
-            12 => U32 (K (12)) and 252,
-            13 => U32 (K (13)),
-            14 => U32 (K (14)),
-            15 => U32 (K (15)) and 15,
+      R := (0  => U32 (K.F (0)),
+            1  => U32 (K.F (1)),
+            2  => U32 (K.F (2)),
+            3  => U32 (K.F (3)) and 15,
+            4  => U32 (K.F (4)) and 252,
+            5  => U32 (K.F (5)),
+            6  => U32 (K.F (6)),
+            7  => U32 (K.F (7)) and 15,
+            8  => U32 (K.F (8)) and 252,
+            9  => U32 (K.F (9)),
+            10 => U32 (K.F (10)),
+            11 => U32 (K.F (11)) and 15,
+            12 => U32 (K.F (12)) and 252,
+            13 => U32 (K.F (13)),
+            14 => U32 (K.F (14)),
+            15 => U32 (K.F (15)) and 15,
             16 => 0);
 
       N := M'Length;
@@ -134,10 +159,11 @@ is
          H (P) := H (P) xor (S and (G (P) xor H (P)));
       end loop;
 
-      C := (U32 (K (16)), U32 (K (17)), U32 (K (18)), U32 (K (19)),
-            U32 (K (20)), U32 (K (21)), U32 (K (22)), U32 (K (23)),
-            U32 (K (24)), U32 (K (25)), U32 (K (26)), U32 (K (27)),
-            U32 (K (28)), U32 (K (29)), U32 (K (30)), U32 (K (31)), 0);
+      C := (U32 (K.F (16)), U32 (K.F (17)), U32 (K.F (18)), U32 (K.F (19)),
+            U32 (K.F (20)), U32 (K.F (21)), U32 (K.F (22)), U32 (K.F (23)),
+            U32 (K.F (24)), U32 (K.F (25)), U32 (K.F (26)), U32 (K.F (27)),
+            U32 (K.F (28)), U32 (K.F (29)), U32 (K.F (30)), U32 (K.F (31)),
+            0);
 
       Add_1305 (H, C);
 

@@ -6,12 +6,13 @@ with Interfaces;      use Interfaces;
 with Ada.Numerics.Discrete_Random;
 procedure Onetimeauth7
 is
-   K : Poly_1305_Key;
-   A : Bytes_16;
    package RB is new Ada.Numerics.Discrete_Random (Byte);
    package RBI16 is new Ada.Numerics.Discrete_Random (Index_16);
    RBG    : RB.Generator;
    RBI16G : RBI16.Generator;
+   Raw_K  : Bytes_32;
+   K      : Poly_1305_Key;
+   A      : Bytes_16;
 begin
    RB.Reset (RBG);
    RBI16.Reset (RBI16G);
@@ -29,7 +30,8 @@ begin
       begin
          RCI.Reset (RCIG);
          Random_Bytes (C);
-         Random_Bytes (K);
+         Random_Bytes (Raw_K);
+         Construct (K, Raw_K);
          Onetimeauth (A, C, K);
          if not Onetimeauth_Verify (A, C, K) then
             DH ("Fail ", I64 (I));
