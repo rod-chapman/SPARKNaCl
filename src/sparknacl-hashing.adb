@@ -78,36 +78,30 @@ is
                      C : in Natural) return U64
         renames Rotate_Right;
 
-      --  RCC replace formals with globals?
       function Ch (X, Y, Z : in U64) return U64
       is ((X and Y) xor ((not X) and Z))
         with Global => null;
 
-      --  RCC replace formals with globals?
       function Maj (X, Y, Z : in U64) return U64
       is ((X and Y) xor (X and Z) xor (Y and Z))
         with Global => null;
 
       --  Sigma0 with an upper-case S!
-      --  RCC replace formals with globals?
       function UC_Sigma0 (X : in U64) return U64
       is (RR64 (X, 28) xor RR64 (X, 34) xor RR64 (X, 39))
         with Global => null;
 
       --  Sigma1 with an upper-case S!
-      --  RCC replace formals with globals?
       function UC_Sigma1 (X : in U64) return U64
       is (RR64 (X, 14) xor RR64 (X, 18) xor RR64 (X, 41))
         with Global => null;
 
       --  sigma0 with a lower-case s!
-      --  RCC replace formals with globals?
       function LC_Sigma0 (X : in U64) return U64
       is (RR64 (X, 1) xor RR64 (X, 8) xor Shift_Right (X, 7))
         with Global => null;
 
       --  sigma1 with a lower-case s!
-      --  RCC replace formals with globals?
       function LC_Sigma1 (X : in U64) return U64
       is (RR64 (X, 19) xor RR64 (X, 61) xor Shift_Right (X, 6))
         with Global => null;
