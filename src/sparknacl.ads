@@ -136,8 +136,6 @@ private
    subtype U64_Seq_16 is U64_Seq (Index_16);
    subtype U64_Seq_8  is U64_Seq (Index_8);
 
-   type GF_Vector_4 is array (Index_4) of GF;
-
    --  Local types for expressing a "Normalized" GF with
    --  all limbs in the range 0 .. 65535
    --

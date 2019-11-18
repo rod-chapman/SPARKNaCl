@@ -41,8 +41,15 @@ is
 
 
    --============================================
-   --  Local subprogram declarations
+   --  Local types and subprogram declarations
    --============================================
+
+   type GF_Vector_4 is array (Index_4) of GF;
+
+   --  Replaces function "add" in the TweetNaCl sources
+   function "+" (Left  : in GF_Vector_4;
+                 Right : in GF_Vector_4) return GF_Vector_4
+     with Global => null;
 
    --  RCC - Q appears unref'd on return, so make this a function?
    procedure Scalarmult (P :    out GF_Vector_4;
@@ -53,11 +60,6 @@ is
    --  RCC - make this a function?
    procedure Scalarbase (P :    out GF_Vector_4;
                          S : in     Bytes_32)
-     with Global => null;
-
-   --  RCC - make this a function?
-   procedure Add (P : in out GF_Vector_4;
-                  Q : in     GF_Vector_4)
      with Global => null;
 
    --  RCC - make this a function?
@@ -88,13 +90,38 @@ is
    --============================================
 
    --  POK
+   function "+" (Left  : in GF_Vector_4;
+                 Right : in GF_Vector_4) return GF_Vector_4
+   is
+      A, B, C, D, E, F, G, H, T : GF;
+   begin
+      A := (Left (1) - Left (0)) * (Right (1) - Right (0));
+
+      B := (Left (0) + Left (1)) * (Right (0) + Right (1));
+
+      C := (Left (3) * Right (3)) * GF_D2;
+
+      T := Left (2) * Right (2);
+      D := T + T;
+
+      E  := B - A;
+      F  := D - C;
+      G  := D + C;
+      H  := B + A;
+
+      return GF_Vector_4'(0 => E * F,
+                          1 => H * G,
+                          2 => G * F,
+                          3 => E * H);
+   end "+";
+
+   --  POK
    procedure Scalarmult (P :    out GF_Vector_4;
                          Q : in out GF_Vector_4;
                          S : in     Bytes_32)
    is
       CB   : Byte;
       Swap : Boolean;
-      P2   : GF_Vector_4;
 
       --  RCC Remove formals for globals?
       procedure CSwap (P, Q : in out GF_Vector_4;
@@ -122,9 +149,10 @@ is
          Swap := Boolean'Val (Shift_Right (CB, Natural (I and 7)) mod 2);
 
          CSwap (P, Q, Swap);
-         Add (P => Q, Q => P);
-         P2 := P;
-         Add (P, P2);
+
+         --  Note user-defined "+" for GF_Vector_4 called here
+         Q := Q + P;
+         P := P + P;
          CSwap (P, Q, Swap);
       end loop;
 
@@ -148,32 +176,6 @@ is
       pragma Unreferenced (Q);
    end Scalarbase;
 
-
-   --  POK
-   procedure Add (P : in out GF_Vector_4;
-                  Q : in     GF_Vector_4)
-   is
-      A, B, C, D, E, F, G, H, T : GF;
-   begin
-      A := (P (1) - P (0)) * (Q (1) - Q (0));
-
-      B := (P (0) + P (1)) * (Q (0) + Q (1));
-
-      C := (P (3) * Q (3)) * GF_D2;
-
-      T := P (2) * Q (2);
-      D := T + T;
-
-      E  := B - A;
-      F  := D - C;
-      G  := D + C;
-      H  := B + A;
-
-      P := (0 => E * F,
-            1 => H * G,
-            2 => G * F,
-            3 => E * H);
-   end Add;
 
    --  POK
    function Par_25519 (A : in GF) return Bit
@@ -474,7 +476,10 @@ is
       Scalarmult (P, Q, H);
 
       Scalarbase (Q, SM (32 .. 63));
-      Add (P, Q);
+
+      --  Call to user-defined "+" for GF_Vector_4
+      P := P + Q;
+
       Pack (T, P);
 
       LN := I32 (I64 (SM'Length) - 64);
