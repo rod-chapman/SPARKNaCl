@@ -96,9 +96,16 @@ is
    --  Data sanitization
    --------------------------------------------------------
 
-   --  Primitive operation of Byte_Seq, so inheritable
+   --  Primitive operation of Byte_Seq, so inheritable.
+   --  In their "Volatiles are mis-compiled..." paper,
+   --  Regehr et al. recommend that calls to such subprograms
+   --  should never be in-lined as a way to prevent
+   --  the incorrect optimization (to nothing) of such a call,
+   --  so we apply No_Inline here.
    procedure Sanitize (R : out Byte_Seq)
-     with Global => null;
+     with Global => null,
+          No_Inline;
+
 
 private
    --==============================================
