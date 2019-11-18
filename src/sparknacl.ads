@@ -102,6 +102,7 @@ is
    --  should never be in-lined as a way to prevent
    --  the incorrect optimization (to nothing) of such a call,
    --  so we apply No_Inline here.
+   pragma Warnings (GNATProve, Off, "No_Inline");
    procedure Sanitize (R : out Byte_Seq)
      with Global => null,
           No_Inline;
