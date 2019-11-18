@@ -1,7 +1,8 @@
 package SPARKNaCl.Sign
   with SPARK_Mode => On
 is
-   --  Limited, so no predefined equality or assignment
+   --  Limited, so no assignment or comparison, and always
+   --  pass-by-reference.
    type Signing_PK is limited private;
    type Signing_SK is limited private;
 
@@ -12,6 +13,18 @@ is
    procedure Keypair (PK : out Signing_PK;
                       SK : out Signing_SK)
      with Global => Random.Entropy;
+
+   function Serialize (K : in Signing_SK) return Bytes_64
+     with Global => null;
+
+   function Serialize (K : in Signing_PK) return Bytes_32
+     with Global => null;
+
+   procedure Sanitize (K : out Signing_PK)
+     with Global => null;
+
+   procedure Sanitize (K : out Signing_SK)
+     with Global => null;
 
 
    procedure Sign (SM :    out Byte_Seq;
@@ -36,14 +49,17 @@ is
                  SM'Last   = M'Last and
                  SM'Length >= 64;
 
-   procedure Sanitize (R : out Signing_PK)
-     with Global => null;
-
-   procedure Sanitize (R : out Signing_SK)
-     with Global => null;
-
 private
-   type Signing_PK is new Bytes_32;
-   type Signing_SK is new Bytes_64;
+
+   --  Note - also limited types here in the full view to ensure
+   --  no assignment and pass-by-reference in the body.
+   type Signing_PK is limited record
+      F : Bytes_32;
+   end record;
+
+   type Signing_SK is limited record
+      F : Bytes_64;
+   end record;
+
 
 end SPARKNaCl.Sign;

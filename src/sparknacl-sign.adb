@@ -341,6 +341,33 @@ is
    --  Exported subprogram bodies
    --============================================
 
+   function Serialize (K : in Signing_SK) return Bytes_64
+   is
+   begin
+      return K.F;
+   end Serialize;
+
+   function Serialize (K : in Signing_PK) return Bytes_32
+   is
+   begin
+      return K.F;
+   end Serialize;
+
+   procedure Sanitize (K : out Signing_PK)
+   is
+   begin
+      SPARKNaCl.Sanitize (K.F);
+   end Sanitize;
+
+   procedure Sanitize (K : out Signing_SK)
+   is
+   begin
+      SPARKNaCl.Sanitize (K.F);
+   end Sanitize;
+
+
+
+
    --  POK
    procedure Keypair (PK : out Signing_PK;
                       SK : out Signing_SK)
@@ -363,8 +390,8 @@ is
 
       LSK (32 .. 63) := LPK;
 
-      PK := Signing_PK (LPK);
-      SK := Signing_SK (LSK);
+      PK.F := LPK;
+      SK.F := LSK;
       --  RCC - Sanitize all local vars here?
    end Keypair;
 
@@ -377,7 +404,7 @@ is
       X    : I64_Seq_64;
       P    : GF_Vector_4;
    begin
-      Hashing.Hash (D, Bytes_32 (SK (0 .. 31)));
+      Hashing.Hash (D, Serialize (SK) (0 .. 31));
       D (0) := D (0) and 248;
       D (31) := D (31) and 127;
       D (31) := D (31) or 64;
@@ -392,7 +419,7 @@ is
 
       Pack (SM (0 .. 31), P);
 
-      SM (32 .. 63) := Bytes_32 (SK (32 .. 63));
+      SM (32 .. 63) := Serialize (SK) (32 .. 63);
 
       H := Hash_Reduce (SM);
 
@@ -429,14 +456,14 @@ is
          return;
       end if;
 
-      Unpackneg (Q, Status, Bytes_32 (PK));
+      Unpackneg (Q, Status, Serialize (PK));
       if not Status then
          M := (others => 0);
          return;
       end if;
 
       M := SM; -- precondition ensures lengths match
-      M (32 .. 63) := Bytes_32 (PK);
+      M (32 .. 63) := Serialize (PK);
 
       H := Hash_Reduce (M);
 
@@ -460,17 +487,5 @@ is
       Status := True;
       return;
    end Open;
-
-   procedure Sanitize (R : out Signing_PK)
-   is
-   begin
-      SPARKNaCl.Sanitize (Bytes_32 (R));
-   end Sanitize;
-
-   procedure Sanitize (R : out Signing_SK)
-   is
-   begin
-      SPARKNaCl.Sanitize (Bytes_64 (R));
-   end Sanitize;
 
 end SPARKNaCl.Sign;
