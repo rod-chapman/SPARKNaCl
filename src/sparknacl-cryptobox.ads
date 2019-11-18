@@ -7,10 +7,10 @@ is
    --  Public Key Authenticated Encryption - "Crypto Box" --
    --------------------------------------------------------
 
-   --  Distinct from Bytes_32, but both inherit Equal,
-   --  Random_Bytes, and Sanitize primitive operations.
-   type Secret_Key is new Bytes_32;
-   type Public_Key is new Bytes_32;
+   --  Limited, so no assignment or comparison, and always
+   --  pass-by-reference.
+   type Secret_Key is limited private;
+   type Public_Key is limited private;
 
    Plaintext_Zero_Bytes  : constant := 32;
    Ciphertext_Zero_Bytes : constant := 16;
@@ -19,6 +19,25 @@ is
    procedure Keypair (PK : out Public_Key;
                       SK : out Secret_Key)
      with Global => Random.Entropy;
+
+   function Construct (K : in Bytes_32) return Secret_Key
+     with Global => null;
+
+   function Construct (K : in Bytes_32) return Public_Key
+     with Global => null;
+
+   function Serialize (K : in Secret_Key) return Bytes_32
+     with Global => null;
+
+   function Serialize (K : in Public_Key) return Bytes_32
+     with Global => null;
+
+   --  Sanitization
+   procedure Sanitize (K : out Secret_Key)
+     with Global => null;
+
+   procedure Sanitize (K : out Public_Key)
+     with Global => null;
 
    --  Precomputation
    procedure BeforeNM (K  :    out Core.Salsa20_Key;
@@ -87,4 +106,14 @@ is
                     Equal (C (0 .. 15), Zero_Bytes_16),
           Post   => Equal (M (0 .. 31), Zero_Bytes_32);
 
+private
+   --  Note - also limited types here in the full view to ensure
+   --  no assignment and pass-by-reference in the body.
+   type Secret_Key is limited record
+      F : Bytes_32;
+   end record;
+
+   type Public_Key is limited record
+      F : Bytes_32;
+   end record;
 end SPARKNaCl.Cryptobox;

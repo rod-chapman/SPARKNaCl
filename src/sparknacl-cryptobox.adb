@@ -5,15 +5,57 @@ with SPARKNaCl.Secretbox;
 package body SPARKNaCl.Cryptobox
   with SPARK_Mode => On
 is
-
    --  POK
    procedure Keypair (PK : out Public_Key;
                       SK : out Secret_Key)
    is
+      Raw_SK : constant Bytes_32 := Utils.Random_Bytes_32;
    begin
-      SK := Secret_Key (Utils.Random_Bytes_32);
-      PK := Public_Key (Scalar.Mult_Base (Bytes_32 (SK)));
+      SK.F := Raw_SK;
+      PK.F := Scalar.Mult_Base (Raw_SK);
    end Keypair;
+
+   --  POK
+   function Construct (K : in Bytes_32) return Secret_Key
+   is
+   begin
+      return Secret_Key'(F => K);
+   end Construct;
+
+   --  POK
+   function Construct (K : in Bytes_32) return Public_Key
+   is
+   begin
+      return Public_Key'(F => K);
+   end Construct;
+
+   --  POK
+   function Serialize (K : in Secret_Key) return Bytes_32
+   is
+   begin
+      return K.F;
+   end Serialize;
+
+   --  POK
+   function Serialize (K : in Public_Key) return Bytes_32
+   is
+   begin
+      return K.F;
+   end Serialize;
+
+   --  POK
+   procedure Sanitize (K : out Secret_Key)
+   is
+   begin
+      Sanitize (K.F);
+   end Sanitize;
+
+   --  POK
+   procedure Sanitize (K : out Public_Key)
+   is
+   begin
+      Sanitize (K.F);
+   end Sanitize;
 
    --  POK
    procedure BeforeNM (K  :    out Core.Salsa20_Key;
@@ -23,7 +65,7 @@ is
       S  : Bytes_32;
       LK : Bytes_32;
    begin
-      S := Scalar.Mult (Bytes_32 (SK), Bytes_32 (PK));
+      S := Scalar.Mult (SK.F, PK.F);
       Core.HSalsa20 (Output => LK,
                      Input  => Zero_Bytes_16,
                      K      => Core.Construct (S),

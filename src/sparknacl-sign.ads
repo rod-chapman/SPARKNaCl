@@ -50,7 +50,6 @@ is
                  SM'Length >= 64;
 
 private
-
    --  Note - also limited types here in the full view to ensure
    --  no assignment and pass-by-reference in the body.
    type Signing_PK is limited record
@@ -60,6 +59,4 @@ private
    type Signing_SK is limited record
       F : Bytes_64;
    end record;
-
-
 end SPARKNaCl.Sign;
