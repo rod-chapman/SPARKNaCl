@@ -256,4 +256,12 @@ is
       Output := H;
    end Hash;
 
+   function Hash (M : in Byte_Seq) return Digest
+   is
+      R : Digest;
+   begin
+      Hash (R, M);
+      return R;
+   end Hash;
+
 end SPARKNaCl.Hashing;

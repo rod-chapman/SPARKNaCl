@@ -21,6 +21,7 @@ begin
    Hash (R1, M4);
    DH ("Hash is", R1);
 
-   Hash (R1, M5);
+   --  Functional style interface
+   R1 := Hash (M5);
    DH ("Hash is", R1);
 end Hash;
