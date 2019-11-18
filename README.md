@@ -9,7 +9,7 @@ An incomplete list of ideas:
 
 2. Strengthen types in sparknacl.ads - for example use different named types for each distinct flavour of key and nonce to prevent them being confused. (Done 12/11/19)
 
-3. Use limited-private, volatile types for keys and nonces, and provide an explicit "Sanitize" procedure for them.
+3. Use limited-private, volatile types for keys and nonces, and provide an explicit "Sanitize" procedure for them. (Done 18/11/19)
 
 4. Split into one child package for each major functional area, so SPARKNaCl.Secret_Box.Open instead of SPARKNaCl.Crypto_Secretbox_Open for example. (Done 6/11/2019)
 
