@@ -28,7 +28,7 @@ is
                            16#6666#, 16#6666#, 16#6666#, 16#6666#,
                            16#6666#, 16#6666#, 16#6666#, 16#6666#);
 
-   --  RCC adds this
+   --  RCC adds constant GF_XY
    GF_XY : constant GF := (16#DD90#, 16#A5B7#, 16#8AB3#, 16#6DDE#,
                            16#52F5#, 16#7751#, 16#9F80#, 16#20F0#,
                            16#E37D#, 16#64AB#, 16#4E8E#, 16#66EA#,
@@ -39,32 +39,35 @@ is
                            16#d130#, 16#eef3#, 16#80f2#, 16#198e#,
                            16#fce7#, 16#56df#, 16#d9dc#, 16#2406#);
 
+   --  Original TweetNaCl code computes Q(3) by multiplying GF_X by GF_Y,
+   --  but this is a constant (now called GF_XY), so that's used below.
+   --
+   --  We make this constant library-level to ensure that its declaration
+   --  is only elaborated exactly once.
+   type GF_Vector_4 is array (Index_4) of GF;
+
+   Scalarbase_Q : constant GF_Vector_4 := (0 => GF_X,
+                                           1 => GF_Y,
+                                           2 => GF_1,
+                                           3 => GF_XY);
 
    --============================================
    --  Local types and subprogram declarations
    --============================================
-
-   type GF_Vector_4 is array (Index_4) of GF;
 
    --  Replaces function "add" in the TweetNaCl sources
    function "+" (Left  : in GF_Vector_4;
                  Right : in GF_Vector_4) return GF_Vector_4
      with Global => null;
 
-   --  RCC - Q appears unref'd on return, so make this a function?
-   procedure Scalarmult (P :    out GF_Vector_4;
-                         Q : in out GF_Vector_4;
-                         S : in     Bytes_32)
+   function Scalarmult (Q : in GF_Vector_4;
+                        S : in Bytes_32) return GF_Vector_4
      with Global => null;
 
-   --  RCC - make this a function?
-   procedure Scalarbase (P :    out GF_Vector_4;
-                         S : in     Bytes_32)
+   function Scalarbase (S : in Bytes_32) return GF_Vector_4
      with Global => null;
 
-   --  RCC - make this a function?
-   procedure Pack (R :    out Bytes_32;
-                   P : in     GF_Vector_4)
+   function Pack (P : in GF_Vector_4) return Bytes_32
      with Global => null;
 
    subtype Bit is Byte range 0 .. 1;
@@ -115,13 +118,12 @@ is
                           3 => E * H);
    end "+";
 
-   --  POK
-   procedure Scalarmult (P :    out GF_Vector_4;
-                         Q : in out GF_Vector_4;
-                         S : in     Bytes_32)
+   function Scalarmult (Q : in GF_Vector_4;
+                        S : in Bytes_32) return GF_Vector_4
    is
-      CB   : Byte;
-      Swap : Boolean;
+      CB     : Byte;
+      Swap   : Boolean;
+      LP, LQ : GF_Vector_4;
 
       --  RCC Remove formals for globals?
       procedure CSwap (P, Q : in out GF_Vector_4;
@@ -139,43 +141,34 @@ is
       end CSwap;
 
    begin
-      P := (0 => GF_0,
-            1 => GF_1,
-            2 => GF_1,
-            3 => GF_0);
+      LP := (0 => GF_0,
+             1 => GF_1,
+             2 => GF_1,
+             3 => GF_0);
+      LQ := Q;
 
       for I in reverse U32 range 0 .. 255 loop
          CB   := S (I32 (Shift_Right (I, 3)));
          Swap := Boolean'Val (Shift_Right (CB, Natural (I and 7)) mod 2);
 
-         CSwap (P, Q, Swap);
+         CSwap (LP, LQ, Swap);
 
          --  Note user-defined "+" for GF_Vector_4 called here
-         Q := Q + P;
-         P := P + P;
-         CSwap (P, Q, Swap);
+         LQ := LQ + LP;
+         LP := LP + LP;
+         CSwap (LP, LQ, Swap);
       end loop;
 
+      return LP;
    end Scalarmult;
 
+
    --  POK
-   procedure Scalarbase (P :    out GF_Vector_4;
-                         S : in     Bytes_32)
+   function Scalarbase (S : in Bytes_32) return GF_Vector_4
    is
-      Q : GF_Vector_4;
    begin
-      --  Original TweetNaCl code computes Q(3) by multiplying GF_X by GF_Y,
-      --  but this is a constant (now called GF_XY), so that's used below.
-      Q := (0 => GF_X,
-            1 => GF_Y,
-            2 => GF_1,
-            3 => GF_XY);
-
-      Scalarmult (P, Q, S);
-
-      pragma Unreferenced (Q);
+      return Scalarmult (Scalarbase_Q, S);
    end Scalarbase;
-
 
    --  POK
    function Par_25519 (A : in GF) return Bit
@@ -187,16 +180,17 @@ is
    end Par_25519;
 
    --  POK
-   procedure Pack (R :    out Bytes_32;
-                   P : in     GF_Vector_4)
+   function Pack (P : in GF_Vector_4) return Bytes_32
    is
       TX, TY, ZI : GF;
+      R : Bytes_32;
    begin
       ZI := Utils.Inv_25519 (P (2));
       TX := P (0) * ZI;
       TY := P (1) * ZI;
       R := Utils.Pack_25519 (TY);
       R (31) := R (31) xor (Par_25519 (TX) * 128);
+      return R;
    end Pack;
 
    L : constant I64_Seq_32 := (16#ed#, 16#d3#, 16#f5#, 16#5c#,
@@ -378,25 +372,19 @@ is
                       SK : out Signing_SK)
    is
       D   : Bytes_64;
-      P   : GF_Vector_4;
-      LSK : Bytes_64;
       LPK : Bytes_32;
+      RB  : Bytes_32;
    begin
-      LSK := (others => 0);
-      LSK (0 .. 31) := Utils.Random_Bytes_32;
+      RB  := Utils.Random_Bytes_32;
 
-      Hashing.Hash (D, LSK (0 .. 31));
+      Hashing.Hash (D, RB);
       D (0)  := D (0) and 248;
-      D (31) := D (31) and 127;
-      D (31) := D (31) or 64;
+      D (31) := (D (31) and 127) or 64;
 
-      Scalarbase (P, D (0 .. 31));
-      Pack (LPK, P);
-
-      LSK (32 .. 63) := LPK;
+      LPK := Pack (Scalarbase (D (0 .. 31)));
 
       PK.F := LPK;
-      SK.F := LSK;
+      SK.F := RB & LPK;
       --  RCC - Sanitize all local vars here?
    end Keypair;
 
@@ -407,7 +395,6 @@ is
       D    : Bytes_64;
       H, R : Bytes_32;
       X    : I64_Seq_64;
-      P    : GF_Vector_4;
    begin
       Hashing.Hash (D, Serialize (SK) (0 .. 31));
       D (0) := D (0) and 248;
@@ -420,9 +407,7 @@ is
 
       R := Hash_Reduce (SM (32 .. SM'Last));
 
-      Scalarbase (P, R);
-
-      Pack (SM (0 .. 31), P);
+      SM (0 .. 31) := Pack (Scalarbase (R));
 
       SM (32 .. 63) := Serialize (SK) (32 .. 63);
 
@@ -450,7 +435,7 @@ is
                    SM     : in     Byte_Seq;
                    PK     : in     Signing_PK)
    is
-      H, T : Bytes_32;
+      T    : Bytes_32;
       P, Q : GF_Vector_4;
       LN   : I32;
    begin
@@ -470,25 +455,18 @@ is
       M := SM; -- precondition ensures lengths match
       M (32 .. 63) := Serialize (PK);
 
-      H := Hash_Reduce (M);
-
-      pragma Warnings (Off, "unused assignment to ""Q""");
-      Scalarmult (P, Q, H);
-
-      Scalarbase (Q, SM (32 .. 63));
-
+      P := Scalarmult (Q, Hash_Reduce (M));
+      Q := Scalarbase (SM (32 .. 63));
       --  Call to user-defined "+" for GF_Vector_4
-      P := P + Q;
-
-      Pack (T, P);
-
-      LN := I32 (I64 (SM'Length) - 64);
+      T := Pack (P + Q);
 
       if not Equal (SM (0 .. 31), T) then
          M := (others => 0);
          Status := False;
          return;
       end if;
+
+      LN := I32 (I64 (SM'Length) - 64);
 
       M (0 .. LN - 1) := SM (64 .. LN + 63);
       MLen := LN;
