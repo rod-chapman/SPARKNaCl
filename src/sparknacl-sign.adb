@@ -4,9 +4,9 @@ package body SPARKNaCl.Sign
   with SPARK_Mode => On
 is
 
-   --===================
-   --  Local constants
-   --===================
+   --============================================
+   --  Local constants and types
+   --============================================
 
    GF_D  : constant GF := (16#78a3#, 16#1359#, 16#4dca#, 16#75eb#,
                            16#d8ab#, 16#4141#, 16#0a4d#, 16#0070#,
@@ -52,7 +52,7 @@ is
                                            3 => GF_XY);
 
    --============================================
-   --  Local types and subprogram declarations
+   --  Local subprogram declarations
    --============================================
 
    --  Replaces function "add" in the TweetNaCl sources
@@ -385,7 +385,15 @@ is
 
       PK.F := LPK;
       SK.F := RB & LPK;
-      --  RCC - Sanitize all local vars here?
+
+      --  Sanitize intermediate values used in key generation
+      pragma Warnings (GNATProve, Off, "statement has no effect");
+      Sanitize (RB);
+      Sanitize (D);
+      Sanitize (LPK);
+      pragma Unreferenced (RB);
+      pragma Unreferenced (D);
+      pragma Unreferenced (LPK);
    end Keypair;
 
    procedure Sign (SM :    out Byte_Seq;
@@ -397,7 +405,7 @@ is
       X    : I64_Seq_64;
    begin
       Hashing.Hash (D, Serialize (SK) (0 .. 31));
-      D (0) := D (0) and 248;
+      D (0)  := D (0) and 248;
       D (31) := D (31) and 127;
       D (31) := D (31) or 64;
 
@@ -426,6 +434,9 @@ is
       end loop;
 
       SM (32 .. 63) := ModL (X);
+
+      --  RCC - Sanitize D, H, R and X here? Not clear if these values
+      --  are sensitive.
    end Sign;
 
    --  POK
@@ -471,7 +482,9 @@ is
       M (0 .. LN - 1) := SM (64 .. LN + 63);
       MLen := LN;
       Status := True;
-      return;
+
+      --  RCC - Sanitize D, H, R and X here? Not clear if these values
+      --  are sensitive.
    end Open;
 
 end SPARKNaCl.Sign;

@@ -9,10 +9,14 @@ is
    procedure Keypair (PK : out Public_Key;
                       SK : out Secret_Key)
    is
-      Raw_SK : constant Bytes_32 := Utils.Random_Bytes_32;
+      Raw_SK : Bytes_32 := Utils.Random_Bytes_32;
    begin
       SK.F := Raw_SK;
       PK.F := Scalar.Mult_Base (Raw_SK);
+
+      pragma Warnings (GNATProve, Off, "statement has no effect");
+      Sanitize (Raw_SK);
+      pragma Unreferenced (Raw_SK);
    end Keypair;
 
    --  POK
@@ -71,6 +75,9 @@ is
                      K      => Core.Construct (S),
                      C      => Sigma);
       Core.Construct (K, LK);
+
+      --  RCC - Sanitize S and LK here? Not clear if these values are
+      --  sensitive.
    end BeforeNM;
 
    --  POK
@@ -108,6 +115,9 @@ is
    begin
       BeforeNM (K, Recipient_PK, Sender_SK);
       AfterNM (C, Status, M, N, K);
+
+      --  RCC - Sanitize K here? Not clear if this value is
+      --  sensitive.
    end Create;
 
    --  POK
@@ -122,6 +132,9 @@ is
    begin
       BeforeNM (K, Sender_PK, Recipient_SK);
       Open_AfterNM (M, Status, C, N, K);
+
+      --  RCC - Sanitize K here? Not clear if this value is
+      --  sensitive.
    end Open;
 
 end SPARKNaCl.Cryptobox;

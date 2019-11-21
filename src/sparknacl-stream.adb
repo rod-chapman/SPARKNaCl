@@ -115,6 +115,9 @@ is
                 X (I);
          end loop;
       end if;
+
+      --  RCC - Sanitize Z and X here? Not clear if these values are
+      --  sensitive.
    end Salsa20_Xor_Local;
 
    --------------------------------------------------------
@@ -153,6 +156,9 @@ is
    begin
       Core.HSalsa20 (S, Bytes_16 (N (0 .. 15)), K, Sigma);
       Salsa20 (C, Salsa20_Nonce (N (16 .. 23)), Core.Construct (S));
+
+      --  RCC - Sanitize S here? Not clear if this value is
+      --  sensitive.
    end HSalsa20;
 
    --  POK
@@ -169,6 +175,9 @@ is
                          Xor_M => True,
                          N     => Salsa20_Nonce (N (16 .. 23)),
                          K     => Core.Construct (S));
+
+      --  RCC - Sanitize S here? Not clear if this value is
+      --  sensitive.
    end HSalsa20_Xor;
 
 end SPARKNaCl.Stream;
