@@ -7,6 +7,9 @@ all: build
 build: $(SPARK_Bodies) $(Non_SPARK_Bodies) *.ads
 	gprbuild
 
+zfp: $(SPARK_Bodies) $(Non_SPARK_Bodies) *.ads
+	gprbuild -Xbuild=zfp
+
 flow: $(SPARK_Bodies)
 	gnatprove -Psparknacl --mode=flow --report=fail -u $(SPARK_Bodies)
 
@@ -18,3 +21,6 @@ proof: $(SPARK_Bodies)
 
 proofall: $(SPARK_Bodies)
 	gnatprove -Psparknacl --report=all -u $(SPARK_Bodies)
+
+clean:
+	gprclean -Psparknacl

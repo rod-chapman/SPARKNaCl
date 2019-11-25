@@ -2,20 +2,24 @@ project SPARKNaCl_Common is
 
    for Languages use ("Ada");
 
-   type Build_Type is ("debug", "fast");
+   type Build_Type is ("debug", "fast", "zfp");
 
    Build : Build_Type := external("build", "debug");
 
-   Cargs := ("-gnatwa", "-gnaty", "-gnata");
+   Cargs := ("-gnatwa", "-gnaty");
 
    for Source_Files use ();
+
+   for Runtime ("Ada") use "native";
 
    package Compiler is
       case Build is
          when "debug" =>
-            for Default_Switches ("Ada") use Cargs & ("-g", "-gnato", "-O0");
+            for Default_Switches ("Ada") use Cargs & ("-g", "-gnato", "-O0", "-gnata");
          when "fast" =>
             for Default_Switches ("Ada") use Cargs & ("-gnatp", "-O3");
+         when "zfp" =>
+            for Default_Switches ("Ada") use Cargs & ("-gnatp", "-O2");
       end case;
 
    end Compiler;
@@ -37,6 +41,8 @@ project SPARKNaCl_Common is
             for Switches ("ada") use Cargs & ("-g", "-s");
          when "fast" =>
             for Switches ("ada") use Cargs & ("-s");
+         when "zfp" =>
+            for Switches ("ada") use Cargs & ("-s");
       end case;
    end Builder;
 
@@ -49,6 +55,8 @@ project SPARKNaCl_Common is
          when "debug" =>
             for Switches ("ada") use Cargs & ("-g");
          when "fast" =>
+            for Switches ("ada") use Cargs & ("");
+         when "zfp" =>
             for Switches ("ada") use Cargs & ("");
       end case;
    end Linker;
