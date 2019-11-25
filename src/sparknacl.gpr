@@ -5,6 +5,16 @@ library project SPARKNaCl is
    for Object_Dir use ".";
    for Library_Dir use "../lib";
 
+   case SPARKNaCl_Common.Build is
+      when "debug" =>
+         for Runtime ("Ada") use "native";
+      when "fast" =>
+         for Runtime ("Ada") use "native";
+      when "zfp" =>
+         for Runtime ("Ada") use "zfp";
+         for Excluded_Source_Files use ("sparknacl-debug.ads", "sparknacl-debug.adb");
+   end case;
+
    package Compiler is
       for Default_Switches ("Ada") use
          SPARKNaCl_Common.Compiler'Default_Switches ("Ada");
