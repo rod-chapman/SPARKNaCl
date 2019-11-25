@@ -5,7 +5,6 @@ pragma Restrictions (No_Delay);
 pragma Restrictions (No_Dispatch);
 pragma Restrictions (No_Dispatching_Calls);
 pragma Restrictions (No_Enumeration_Maps);
-pragma Restrictions (No_Exception_Registration);
 pragma Restrictions (No_Finalization);
 pragma Restrictions (No_Fixed_Point);
 pragma Restrictions (No_Floating_Point);
