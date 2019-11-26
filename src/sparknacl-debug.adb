@@ -47,8 +47,9 @@ is
          for I in D'Range loop
             I64IO.Put (D (I), Width => 0);
             Put (' ');
+            I64IO.Put (D (I), Width => 0, Base => 16);
+            New_Line;
          end loop;
-         New_Line;
       end if;
    end DH;
 
