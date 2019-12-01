@@ -1,3 +1,4 @@
+--  with SPARKNaCl.Debug;
 package body SPARKNaCl.Utils
   with SPARK_Mode => On
 is
@@ -22,9 +23,12 @@ is
       end loop;
    end Sel_25519;
 
-
    procedure Car_25519 (O : in out GF)
    is
+      subtype LSB_Adjustment is I64 range -1 .. (2**20 + 20);
+      subtype Carry_Adjustment is I64 range -1 .. (38 * 2**20);
+      LSBA : LSB_Adjustment;
+      Carry : Carry_Adjustment;
    begin
       --  In SPARK, we unroll the final (I = 15)'th iteration
       --  of this loop below. This removes the need for
@@ -37,14 +41,59 @@ is
       --  This implementation also avoids the use of the <<
       --  operator on a signed integer which is undefined
       --  behaviour in C.
+
+--      Debug.DH ("Into Car, O is ", O);
+
       for I in Index_16 range 0 .. 14 loop
-         O (I + 1) := O (I + 1) + ASR_16 (O (I)); --  POV on RHS 2nd +
+         Carry := ASR_16 (O (I));
+--         Debug.DH ("Carry is ", Carry);
+--         Debug.DHH ("O (I + 1) is ", O (I + 1));
+--         Debug.DHH ("Carry is ", Carry);
+
+         --  O (15) in 0 .. (16*MGFLP + Carry'Last)
+         O (I + 1) := O (I + 1) + Carry; --  POV on RHS 2nd +
+
          O (I) := O (I) mod 65536;
       end loop;
-      O (0) := O (0) + 38 * ASR_16 (O (15)); --  POV on +
+
+--      Debug.DH ("O (15) is ", O (15));
+--      Debug.DHH ("O (15) is ", O (15));
+
+      LSBA := ASR_16 (O (15));
+
+--      Debug.DH ("LSBA is ", LSBA);
+--      Debug.DHH ("LSBA is ", LSBA);
+
+--      Debug.DH ("O (0) is ", O (0));
+--      Debug.DHH ("O (0) is ", O (0));
+
+      O (0) := O (0) + 38 * LSBA; --  0 .. 39_846_648
+
+--      Debug.DH ("Final O (0) is ", O (0));
+--      Debug.DHH ("Final O (0) is ", O (0));
+
       O (15) := O (15) mod 65536;
    end Car_25519;
 
+   function Car_Any_To_Seminormal (X : in Unnormalized_GF_Product)
+                                  return Seminormal_GF
+   is
+      R : GF;
+   begin
+      R := X;
+      Car_25519 (R);
+      return Seminormal_GF (R);
+   end Car_Any_To_Seminormal;
+
+   function Car_Seminormal_To_Normal (X : in Unnormalized_GF_Product)
+                                     return Seminormal_GF
+   is
+      R : GF;
+   begin
+      R := X;
+      Car_25519 (R);
+      return Normal_GF (R);
+   end Car_Seminormal_To_Normal;
 
    --  P?
    function Pack_25519 (N : in GF) return Bytes_32

@@ -7,17 +7,18 @@ is
    is
       A, B, C : GF;
    begin
-      Put_Line ("Car_Stress case 1 - 0 * 0");
+      Put_Line ("GF_Stress case 1 - 0 * 0");
       A := (others => 0);
       B := (others => 0);
       C := A * B;
       Debug.DH ("Result is", C);
 
-      Put_Line ("Car_Stress case 2 - FFFF * FFFF");
+      Put_Line ("GF_Stress case 2 - FFFF * FFFF");
       A := (others => 16#FFFF#);
       B := (others => 16#FFFF#);
       C := A * B;
       Debug.DH ("Result is", C);
+
    end GF_Stress;
 
    procedure Car_Stress
@@ -38,11 +39,11 @@ is
       Utils.Car_25519 (A);
       Debug.DH ("A2 is", A);
 
-      B := (others => -65535);
-      Debug.DH ("B is", B);
-      Utils.Car_25519 (B);
-      Debug.DH ("B1 is", B);
-      Utils.Car_25519 (B);
-      Debug.DH ("B2 is", B);
+--      B := (others => -65535);
+--      Debug.DH ("B is", B);
+--      Utils.Car_25519 (B);
+--      Debug.DH ("B1 is", B);
+--      Utils.Car_25519 (B);
+--      Debug.DH ("B2 is", B);
    end Car_Stress;
 end SPARKNaCl.Tests;

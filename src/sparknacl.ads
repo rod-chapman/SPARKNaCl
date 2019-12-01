@@ -59,7 +59,49 @@ is
    subtype Index_64 is I32 range 0 .. 63;
 
    type I64_Seq  is array (N32 range <>) of I64;
-   subtype GF         is I64_Seq (Index_16);
+
+
+   --  In multlying two normalized GFs, a simple product of
+   --  two limbs is bounded to 65535**2. This comes up in
+   --  predicates and subtypes below, so a named number here
+   --  is called for.  The name "MGFLP" is short for
+   --  "Maximum GF Limb Product"
+   MGFLP : constant := 65535 * 65535;
+
+
+   --  RCC Justify 571 here!
+   --  During a subtraction of a GF, a limb can also reach -65535,
+   --  but this can be rounded down to -65536 by addition of a -1 carry
+   --  in Car_25519, so...
+   subtype GF_Any_Limb        is I64 range -65536 .. (571 * MGFLP);
+
+   subtype GF_Seminormal_Limb is I64 range    -37 .. 39_847_219;  -- Explain
+
+   subtype GF_Normal_Limb     is I64 range      0 .. 65535;
+
+   type GF is array (Index_16) of GF_Any_Limb;
+
+   --  In a "Seminornal" GF, limbs 1 through 15 are "normal", but
+   --  Limb 0 is a GF_Seminormal_Limb
+   subtype Seminormal_GF is GF
+     with Dynamic_Predicate =>
+       (Seminormal_GF (0) in GF_Seminormal_Limb and
+         (for all I in Index_16 range 1 .. 15 =>
+           Seminormal_GF (I) in GF_Normal_Limb));
+
+   subtype Normal_GF is GF
+     with Dynamic_Predicate =>
+       (for all I in Index_16 => Normal_GF (I) in GF_Normal_Limb);
+
+   --  A GF which is the result of multiplying two other Normalized GFs,
+   --  but BEFORE normalization is applied has the following bounds on
+   --  its coefficients
+   subtype Unnormalized_GF_Product is GF
+     with Dynamic_Predicate =>
+       (for all I in Index_16 =>
+         Unnormalized_GF_Product (I) >= 0 and
+         Unnormalized_GF_Product (I) <=
+           (571 - 37 * GF_Any_Limb (I)) * MGFLP);
 
    subtype Bytes_8  is Byte_Seq (Index_8);
    subtype Bytes_16 is Byte_Seq (Index_16);
@@ -206,16 +248,31 @@ private
    --  algorithm where it is needed.
    function "=" (Left, Right : in GF) return Boolean is abstract;
 
-   function "*" (Left, Right : in GF) return GF
-     with Global => null;
-
    function "+" (Left, Right : in GF) return GF
-     with Global => null;
+     with Global => null,
+          Pre => (for all I in Index_16 => (Left (I)  in GF_Normal_Limb and
+                                            Right (I) in GF_Normal_Limb)),
+          Post => (for all I in Index_16 =>
+                      ("+"'Result (I) in GF_Normal_Limb));
 
    function "-" (Left, Right : in GF) return GF
-     with Global => null;
+     with Global => null,
+          Pre => (for all I in Index_16 => (Left (I)  in GF_Normal_Limb and
+                                            Right (I) in GF_Normal_Limb)),
+          Post => (for all I in Index_16 =>
+                      ("-"'Result (I) in GF_Normal_Limb));
+
+   function "*" (Left, Right : in Normal_GF) return Normal_GF
+     with Global => null,
+          Pre => (for all I in Index_16 => (Left (I)  in GF_Normal_Limb and
+                                            Right (I) in GF_Normal_Limb)),
+          Post => (for all I in Index_16 =>
+                      ("*"'Result (I) in GF_Normal_Limb));
 
    function Square (A : in GF) return GF
-     with Global => null;
+     with Global => null,
+          Pre => (for all I in Index_16 => (A (I)  in GF_Normal_Limb)),
+          Post => (for all I in Index_16 =>
+                      (Square'Result (I) in GF_Normal_Limb));
 
 end SPARKNaCl;
