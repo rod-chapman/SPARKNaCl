@@ -1,5 +1,5 @@
 with SPARKNaCl.Utils;
-with SPARKNaCl.Debug;
+--  with SPARKNaCl.Debug;
 package body SPARKNaCl
   with SPARK_Mode => On
 is
@@ -55,6 +55,7 @@ is
          for J in Index_16 loop
             T (I + J) := T (I + J) + (Left (I) * Right (J));
 
+            --  RCC explain this invariant
             pragma Loop_Invariant
               (
                --  Lower bound
@@ -89,11 +90,13 @@ is
 
          end loop;
 
+         --  Substituting J = 15 into the nested invariant above,
+         --  and eliminating quantifiers with null ranges yields:
          pragma Loop_Invariant
            (
             --  Lower bound
             (for all K in Index_31 => T (K) >= 0) and
-
+            --  Upper bounds
             (for all K in Index_31 range 0 .. (I - 1)   =>
                T (K) <= (I64 (K + 1) * MGFLP)) and
             (for all K in Index_31 range I .. 15        =>
@@ -105,6 +108,8 @@ is
            );
       end loop;
 
+      --  Substituting I = 15 into the outer loop invariant above,
+      --  and eliminating quantifiers with null ranges yields:
       pragma Assert
         (
          --  Lower bound
@@ -125,26 +130,18 @@ is
            (
             (for all J in Index_15 range 0 .. I =>
                TF (J) = T (J) + 38 * T (J + 16))
-            and
+            and then
             (for all J in Index_15 range I + 1 .. 14 =>
                TF (J) = 0)
-            and
+            and then
               TF (15) = T (15)
+            and then
+              --  Force the subtype predicate check here
+              TF in Unnormalized_GF_Product
            );
       end loop;
 
-      --  Combining the effects of adding T(J) + 38 * T (J + 16)
-      --  with the upper bounds from the Assert above, T (0)
-      --  has the largest upper bounds of (1 + 38 * 15) * MGFLP = 571 * MGFLP
-      --
-      --  The upper bound on T (1), T (2) ... T (I) and so on reduce by
-      --  37 * MGFLP for each increasing value of I, so...
-      pragma Assert
-        (for all I in Index_16 =>
-           TF (I) >= 0 and
-           TF (I) <= (571 - 37 * GF_Any_Limb (I)) * MGFLP);
-
-      return Utils.Car_Seminormal_To_Normal -- Proof predicate check * 2?
+      return Utils.Car_Seminormal_To_Normal
         (Utils.Car_Any_To_Seminormal (TF));
    end "*";
 

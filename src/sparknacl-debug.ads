@@ -2,7 +2,7 @@ package SPARKNaCl.Debug
   with SPARK_Mode => On
 is
    procedure DH  (S : in String; D : in Byte_Seq);
-   procedure DH  (S : in String; D : in GF);
+--   procedure DH  (S : in String; D : in GF);
    procedure DH  (S : in String; D : in Boolean);
 
    procedure DH  (S : in String; D : in I64);

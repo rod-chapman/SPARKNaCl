@@ -61,48 +61,6 @@ is
    type I64_Seq  is array (N32 range <>) of I64;
 
 
-   --  In multlying two normalized GFs, a simple product of
-   --  two limbs is bounded to 65535**2. This comes up in
-   --  predicates and subtypes below, so a named number here
-   --  is called for.  The name "MGFLP" is short for
-   --  "Maximum GF Limb Product"
-   MGFLP : constant := 65535 * 65535;
-
-
-   --  RCC Justify 571 here!
-   --  During a subtraction of a GF, a limb can also reach -65535,
-   --  but this can be rounded down to -65536 by addition of a -1 carry
-   --  in Car_25519, so...
-   subtype GF_Any_Limb        is I64 range -65536 .. (571 * MGFLP);
-
-   subtype GF_Seminormal_Limb is I64 range    -37 .. 39_847_219;  -- Explain
-
-   subtype GF_Normal_Limb     is I64 range      0 .. 65535;
-
-   type GF is array (Index_16) of GF_Any_Limb;
-
-   --  In a "Seminornal" GF, limbs 1 through 15 are "normal", but
-   --  Limb 0 is a GF_Seminormal_Limb
-   subtype Seminormal_GF is GF
-     with Dynamic_Predicate =>
-       (Seminormal_GF (0) in GF_Seminormal_Limb and
-         (for all I in Index_16 range 1 .. 15 =>
-           Seminormal_GF (I) in GF_Normal_Limb));
-
-   subtype Normal_GF is GF
-     with Dynamic_Predicate =>
-       (for all I in Index_16 => Normal_GF (I) in GF_Normal_Limb);
-
-   --  A GF which is the result of multiplying two other Normalized GFs,
-   --  but BEFORE normalization is applied has the following bounds on
-   --  its coefficients
-   subtype Unnormalized_GF_Product is GF
-     with Dynamic_Predicate =>
-       (for all I in Index_16 =>
-         Unnormalized_GF_Product (I) >= 0 and
-         Unnormalized_GF_Product (I) <=
-           (571 - 37 * GF_Any_Limb (I)) * MGFLP);
-
    subtype Bytes_8  is Byte_Seq (Index_8);
    subtype Bytes_16 is Byte_Seq (Index_16);
    subtype Bytes_24 is Byte_Seq (Index_24);
@@ -207,8 +165,84 @@ private
       14 => Character'Pos (' '),
       15 => Character'Pos ('k'));
 
-   GF_0      : constant GF := (others => 0);
-   GF_1      : constant GF := (1, others => 0);
+
+
+   --  In multlying two normalized GFs, a simple product of
+   --  two limbs is bounded to 65535**2. This comes up in
+   --  predicates and subtypes below, so a named number here
+   --  is called for.  The name "MGFLP" is short for
+   --  "Maximum GF Limb Product"
+   MGFLP : constant := 65535 * 65535;
+
+
+   -------------------------------------------------------------------------
+   --  Bounds on All GF Limbs
+   --
+   --  In the most general case, we define GF_Any_Limb so it can take
+   --  on the value of any GF limb at any point including intermediate
+   --  values inside the "*", "-" and "+" operations.
+   --
+   --  Lower bound on GF_Any_Limb
+   --
+   --  During a subtraction of a GF, a limb can also reach -65535,
+   --  but this can be rounded down to -65536 by addition of a -1 carry
+   --  in Car_25519, so the lower bound is -65536
+   --
+   --  Upper bound on GF_Any_Limb
+   --
+   --  During the "reduction modulo 2**255-19" phase of the "*"
+   --  operation, each limb GF (I) is added to 38 * GF (I + 16)
+   --  The worst-case upper bound of this result is when I = 0,
+   --  where I (0) has upper bound MGFLP an I (16) has upper bound
+   --  15 * MGFLP.
+   --
+   --  Therefore the upper bound of Any_GF_Limb is
+   --   (38 * 15 + 1) * MGFLP = 571 * MGFLP
+   -------------------------------------------------------------------------
+
+   --  "Maximum GF Limb Coefficient"
+   MGFLC : constant := (38 * 15) + 1;
+
+   subtype GF_Any_Limb        is I64 range -65536 .. (MGFLC * MGFLP);
+
+   type GF is array (Index_16) of GF_Any_Limb;
+
+   --  RCC Justification required here of the lower and upper bounds
+   subtype GF_Seminormal_Limb is I64 range    -37 .. 39_847_219;
+
+   subtype GF_Normal_Limb     is I64 range      0 .. 65535;
+
+   --  In a "Seminornal" GF, limbs 1 through 15 are "normal", but
+   --  Limb 0 is a GF_Seminormal_Limb
+   subtype Seminormal_GF is GF
+     with Dynamic_Predicate =>
+       (Seminormal_GF (0) in GF_Seminormal_Limb and
+         (for all I in Index_16 range 1 .. 15 =>
+           Seminormal_GF (I) in GF_Normal_Limb));
+
+   subtype Normal_GF is GF
+     with Dynamic_Predicate =>
+       (for all I in Index_16 => Normal_GF (I) in GF_Normal_Limb);
+
+   --  A GF which is the result of multiplying two other Normalized GFs,
+   --  but BEFORE normalization is applied has the following bounds on
+   --  its coefficients. The upperbound on Unnormalized_GF_Product (0) is
+   --  MGFLC * MGFLP as above, but the upper bound reduces by 37 * MGFLP
+   --  for each element I+1 onwards...
+   --
+   --  Lower-bound here is 0 since "*" always takes Normal_GF
+   --  parameters, so an intermediate limb can never be negative.
+   subtype Unnormalized_GF_Product is GF
+     with Dynamic_Predicate =>
+       (for all I in Index_16 =>
+         Unnormalized_GF_Product (I) >= 0 and
+         Unnormalized_GF_Product (I) <=
+           (MGFLC - 37 * GF_Any_Limb (I)) * MGFLP);
+
+
+   GF_0      : constant Normal_GF := (others => 0);
+   GF_1      : constant Normal_GF := (1, others => 0);
+
 
    function To_U64 is new Ada.Unchecked_Conversion (I64, U64);
    function To_I64 is new Ada.Unchecked_Conversion (U64, I64);

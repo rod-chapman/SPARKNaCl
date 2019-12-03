@@ -21,8 +21,8 @@ is
                                   return Seminormal_GF
      with Global => null;
 
-   function Car_Seminormal_To_Normal (X : in Unnormalized_GF_Product)
-                                  return Seminormal_GF
+   function Car_Seminormal_To_Normal (X : in Seminormal_GF)
+                                  return Normal_GF
      with Global => null;
 
    --  Constant time conditional swap of P and Q.
