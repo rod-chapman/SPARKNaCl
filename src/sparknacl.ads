@@ -137,14 +137,6 @@ private
    subtype U64_Seq_16 is U64_Seq (Index_16);
    subtype U64_Seq_8  is U64_Seq (Index_8);
 
-   --  Local types for expressing a "Normalized" GF with
-   --  all limbs in the range 0 .. 65535
-   --
-   --   subtype GF_Limb is I64 range 0 .. 65535;
-   --   type GF_Normalized is new GF
-   --     with Dynamic_Predicate => (for all I in Index_16 =>
-   --                                  GF_Normalized (I) in GF_Limb);
-
    --  Constant Sigma used for initialization of Core Salsa20
    --  function in both Stream and Cryptobox packages
    Sigma : constant Bytes_16 :=
@@ -207,8 +199,24 @@ private
 
    type GF is array (Index_16) of GF_Any_Limb;
 
+   --  In a "+" operation, intermediate result limbs peak at +131070, so
+   subtype GF_Summation_Limb is I64 range 0 .. 131070;
+
+   subtype Summation_GF is GF
+     with Dynamic_Predicate =>
+       (for all I in Index_16 => Summation_GF (I) in GF_Summation_Limb);
+
+
+   --  In a "-" operation, intermediate result limbs are in -65535 .. 65535
+   subtype GF_Difference_Limb is I64 range -65535 .. 65535;
+   subtype Difference_GF is GF
+     with Dynamic_Predicate =>
+       (for all I in Index_16 => Difference_GF (I) in GF_Difference_Limb);
+
+
+
    --  RCC Justification required here of the lower and upper bounds
-   subtype GF_Seminormal_Limb is I64 range    -37 .. 39_847_219;
+   subtype GF_Seminormal_Limb is I64 range    -38 .. 39_847_219;
 
    subtype GF_Normal_Limb     is I64 range      0 .. 65535;
 
@@ -280,33 +288,18 @@ private
    --
    --  See Sign.Unpackneg.Eq_25519 which declares a time-constant
    --  algorithm where it is needed.
-   function "=" (Left, Right : in GF) return Boolean is abstract;
+--   function "=" (Left, Right : in GF) return Boolean is abstract;
 
-   function "+" (Left, Right : in GF) return GF
-     with Global => null,
-          Pre => (for all I in Index_16 => (Left (I)  in GF_Normal_Limb and
-                                            Right (I) in GF_Normal_Limb)),
-          Post => (for all I in Index_16 =>
-                      ("+"'Result (I) in GF_Normal_Limb));
+   function "+" (Left, Right : in Normal_GF) return Normal_GF
+     with Global => null;
 
-   function "-" (Left, Right : in GF) return GF
-     with Global => null,
-          Pre => (for all I in Index_16 => (Left (I)  in GF_Normal_Limb and
-                                            Right (I) in GF_Normal_Limb)),
-          Post => (for all I in Index_16 =>
-                      ("-"'Result (I) in GF_Normal_Limb));
+   function "-" (Left, Right : in Normal_GF) return Normal_GF
+     with Global => null;
 
    function "*" (Left, Right : in Normal_GF) return Normal_GF
-     with Global => null,
-          Pre => (for all I in Index_16 => (Left (I)  in GF_Normal_Limb and
-                                            Right (I) in GF_Normal_Limb)),
-          Post => (for all I in Index_16 =>
-                      ("*"'Result (I) in GF_Normal_Limb));
+     with Global => null;
 
-   function Square (A : in GF) return GF
-     with Global => null,
-          Pre => (for all I in Index_16 => (A (I)  in GF_Normal_Limb)),
-          Post => (for all I in Index_16 =>
-                      (Square'Result (I) in GF_Normal_Limb));
+   function Square (A : in Normal_GF) return Normal_GF
+     with Global => null;
 
 end SPARKNaCl;

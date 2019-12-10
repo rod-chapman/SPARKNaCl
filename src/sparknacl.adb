@@ -7,40 +7,32 @@ is
    --  Local subprogram bodies
    --===============================
 
-   function "+" (Left, Right : in GF) return GF
+   function "+" (Left, Right : in Normal_GF) return Normal_GF
    is
-      O : GF := (others => 0);
+      O  : Summation_GF := (others => 0);
    begin
       for I in Index_16 loop
          O (I) := Left (I) + Right (I);
          pragma Loop_Invariant
-           (for all J in Index_16 range 0 .. I => (O (J) >= 0 and
-                                                   O (J) <= 131070));
+           (for all J in Index_16 range 0 .. I => O (J) in GF_Summation_Limb);
       end loop;
 
-      --  RCC why 2 calls here?
-      Utils.Car_25519 (O);
-      Utils.Car_25519 (O);
-
-      return O;
+      return Utils.Car_Seminormal_To_Normal
+        (Utils.Car_Summation_To_Seminormal (O));
    end "+";
 
-   function "-" (Left, Right : in GF) return GF
+   function "-" (Left, Right : in Normal_GF) return Normal_GF
    is
-      O : GF := (others => 0);
+      O : Difference_GF := (others => 0);
    begin
       for I in Index_16 loop
          O (I) := Left (I) - Right (I);
          pragma Loop_Invariant
-           (for all J in Index_16 range 0 .. I => (O (J) >= -65535 and
-                                                   O (J) <= 65535));
+           (for all J in Index_16 range 0 .. I => O (J) in GF_Difference_Limb);
       end loop;
 
-      --  RCC why 2 calls here?
-      Utils.Car_25519 (O);
-      Utils.Car_25519 (O);
-
-      return O;
+      return Utils.Car_Seminormal_To_Normal
+        (Utils.Car_Difference_To_Seminormal (O));
    end "-";
 
    function "*" (Left, Right : in Normal_GF) return Normal_GF
@@ -146,22 +138,10 @@ is
    end "*";
 
    --  POK
-   function Square (A : in GF) return GF
+   function Square (A : in Normal_GF) return Normal_GF
    is
-      O : GF;
    begin
-      pragma Assert ((for all I in Index_16 => A (I) >= 0),
-                     "S input A - limb too negative");
-      pragma Assert ((for all I in Index_16 => A (I) <= 65535),
-                     "S input A - limb too big");
-
-      O := A * A;
-
-      pragma Assert ((for all I in Index_16 => O (I) >= 0),
-                     "S output - limb too negative");
-      pragma Assert ((for all I in Index_16 => O (I) <= 65535),
-                     "S output - limb too large");
-      return O;
+      return A * A;
    end Square;
 
    --===============================
