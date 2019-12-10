@@ -21,6 +21,14 @@ is
                                   return Seminormal_GF
      with Global => null;
 
+   function Car_Summation_To_Seminormal (X : in Summation_GF)
+                                        return Seminormal_GF
+     with Global => null;
+
+   function Car_Difference_To_Seminormal (X : in Difference_GF)
+                                        return Seminormal_GF
+     with Global => null;
+
    function Car_Seminormal_To_Normal (X : in Seminormal_GF)
                                   return Normal_GF
      with Global => null;
