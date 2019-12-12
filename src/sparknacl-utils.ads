@@ -39,6 +39,8 @@ is
                         Swap : in     Boolean)
      with Global => null;
 
+   --  Reduces N modulo (2**255 - 19) then packs the
+   --  value into 32 bytes little-endian.
    function Pack_25519 (N : in GF) return Bytes_32
      with Global => null;
 
