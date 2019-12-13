@@ -19,6 +19,7 @@ is
       for I in Index_16 loop
          T := C and (To_U64 (P (I)) xor To_U64 (Q (I)));
 
+
          --  Case 1:
          --   Swap -> C = 16#FFFF....# -> T = P(I) xor Q (I) ->
          --   P (I) xor T = Q (I) and
@@ -28,9 +29,39 @@ is
          --   not Swap -> C = 0 -> T = 0 ->
          --   P (I) xor T = P (I) and
          --   Q (I) xor T = Q (I)
+         pragma Assert
+           ((if Swap then
+              (T = (To_U64 (P (I)) xor To_U64 (Q (I))) and then
+               (To_U64 (P (I)) xor T) = To_U64 (Q (I)) and then
+               (To_U64 (Q (I)) xor T) = To_U64 (P (I)))
+             else
+              (T = 0 and then
+               (To_U64 (P (I)) xor T) = To_U64 (P (I)) and then
+               (To_U64 (Q (I)) xor T) = To_U64 (Q (I))))
+           );
+
+         --  This Assume seems to make no differnce...
+         pragma Assume
+           (To_I64 (To_U64 (P (I)) xor T)'Valid and
+            To_I64 (To_U64 (Q (I)) xor T)'Valid);
+
+         --  "range Check might fail here" - why?
          P (I) := To_I64 (To_U64 (P (I)) xor T);
+         --  Ditto
          Q (I) := To_I64 (To_U64 (Q (I)) xor T);
+
+         pragma Loop_Invariant
+           (if Swap then
+              (for all J in Index_16 range 0 .. I =>
+                   (P (J) = Q'Loop_Entry (J) and
+                    Q (J) = P'Loop_Entry (J)))
+            else
+              (for all J in Index_16 range 0 .. I =>
+                   (P (J) = P'Loop_Entry (J) and
+                    Q (J) = Q'Loop_Entry (J)))
+           );
       end loop;
+
    end Sel_25519;
 
    procedure Car_25519 (O : in out GF)

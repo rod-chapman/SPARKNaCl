@@ -37,7 +37,9 @@ is
    procedure Sel_25519 (P    : in out GF;
                         Q    : in out GF;
                         Swap : in     Boolean)
-     with Global => null;
+     with Global => null,
+          Contract_Cases => (Swap     => (P = Q'Old and Q = P'Old),
+                             not Swap => (P = P'Old and Q = Q'Old));
 
    --  Reduces N modulo (2**255 - 19) then packs the
    --  value into 32 bytes little-endian.
