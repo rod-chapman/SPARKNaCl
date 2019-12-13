@@ -15,39 +15,38 @@ is
    is
       T : U64;
       C : constant U64 := Bit_To_Swapmask (Swap);
+
+      --  Do NOT try to evaluate the assumption below at run-time
+      pragma Assertion_Policy (Assume => Ignore);
    begin
+      --  We need this axiom
+      pragma Assume
+        (for all K in I64 => To_I64 (To_U64 (K)) = K);
+
       for I in Index_16 loop
          T := C and (To_U64 (P (I)) xor To_U64 (Q (I)));
 
-
-         --  Case 1:
+         --  Case 1 - "Swap"
          --   Swap -> C = 16#FFFF....# -> T = P(I) xor Q (I) ->
          --   P (I) xor T = Q (I) and
          --   Q (I) xor T = P (I)
          --
-         --  Case 2:
+         --  Case 2 - "Don't Swap"
          --   not Swap -> C = 0 -> T = 0 ->
          --   P (I) xor T = P (I) and
          --   Q (I) xor T = Q (I)
          pragma Assert
            ((if Swap then
               (T = (To_U64 (P (I)) xor To_U64 (Q (I))) and then
-               (To_U64 (P (I)) xor T) = To_U64 (Q (I)) and then
-               (To_U64 (Q (I)) xor T) = To_U64 (P (I)))
+               To_I64 (To_U64 (P (I)) xor T) = Q (I) and then
+               To_I64 (To_U64 (Q (I)) xor T) = P (I))
              else
               (T = 0 and then
-               (To_U64 (P (I)) xor T) = To_U64 (P (I)) and then
-               (To_U64 (Q (I)) xor T) = To_U64 (Q (I))))
+               To_I64 (To_U64 (P (I)) xor T) = P (I) and then
+               To_I64 (To_U64 (Q (I)) xor T) = Q (I)))
            );
 
-         --  This Assume seems to make no differnce...
-         pragma Assume
-           (To_I64 (To_U64 (P (I)) xor T)'Valid and
-            To_I64 (To_U64 (Q (I)) xor T)'Valid);
-
-         --  "range Check might fail here" - why?
          P (I) := To_I64 (To_U64 (P (I)) xor T);
-         --  Ditto
          Q (I) := To_I64 (To_U64 (Q (I)) xor T);
 
          pragma Loop_Invariant
@@ -61,7 +60,6 @@ is
                     Q (J) = Q'Loop_Entry (J)))
            );
       end loop;
-
    end Sel_25519;
 
    procedure Car_25519 (O : in out GF)
