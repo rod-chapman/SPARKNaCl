@@ -8,60 +8,6 @@ is
      (False => 16#0000_0000_0000_0000#,
       True  => 16#FFFF_FFFF_FFFF_FFFF#);
 
-   --  POK
-   procedure Sel_25519 (P    : in out GF;
-                        Q    : in out GF;
-                        Swap : in     Boolean)
-   is
-      T : U64;
-      C : constant U64 := Bit_To_Swapmask (Swap);
-
-      --  Do NOT try to evaluate the assumption below at run-time
-      pragma Assertion_Policy (Assume => Ignore);
-   begin
-      --  We need this axiom
-      pragma Assume
-        (for all K in I64 => To_I64 (To_U64 (K)) = K);
-
-      for I in Index_16 loop
-         T := C and (To_U64 (P (I)) xor To_U64 (Q (I)));
-
-         --  Case 1 - "Swap"
-         --   Swap -> C = 16#FFFF....# -> T = P(I) xor Q (I) ->
-         --   P (I) xor T = Q (I) and
-         --   Q (I) xor T = P (I)
-         --
-         --  Case 2 - "Don't Swap"
-         --   not Swap -> C = 0 -> T = 0 ->
-         --   P (I) xor T = P (I) and
-         --   Q (I) xor T = Q (I)
-         pragma Assert
-           ((if Swap then
-              (T = (To_U64 (P (I)) xor To_U64 (Q (I))) and then
-               To_I64 (To_U64 (P (I)) xor T) = Q (I) and then
-               To_I64 (To_U64 (Q (I)) xor T) = P (I))
-             else
-              (T = 0 and then
-               To_I64 (To_U64 (P (I)) xor T) = P (I) and then
-               To_I64 (To_U64 (Q (I)) xor T) = Q (I)))
-           );
-
-         P (I) := To_I64 (To_U64 (P (I)) xor T);
-         Q (I) := To_I64 (To_U64 (Q (I)) xor T);
-
-         pragma Loop_Invariant
-           (if Swap then
-              (for all J in Index_16 range 0 .. I =>
-                   (P (J) = Q'Loop_Entry (J) and
-                    Q (J) = P'Loop_Entry (J)))
-            else
-              (for all J in Index_16 range 0 .. I =>
-                   (P (J) = P'Loop_Entry (J) and
-                    Q (J) = Q'Loop_Entry (J)))
-           );
-      end loop;
-   end Sel_25519;
-
    procedure Car_25519 (O : in out GF)
    is
       subtype LSB_Adjustment is I64 range -1 .. (2**20 + 20);
@@ -153,6 +99,60 @@ is
       Car_25519 (R);
       return Normal_GF (R);
    end Car_Seminormal_To_Normal;
+
+   --  POK
+   procedure Sel_25519 (P    : in out Normal_GF;
+                        Q    : in out Normal_GF;
+                        Swap : in     Boolean)
+   is
+      T : U64;
+      C : constant U64 := Bit_To_Swapmask (Swap);
+
+      --  Do NOT try to evaluate the assumption below at run-time
+      pragma Assertion_Policy (Assume => Ignore);
+   begin
+      --  We need this axiom
+      pragma Assume
+        (for all K in I64 => To_I64 (To_U64 (K)) = K);
+
+      for I in Index_16 loop
+         T := C and (To_U64 (P (I)) xor To_U64 (Q (I)));
+
+         --  Case 1 - "Swap"
+         --   Swap -> C = 16#FFFF....# -> T = P(I) xor Q (I) ->
+         --   P (I) xor T = Q (I) and
+         --   Q (I) xor T = P (I)
+         --
+         --  Case 2 - "Don't Swap"
+         --   not Swap -> C = 0 -> T = 0 ->
+         --   P (I) xor T = P (I) and
+         --   Q (I) xor T = Q (I)
+         pragma Assert
+           ((if Swap then
+              (T = (To_U64 (P (I)) xor To_U64 (Q (I))) and then
+               To_I64 (To_U64 (P (I)) xor T) = Q (I) and then
+               To_I64 (To_U64 (Q (I)) xor T) = P (I))
+             else
+              (T = 0 and then
+               To_I64 (To_U64 (P (I)) xor T) = P (I) and then
+               To_I64 (To_U64 (Q (I)) xor T) = Q (I)))
+           );
+
+         P (I) := To_I64 (To_U64 (P (I)) xor T);
+         Q (I) := To_I64 (To_U64 (Q (I)) xor T);
+
+         pragma Loop_Invariant
+           (if Swap then
+              (for all J in Index_16 range 0 .. I =>
+                   (P (J) = Q'Loop_Entry (J) and
+                    Q (J) = P'Loop_Entry (J)))
+            else
+              (for all J in Index_16 range 0 .. I =>
+                   (P (J) = P'Loop_Entry (J) and
+                    Q (J) = Q'Loop_Entry (J)))
+           );
+      end loop;
+   end Sel_25519;
 
    --  POK (excepting Post of Car_25519 applied 3 times)
    function Pack_25519 (N : in GF) return Bytes_32
@@ -266,17 +266,16 @@ is
       return O;
    end Unpack_25519;
 
-
-   --  Proof - is I a Normal_GF?
-   function Inv_25519 (I : in GF) return GF
+   --  POK
+   function Inv_25519 (I : in Normal_GF) return Normal_GF
    is
-      C, C2 : GF;
+      C, C2 : Normal_GF;
    begin
       C := I;
 
       for A in reverse 0 .. 253 loop
          --  Need C2 here to avoid aliasing C with C via pass by reference
-         C2 := Square (C);  -- C in Normal_GF?
+         C2 := Square (C);
          if (A /= 2 and A /= 4) then
             C := C2 * I;
          else
@@ -286,7 +285,6 @@ is
 
       return C;
    end Inv_25519;
-
 
    --  POK
    function Random_Bytes_32 return Bytes_32

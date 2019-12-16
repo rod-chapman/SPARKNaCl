@@ -34,8 +34,8 @@ is
      with Global => null;
 
    --  Constant time conditional swap of P and Q.
-   procedure Sel_25519 (P    : in out GF;
-                        Q    : in out GF;
+   procedure Sel_25519 (P    : in out Normal_GF;
+                        Q    : in out Normal_GF;
                         Swap : in     Boolean)
      with Global => null,
           Contract_Cases => (Swap     => (P = Q'Old and Q = P'Old),
@@ -46,7 +46,7 @@ is
    function Pack_25519 (N : in GF) return Bytes_32
      with Global => null;
 
-   function Inv_25519 (I : in GF) return GF
+   function Inv_25519 (I : in Normal_GF) return Normal_GF
      with Global => null;
 
    function Unpack_25519 (N : in Bytes_32) return Normal_GF
