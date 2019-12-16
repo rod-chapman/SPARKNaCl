@@ -154,44 +154,54 @@ is
       return Normal_GF (R);
    end Car_Seminormal_To_Normal;
 
+   --  POK (excepting Post of Car_25519 applied 3 times)
    function Pack_25519 (N : in GF) return Bytes_32
    is
---      subtype Reduced_Limb is I64 range -65536 .. 65535;
-
-      procedure Subtract_P (T         : in     GF;
-                            Result    :    out GF;
+      procedure Subtract_P (T         : in     Normal_GF;
+                            Result    :    out Normal_GF;
                             Underflow :    out Boolean)
         with Global => null;
 
       function To_Bytes_32 (X : in Normal_GF) return Bytes_32
         with Global => null;
 
-      procedure Subtract_P (T         : in     GF;
-                            Result    :    out GF;
+      procedure Subtract_P (T         : in     Normal_GF;
+                            Result    :    out Normal_GF;
                             Underflow :    out Boolean)
       is
          subtype CBit is I64 range 0 .. 1;
-         Carry     : CBit;
+         Carry : CBit;
+         R     : GF;
       begin
-         Result := GF_0;
+         R := GF_0;
 
-         --  Limb 0 - subtract FFED
-         Result (0) := T (0) - 16#FFED#; --  POV
+         --  Limb 0 - subtract LSB of P, which is 16#FFED#
+         R (0) := T (0) - 16#FFED#;
 
          --  Limbs 1 .. 14 - subtract FFFF with carry
          for I in I32 range 1 .. 14 loop
-            Carry := ASR_16 (Result (I - 1)) mod 2;
-            Result (I) := T (I) - 16#FFFF# - Carry;
-            Result (I - 1) := Result (I - 1) mod 65536;
+            Carry := ASR_16 (R (I - 1)) mod 2;
+            R (I) := T (I) - 16#FFFF# - Carry;
+            R (I - 1) := R (I - 1) mod 65536;
+
+            pragma Loop_Invariant
+              (for all J in Index_16 range 0 .. I - 1 =>
+                 R (J) in GF_Normal_Limb);
          end loop;
 
-         --  Limb 15 - Subtract 7FFF with carry
-         Carry := ASR_16 (Result (14)) mod 2;
-         Result (15) := T (15) - 16#7FFF# - Carry;
+         --  Limb 15 - Subtract MSB of P (16#7FFF#) with carry
+         Carry := ASR_16 (R (14)) mod 2;
+         R (15) := T (15) - 16#7FFF# - Carry;
          --  Note that Limb 15 might be negative now
-         Result (14) := Result (14) mod 65536;
+         R (14) := R (14) mod 65536;
 
-         Underflow := Boolean'Val (ASR_16 (Result (15)) mod 2);
+         Underflow := Boolean'Val (ASR_16 (R (15)) mod 2);
+
+         --  Normalize R (15) now so that R in Normal_GF,
+         --  even if it did Underflow.
+         R (15) := R (15) mod 65536;
+
+         Result := R;
       end Subtract_P;
 
       function To_Bytes_32 (X : in Normal_GF) return Bytes_32
@@ -205,10 +215,11 @@ is
          return Result;
       end To_Bytes_32;
 
-      L, R1, R2 : GF;
+      L      : GF;
+      R1, R2 : Normal_GF;
 
-      First_Reduction_Underflowed  : Boolean;
-      Second_Reduction_Underflowed : Boolean;
+      First_Underflow  : Boolean;
+      Second_Underflow : Boolean;
    begin
       L := N;
 
@@ -216,20 +227,31 @@ is
       Car_25519 (L);
       Car_25519 (L);
       Car_25519 (L);
+      pragma Assert (L in Normal_GF); --  RCC - Assume this?
 
-      Subtract_P (L,  R1, First_Reduction_Underflowed);
-      Subtract_P (R1, R2, Second_Reduction_Underflowed);
+      --  Readable, but variable-time version of this algorithm:
+      --     Subtract_P (L,  R1, First_Underflow);
+      --     if First_Underflow then
+      --        return L;
+      --     else
+      --        Subtract_P (R1, R2, Second_Underflow);
+      --        if Second_Underflow then
+      --           return R1;
+      --        else
+      --           return R2;
+      --        end if;
+      --     end if;
 
-      Sel_25519 (R1, R2, Second_Reduction_Underflowed);
-      Sel_25519 (L,  R2, First_Reduction_Underflowed);
+      --  Constant-time version: always do both subtractions, then
+      --  use Sel_25519 to swap the right answer into R2
+      Subtract_P (L,  R1, First_Underflow);
+      Subtract_P (R1, R2, Second_Underflow);
+      Sel_25519  (R1, R2, Second_Underflow);
+      Sel_25519  (L,  R2, First_Underflow);
+      return To_Bytes_32 (R2);
 
       pragma Unreferenced (R1);
       pragma Unreferenced (L);
-
-      pragma Assert (R2 in Normal_GF);
-
-      --  The right answer is now in R2
-      return To_Bytes_32 (R2);
    end Pack_25519;
 
    --  POK
