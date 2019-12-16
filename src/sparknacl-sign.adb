@@ -8,44 +8,44 @@ is
    --  Local constants and types
    --============================================
 
-   GF_D  : constant GF := (16#78a3#, 16#1359#, 16#4dca#, 16#75eb#,
-                           16#d8ab#, 16#4141#, 16#0a4d#, 16#0070#,
-                           16#e898#, 16#7779#, 16#4079#, 16#8cc7#,
-                           16#fe73#, 16#2b6f#, 16#6cee#, 16#5203#);
+   GF_D  : constant Normal_GF := (16#78a3#, 16#1359#, 16#4dca#, 16#75eb#,
+                                  16#d8ab#, 16#4141#, 16#0a4d#, 16#0070#,
+                                  16#e898#, 16#7779#, 16#4079#, 16#8cc7#,
+                                  16#fe73#, 16#2b6f#, 16#6cee#, 16#5203#);
 
-   GF_I  : constant GF := (16#a0b0#, 16#4a0e#, 16#1b27#, 16#c4ee#,
-                           16#e478#, 16#ad2f#, 16#1806#, 16#2f43#,
-                           16#d7a7#, 16#3dfb#, 16#0099#, 16#2b4d#,
-                           16#df0b#, 16#4fc1#, 16#2480#, 16#2b83#);
+   GF_I  : constant Normal_GF := (16#a0b0#, 16#4a0e#, 16#1b27#, 16#c4ee#,
+                                  16#e478#, 16#ad2f#, 16#1806#, 16#2f43#,
+                                  16#d7a7#, 16#3dfb#, 16#0099#, 16#2b4d#,
+                                  16#df0b#, 16#4fc1#, 16#2480#, 16#2b83#);
 
-   GF_X  : constant GF := (16#d51a#, 16#8f25#, 16#2d60#, 16#c956#,
-                           16#a7b2#, 16#9525#, 16#c760#, 16#692c#,
-                           16#dc5c#, 16#fdd6#, 16#e231#, 16#c0a4#,
-                           16#53fe#, 16#cd6e#, 16#36d3#, 16#2169#);
+   GF_X  : constant Normal_GF := (16#d51a#, 16#8f25#, 16#2d60#, 16#c956#,
+                                  16#a7b2#, 16#9525#, 16#c760#, 16#692c#,
+                                  16#dc5c#, 16#fdd6#, 16#e231#, 16#c0a4#,
+                                  16#53fe#, 16#cd6e#, 16#36d3#, 16#2169#);
 
-   GF_Y  : constant GF := (16#6658#, 16#6666#, 16#6666#, 16#6666#,
-                           16#6666#, 16#6666#, 16#6666#, 16#6666#,
-                           16#6666#, 16#6666#, 16#6666#, 16#6666#,
-                           16#6666#, 16#6666#, 16#6666#, 16#6666#);
+   GF_Y  : constant Normal_GF := (16#6658#, 16#6666#, 16#6666#, 16#6666#,
+                                  16#6666#, 16#6666#, 16#6666#, 16#6666#,
+                                  16#6666#, 16#6666#, 16#6666#, 16#6666#,
+                                  16#6666#, 16#6666#, 16#6666#, 16#6666#);
 
    --  RCC adds constant GF_XY
-   GF_XY : constant GF := (16#DD90#, 16#A5B7#, 16#8AB3#, 16#6DDE#,
-                           16#52F5#, 16#7751#, 16#9F80#, 16#20F0#,
-                           16#E37D#, 16#64AB#, 16#4E8E#, 16#66EA#,
-                           16#7665#, 16#D78B#, 16#5F0F#, 16#E787#);
+   GF_XY : constant Normal_GF := (16#DD90#, 16#A5B7#, 16#8AB3#, 16#6DDE#,
+                                  16#52F5#, 16#7751#, 16#9F80#, 16#20F0#,
+                                  16#E37D#, 16#64AB#, 16#4E8E#, 16#66EA#,
+                                  16#7665#, 16#D78B#, 16#5F0F#, 16#E787#);
 
-   GF_D2 : constant GF := (16#f159#, 16#26b2#, 16#9b94#, 16#ebd6#,
-                           16#b156#, 16#8283#, 16#149a#, 16#00e0#,
-                           16#d130#, 16#eef3#, 16#80f2#, 16#198e#,
-                           16#fce7#, 16#56df#, 16#d9dc#, 16#2406#);
+   GF_D2 : constant Normal_GF := (16#f159#, 16#26b2#, 16#9b94#, 16#ebd6#,
+                                  16#b156#, 16#8283#, 16#149a#, 16#00e0#,
+                                  16#d130#, 16#eef3#, 16#80f2#, 16#198e#,
+                                  16#fce7#, 16#56df#, 16#d9dc#, 16#2406#);
+
+   type GF_Vector_4 is array (Index_4) of Normal_GF;
 
    --  Original TweetNaCl code computes Q(3) by multiplying GF_X by GF_Y,
    --  but this is a constant (now called GF_XY), so that's used below.
    --
    --  We make this constant library-level to ensure that its declaration
    --  is only elaborated exactly once.
-   type GF_Vector_4 is array (Index_4) of GF;
-
    Scalarbase_Q : constant GF_Vector_4 := (0 => GF_X,
                                            1 => GF_Y,
                                            2 => GF_1,
@@ -125,7 +125,6 @@ is
       Swap   : Boolean;
       LP, LQ : GF_Vector_4;
 
-      --  RCC Remove formals for globals?
       procedure CSwap (P, Q : in out GF_Vector_4;
                        Swap : in     Boolean)
         with Global => null;
@@ -201,7 +200,7 @@ is
                                16#00#, 16#00#, 16#00#, 16#00#,
                                16#00#, 16#00#, 16#00#, 16#00#,
                                16#00#, 16#00#, 16#00#, 16#10#);
-
+   --  RCC Proof?
    function ModL (X : in I64_Seq_64) return Bytes_32
    is
       Carry : I64;
@@ -262,7 +261,7 @@ is
       function "=" (Left, Right : in GF) return Boolean
         with Global => null;
 
-      function Pow_2523 (I : in GF) return GF
+      function Pow_2523 (I : in Normal_GF) return Normal_GF
         with Global => null;
 
       --  POK
@@ -274,9 +273,9 @@ is
       end "=";
 
       --  POK
-      function Pow_2523 (I : in GF) return GF
+      function Pow_2523 (I : in Normal_GF) return Normal_GF
       is
-         C, C2 : GF;
+         C, C2 : Normal_GF;
       begin
          C := I;
          --  Note that 2**252 - 3 = 16#1111_1111 .. 1101#
@@ -297,17 +296,17 @@ is
       --  number of calls to "*" from 8 in the original TweetNaCl code
       --  to 5 from here until the initialization of R0, but only if
       --  "*" on GF is commutative.
-      R1          : constant GF := Utils.Unpack_25519 (P);
-      R2          :          GF renames GF_1;
-      R1_Squared  : constant GF := Square (R1);
-      Num         : constant GF := R1_Squared - R2;
-      Den         : constant GF := R2 + (R1_Squared * GF_D);
-      Den_Power_2 : constant GF := Square (Den);
-      Den_Power_4 : constant GF := Square (Den_Power_2);
-      Num_Den2    : constant GF := (Num * Den) * Den_Power_2;
+      R1          : constant Normal_GF := Utils.Unpack_25519 (P);
+      R2          :          Normal_GF renames GF_1;
+      R1_Squared  : constant Normal_GF := Square (R1);
+      Num         : constant Normal_GF := R1_Squared - R2;
+      Den         : constant Normal_GF := R2 + (R1_Squared * GF_D);
+      Den_Power_2 : constant Normal_GF := Square (Den);
+      Den_Power_4 : constant Normal_GF := Square (Den_Power_2);
+      Num_Den2    : constant Normal_GF := (Num * Den) * Den_Power_2;
 
-      R0    : GF := Pow_2523 ((Den_Power_4 * Num_Den2)) * Num_Den2;
-      Check : GF;
+      R0    : Normal_GF := Pow_2523 ((Den_Power_4 * Num_Den2)) * Num_Den2;
+      Check : Normal_GF;
    begin
       Check := Square (R0) * Den;
 
@@ -400,9 +399,11 @@ is
                    M  : in     Byte_Seq;
                    SK : in     Signing_SK)
    is
+      subtype Byte_Product is I64 range 0 .. (255 * 255);
       D    : Bytes_64;
       H, R : Bytes_32;
       X    : I64_Seq_64;
+      T    : Byte_Product;
    begin
       Hashing.Hash (D, Serialize (SK) (0 .. 31));
       D (0)  := D (0) and 248;
@@ -424,14 +425,48 @@ is
       X := (others => 0);
       for I in Index_32 loop
          X (I) := I64 (R (I));
+         pragma Loop_Invariant
+           ((for all K in N32 range     0 .. I  => X (K) in 0 .. 255) and
+            (for all K in N32 range I + 1 .. 63 => X (K) = 0));
       end loop;
+
+      pragma Assert
+        ((for all K in N32 range  0 .. 31 => X (K) in 0 .. 255) and
+         (for all K in N32 range 32 .. 63 => X (K) = 0));
 
       for I in Index_32 loop
          for J in Index_32 loop
-            X (I + J) := X (I + J) +  --  POV on RHS +
-              I64 (U64 (H (I)) * U64 (D (J)));
+            T := Byte_Product (H (I)) * Byte_Product (D (J));
+            X (I + J) := X (I + J) + T;
+
+--            pragma Loop_Invariant
+--              (for all K in Index_64 =>
+--                 X (K) >= 0 and
+--                 X (K) <= I64 (I + J + 2) * Byte_Product'Last);
+            pragma Loop_Invariant
+              (for all K in Index_32 =>
+                 (for all L in Index_32 =>
+                    (X (K + L) >= 0 and
+                     X (K + L) <= I64 (I + J + 2) * Byte_Product'Last)));
          end loop;
+--         pragma Loop_Invariant
+--           (for all K in Index_64 =>
+--              X (K) >= 0 and X (K) <= I64 (I + 33) * Byte_Product'Last);
+         pragma Loop_Invariant
+           (for all K in Index_32 =>
+              (for all L in Index_32 =>
+                 (X (K + L) >= 0 and
+                  X (K + L) <= I64 (I + 33) * Byte_Product'Last)));
       end loop;
+
+--      pragma Assert
+--        (for all K in Index_64 =>
+--           X (K) >= 0 and X (K) <= 64 * Byte_Product'Last);
+      pragma Assert
+        (for all K in Index_32 =>
+           (for all L in Index_32 =>
+              (X (K + L) >= 0 and
+               X (K + L) <= 64 * Byte_Product'Last)));
 
       SM (32 .. 63) := ModL (X);
 
