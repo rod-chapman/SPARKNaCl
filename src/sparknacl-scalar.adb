@@ -4,7 +4,7 @@ package body SPARKNaCl.Scalar
 is
 
    Nine : constant Bytes_32 := (9, others => 0);
-   GF_121665 : constant GF := (16#DB41#, 1, others => 0);
+   GF_121665 : constant Normal_GF := (16#DB41#, 1, others => 0);
 
 
    --------------------------------------------------------
@@ -15,26 +15,20 @@ is
    function Mult (N : in Bytes_32;
                   P : in Bytes_32) return Bytes_32
    is
-      X : constant GF := Utils.Unpack_25519 (P);
+      X  : constant Normal_GF := Utils.Unpack_25519 (P);
+      Z2 : constant Bytes_32 :=
+         (N (0) and 248) & N (1 .. 30) & ((N (31) and 127) or 64);
 
-      Z2    : Bytes_32;
       Swap  : Boolean;
       CB    : Byte;
       Shift : Natural;
 
-      A2, A3, B, B2, C, C2, D, E, F, T1, T2 : GF;
+      A2, A3, B, B2, C, C2, D, E, F, T1, T2 : Normal_GF;
    begin
-      Z2 := N;
-      Z2 (31) := (N (31) and 127) or 64;
-      Z2 (0) := Z2 (0) and 248;
-
       B  := X;
       C  := GF_0;
-      A2 := GF_0;
-      D  := GF_0;
-
-      A2 (0) := 1;
-      D  (0) := 1;
+      A2 := GF_1;
+      D  := GF_1;
 
       for I in reverse U32 range 0 .. 254 loop
          CB := Z2 (I32 (Shift_Right (I, 3)));
