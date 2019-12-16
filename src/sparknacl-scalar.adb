@@ -15,19 +15,18 @@ is
    function Mult (N : in Bytes_32;
                   P : in Bytes_32) return Bytes_32
    is
-      Z2   : Bytes_32;
-      X    : GF;
-      Swap : Boolean;
+      X : constant GF := Utils.Unpack_25519 (P);
 
-      A2, A3, B, B2, C, C2, D, E, F, T1, T2 : GF;
+      Z2    : Bytes_32;
+      Swap  : Boolean;
       CB    : Byte;
       Shift : Natural;
+
+      A2, A3, B, B2, C, C2, D, E, F, T1, T2 : GF;
    begin
       Z2 := N;
       Z2 (31) := (N (31) and 127) or 64;
       Z2 (0) := Z2 (0) and 248;
-
-      X := Utils.Unpack_25519 (P);
 
       B  := X;
       C  := GF_0;

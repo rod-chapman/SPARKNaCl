@@ -255,9 +255,9 @@ is
    end Pack_25519;
 
    --  POK
-   function Unpack_25519 (N : in Bytes_32) return GF
+   function Unpack_25519 (N : in Bytes_32) return Normal_GF
    is
-      O : GF;
+      O : Normal_GF := GF_0;
    begin
       for I in Index_16 loop
          O (I) := I64 (N (2 * I)) + (I64 (N (2 * I + 1)) * 256);

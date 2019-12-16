@@ -49,9 +49,8 @@ is
    function Inv_25519 (I : in GF) return GF
      with Global => null;
 
-   function Unpack_25519 (N : in Bytes_32) return GF
+   function Unpack_25519 (N : in Bytes_32) return Normal_GF
      with Global => null;
-
 
    function Random_Bytes_32 return Bytes_32
      with Global => Random.Entropy,
