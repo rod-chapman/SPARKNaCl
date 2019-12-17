@@ -51,6 +51,10 @@ is
                                            2 => GF_1,
                                            3 => GF_XY);
 
+   --  MBP = "Max Byte Product"
+   MBP : constant := (255 * 255);
+   subtype Byte_Product is I64 range 0 .. MBP;
+
    --============================================
    --  Local subprogram declarations
    --============================================
@@ -76,7 +80,8 @@ is
      with Global => null;
 
    function ModL (X : in I64_Seq_64) return Bytes_32
-     with Global => null;
+     with Global => null,
+          Pre => (for all K in Index_64 => X (K) in 0 .. (32 * MBP) + 255);
 
    --  RCC introduces this function to combine Hash and Reduce into
    --  a single call. Former procedure Reduce removed.
@@ -192,21 +197,28 @@ is
       return R;
    end Pack;
 
-   L : constant I64_Seq_32 := (16#ed#, 16#d3#, 16#f5#, 16#5c#,
-                               16#1a#, 16#63#, 16#12#, 16#58#,
-                               16#d6#, 16#9c#, 16#f7#, 16#a2#,
-                               16#de#, 16#f9#, 16#de#, 16#14#,
-                               16#00#, 16#00#, 16#00#, 16#00#,
-                               16#00#, 16#00#, 16#00#, 16#00#,
-                               16#00#, 16#00#, 16#00#, 16#00#,
-                               16#00#, 16#00#, 16#00#, 16#10#);
+   --  RFC 7748 says the "order" of Curve25519 is
+   --  2^252 + 0x14def9dea2f79cd65812631a5cf5d3ed
+   --
+   --  In little-endian mod 2**8 format, this is 256 bits, thus:
+   L : constant I64_Byte_Seq_32 := (16#ed#, 16#d3#, 16#f5#, 16#5c#,
+                                    16#1a#, 16#63#, 16#12#, 16#58#,
+                                    16#d6#, 16#9c#, 16#f7#, 16#a2#,
+                                    16#de#, 16#f9#, 16#de#, 16#14#,
+                                    16#00#, 16#00#, 16#00#, 16#00#,
+                                    16#00#, 16#00#, 16#00#, 16#00#,
+                                    16#00#, 16#00#, 16#00#, 16#00#,
+                                    16#00#, 16#00#, 16#00#, 16#10#);
    --  RCC Proof?
    function ModL (X : in I64_Seq_64) return Bytes_32
    is
+      --  Notes from TweetNaCl paper, bottom of page 10.
+      --  X is 512 bits == 64 8-bit limbs
       Carry : I64;
       XL    : I64_Seq_64 := X;
       R     : Bytes_32;
    begin
+      --  step 1 - eliminate upper limbs X (32) .. X (63)
       for I in reverse I32 range 32 .. 63 loop
          Carry := 0;
          for J in I32 range (I - 32) .. (I - 13) loop
@@ -220,16 +232,25 @@ is
       end loop;
       Carry := 0;
 
+      --  Assert range of X (0 .. 31) and Carry here.
+      --  Assert X (32 .. 63) = (others => 0)
+
+      --  Step 2
       for J in Index_32 loop
          XL (J) := XL (J) + (Carry - ASR_4 (XL (31)) * L (J)); -- POV * 3
          Carry := ASR_8 (XL (J));
          XL (J) := XL (J) mod 256;
       end loop;
 
+      --  Assert range of X and Carry here...
+
+      --  Step 3
       for J in Index_32 loop
          XL (J) := XL (J) - Carry * L (J); --  POV on -
       end loop;
 
+      --  Step 4 - final carry chain from X (0) to X (32) and reduce
+      --  each limb mod 256
       for I in Index_32 loop
          XL (I + 1) := XL (I + 1) + ASR_8 (XL (I)); --  POV on RHS 2nd +
          R (I) := Byte (XL (I) mod 256);
@@ -244,9 +265,16 @@ is
       X : I64_Seq_64;
    begin
       Hashing.Hash (R, M);
+      X := (others => 0);
       for I in Index_64 loop
          X (I) := I64 (R (I));
+         pragma Loop_Invariant
+           (for all K in Index_64 range 0 .. I => X (K) in I64_Byte);
       end loop;
+
+      pragma Assert
+        (for all K in Index_64 => X (K) in I64_Byte);
+
       return ModL (X);
    end Hash_Reduce;
 
@@ -395,11 +423,11 @@ is
       pragma Unreferenced (LPK);
    end Keypair;
 
+   --  POK
    procedure Sign (SM :    out Byte_Seq;
                    M  : in     Byte_Seq;
                    SK : in     Signing_SK)
    is
-      subtype Byte_Product is I64 range 0 .. (255 * 255);
       D    : Bytes_64;
       H, R : Bytes_32;
       X    : I64_Seq_64;
@@ -407,12 +435,10 @@ is
    begin
       Hashing.Hash (D, Serialize (SK) (0 .. 31));
       D (0)  := D (0) and 248;
-      D (31) := D (31) and 127;
-      D (31) := D (31) or 64;
+      D (31) := (D (31) and 127) or 64;
 
-      SM := (others => 0);
-      SM (64 .. SM'Last) := M;
-      SM (32 .. 63) := D (32 .. 63);
+      --  Precondition guarantees that SM is 64 bytes longer than M, so
+      SM := Zero_Bytes_32 & D (32 .. 63) & M;
 
       R := Hash_Reduce (SM (32 .. SM'Last));
 
@@ -426,47 +452,104 @@ is
       for I in Index_32 loop
          X (I) := I64 (R (I));
          pragma Loop_Invariant
-           ((for all K in N32 range     0 .. I  => X (K) in 0 .. 255) and
+           ((for all K in N32 range     0 .. I  => X (K) in I64_Byte) and
             (for all K in N32 range I + 1 .. 63 => X (K) = 0));
       end loop;
 
       pragma Assert
-        ((for all K in N32 range  0 .. 31 => X (K) in 0 .. 255) and
-         (for all K in N32 range 32 .. 63 => X (K) = 0));
+        ((for all K in N32 range  0 .. 31 => X (K) in I64_Byte) and
+         (for all K in N32 range 32 .. 63 => X (K) = 0) and
+         (for all K in Index_64 => X (K) in I64_Byte)
+        );
+
+      pragma Warnings (Off, "explicit membership test may be optimized");
 
       for I in Index_32 loop
          for J in Index_32 loop
             T := Byte_Product (H (I)) * Byte_Product (D (J));
             X (I + J) := X (I + J) + T;
 
---            pragma Loop_Invariant
---              (for all K in Index_64 =>
---                 X (K) >= 0 and
---                 X (K) <= I64 (I + J + 2) * Byte_Product'Last);
+            --  This loop invariant follows the same pattern
+            --  as that in SPARKNaCl."*"
             pragma Loop_Invariant
-              (for all K in Index_32 =>
-                 (for all L in Index_32 =>
-                    (X (K + L) >= 0 and
-                     X (K + L) <= I64 (I + J + 2) * Byte_Product'Last)));
+              (
+               T in Byte_Product and
+
+               --  Lower bound
+               (for all K in Index_64 => X (K) >= 0) and
+
+               --  rising from 1 to I
+               (for all K in Index_64 range 0 .. (I - 1)   =>
+                  X (K) <= (I64 (K + 1) * MBP + 255)) and
+
+               --  flat at I + 1, just written
+               (for all K in Index_64 range I .. I32'Min (31, I + J) =>
+                  X (K) <= (I64 (I + 1) * MBP + 255)) and
+
+               --  flat at I, not written yet
+               (for all K in Index_64 range I + J + 1 .. 31 =>
+                  X (K) <= (I64 (I) * MBP + 255)) and
+
+               --  falling from I to 1, just written
+               (for all K in Index_64 range 32 .. (I + J) =>
+                  X (K) <= (I64 (32 + I) - I64 (K)) * MBP + 255) and
+
+               --  falling, from I to 1, but not written yet
+               (for all K in Index_64 range
+                  I32'Max (32, I + J + 1) .. (I + 31) =>
+                  X (K) <= (I64 (31 + I) - I64 (K)) * MBP + 255) and
+
+               --  Zeroes - never written
+               (for all K in Index_64 range I + 32 .. 63   =>
+                  X (K) = 0)
+              );
          end loop;
---         pragma Loop_Invariant
---           (for all K in Index_64 =>
---              X (K) >= 0 and X (K) <= I64 (I + 33) * Byte_Product'Last);
+
+         --  Substitute J = 31 into the above yields
          pragma Loop_Invariant
-           (for all K in Index_32 =>
-              (for all L in Index_32 =>
-                 (X (K + L) >= 0 and
-                  X (K + L) <= I64 (I + 33) * Byte_Product'Last)));
+           (
+            T in Byte_Product and
+
+            --  Lower bound
+            (for all K in Index_64 => X (K) >= 0) and
+
+            --  rising from 1 to I
+            (for all K in Index_64 range 0 .. (I - 1)   =>
+               X (K) <= (I64 (K + 1) * MBP + 255)) and
+
+            --  flat at I + 1, just written
+            (for all K in Index_64 range I .. 31 =>
+               X (K) <= (I64 (I + 1) * MBP + 255)) and
+
+            --  falling from I to 1, just written
+            (for all K in Index_64 range 32 .. (I + 31) =>
+               X (K) <= (I64 (32 + I) - I64 (K)) * MBP + 255) and
+
+            --  Zeroes - never written
+            (for all K in Index_64 range I + 32 .. 63   =>
+               X (K) = 0)
+           );
       end loop;
 
---      pragma Assert
---        (for all K in Index_64 =>
---           X (K) >= 0 and X (K) <= 64 * Byte_Product'Last);
+
+      --  Substitute I = 31
       pragma Assert
-        (for all K in Index_32 =>
-           (for all L in Index_32 =>
-              (X (K + L) >= 0 and
-               X (K + L) <= 64 * Byte_Product'Last)));
+        (
+         --  Lower bound
+         (for all K in Index_64 => X (K) >= 0) and
+
+         --  Upper bounds
+         (for all K in Index_64 range 0 .. 30   =>
+            X (K) <= (I64 (K + 1) * MBP + 255)) and
+         X (31) <= (32 * MBP + 255) and
+         (for all K in Index_64 range 32 .. 62 =>
+            X (K) <= (63 - I64 (K)) * MBP + 255) and
+         X (63) = 0
+        );
+
+      --  Simplify - this assert is equivalent to the precondition of ModL
+      pragma Assert
+        (for all K in Index_64 => X (K) in 0 .. (32 * MBP + 255));
 
       SM (32 .. 63) := ModL (X);
 
