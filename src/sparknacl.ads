@@ -44,6 +44,7 @@ is
    subtype I32 is Integer_32;
    subtype N32 is I32 range 0 .. I32'Last;
    subtype I64 is Integer_64;
+   subtype I64_Byte is I64 range 0 .. 255;
    subtype N64 is I64 range 0 .. I64'Last;
 
    type Byte_Seq is array (N32 range <>) of Byte;
@@ -59,6 +60,10 @@ is
    subtype Index_64 is I32 range 0 .. 63;
 
    type I64_Seq  is array (N32 range <>) of I64;
+
+   --  A sequence of I64 values, but where each is limited to
+   --  values 0 .. 255;
+   type I64_Byte_Seq  is array (N32 range <>) of I64_Byte;
 
 
    subtype Bytes_8  is Byte_Seq (Index_8);
@@ -132,7 +137,7 @@ private
    subtype U32_Seq_4   is U32_Seq (Index_4);
    subtype U32_Seq_16  is U32_Seq (Index_16);
 
-   subtype I64_Seq_32 is I64_Seq (Index_32);
+   subtype I64_Byte_Seq_32 is I64_Byte_Seq (Index_32);
 
    subtype U64_Seq_16 is U64_Seq (Index_16);
    subtype U64_Seq_8  is U64_Seq (Index_8);
