@@ -268,22 +268,22 @@ private
    --  shift right when X is negative
    function ASR_16 (X : in I64) return I64
    is (To_I64 (Shift_Right_Arithmetic (To_U64 (X), 16)))
-     with Post => ASR_16'Result >= -2**47 and
-                  ASR_16'Result <= (2**47) - 1;
+     with Post => (if X >= 0 then ASR_16'Result = X / 65536 else
+                                  ASR_16'Result = ((X + 1) / 65536) - 1);
 
    --  returns equivalent of X >> 8 in C, doing an arithmetic
    --  shift right when X is negative
    function ASR_8 (X : in I64) return I64
    is (To_I64 (Shift_Right_Arithmetic (To_U64 (X), 8)))
-     with Post => ASR_8'Result >= -2**55 and
-                  ASR_8'Result <= (2**55) - 1;
+     with Post => (if X >= 0 then ASR_8'Result = X / 256 else
+                                  ASR_8'Result = ((X + 1) / 256) - 1);
 
    --  returns equivalent of X >> 4 in C, doing an arithmetic
    --  shift right when X is negative
    function ASR_4 (X : in I64) return I64
    is (To_I64 (Shift_Right_Arithmetic (To_U64 (X), 4)))
-     with Post => ASR_4'Result >= -2**59 and
-                  ASR_4'Result <= (2**59) - 1;
+     with Post => (if X >= 0 then ASR_4'Result = X / 16 else
+                                  ASR_4'Result = ((X + 1) / 16) - 1);
 
    --===============================
    --  Local subprogram declarations
