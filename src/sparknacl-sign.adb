@@ -89,11 +89,6 @@ is
      with Global => null;
 
 
-   function ModL2 (X : in I64_Seq_64) return Bytes_32
-     with Global => null,
-          Pre => (for all K in Index_64 => X (K) in 0 .. Max_X_Limb);
-
-
    --============================================
    --  Local subprogram bodies
    --============================================
@@ -214,7 +209,7 @@ is
                             16#00#, 16#00#, 16#00#, 16#00#,
                             16#00#, 16#00#, 16#00#, 16#10#);
 
-   function ModL2 (X : in I64_Seq_64) return Bytes_32
+   function ModL (X : in I64_Seq_64) return Bytes_32
    is
 
       Max_Carry : constant := 2**14;
@@ -526,12 +521,6 @@ is
          return R;
       end;
 
-   end ModL2;
-
-   function ModL (X : in I64_Seq_64) return Bytes_32
-   is
-   begin
-      return ModL2 (X);
    end ModL;
 
    --  POK
@@ -704,6 +693,8 @@ is
                    M  : in     Byte_Seq;
                    SK : in     Signing_SK)
    is
+      subtype Byte_Product is I64 range 0 .. MBP;
+
       D    : Bytes_64;
       H, R : Bytes_32;
       X    : I64_Seq_64;

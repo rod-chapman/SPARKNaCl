@@ -31,8 +31,6 @@ is
    MBP        : constant := (255 * 255);
    Max_X_Limb : constant := (32 * MBP) + 255;
 
-   subtype Byte_Product is I64 range 0 .. MBP;
-
    function ModL (X : in I64_Seq_64) return Bytes_32
      with Global => null,
           Pre => (for all K in Index_64 => X (K) in 0 .. Max_X_Limb);
