@@ -31,8 +31,8 @@ project SPARKNaCl_Common is
                                       "--no-inlining",
                                       "--no-counterexample",
                                       "--no-loop-unrolling",
-                                      "--level=3",
-                                      "--report=all");
+                                      "--level=4",
+                                      "--report=statistics");
    end Prove;
 
    package Builder is
