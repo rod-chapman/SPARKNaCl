@@ -230,29 +230,39 @@ is
       subtype XL_Limb is I64
         range -((Max_X_Limb + Max_Carry + Max_Adjustment) * 16 * Max_L) ..
                ((Max_X_Limb + Max_Carry + Max_Adjustment) * 16 * Max_L);
-      subtype XL_Table is I64_Seq_64
-        with Dynamic_Predicate =>
-          (for all I in Index_64 => XL_Table (I) in XL_Limb);
-      XL    : XL_Table := (others => 0);
+
+      type XL_Table is array (Index_64) of XL_Limb;
+      XL : XL_Table;
 
       subtype XL51_T is I64 range Min_Carry .. (Max_X_Limb + Max_Carry);
+
+      --  "PRL" = "Partially Reduced Limb"
       subtype PRL is I64 range -128 .. 127;
 
       R     : Bytes_32;
+
+      procedure Initialize_XL
+        with Global => (Input  => X,
+                        Output => XL),
+             Pre  => (for all K in Index_64 => X (K) in 0 .. Max_X_Limb),
+             Post => (for all K in Index_64 => XL (K) >= XL_Limb'First) and
+                     (for all K in Index_64 => XL (K) <= XL_Limb'Last) and
+                     (for all K in Index_64 => XL (K) = XL_Limb (X (K)));
+
+      procedure Initialize_XL
+      is
+      begin
+         XL := (others => 0);
+         for K in Index_64 loop
+            XL (K) := XL_Limb (X (K));
+            pragma Loop_Invariant
+              (for all A in Index_64 range 0 .. K => XL (A) = XL_Limb (X (A)));
+         end loop;
+      end Initialize_XL;
+
+
    begin
-      --  Re-establish the precondition - X(K) in 0 .. 2_081_055
-      pragma Assert (for all K in Index_64 => X (K) in 0 .. Max_X_Limb);
-
-      for K in Index_64 loop
-         XL (K) := XL_Limb (X (K));
-         pragma Loop_Invariant
-           (for all A in Index_64 range 0 .. K => XL (A) = XL_Limb (X (A)));
-      end loop;
-
-      pragma Assert (for all K in Index_64 => XL (K) >= XL_Limb'First);
-      pragma Assert (for all K in Index_64 => XL (K) <= XL_Limb'Last);
-
-      -------------
+      Initialize_XL;
 
       --  step 1A - eliminate upper limbs X (63) .. X (63)
       Carry := 0;
