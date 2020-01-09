@@ -32,8 +32,6 @@ project SPARKNaCl_Common is
                                       "--no-counterexample",
                                       "--no-loop-unrolling",
                                       "--level=4",
-                                      "--steps=110000",
-                                      "--timeout=0",
                                       "--report=statistics");
    end Prove;
 
