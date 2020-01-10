@@ -267,12 +267,14 @@ is
         with Global => (Proof_In => X,
                         In_Out   => XL),
              Pre  => ((for all K in Index_64 range 0 .. 30 =>
-                         XL (K) = X (K)) and
+                         XL (K) = X (K) and
+                         XL (K) in 0 .. Max_X_Limb) and
                       (for all K in Index_64 range 31 .. 50 =>
                          XL (K) in PRL) and
                       (XL (51) in XL51_T) and
                       (for all K in Index_64 range 52 .. 62 =>
-                         XL (K) = X (K)) and
+                         XL (K) = X (K) and
+                         XL (K) in 0 .. Max_X_Limb) and
                       (XL (63) = 0) and
                       (for all K in Index_64 => XL (K) in XL51_T)),
              Post => ((for all K in Index_64 range  0 .. 31 =>
@@ -299,10 +301,10 @@ is
 
       procedure Eliminate_Limb_63
       is
-         Carry1      : Carry_T;
-         Adjustment1 : Adjustment_T;
+         Carry      : Carry_T;
+         Adjustment : Adjustment_T;
       begin
-         Carry1 := 0;
+         Carry := 0;
 
          --  In the TweetNaCl sources, this loop interates 20 times
          --  covering elements of L from L (0) to L (19).
@@ -311,10 +313,10 @@ is
          --  and manually unroll the final 4 iterations where L (16)
          --  through L (19) are all zero.
          for J in I32 range 31 .. 46 loop
-            Adjustment1 := (16 * L (J - 31)) * XL (63);
-            XL (J) := XL (J) + Carry1 - Adjustment1;
-            Carry1 := ASR_8 (XL (J) + 128);
-            XL (J) := XL (J) - (Carry1 * 256);
+            Adjustment := (16 * L (J - 31)) * XL (63);
+            XL (J) := XL (J) + Carry - Adjustment;
+            Carry := ASR_8 (XL (J) + 128);
+            XL (J) := XL (J) - (Carry * 256);
 
             pragma Loop_Invariant
               ((for all K in Index_64 range 0 .. 30 =>
@@ -336,21 +338,21 @@ is
          --  Final 4 limbs of XL (47) through XL (50)
          --  For these limbs, we know that L (16) through L (19)
          --  is zero, so the calculation of Adjustment can be eliminated.
-         XL (47) := XL (47) + Carry1;
-         Carry1 := ASR_8 (XL (47) + 128);
-         XL (47) := XL (47) - (Carry1 * 256);
+         XL (47) := XL (47) + Carry;
+         Carry := ASR_8 (XL (47) + 128);
+         XL (47) := XL (47) - (Carry * 256);
 
-         XL (48) := XL (48) + Carry1;
-         Carry1 := ASR_8 (XL (48) + 128);
-         XL (48) := XL (48) - (Carry1 * 256);
+         XL (48) := XL (48) + Carry;
+         Carry := ASR_8 (XL (48) + 128);
+         XL (48) := XL (48) - (Carry * 256);
 
-         XL (49) := XL (49) + Carry1;
-         Carry1 := ASR_8 (XL (49) + 128);
-         XL (49) := XL (49) - (Carry1 * 256);
+         XL (49) := XL (49) + Carry;
+         Carry := ASR_8 (XL (49) + 128);
+         XL (49) := XL (49) - (Carry * 256);
 
-         XL (50) := XL (50) + Carry1;
-         Carry1 := ASR_8 (XL (50) + 128);
-         XL (50) := XL (50) - (Carry1 * 256);
+         XL (50) := XL (50) + Carry;
+         Carry := ASR_8 (XL (50) + 128);
+         XL (50) := XL (50) - (Carry * 256);
 
          pragma Assert
            ((for all K in Index_64 range  0 .. 30 => XL (K) = X (K)) and
@@ -360,23 +362,25 @@ is
          --  Note XL (51) is adjusted here but is NOT normalized
          --  to be in PRL... hence it's a special case in the post-
          --  condition above.
-         XL (51) := XL (51) + Carry1;
+         XL (51) := XL (51) + Carry;
          XL (63) := 0;
       end Eliminate_Limb_63;
 
       procedure Eliminate_Limbs_62_To_32
       is
-         Carry2      : Carry_T;
-         Adjustment2 : Adjustment_T;
+         Carry      : Carry_T;
+         Adjustment : Adjustment_T;
       begin
          for I in reverse I32 range 32 .. 62 loop
-            Carry2 := 0;
+            Carry := 0;
 
+            --  As above, this loop iterates over the first 16 limbs of L
+            --  leaving the final four (zero) limbs unrolled below.
             for J in I32 range (I - 32) .. (I - 17) loop
-               Adjustment2 := (16 * L (J - (I - 32))) * XL (I);
-               XL (J) := XL (J) + Carry2 - Adjustment2;
-               Carry2 := ASR_8 (XL (J) + 128);
-               XL (J) := XL (J) - (Carry2 * 256);
+               Adjustment := (16 * L (J - (I - 32))) * XL (I);
+               XL (J) := XL (J) + Carry - Adjustment;
+               Carry := ASR_8 (XL (J) + 128);
+               XL (J) := XL (J) - (Carry * 256);
 
                pragma Loop_Invariant
                  (for all K in Index_64 range 0 .. I - 33 =>
@@ -398,16 +402,16 @@ is
 
             end loop;
 
-            --  16 elements of XL are in PRL
+            --  16 elements of XL(I-32) .. XL(I-17) are in now PRL
             pragma Assert
               (for all K in Index_64 range I - 32 .. I - 17 =>
                  XL (K) in PRL);
 
             pragma Assert (XL (I - 16) in PRL);
-
-            XL (I - 16) := XL (I - 16) + Carry2;
-            Carry2 := ASR_8 (XL (I - 16) + 128);
-            XL (I - 16) := XL (I - 16) - (Carry2 * 256);
+            --  Carry is in Carry_T here
+            XL (I - 16) := XL (I - 16) + Carry;
+            Carry := ASR_8 (XL (I - 16) + 128);
+            XL (I - 16) := XL (I - 16) - (Carry * 256);
 
             --  17 elements of XL are in PRL
             pragma Assert
@@ -415,10 +419,13 @@ is
                  XL (K) in PRL);
 
             pragma Assert (XL (I - 15) in PRL);
-            pragma Assert (Carry2 in -2**17 .. 65);
-            XL (I - 15) := XL (I - 15) + Carry2;
-            Carry2 := ASR_8 (XL (I - 15) + 128);
-            XL (I - 15) := XL (I - 15) - (Carry2 * 256);
+            --  Now we can start to prove that Carry is converging.
+            --  Each further reduction reduces the lower and upper bound
+            --  of Carry by 2**8, so...
+            pragma Assert (Carry in -2**17 .. 65);
+            XL (I - 15) := XL (I - 15) + Carry;
+            Carry := ASR_8 (XL (I - 15) + 128);
+            XL (I - 15) := XL (I - 15) - (Carry * 256);
 
             --  18 elements of XL are in PRL
             pragma Assert
@@ -426,10 +433,10 @@ is
                  XL (K) in PRL);
 
             pragma Assert (XL (I - 14) in PRL);
-            pragma Assert (Carry2 in -512 .. 1);
-            XL (I - 14) := XL (I - 14) + Carry2;
-            Carry2 := ASR_8 (XL (I - 14) + 128);
-            XL (I - 14) := XL (I - 14) - (Carry2 * 256);
+            pragma Assert (Carry in -512 .. 1);
+            XL (I - 14) := XL (I - 14) + Carry;
+            Carry := ASR_8 (XL (I - 14) + 128);
+            XL (I - 14) := XL (I - 14) - (Carry * 256);
 
             --  19 elements of XL are in PRL
             pragma Assert
@@ -437,10 +444,10 @@ is
                  XL (K) in PRL);
 
             pragma Assert (XL (I - 13) in PRL);
-            pragma Assert (Carry2 in -2 .. 1);
-            XL (I - 13) := XL (I - 13) + Carry2;
-            Carry2 := ASR_8 (XL (I - 13) + 128);
-            XL (I - 13) := XL (I - 13) - (Carry2 * 256);
+            pragma Assert (Carry in -2 .. 1);
+            XL (I - 13) := XL (I - 13) + Carry;
+            Carry := ASR_8 (XL (I - 13) + 128);
+            XL (I - 13) := XL (I - 13) - (Carry * 256);
 
             --  20 elements of XL are in PRL
             pragma Assert
@@ -448,9 +455,18 @@ is
                  XL (K) in PRL);
 
             pragma Assert (XL (I - 12) in PRL);
-            pragma Assert (Carry2 in -1 .. 1);
-            XL (I - 12) := XL (I - 12) + Carry2;
+            pragma Assert (Carry in -1 .. 1);
+
+            --  Having established that XL (I - 12) in PRL and
+            --  Carry in -1 .. 1, we have to prove 2 special cases
+            --  to ensure taht XL (I - 12) + Carry is STILL in PRL.
+            pragma Assert (if Carry = 1 then XL (I - 12) < PRL'Last);
+            pragma Assert (if Carry = -1 then XL (I - 12) > PRL'First);
+
+            XL (I - 12) := XL (I - 12) + Carry;
             pragma Assert (XL (I - 12) in PRL);
+
+            --  XL (I) is now eliminated, so it gets zeroed out now.
             XL (I) := 0;
 
             pragma Loop_Invariant
@@ -504,16 +520,16 @@ is
          S3_LB_Delta : constant I64 := ((Step2_XL_Limb'First + 1) / 256) - 1;
          S3_UB_Delta : constant I64 := Step2_XL_Limb'Last / 256;
 
-         Carry3    : Final_Carry_T;
+         Carry : Final_Carry_T;
       begin
          --  Step 1
-         Carry3 := 0;
+         Carry := 0;
          for J in Index_32 loop
             pragma Assert (XL (31) in PRL);
-            XL (J) := XL (J) + (Carry3 - ASR_4 (XL (31)) * L (J));
+            XL (J) := XL (J) + (Carry - ASR_4 (XL (31)) * L (J));
 
             pragma Assert (XL (J) in Step1_XL_Limb);
-            Carry3 := ASR_8 (XL (J));
+            Carry := ASR_8 (XL (J));
             XL (J) := XL (J) mod 256;
 
             --  Modified limbs 0 .. J are all in I64_Byte
@@ -540,7 +556,7 @@ is
 
          --  Step 2
          for J in Index_32 loop
-            XL (J) := XL (J) - Carry3 * L (J);
+            XL (J) := XL (J) - Carry * L (J);
             pragma Loop_Invariant
               (for all K in Index_32 range 0 .. J =>
                  XL (K) in Step2_XL_Limb);
@@ -582,6 +598,9 @@ is
       Initialize_XL;
       Eliminate_Limb_63;
       Eliminate_Limbs_62_To_32;
+
+      pragma Warnings (GNATProve, Off, "unused assignment");
+      --  Unused assignment to XL here expected
       Finalize;
       return R;
    end ModL;
