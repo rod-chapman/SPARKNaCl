@@ -1,4 +1,5 @@
 --  with SPARKNaCl.PDebug;
+--  with SPARKNaCl.Debug;
 package body SPARKNaCl.Utils
   with SPARK_Mode => On
 is
@@ -93,11 +94,37 @@ is
    function Car_Seminormal_To_Normal (X : in Seminormal_GF)
                                   return Normal_GF
    is
-      R : GF;
+--      subtype LSB_Adjustment is I64 range -1 .. (2**20 + 20);
+      subtype LSB_Adjustment is I64 range -1 .. 0;
+      subtype Carry_Adjustment is I64 range -1 .. (38 * 2**20);
+      LSBA : LSB_Adjustment;
+      Carry : Carry_Adjustment;
+      O     : GF;
    begin
-      R := X;
-      Car_25519 (R);
-      return Normal_GF (R);
+      O := X;
+      --  RCC question: how many iterations before Carry converges to 0???
+      --  Not true if X (0) is negative.  e.g.
+      --  X = (-1, others => 0)
+      for I in Index_16 range 0 .. 14 loop
+         Carry := ASR_16 (O (I));
+         O (I + 1) := O (I + 1) + Carry;
+         O (I) := O (I) mod 65536;
+         --  RCC invariant
+         --  (for all K in Index_16 range 0 .. I =>
+         --      O (K) in GF_Normal_Limb) and
+         --  O (15) in -1 .. 65535
+      end loop;
+
+      pragma Assert (Carry in -1 .. 0);
+      pragma Assert (for all K in Index_16 range 0 .. 14 =>
+                       O (K) in GF_Normal_Limb);
+      pragma Assert (O (15) in -1 .. 65535);
+
+      LSBA := ASR_16 (O (15));
+
+      O (0) := O (0) + 38 * LSBA;
+      O (15) := O (15) mod 65536;
+      return Normal_GF (O);
    end Car_Seminormal_To_Normal;
 
    --  POK
