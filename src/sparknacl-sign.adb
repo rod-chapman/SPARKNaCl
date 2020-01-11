@@ -29,7 +29,8 @@ is
                                   16#6666#, 16#6666#, 16#6666#, 16#6666#,
                                   16#6666#, 16#6666#, 16#6666#, 16#6666#);
 
-   --  RCC adds constant GF_XY
+   --  Original TweetNaCl code computes Q(3) by multiplying GF_X by GF_Y,
+   --  but this is a constant (now called GF_XY), thus:
    GF_XY : constant Normal_GF := (16#DD90#, 16#A5B7#, 16#8AB3#, 16#6DDE#,
                                   16#52F5#, 16#7751#, 16#9F80#, 16#20F0#,
                                   16#E37D#, 16#64AB#, 16#4E8E#, 16#66EA#,
@@ -42,9 +43,6 @@ is
 
    type GF_Vector_4 is array (Index_4) of Normal_GF;
 
-   --  Original TweetNaCl code computes Q(3) by multiplying GF_X by GF_Y,
-   --  but this is a constant (now called GF_XY), so that's used below.
-   --
    --  We make this constant library-level to ensure that its declaration
    --  is only elaborated exactly once.
    Scalarbase_Q : constant GF_Vector_4 := (0 => GF_X,
@@ -73,12 +71,12 @@ is
 
    subtype Bit is Byte range 0 .. 1;
 
-   function Par_25519 (A : in GF) return Bit
+   function Par_25519 (A : in Normal_GF) return Bit
      with Global => null;
 
-   --  ModL was here
+   --  RCC Local spec of ModL was here
 
-   --  RCC introduces this function to combine Hash and Reduce into
+   --  SPARKNaCl introduces this function to combine Hash and Reduce into
    --  a single call. Former procedure Reduce removed.
    function Hash_Reduce (M : in Byte_Seq) return Bytes_32
      with Global => null;
@@ -171,7 +169,7 @@ is
    end Scalarbase;
 
    --  POK
-   function Par_25519 (A : in GF) return Bit
+   function Par_25519 (A : in Normal_GF) return Bit
    is
       D : Bytes_32;
    begin
@@ -182,7 +180,7 @@ is
    --  POK
    function Pack (P : in GF_Vector_4) return Bytes_32
    is
-      TX, TY, ZI : GF;
+      TX, TY, ZI : Normal_GF;
       R : Bytes_32;
    begin
       ZI := Utils.Inv_25519 (P (2));
@@ -633,14 +631,14 @@ is
    is
       --  Local, time-constant equality test for GF
       --  In the original TweetNaCl sources, this is called eq25519
-      function "=" (Left, Right : in GF) return Boolean
+      function "=" (Left, Right : in Normal_GF) return Boolean
         with Global => null;
 
       function Pow_2523 (I : in Normal_GF) return Normal_GF
         with Global => null;
 
       --  POK
-      function "=" (Left, Right : in GF) return Boolean
+      function "=" (Left, Right : in Normal_GF) return Boolean
       is
       begin
          return Equal (Bytes_32'(Utils.Pack_25519 (Left)),

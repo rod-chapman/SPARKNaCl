@@ -43,7 +43,7 @@ is
 
    --  Reduces N modulo (2**255 - 19) then packs the
    --  value into 32 bytes little-endian.
-   function Pack_25519 (N : in GF) return Bytes_32
+   function Pack_25519 (N : in Normal_GF) return Bytes_32
      with Global => null;
 
    function Inv_25519 (I : in Normal_GF) return Normal_GF

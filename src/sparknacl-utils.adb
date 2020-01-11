@@ -154,8 +154,8 @@ is
       end loop;
    end Sel_25519;
 
-   --  POK (excepting Post of Car_25519 applied 3 times)
-   function Pack_25519 (N : in GF) return Bytes_32
+   --  POK
+   function Pack_25519 (N : in Normal_GF) return Bytes_32
    is
       procedure Subtract_P (T         : in     Normal_GF;
                             Result    :    out Normal_GF;
@@ -221,13 +221,13 @@ is
       First_Underflow  : Boolean;
       Second_Underflow : Boolean;
    begin
+      --  Make a variable copy of N so can be passed to
+      --  calls to Sel_25519 below
       L := N;
 
-      --  Fully normalize T first so all limbs in 0 .. 65535
-      Car_25519 (L);
-      Car_25519 (L);
-      Car_25519 (L);
-      pragma Assert (L in Normal_GF); --  RCC - Assume this?
+      --  SPARKNaCl differs from TweetNaCl here, in that Pack_25519
+      --  takes a Normal_GF parameter N, so no further normalization
+      --  by Car_25519 is required here.
 
       --  Readable, but variable-time version of this algorithm:
       --     Subtract_P (L,  R1, First_Underflow);
