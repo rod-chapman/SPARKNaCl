@@ -43,7 +43,7 @@ is
    is
    begin
       if On then
-         Put_Line (S);
+         Put (S & ' ');
          I64IO.Put (D, Width => 0);
          New_Line;
       end if;
