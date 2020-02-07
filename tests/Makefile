@@ -7,11 +7,11 @@ new_test_results: testall
 	./testall >new_test_results
 
 testall: *.adb ../src/*.adb ../src/*.ads
-	gprbuild
+	gprbuild -Ptestall
 
 badtests: badbox.adb
 	gcc -c -gnatwa -I../src badbox.adb
 
 clean:
-	gprclean -r
+	gprclean -r -Ptestall
 	rm -f new_test_results
