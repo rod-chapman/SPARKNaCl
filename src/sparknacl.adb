@@ -1,5 +1,4 @@
-with SPARKNaCl.Utils;
---  with SPARKNaCl.Debug;
+with SPARKNaCl.Utils2;
 package body SPARKNaCl
   with SPARK_Mode => On
 is
@@ -17,22 +16,39 @@ is
            (for all J in Index_16 range 0 .. I => O (J) in GF_Summation_Limb);
       end loop;
 
-      return Utils.Car_Seminormal_To_Normal
-        (Utils.Car_Summation_To_Seminormal (O));
+      return Utils2.Car_Nearlynormal_To_Normal
+        (Utils2.Car_Summation_To_Nearlynormal (O));
    end "+";
 
    function "-" (Left, Right : in Normal_GF) return Normal_GF
    is
-      O : Difference_GF := (others => 0);
+      O : GF := (others => 0);
+      R : Nearlynormal_GF_Difference;
    begin
-      for I in Index_16 loop
-         O (I) := Left (I) - Right (I);
+      --  For limb 0, we compute the difference, but add 65536 to
+      --  make sure the result is positive.
+      O (0) := (Left (0) - Right (0)) + 65536;
+
+      for I in Index_16 range 1 .. 15 loop
+         --  Having added 65536 to the previous limb, we also add 65536 to
+         --  each new limb, but subtract 1 to account for the extra 65536 from
+         --  the earlier limb
+         O (I) := (Left (I) - Right (I)) + 65535;
          pragma Loop_Invariant
-           (for all J in Index_16 range 0 .. I => O (J) in GF_Difference_Limb);
+           ((O (0) in 1 .. 131071) and
+            (for all K in Index_16 range 1 .. I => O (K) in 0 .. 131070));
       end loop;
 
-      return Utils.Car_Seminormal_To_Normal
-        (Utils.Car_Difference_To_Seminormal (O));
+      --  We now need to carry -1 into limb O (16), but that doesn't
+      --  exist, so we carry 2**256 * -1 into limb O (0). As before,
+      --  we know that (2**256) mod (2**255 - 19) = 38, so we add
+      --  38 * -1 to O (0)
+      O (0) := O (0) - 38;
+
+      pragma Assert (O in Unnormalized_GF_Difference);
+
+      R := Utils2.Car_Difference_To_Nearlynormal (O);
+      return Utils2.Car_NNTN2 (R);
    end "-";
 
    function "*" (Left, Right : in Normal_GF) return Normal_GF
@@ -133,8 +149,9 @@ is
            );
       end loop;
 
-      return Utils.Car_Seminormal_To_Normal
-        (Utils.Car_Any_To_Seminormal (TF));
+      return Utils2.Car_Nearlynormal_To_Normal
+               (Utils2.Car_Seminormal_Product_To_Nearlynormal
+                 (Utils2.Car_Product_To_Seminormal (TF)));
    end "*";
 
    --  POK
