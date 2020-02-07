@@ -315,6 +315,10 @@ private
    is (To_I64 (Shift_Right_Arithmetic (To_U64 (X), 16)))
      with Post => (if X >= 0 then ASR_16'Result = X / 65536 else
                                   ASR_16'Result = ((X + 1) / 65536) - 1);
+   pragma Annotate (GNATprove,
+                    False_Positive,
+                    "postcondition might fail",
+                    "From definition of arithmetic shift right");
 
    --  returns equivalent of X >> 8 in C, doing an arithmetic
    --  shift right when X is negative
@@ -322,6 +326,10 @@ private
    is (To_I64 (Shift_Right_Arithmetic (To_U64 (X), 8)))
      with Post => (if X >= 0 then ASR_8'Result = X / 256 else
                                   ASR_8'Result = ((X + 1) / 256) - 1);
+   pragma Annotate (GNATprove,
+                    False_Positive,
+                    "postcondition might fail",
+                    "From definition of arithmetic shift right");
 
    --  returns equivalent of X >> 4 in C, doing an arithmetic
    --  shift right when X is negative
@@ -329,6 +337,10 @@ private
    is (To_I64 (Shift_Right_Arithmetic (To_U64 (X), 4)))
      with Post => (if X >= 0 then ASR_4'Result = X / 16 else
                                   ASR_4'Result = ((X + 1) / 16) - 1);
+   pragma Annotate (GNATprove,
+                    False_Positive,
+                    "postcondition might fail",
+                    "From definition of arithmetic shift right");
 
    --===============================
    --  Local subprogram declarations
