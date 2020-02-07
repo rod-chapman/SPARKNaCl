@@ -12,26 +12,33 @@ is
    --===================================================
 
    --  Carry reduction of all elements of O
-   procedure Car_25519 (O : in out GF)
-     with Global => null;
+--   procedure Car_25519 (O : in out GF)
+--     with Global => null;
    --  Pre all limbs in -65535 .. (38 * 2**36)
    --  Post all limbs in -37 .. 65535 ???
 
-   function Car_Any_To_Seminormal (X : in Unnormalized_GF_Product)
-                                  return Seminormal_GF
-     with Global => null;
+--   procedure Car_25519_Orig (O : in out GF)
+--     with Global => null;
 
-   function Car_Summation_To_Seminormal (X : in Summation_GF)
-                                        return Seminormal_GF
-     with Global => null;
+--   function Car_Any_To_Seminormal (X : in Unnormalized_GF_Product)
+--                                  return Seminormal_GF
+--     with Global => null;
 
-   function Car_Difference_To_Seminormal (X : in Difference_GF)
-                                        return Seminormal_GF
-     with Global => null;
+--   function Car_Product_To_Seminormal (X : in Unnormalized_GF_Product)
+--                                      return Seminormal_GF
+--     with Global => null;
 
-   function Car_Seminormal_To_Normal (X : in Seminormal_GF)
-                                  return Normal_GF
-     with Global => null;
+--   function Car_Summation_To_Nearlynormal (X : in Summation_GF)
+--                                        return Nearlynormal_GF
+--     with Global => null;
+
+--   function Car_Difference_To_Seminormal (X : in Difference_GF)
+--                                        return Seminormal_GF
+--     with Global => null;
+
+--   function Car_Seminormal_To_Normal (X : in Seminormal_GF)
+--                                  return Normal_GF
+--     with Global => null;
 
    --  Constant time conditional swap of P and Q.
    procedure Sel_25519 (P    : in out Normal_GF;
