@@ -1,10 +1,10 @@
 --  with SPARKNaCl.PDebug;
 --  with SPARKNaCl.Debug;
-package body SPARKNaCl.Utils2
+package body SPARKNaCl.Car
   with SPARK_Mode => On
 is
 
-   function Car_Product_To_Seminormal (X : in Unnormalized_GF_Product)
+   function Product_To_Seminormal (X : in Unnormalized_GF_Product)
                                       return Seminormal_Product_GF
    is
       subtype Temp_GF is GF
@@ -56,9 +56,9 @@ is
       O (15) := O (15) mod 65536;
 
       return Seminormal_Product_GF (O);
-   end Car_Product_To_Seminormal;
+   end Product_To_Seminormal;
 
-   function Car_Seminormal_Product_To_Nearlynormal
+   function Seminormal_Product_To_Nearlynormal
      (X : in Seminormal_Product_GF)
        return Nearlynormal_GF
    is
@@ -111,10 +111,10 @@ is
       O (15) := O (15) mod 65536;
 
       return Nearlynormal_GF (O);
-   end Car_Seminormal_Product_To_Nearlynormal;
+   end Seminormal_Product_To_Nearlynormal;
 
 
-   function Car_Summation_To_Nearlynormal
+   function Summation_To_Nearlynormal
      (X : in Summation_GF)
        return Nearlynormal_GF
    is
@@ -161,11 +161,11 @@ is
       O (15) := O (15) mod 65536;
 
       return Nearlynormal_GF (O);
-   end Car_Summation_To_Nearlynormal;
+   end Summation_To_Nearlynormal;
 
 
 
-   function Car_Difference_To_Nearlynormal
+   function Difference_To_Nearlynormal
      (X : in Unnormalized_GF_Difference)
        return Nearlynormal_GF_Difference
    is
@@ -203,11 +203,11 @@ is
       pragma Assert (O in Nearlynormal_GF_Difference);
 
       return Nearlynormal_GF_Difference (O);
-   end Car_Difference_To_Nearlynormal;
+   end Difference_To_Nearlynormal;
 
 
 
-   function Car_Nearlynormal_To_Normal
+   function Nearlynormal_To_Normal
      (X : in Nearlynormal_GF_Difference)
        return Normal_GF
    is
@@ -311,6 +311,6 @@ is
 
       pragma Assert (O (0) in GF_Normal_Limb);
       return Normal_GF (O);
-   end Car_Nearlynormal_To_Normal;
+   end Nearlynormal_To_Normal;
 
-end SPARKNaCl.Utils2;
+end SPARKNaCl.Car;
