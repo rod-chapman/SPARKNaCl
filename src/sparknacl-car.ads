@@ -12,8 +12,8 @@ is
        return Nearlynormal_GF
      with Global => null;
 
-   function Summation_To_Nearlynormal
-     (X : in Summation_GF)
+   function Sum_To_Nearlynormal
+     (X : in Sum_GF)
        return Nearlynormal_GF
      with Global => null;
 

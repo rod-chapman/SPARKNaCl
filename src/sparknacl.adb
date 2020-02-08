@@ -8,16 +8,16 @@ is
 
    function "+" (Left, Right : in Normal_GF) return Normal_GF
    is
-      O : Summation_GF := (others => 0);
+      O : Sum_GF := (others => 0);
    begin
       for I in Index_16 loop
          O (I) := Left (I) + Right (I);
          pragma Loop_Invariant
-           (for all J in Index_16 range 0 .. I => O (J) in GF_Summation_Limb);
+           (for all J in Index_16 range 0 .. I => O (J) in GF_Sum_Limb);
       end loop;
 
       return Car.Nearlynormal_To_Normal
-        (Car.Summation_To_Nearlynormal (O));
+        (Car.Sum_To_Nearlynormal (O));
    end "+";
 
    function "-" (Left, Right : in Normal_GF) return Normal_GF

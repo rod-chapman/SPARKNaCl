@@ -112,8 +112,8 @@ is
    end Seminormal_Product_To_Nearlynormal;
 
 
-   function Summation_To_Nearlynormal
-     (X : in Summation_GF)
+   function Sum_To_Nearlynormal
+     (X : in Sum_GF)
        return Nearlynormal_GF
    is
       subtype Carry_T is I64 range 0 .. 1;
@@ -122,7 +122,7 @@ is
       subtype Temp_GF is GF
         with Dynamic_Predicate =>
           (for all I in Index_16 range 0 .. 15 =>
-            Temp_GF (I) in 0 .. GF_Summation_Limb'Last + 1);
+            Temp_GF (I) in 0 .. GF_Sum_Limb'Last + 1);
       R : Temp_GF;
    begin
       R := X;
@@ -132,7 +132,7 @@ is
       R (0) := R (0) mod 65536;
 
       pragma Assert (R (0) in GF_Normal_Limb);
-      pragma Assert (R (1) in 0 .. GF_Summation_Limb'Last + 1);
+      pragma Assert (R (1) in 0 .. GF_Sum_Limb'Last + 1);
       pragma Assert
         (for all K in Index_16 range 2 .. 15 => R (K) = X (K));
 
@@ -143,7 +143,7 @@ is
 
          pragma Loop_Invariant
            (for all K in Index_16 range 0 .. I => (R (K) in GF_Normal_Limb));
-         pragma Loop_Invariant (R (I + 1) in 0 .. GF_Summation_Limb'Last + 1);
+         pragma Loop_Invariant (R (I + 1) in 0 .. GF_Sum_Limb'Last + 1);
          pragma Loop_Invariant
            (for all K in Index_16 range I + 2 .. 15 => R (K) = X (K));
 
@@ -151,7 +151,7 @@ is
 
       pragma Assert
         (for all K in Index_16 range 0 .. 14 => (R (K) in GF_Normal_Limb));
-      pragma Assert (R (15) in 0 .. GF_Summation_Limb'Last + 1);
+      pragma Assert (R (15) in 0 .. GF_Sum_Limb'Last + 1);
 
       Carry := ASR_16 (R (15));
 
@@ -159,7 +159,7 @@ is
       R (15) := R (15) mod 65536;
 
       return Nearlynormal_GF (R);
-   end Summation_To_Nearlynormal;
+   end Sum_To_Nearlynormal;
 
 
 

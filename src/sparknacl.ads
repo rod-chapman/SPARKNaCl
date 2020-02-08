@@ -182,8 +182,8 @@ private
    --  Lower bound on GF_Any_Limb
    --
    --  During a subtraction of a GF, a limb can also reach -65535,
-   --  but this can be rounded down to -65536 by addition of a -1 carry
-   --  in Car_25519, so the lower bound is -65536
+   --  but this can be rounded down to -65536 by addition of a -1 carry,
+   --  so the lower bound is -65536
    --
    --  Upper bound on GF_Any_Limb
    --
@@ -200,46 +200,41 @@ private
    --  "Maximum GF Limb Coefficient"
    MGFLC : constant := (38 * 15) + 1;
 
-   subtype GF_Any_Limb        is I64 range -65536 .. (MGFLC * MGFLP);
+   subtype GF_Any_Limb is I64 range -65536 .. (MGFLC * MGFLP);
 
    type GF is array (Index_16) of GF_Any_Limb;
 
+
+   -------------------------------------------------------------------------
+   subtype GF_Normal_Limb     is I64 range      0 .. 65535;
+
+   subtype Normal_GF is GF
+     with Dynamic_Predicate =>
+       (for all I in Index_16 => Normal_GF (I) in GF_Normal_Limb);
+   -------------------------------------------------------------------------
+
+
+
+
+   -------------------------------------------------------------------------
    --  In a "+" operation, intermediate result limbs peak at +131070, so
-   subtype GF_Summation_Limb is I64 range 0 .. 131070;
+   subtype GF_Sum_Limb is I64 range 0 .. 131070;
 
-   subtype Summation_GF is GF
+   subtype Sum_GF is GF
      with Dynamic_Predicate =>
-       (for all I in Index_16 => Summation_GF (I) in GF_Summation_Limb);
+       (for all I in Index_16 => Sum_GF (I) in GF_Sum_Limb);
+   -------------------------------------------------------------------------
 
 
-   --  In a "-" operation, intermediate result limbs are in -65535 .. 65535
-   subtype GF_Difference_Limb is I64 range -65535 .. 65535;
-   subtype Difference_GF is GF
-     with Dynamic_Predicate =>
-       (for all I in Index_16 => Difference_GF (I) in GF_Difference_Limb);
-
+   -------------------------------------------------------------------------
    subtype Unnormalized_GF_Difference is GF
      with Dynamic_Predicate =>
         ((Unnormalized_GF_Difference (0) in -37 .. 131033) and
            (for all K in Index_16 range 1 .. 15 =>
               Unnormalized_GF_Difference (K) in 0 .. 131070));
+   -------------------------------------------------------------------------
 
-   --  RCC Justification required here of the lower and upper bounds
-   subtype GF_Seminormal_Limb is I64 range    -38 .. 39_847_219;
-
-   subtype GF_Normal_Limb     is I64 range      0 .. 65535;
-
-   --  In a "Seminornal" GF, limbs 1 through 15 are "normal", but
-   --  Limb 0 is a GF_Seminormal_Limb
-   subtype Seminormal_GF is GF
-     with Dynamic_Predicate =>
-       (Seminormal_GF (0) in GF_Seminormal_Limb and
-          (for all I in Index_16 range 1 .. 15 =>
-             Seminormal_GF (I) in GF_Normal_Limb));
-
-   subtype Normal_GF is GF
-     with Dynamic_Predicate =>
-       (for all I in Index_16 => Normal_GF (I) in GF_Normal_Limb);
+   -------------------------------------------------------------------------
 
    --  A GF which is the result of multiplying two other Normalized GFs,
    --  but BEFORE normalization is applied has the following bounds on
@@ -258,14 +253,21 @@ private
 
    ----------------------------------------------------------------------
    --  A "Seminormal GF Product" is the result of applying a single
-   --  "Car_25519" normalization step to an Unnormalized_GF_Product
+   --  normalization step to an Unnormalized_GF_Product
 
-   --  Least Significant Limb of a Seminormal GF Product
+   --  Least Significant Limb ("LSL") of a Seminormal GF Product.
+   --  LSL is initially normalized to 0 .. 65535, but gets
+   --  38 * Carry added to it, where Carry is (Limb 15 / 65536)
+   --  The upper-bound on Limb 15 is given by substituting I = 15
+   --  into the Dynamic_Predicate above, so
+   --    (MGFLC - 37 * 15) * MGFLP = 53 * MGFLP
+
+   --  RCC should this be 16 no 53?
    subtype GF_Seminormal_Product_LSL is I64
      range 0 .. (65535 + 38 * ((53 * MGFLP) / 65536));
 
    --  Limbs 1 though 15 are in 0 .. 65535, but the
-   --  Least Significant Limb 0 is special..
+   --  Least Significant Limb 0 is in GF_Seminormal_Product_LSL
    subtype Seminormal_Product_GF is GF
      with Dynamic_Predicate =>
        (Seminormal_Product_GF (0) in GF_Seminormal_Product_LSL and
@@ -274,12 +276,14 @@ private
 
    ------------------------------------------------------------------------
    --  A "Nearly-normal GF" is the result of applying either:
-   --  1. TWO "Car_25519" normalization steps to an Unnormalized_GF_Product
+   --  1. TWO normalization steps to an Unnormalized_GF_Product
    --  OR
    --  2. ONE normalization step the the SUM of 2 normalized GFs
    --  OR
    --  3. ONE normalization step the the DIFFERENCE of 2 normalized GFs
 
+   --  The least-significant-limb is normalized to 0 .. 65535, but then
+   --  has +38 or -38 added to it, so its range is...
    subtype Nearlynormal_GF is GF
      with Dynamic_Predicate =>
         ((Nearlynormal_GF (0) in -38 .. 65573) and
