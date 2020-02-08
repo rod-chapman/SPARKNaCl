@@ -39,7 +39,7 @@ is
       Z : Bytes_16;
       X : Bytes_64;
       U : U32;
-      B : N64;
+      B : Natural_64;
    begin
       B := C'Length;
       C := (others => 0);

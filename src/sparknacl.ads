@@ -45,7 +45,7 @@ is
    subtype N32 is I32 range 0 .. I32'Last;
    subtype I64 is Integer_64;
    subtype I64_Byte is I64 range 0 .. 255;
-   subtype N64 is I64 range 0 .. I64'Last;
+   subtype Natural_64 is I64 range 0 .. I64'Last;
 
    type Byte_Seq is array (N32 range <>) of Byte;
 
