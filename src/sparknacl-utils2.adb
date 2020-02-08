@@ -114,91 +114,6 @@ is
    end Car_Seminormal_Product_To_Nearlynormal;
 
 
-
-
-   function Car_Nearlynormal_To_Normal
-     (X : in Nearlynormal_GF)
-     return Normal_GF
-   is
-      Carry : Boolean;
-
-      subtype Temp_GF is GF
-        with Dynamic_Predicate =>
-        (Temp_GF (0) in GF_Seminormal_Product_LSL and
-           (for all I in Index_16 range 1 .. 15 =>
-              Temp_GF (I) in 0 .. 65536));
-      O  : Temp_GF;
-   begin
-      --  Expand X's dynamic subtype precondition
-      pragma Assert (X (0) in GF_Nearlynormal_LSL);
-      pragma Assert
-        (for all I in Index_16 range 1 .. 15 => X (I) in GF_Normal_Limb);
-
-      O := X;
-
-      Carry := (X (0) >= 65536);
-      O (1) := O (1) + Boolean'Pos (Carry);
-      O (0) := O (0) mod 65536;
-
-      pragma Assert (Carry = (X (0) >= 65536));
-      pragma Assert (O (0) in GF_Normal_Limb);
-      pragma Assert (O (0) = X (0) mod 65536);
-      pragma Assert (O (1) in 0 .. 65536);
-      pragma Assert
-        (for all K in Index_16 range 2 .. 15 => O (K) = X (K));
-
-      for I in Index_16 range 1 .. 14 loop
-         Carry := Carry and (X (I) = 65535);
-
-         O (I + 1) := O (I + 1) + Boolean'Pos (Carry);
-         O (I) := O (I) mod 65536;
-
-         pragma Loop_Invariant (O (0) = X (0) mod 65536);
-         pragma Loop_Invariant
-           (Carry = ((X (0) >= 65536) and
-                     (for all K in Index_16 range 1 .. I => (X (K) = 65535))));
-         pragma Loop_Invariant
-           (for all K in Index_16 range 0 .. I => (O (K) in GF_Normal_Limb));
-         pragma Loop_Invariant (O (I + 1) in 0 .. 65536);
-         pragma Loop_Invariant
-           (for all K in Index_16 range I + 2 .. 15 => O (K) = X (K));
-
-      end loop;
-
-      --  Substitute I = 14 into the above loop invariant
-      --  and simplify to yield:
-      pragma Assert
-        (Carry = ((X (0) >= 65536) and
-                    (for all K in Index_16 range 1 .. 14 => (X (K) = 65535))));
-      pragma Assert
-        (for all K in Index_16 range 0 .. 14 => (O (K) in GF_Normal_Limb));
-      pragma Assert (O (15) in 0 .. 65536);
-
-
-      --  Now compute the final carry from X (15)
-      Carry := Carry and (X (15) = 65535);
-
-      --  And assert the relationship between Carry and X (0)
-      pragma Assert
-        (Carry = ((X (0) >= 65536) and
-                    (for all K in Index_16 range 1 .. 15 => (X (K) = 65535))));
-
-      --  If Carry = True, then X (0) >= 65536, so O (0) in 0 .. 37
-      pragma Assert (if Carry then O (0) in 0 .. 37);
-
-      --  Which means this addition will never overflow...
-      O (0) := O (0) + 38 * Boolean'Pos (Carry);
-      O (15) := O (15) mod 65536;
-
-      --  All limbs are fully normalized now...
-      pragma Assert
-        (for all K in Index_16 => (O (K) in GF_Normal_Limb));
-
-      return Normal_GF (O);
-
-   end Car_Nearlynormal_To_Normal;
-
-
    function Car_Summation_To_Nearlynormal
      (X : in Summation_GF)
        return Nearlynormal_GF
@@ -290,7 +205,9 @@ is
       return Nearlynormal_GF_Difference (O);
    end Car_Difference_To_Nearlynormal;
 
-   function Car_NNTN2
+
+
+   function Car_Nearlynormal_To_Normal
      (X : in Nearlynormal_GF_Difference)
        return Normal_GF
    is
@@ -394,6 +311,6 @@ is
 
       pragma Assert (O (0) in GF_Normal_Limb);
       return Normal_GF (O);
-   end Car_NNTN2;
+   end Car_Nearlynormal_To_Normal;
 
 end SPARKNaCl.Utils2;

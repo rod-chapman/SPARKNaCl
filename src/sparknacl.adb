@@ -8,7 +8,7 @@ is
 
    function "+" (Left, Right : in Normal_GF) return Normal_GF
    is
-      O  : Summation_GF := (others => 0);
+      O : Summation_GF := (others => 0);
    begin
       for I in Index_16 loop
          O (I) := Left (I) + Right (I);
@@ -23,7 +23,6 @@ is
    function "-" (Left, Right : in Normal_GF) return Normal_GF
    is
       O : GF := (others => 0);
-      R : Nearlynormal_GF_Difference;
    begin
       --  For limb 0, we compute the difference, but add 65536 to
       --  make sure the result is positive.
@@ -47,8 +46,8 @@ is
 
       pragma Assert (O in Unnormalized_GF_Difference);
 
-      R := Utils2.Car_Difference_To_Nearlynormal (O);
-      return Utils2.Car_NNTN2 (R);
+      return Utils2.Car_Nearlynormal_To_Normal
+        (Utils2.Car_Difference_To_Nearlynormal (O));
    end "-";
 
    function "*" (Left, Right : in Normal_GF) return Normal_GF
