@@ -167,7 +167,7 @@ is
 
    function Difference_To_Nearlynormal
      (X : in Unnormalized_GF_Difference)
-       return Nearlynormal_GF_Difference
+       return Nearlynormal_GF
    is
       --  Note that Carry can be negative in this case
       subtype Carry_T is I64 range -1 .. 1;
@@ -200,15 +200,15 @@ is
       O (0) := O (0) + 38 * Carry;
       O (15) := O (15) mod 65536;
 
-      pragma Assert (O in Nearlynormal_GF_Difference);
+      pragma Assert (O in Nearlynormal_GF);
 
-      return Nearlynormal_GF_Difference (O);
+      return Nearlynormal_GF (O);
    end Difference_To_Nearlynormal;
 
 
 
    function Nearlynormal_To_Normal
-     (X : in Nearlynormal_GF_Difference)
+     (X : in Nearlynormal_GF)
        return Normal_GF
    is
       subtype Temp_GF is GF

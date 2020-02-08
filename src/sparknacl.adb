@@ -1,4 +1,4 @@
-with SPARKNaCl.Utils2;
+with SPARKNaCl.Car;
 package body SPARKNaCl
   with SPARK_Mode => On
 is
@@ -16,8 +16,8 @@ is
            (for all J in Index_16 range 0 .. I => O (J) in GF_Summation_Limb);
       end loop;
 
-      return Utils2.Car_Nearlynormal_To_Normal
-        (Utils2.Car_Summation_To_Nearlynormal (O));
+      return Car.Nearlynormal_To_Normal
+        (Car.Summation_To_Nearlynormal (O));
    end "+";
 
    function "-" (Left, Right : in Normal_GF) return Normal_GF
@@ -46,8 +46,8 @@ is
 
       pragma Assert (O in Unnormalized_GF_Difference);
 
-      return Utils2.Car_Nearlynormal_To_Normal
-        (Utils2.Car_Difference_To_Nearlynormal (O));
+      return Car.Nearlynormal_To_Normal
+        (Car.Difference_To_Nearlynormal (O));
    end "-";
 
    function "*" (Left, Right : in Normal_GF) return Normal_GF
@@ -148,9 +148,9 @@ is
            );
       end loop;
 
-      return Utils2.Car_Nearlynormal_To_Normal
-               (Utils2.Car_Seminormal_Product_To_Nearlynormal
-                 (Utils2.Car_Product_To_Seminormal (TF)));
+      return Car.Nearlynormal_To_Normal
+               (Car.Seminormal_Product_To_Nearlynormal
+                 (Car.Product_To_Seminormal (TF)));
    end "*";
 
    --  POK

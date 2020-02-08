@@ -19,7 +19,7 @@ is
 
    function Difference_To_Nearlynormal
      (X : in Unnormalized_GF_Difference)
-       return Nearlynormal_GF_Difference
+       return Nearlynormal_GF
      with Global => null;
 
 

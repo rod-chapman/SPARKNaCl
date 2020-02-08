@@ -224,12 +224,6 @@ private
            (for all K in Index_16 range 1 .. 15 =>
               Unnormalized_GF_Difference (K) in 0 .. 131070));
 
-   subtype Nearlynormal_GF_Difference is GF
-     with Dynamic_Predicate =>
-        ((Nearlynormal_GF_Difference (0) in -38 .. 65573) and
-           (for all K in Index_16 range 1 .. 15 =>
-              (Nearlynormal_GF_Difference (K) in GF_Normal_Limb)));
-
    --  RCC Justification required here of the lower and upper bounds
    subtype GF_Seminormal_Limb is I64 range    -38 .. 39_847_219;
 
@@ -278,25 +272,21 @@ private
          (for all I in Index_16 range 1 .. 15 =>
            Seminormal_Product_GF (I) in GF_Normal_Limb));
 
-   ----------------------------------------------------------------------
-   --  A "Nearly-normal GF" is the result of applying TWO
-   --  "Car_25519" normalization steps to an Unnormalized_GF_Product
-   --  OR the result of applying a single normalization to the
-   --  sum of 2 normalized GFs
+   ------------------------------------------------------------------------
+   --  A "Nearly-normal GF" is the result of applying either:
+   --  1. TWO "Car_25519" normalization steps to an Unnormalized_GF_Product
+   --  OR
+   --  2. ONE normalization step the the SUM of 2 normalized GFs
+   --  OR
+   --  3. ONE normalization step the the DIFFERENCE of 2 normalized GFs
 
-   --  Least Significant Limb of a Nearly-normal GF
-   subtype GF_Nearlynormal_LSL is I64
-     range 0 .. (65535 + 38);
-
-   --  Limbs 1 though 15 are in 0 .. 65535, but the
-   --  Least Significant Limb 0 is special..
    subtype Nearlynormal_GF is GF
      with Dynamic_Predicate =>
-       (Nearlynormal_GF (0) in GF_Nearlynormal_LSL and
-         (for all I in Index_16 range 1 .. 15 =>
-           Nearlynormal_GF (I) in GF_Normal_Limb));
+        ((Nearlynormal_GF (0) in -38 .. 65573) and
+           (for all K in Index_16 range 1 .. 15 =>
+              (Nearlynormal_GF (K) in GF_Normal_Limb)));
 
-   ----------------------------------------------------------------------
+   ------------------------------------------------------------------------
 
    GF_0      : constant Normal_GF := (others => 0);
    GF_1      : constant Normal_GF := (1, others => 0);
