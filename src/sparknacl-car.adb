@@ -2,8 +2,9 @@ package body SPARKNaCl.Car
   with SPARK_Mode => On
 is
 
-   function Product_To_Seminormal (X : in Unnormalized_GF_Product)
-                                      return Seminormal_Product_GF
+   function Product_To_Seminormal
+     (X : in Product_GF)
+       return Seminormal_GF
    is
       subtype Temp_GF is GF
         with Dynamic_Predicate =>
@@ -49,19 +50,19 @@ is
 
       R (0) := R (0) + 38 * Carry;
 
-      pragma Assert (R (0) in GF_Seminormal_Product_LSL);
+      pragma Assert (R (0) in Seminormal_GF_LSL);
 
       R (15) := R (15) mod 65536;
 
-      return Seminormal_Product_GF (R);
+      return Seminormal_GF (R);
    end Product_To_Seminormal;
 
-   function Seminormal_Product_To_Nearlynormal
-     (X : in Seminormal_Product_GF)
+   function Seminormal_To_Nearlynormal
+     (X : in Seminormal_GF)
        return Nearlynormal_GF
    is
       subtype First_Carry_T is I64 range
-        0 .. GF_Seminormal_Product_LSL'Last / 65536;
+        0 .. Seminormal_GF_LSL'Last / 65536;
       First_Carry : First_Carry_T;
 
       subtype Later_Carry_T is I64 range 0 .. 1;
@@ -69,7 +70,7 @@ is
 
       subtype Temp_GF is GF
         with Dynamic_Predicate =>
-        (Temp_GF (0) in GF_Seminormal_Product_LSL and
+        (Temp_GF (0) in Seminormal_GF_LSL and
            (for all I in Index_16 range 1 .. 15 =>
               Temp_GF (I) in 0 .. GF_Normal_Limb'Last + First_Carry_T'Last));
       R : Temp_GF;
@@ -109,7 +110,7 @@ is
       R (15) := R (15) mod 65536;
 
       return Nearlynormal_GF (R);
-   end Seminormal_Product_To_Nearlynormal;
+   end Seminormal_To_Nearlynormal;
 
 
    function Sum_To_Nearlynormal
@@ -164,7 +165,7 @@ is
 
 
    function Difference_To_Nearlynormal
-     (X : in Unnormalized_GF_Difference)
+     (X : in Difference_GF)
        return Nearlynormal_GF
    is
       --  Note that Carry can be negative in this case
@@ -174,7 +175,7 @@ is
    begin
       R := X;
 
-      pragma Assert (R in Unnormalized_GF_Difference);
+      pragma Assert (R in Difference_GF);
 
       for I in Index_16 range 0 .. 14 loop
          Carry := ASR_16 (R (I));

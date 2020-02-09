@@ -44,7 +44,7 @@ is
       --  38 * -1 to O (0)
       O (0) := O (0) - 38;
 
-      pragma Assert (O in Unnormalized_GF_Difference);
+      pragma Assert (O in Difference_GF);
 
       return Car.Nearlynormal_To_Normal
         (Car.Difference_To_Nearlynormal (O));
@@ -54,7 +54,7 @@ is
    is
       type TA is array (Index_31) of GF_Any_Limb;
       T  : TA;
-      TF : Unnormalized_GF_Product;
+      TF : Product_GF;
    begin
       T := (others => 0);
 
@@ -144,12 +144,12 @@ is
               TF (15) = T (15)
             and then
               --  Force the subtype predicate check here
-              TF in Unnormalized_GF_Product
+              TF in Product_GF
            );
       end loop;
 
       return Car.Nearlynormal_To_Normal
-               (Car.Seminormal_Product_To_Nearlynormal
+               (Car.Seminormal_To_Nearlynormal
                  (Car.Product_To_Seminormal (TF)));
    end "*";
 

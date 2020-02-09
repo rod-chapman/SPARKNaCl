@@ -227,35 +227,40 @@ private
 
 
    -------------------------------------------------------------------------
-   subtype Unnormalized_GF_Difference is GF
+   --  In a "-" operation, each limb of the intermediate result is
+   --  increased by 65536 to make sure it's not negative, and one
+   --  is taken off the next limb up to balance the value.
+   --  Finally, to balance the -1 value carried into limb 16, limb 0
+   --  is reduced by 38, so...
+   subtype Difference_GF is GF
      with Dynamic_Predicate =>
-        ((Unnormalized_GF_Difference (0) in -37 .. 131033) and
+        ((Difference_GF (0) in -37 .. 131033) and
            (for all K in Index_16 range 1 .. 15 =>
-              Unnormalized_GF_Difference (K) in 0 .. 131070));
+              Difference_GF (K) in 0 .. 131070));
    -------------------------------------------------------------------------
 
    -------------------------------------------------------------------------
 
    --  A GF which is the result of multiplying two other Normalized GFs,
    --  but BEFORE normalization is applied has the following bounds on
-   --  its coefficients. The upperbound on Unnormalized_GF_Product (0) is
-   --  MGFLC * MGFLP as above, but the upper bound reduces by 37 * MGFLP
-   --  for each element I+1 onwards...
+   --  its limbs. The upperbound on Limb 0 is MGFLC * MGFLP as in
+   --  GF_Any_Limb, but the upper bound reduces by 37 * MGFLP
+   --  for each limb onwards...
    --
    --  Lower-bound here is 0 since "*" always takes Normal_GF
    --  parameters, so an intermediate limb can never be negative.
-   subtype Unnormalized_GF_Product is GF
+   subtype Product_GF is GF
      with Dynamic_Predicate =>
        (for all I in Index_16 =>
-         Unnormalized_GF_Product (I) >= 0 and
-         Unnormalized_GF_Product (I) <=
+         Product_GF (I) >= 0 and
+         Product_GF (I) <=
            (MGFLC - 37 * GF_Any_Limb (I)) * MGFLP);
 
    ----------------------------------------------------------------------
-   --  A "Seminormal GF Product" is the result of applying a single
-   --  normalization step to an Unnormalized_GF_Product
+   --  A "Seminormal GF" is the result of applying a single
+   --  normalization step to a Product_GF
 
-   --  Least Significant Limb ("LSL") of a Seminormal GF Product.
+   --  Least Significant Limb ("LSL") of a Seminormal GF.
    --  LSL is initially normalized to 0 .. 65535, but gets
    --  38 * Carry added to it, where Carry is (Limb 15 / 65536)
    --  The upper-bound on Limb 15 is given by substituting I = 14
@@ -263,20 +268,20 @@ private
    --    (MGFLC - 37 * 14) * MGFLP = 53 * MGFLP
    --  See the body of Car_Product_To_Seminormal for the full
    --  proof of this upper-bound
-   subtype GF_Seminormal_Product_LSL is I64
+   subtype Seminormal_GF_LSL is I64
      range 0 .. (65535 + 38 * ((53 * MGFLP) / 65536));
 
    --  Limbs 1 though 15 are in 0 .. 65535, but the
    --  Least Significant Limb 0 is in GF_Seminormal_Product_LSL
-   subtype Seminormal_Product_GF is GF
+   subtype Seminormal_GF is GF
      with Dynamic_Predicate =>
-       (Seminormal_Product_GF (0) in GF_Seminormal_Product_LSL and
+       (Seminormal_GF (0) in Seminormal_GF_LSL and
          (for all I in Index_16 range 1 .. 15 =>
-           Seminormal_Product_GF (I) in GF_Normal_Limb));
+           Seminormal_GF (I) in GF_Normal_Limb));
 
    ------------------------------------------------------------------------
    --  A "Nearly-normal GF" is the result of applying either:
-   --  1. TWO normalization steps to an Unnormalized_GF_Product
+   --  1. TWO normalization steps to a Product_GF
    --  OR
    --  2. ONE normalization step the the SUM of 2 normalized GFs
    --  OR
