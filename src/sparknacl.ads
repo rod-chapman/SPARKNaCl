@@ -258,11 +258,11 @@ private
    --  Least Significant Limb ("LSL") of a Seminormal GF Product.
    --  LSL is initially normalized to 0 .. 65535, but gets
    --  38 * Carry added to it, where Carry is (Limb 15 / 65536)
-   --  The upper-bound on Limb 15 is given by substituting I = 15
+   --  The upper-bound on Limb 15 is given by substituting I = 14
    --  into the Dynamic_Predicate above, so
-   --    (MGFLC - 37 * 15) * MGFLP = 53 * MGFLP
-
-   --  RCC should this be 16 no 53?
+   --    (MGFLC - 37 * 14) * MGFLP = 53 * MGFLP
+   --  See the body of Car_Product_To_Seminormal for the full
+   --  proof of this upper-bound
    subtype GF_Seminormal_Product_LSL is I64
      range 0 .. (65535 + 38 * ((53 * MGFLP) / 65536));
 
