@@ -15,8 +15,11 @@ is
    --
    --  The core algorithm is actually a variant
    --  of that used in the TweetNaCl sources, as
-   --  suggested by Jason Donenfeld - this
-   --  algorithm is simpler and avoids the need
+   --  suggested by Jason Donenfeld and used in
+   --  WireGuard (See the "Embeddable WG Library"
+   --  in the WireGuard sources for full details.)
+   --
+   --  This algorithm is simpler and avoids the need
    --  for a left-shift of a signed integer
    --  (which is, strictly speaking, an undefined
    --   behaviour in C, so best avoided.)
