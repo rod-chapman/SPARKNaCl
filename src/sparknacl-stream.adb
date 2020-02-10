@@ -117,7 +117,7 @@ is
          end loop;
       end if;
 
-      --  RCC - Sanitize Z and X here? Not clear if these values are
+      --  Sanitize Z and X here? Not clear if these values are
       --  sensitive.
    end Salsa20_Xor_Local;
 

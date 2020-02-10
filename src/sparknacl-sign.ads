@@ -27,14 +27,6 @@ is
      with Global => null;
 
 
-   --  MBP = "Max Byte Product"
-   MBP        : constant := (255 * 255);
-   Max_X_Limb : constant := (32 * MBP) + 255;
-
-   function ModL (X : in I64_Seq_64) return Bytes_32
-     with Global => null,
-          Pre => (for all K in Index_64 => X (K) in 0 .. Max_X_Limb);
-
    procedure Sign (SM :    out Byte_Seq;
                    M  : in     Byte_Seq;
                    SK : in     Signing_SK)

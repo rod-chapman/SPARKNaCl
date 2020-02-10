@@ -72,7 +72,13 @@ is
    function Par_25519 (A : in Normal_GF) return Bit
      with Global => null;
 
-   --  RCC Local spec of ModL was here
+   --  MBP = "Max Byte Product"
+   MBP        : constant := (255 * 255);
+   Max_X_Limb : constant := (32 * MBP) + 255;
+
+   function ModL (X : in I64_Seq_64) return Bytes_32
+     with Global => null,
+          Pre    => (for all K in Index_64 => X (K) in 0 .. Max_X_Limb);
 
    --  SPARKNaCl introduces this function to combine Hash and Reduce into
    --  a single call. Former procedure Reduce removed.
