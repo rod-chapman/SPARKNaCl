@@ -395,7 +395,7 @@ M is
 16#E0# 16#82# 16#F9# 16#37# 16#76# 16#38# 16#48# 16#64# 
 16#5E# 16#07# 16#05# 
 Secretbox3
-Precondition failure, Status is TRUE
+Precondition failure expected OK
 Secretbox7
 Secretbox7 - iteration 0 OK
 Secretbox7 - iteration 1 OK

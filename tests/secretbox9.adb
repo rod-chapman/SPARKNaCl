@@ -31,10 +31,15 @@ is
    C : Byte_Seq (0 .. 162) := (others => 0);
    S : Boolean;
 begin
+   S := False;
    Create (C, S, M, Nonce, Firstkey);
 
-   Put_Line ("Status is" & S'Img);
-   DH ("C is", C);
+   if S then
+      Put_Line ("Status is" & S'Img);
+      DH ("C is", C);
+   else
+      Put_Line ("Precondition failure expected OK");
+   end if;
 exception
    when Assert_Failure | Constraint_Error =>
       Put_Line ("Precondition failure expected OK");

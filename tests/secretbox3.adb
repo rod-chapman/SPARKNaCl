@@ -31,12 +31,17 @@ is
    M : Byte_Seq (0 .. 15);
    S : Boolean;
 begin
+   S := False;
    Open (M, S, C, Nonce, Firstkey);
 
-   Put_Line ("Status is " & S'Img);
-   DH ("M is", M);
+   if S then
+      Put_Line ("Status is " & S'Img);
+      DH ("M is", M);
+   else
+      Put_Line ("Precondition failure expected OK");
+   end if;
 
 exception
    when Assert_Failure =>
-      Put_Line ("Precondition failure, Status is " & S'Img);
+      Put_Line ("Precondition failure expected OK");
 end Secretbox3;
