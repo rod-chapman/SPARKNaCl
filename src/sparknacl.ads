@@ -164,14 +164,6 @@ private
 
 
 
-   --  In multlying two normalized GFs, a simple product of
-   --  two limbs is bounded to 65535**2. This comes up in
-   --  predicates and subtypes below, so a named number here
-   --  is called for.  The name "MGFLP" is short for
-   --  "Maximum GF Limb Product"
-   MGFLP : constant := 65535 * 65535;
-
-
    -------------------------------------------------------------------------
    --  Bounds on All GF Limbs
    --
@@ -200,6 +192,13 @@ private
    --  "Maximum GF Limb Coefficient"
    MGFLC : constant := (38 * 15) + 1;
 
+   --  In multlying two normalized GFs, a simple product of
+   --  two limbs is bounded to 65535**2. This comes up in
+   --  predicates and subtypes below, so a named number here
+   --  is called for.  The name "MGFLP" is short for
+   --  "Maximum GF Limb Product"
+   MGFLP : constant := 65535 * 65535;
+
    subtype GF_Any_Limb is I64 range -65536 .. (MGFLC * MGFLP);
 
    type GF is array (Index_16) of GF_Any_Limb;
@@ -213,10 +212,9 @@ private
        (for all I in Index_16 => Normal_GF (I) in GF_Normal_Limb);
    -------------------------------------------------------------------------
 
-
-
-
    -------------------------------------------------------------------------
+   --  Subtypes supporting "+" operation on GF
+   --
    --  In a "+" operation, intermediate result limbs peak at +131070, so
    subtype GF_Sum_Limb is I64 range 0 .. 131070;
 
@@ -225,11 +223,19 @@ private
        (for all I in Index_16 => Sum_GF (I) in GF_Sum_Limb);
    -------------------------------------------------------------------------
 
-
    -------------------------------------------------------------------------
+   --  Subtypes supporting "-" operation on GF
+   --
    --  In a "-" operation, each limb of the intermediate result is
    --  increased by 65536 to make sure it's not negative, and one
    --  is taken off the next limb up to balance the value.
+   --
+   --  This means that
+   --   Limb 0 is in range (0 - 65535) + 65536 .. (65535 - 0) + 65536
+   --              which is 1 .. 131071
+   --   Limbs 1 .. 15 are in range (0 - 65535) + 65535 .. (65535 - 0) + 65535
+   --              which is 0 .. 131070
+   --
    --  Finally, to balance the -1 value carried into limb 16, limb 0
    --  is reduced by 38, so...
    subtype Difference_GF is GF
@@ -240,7 +246,8 @@ private
    -------------------------------------------------------------------------
 
    -------------------------------------------------------------------------
-
+   --  Subtypes supporting "*" operation on GF
+   --
    --  A GF which is the result of multiplying two other Normalized GFs,
    --  but BEFORE normalization is applied has the following bounds on
    --  its limbs. The upperbound on Limb 0 is MGFLC * MGFLP as in
@@ -259,7 +266,7 @@ private
    ----------------------------------------------------------------------
    --  A "Seminormal GF" is the result of applying a single
    --  normalization step to a Product_GF
-
+   --
    --  Least Significant Limb ("LSL") of a Seminormal GF.
    --  LSL is initially normalized to 0 .. 65535, but gets
    --  38 * Carry added to it, where Carry is (Limb 15 / 65536)
@@ -283,10 +290,10 @@ private
    --  A "Nearly-normal GF" is the result of applying either:
    --  1. TWO normalization steps to a Product_GF
    --  OR
-   --  2. ONE normalization step the the SUM of 2 normalized GFs
+   --  2. ONE normalization step to the SUM of 2 normalized GFs
    --  OR
-   --  3. ONE normalization step the the DIFFERENCE of 2 normalized GFs
-
+   --  3. ONE normalization step to the DIFFERENCE of 2 normalized GFs
+   --
    --  The least-significant-limb is normalized to 0 .. 65535, but then
    --  has +38 or -38 added to it, so its range is...
    subtype Nearlynormal_GF is GF
@@ -297,19 +304,24 @@ private
 
    ------------------------------------------------------------------------
 
+   --=================================================
+   --  Constants, used in more than one child package
+   --=================================================
+
    GF_0      : constant Normal_GF := (others => 0);
    GF_1      : constant Normal_GF := (1, others => 0);
 
 
+   --==================
+   --  Local functions
+   --==================
+
    function To_U64 is new Ada.Unchecked_Conversion (I64, U64);
    function To_I64 is new Ada.Unchecked_Conversion (U64, I64);
 
-   --===============================
-   --  Local expression functions
-   --===============================
-
    --  returns equivalent of X >> 16 in C, doing an arithmetic
-   --  shift right when X is negative
+   --  shift right when X is negative, assuming 2's complement
+   --  representation
    function ASR_16 (X : in I64) return I64
    is (To_I64 (Shift_Right_Arithmetic (To_U64 (X), 16)))
      with Post => (if X >= 0 then ASR_16'Result = X / 65536 else
@@ -320,7 +332,8 @@ private
                     "From definition of arithmetic shift right");
 
    --  returns equivalent of X >> 8 in C, doing an arithmetic
-   --  shift right when X is negative
+   --  shift right when X is negative, assuming 2's complement
+   --  representation
    function ASR_8 (X : in I64) return I64
    is (To_I64 (Shift_Right_Arithmetic (To_U64 (X), 8)))
      with Post => (if X >= 0 then ASR_8'Result = X / 256 else
@@ -331,7 +344,8 @@ private
                     "From definition of arithmetic shift right");
 
    --  returns equivalent of X >> 4 in C, doing an arithmetic
-   --  shift right when X is negative
+   --  shift right when X is negative, assuming 2's complement
+   --  representation
    function ASR_4 (X : in I64) return I64
    is (To_I64 (Shift_Right_Arithmetic (To_U64 (X), 4)))
      with Post => (if X >= 0 then ASR_4'Result = X / 16 else

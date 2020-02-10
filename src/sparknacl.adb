@@ -8,46 +8,46 @@ is
 
    function "+" (Left, Right : in Normal_GF) return Normal_GF
    is
-      O : Sum_GF := (others => 0);
+      R : Sum_GF := (others => 0);
    begin
       for I in Index_16 loop
-         O (I) := Left (I) + Right (I);
+         R (I) := Left (I) + Right (I);
          pragma Loop_Invariant
-           (for all J in Index_16 range 0 .. I => O (J) in GF_Sum_Limb);
+           (for all J in Index_16 range 0 .. I => R (J) in GF_Sum_Limb);
       end loop;
 
       return Car.Nearlynormal_To_Normal
-        (Car.Sum_To_Nearlynormal (O));
+        (Car.Sum_To_Nearlynormal (R));
    end "+";
 
    function "-" (Left, Right : in Normal_GF) return Normal_GF
    is
-      O : GF := (others => 0);
+      R : GF := (others => 0);
    begin
       --  For limb 0, we compute the difference, but add 65536 to
       --  make sure the result is positive.
-      O (0) := (Left (0) - Right (0)) + 65536;
+      R (0) := (Left (0) - Right (0)) + 65536;
 
       for I in Index_16 range 1 .. 15 loop
          --  Having added 65536 to the previous limb, we also add 65536 to
          --  each new limb, but subtract 1 to account for the extra 65536 from
          --  the earlier limb
-         O (I) := (Left (I) - Right (I)) + 65535;
+         R (I) := (Left (I) - Right (I)) + 65535;
          pragma Loop_Invariant
-           ((O (0) in 1 .. 131071) and
-            (for all K in Index_16 range 1 .. I => O (K) in 0 .. 131070));
+           ((R (0) in 1 .. 131071) and
+            (for all K in Index_16 range 1 .. I => R (K) in 0 .. 131070));
       end loop;
 
-      --  We now need to carry -1 into limb O (16), but that doesn't
-      --  exist, so we carry 2**256 * -1 into limb O (0). As before,
+      --  We now need to carry -1 into limb R (16), but that doesn't
+      --  exist, so we carry 2**256 * -1 into limb R (0). As before,
       --  we know that (2**256) mod (2**255 - 19) = 38, so we add
-      --  38 * -1 to O (0)
-      O (0) := O (0) - 38;
+      --  38 * -1 to R (0)
+      R (0) := R (0) - 38;
 
-      pragma Assert (O in Difference_GF);
+      pragma Assert (R in Difference_GF);
 
       return Car.Nearlynormal_To_Normal
-        (Car.Difference_To_Nearlynormal (O));
+        (Car.Difference_To_Nearlynormal (R));
    end "-";
 
    function "*" (Left, Right : in Normal_GF) return Normal_GF
@@ -58,11 +58,11 @@ is
    begin
       T := (others => 0);
 
+      --  "Textbook" ladder multiplication
       for I in Index_16 loop
          for J in Index_16 loop
             T (I + J) := T (I + J) + (Left (I) * Right (J));
 
-            --  RCC explain this invariant
             pragma Loop_Invariant
               (
                --  Lower bound
@@ -116,7 +116,12 @@ is
       end loop;
 
       --  Substituting I = 15 into the outer loop invariant above,
-      --  and eliminating quantifiers with null ranges yields:
+      --  and eliminating quantifiers with null ranges yields
+      --
+      --  The coefficients of MGFLP in the upper bound for limbs 0 .. 30
+      --  form a "pyramid" which peaks at 16 for T (15), like this:
+      --
+      --- 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 15 14 13 12 11 10 ... 1
       pragma Assert
         (
          --  Lower bound
@@ -131,6 +136,15 @@ is
 
       TF := (15 => T (15), others => 0);
 
+      --  To "carry" the value in limbs 16 .. 30 and above down into
+      --  limbs 0 .. 14, we need to multiply each upper limb by 2**256.
+      --
+      --  Unfortutely, our limbs don't have enough bits for that to work,
+      --  but we're working in mod (2**255 - 19) arithmetic, and we know that
+      --  2**256 mod (2**255 - 19) = 38, so we can multiply by 38 instead.
+      --
+      --  Given the upper bounds established above, we _can_ prove that
+      --  T (I) + 38 * T (I + 16) WILL fit in 64 bits.
       for I in Index_15 loop
          TF (I) := T (I) + 38 * T (I + 16);
          pragma Loop_Invariant
@@ -153,7 +167,6 @@ is
                  (Car.Product_To_Seminormal (TF)));
    end "*";
 
-   --  POK
    function Square (A : in Normal_GF) return Normal_GF
    is
    begin
@@ -168,7 +181,6 @@ is
    --  Constant time equality test
    --------------------------------------------------------
 
-   --  POK
    function Equal (X, Y : in Byte_Seq) return Boolean
    is
       D : Boolean := True;
@@ -186,7 +198,6 @@ is
    --  RNG
    --------------------------------------------------------
 
-   --  POK
    procedure Random_Bytes (R : out Byte_Seq)
    is
    begin
