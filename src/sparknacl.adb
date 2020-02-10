@@ -16,6 +16,12 @@ is
            (for all J in Index_16 range 0 .. I => R (J) in GF_Sum_Limb);
       end loop;
 
+      --  In SPARKNaCl, we _always_ normalize after "+" to simplify proof.
+      --  This sacrifices some performance for proof automation.
+      --
+      --  In future, it might be possible to remove normalization here
+      --  if the functions in SPARKNaCl.Car can be proven to handle the
+      --  larger range of limbs that result.  TBD.
       return Car.Nearlynormal_To_Normal
         (Car.Sum_To_Nearlynormal (R));
    end "+";
@@ -46,6 +52,12 @@ is
 
       pragma Assert (R in Difference_GF);
 
+      --  In SPARKNaCl, we _always_ normalize after "-" to simplify proof.
+      --  This sacrifices some performance for proof automation.
+      --
+      --  In future, it might be possible to remove normalization here
+      --  if the functions in SPARKNaCl.Car can be proven to handle the
+      --  larger range of limbs that result.  TBD.
       return Car.Nearlynormal_To_Normal
         (Car.Difference_To_Nearlynormal (R));
    end "-";
@@ -162,6 +174,15 @@ is
            );
       end loop;
 
+      --  In SPARKNaCl, we normalize after "*".
+      --
+      --  Interestingly, in the TweetNaCl sources, only TWO
+      --  applications of the "car_25519" function are used here.
+      --
+      --  In SPARKNaCl we have proved that THREE
+      --  applications of car_25519 are required to definitely
+      --  return any possible Product_GF to a fully normalized
+      --  Normal_GF.
       return Car.Nearlynormal_To_Normal
                (Car.Seminormal_To_Nearlynormal
                  (Car.Product_To_Seminormal (TF)));

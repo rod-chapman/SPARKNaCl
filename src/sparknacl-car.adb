@@ -1,6 +1,26 @@
 package body SPARKNaCl.Car
   with SPARK_Mode => On
 is
+   --===============================================
+   --  Functions supporting normalization
+   --  of GF values following "+", "-" or "*"
+   --  operations.
+   --
+   --  The core algorithm in _all_ of these
+   --  is the same, but the type signature of
+   --  each function differs to suit its usage
+   --  and to prove that repeated application
+   --  of these functions do eventually yield
+   --  a "Normal_GF"
+   --
+   --  The core algorithm is actually a variant
+   --  of that used in the TweetNaCl sources, as
+   --  suggested by Jason Donenfeld - this
+   --  algorithm is simpler and avoids the need
+   --  for a left-shift of a signed integer
+   --  (which is, strictly speaking, an undefined
+   --   behaviour in C, so best avoided.)
+   --===============================================
 
    function Product_To_Seminormal
      (X : in Product_GF)
@@ -216,25 +236,36 @@ is
            (for all K in Index_16 range 1 .. 15 =>
               (Temp_GF (K) in -1 .. 65536)));
 
-      function LCP (G : in Temp_GF;
-                    I : in Index_16) return Boolean
-      is ((G (0) in 0 .. 37) and
-          (X (0) in 65536 .. 65573) and
+      --  True iff the initial value of X and the current
+      --  state of G are necessary and sufficient for Carry = 1 after
+      --  the I'th loop iteration
+      function Carrying_Plus_One (G : in Temp_GF;
+                                  I : in Index_16) return Boolean
+      is ((X (0) in 65536 .. 65573) and --  X (O) will carry +1
+            --  ...therefore G (0) will be in 0 .. 37 ...
           (G (0) = X (0) mod 65536) and
+          (G (0) in 0 .. 37) and
+            --  ... AND all values of X (K) between 1 and I
+            --  are 65535 and G (K) = (X (K) + Carry) mod 65536 = 0
           (for all K in Index_16 range 1 .. I =>
              (G (K) = 0 and X (K) = 65535)))
         with Global => (Input => X);
 
-      function LCN (G : in Temp_GF;
-                    I : in Index_16) return Boolean
-      is ((G (0) in 65498 .. 65535) and
-          (X (0) in   -38 .. -1) and
+      --  True iff the initial value of X and the current
+      --  state of G are necessary and sufficient for Carry = -1 after
+      --  the I'th loop iteration
+      function Carrying_Minus_One (G : in Temp_GF;
+                                   I : in Index_16) return Boolean
+      is ((X (0) in   -38 .. -1) and --  X (O) will carry -1
+          --  ...therefore G (0) will be in 65498 .. 65535 ...
           (G (0) = X (0) mod 65536) and
+          (G (0) in 65498 .. 65535) and
+          --  ... AND all values of X (K) between 1 and I
+          --  are 0 and G (K) = (X (K) + Carry) mod 65536 = 65535
           (for all K in Index_16 range 1 .. I =>
              (G (K) = 65535 and X (K) = 0)))
         with Global => (Input => X);
 
-      --  Note that Carry can be negative in this case
       subtype Carry_T is I64 range -1 .. 1;
       Carry : Carry_T;
       R     : Temp_GF;
@@ -253,6 +284,7 @@ is
            (for all K in Index_16 range 1 .. 15 =>
               (R (K) in GF_Normal_Limb and R (K) = X (K))));
 
+      --  Carry and normalize limb 0
       Carry := ASR_16 (R (0));
       R (1) := R (1) + Carry;
       R (0) := R (0) mod 65536;
@@ -264,10 +296,11 @@ is
         (for all K in Index_16 range 2 .. 15 =>
            (R (K) in GF_Normal_Limb and R (K) = X (K)));
 
+      --  Establish the crux invariant
       pragma Assert
-        ((Carry = 1) = LCP (R, 0));
+        ((Carry = 1) = Carrying_Plus_One (R, 0));
       pragma Assert
-        ((Carry = -1) = LCN (R, 0));
+        ((Carry = -1) = Carrying_Minus_One (R, 0));
 
       for I in Index_16 range 1 .. 14 loop
          Carry := ASR_16 (R (I));
@@ -280,10 +313,14 @@ is
          pragma Loop_Invariant
            (for all K in Index_16 range I + 2 .. 15 => R (K) = X (K));
          pragma Loop_Invariant (R (I + 1) = X (I + 1) + Carry);
+
+         --  The crux of the invariant - relate the current value
+         --  of Carry after I loop iterations to the _initial_
+         --  value of X, and therefore the value of R (0)
          pragma Loop_Invariant
-           ((Carry = 1) = LCP (R, I));
+           ((Carry = 1) = Carrying_Plus_One (R, I));
          pragma Loop_Invariant
-           ((Carry = -1) = LCN (R, I));
+           ((Carry = -1) = Carrying_Minus_One (R, I));
       end loop;
 
       --  Expand loop invariant with I = 14
@@ -292,20 +329,28 @@ is
       pragma Assert (R (15) in -1 .. 65536);
       pragma Assert (R (15) = X (15) + Carry);
       pragma Assert
-        ((Carry = 1) = LCP (R, 14));
+        ((Carry = 1) = Carrying_Plus_One (R, 14));
       pragma Assert
-        ((Carry = -1) = LCN (R, 14));
+        ((Carry = -1) = Carrying_Minus_One (R, 14));
 
+      --  Finally, deal with limb 15
       Carry := ASR_16 (R (15));
       R (15) := R (15) mod 65536;
 
+      --  Maintain the invariant, but weaken to an implication
       pragma Assert
-        (if (Carry = 1) then LCP (R, 15));
+        (if (Carry = 1)  then Carrying_Plus_One (R, 15));
       pragma Assert
-        (if (Carry = -1) then LCN (R, 15));
+        (if (Carry = -1) then Carrying_Minus_One (R, 15));
       pragma Assert
         (for all K in Index_16 range 0 .. 15 => (R (K) in GF_Normal_Limb));
 
+      --  At last, we know that:
+      --    if Carry = +1, then R (0) in 0 .. 37
+      --    if Carry = -1, then R (0) in 65498 .. 65535
+      --    if Carry =  0, then it doesn't matter since R (0) in GF_Normal_Limb
+      --  Therefore this multiplication and assignment will never overflow and
+      --  R (0) remains in GF_Normal_Limb. Phew!
       R (0) := R (0) + 38 * Carry;
 
       pragma Assert (R (0) in GF_Normal_Limb);
