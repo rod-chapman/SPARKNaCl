@@ -1,17 +1,34 @@
-all: testdiff
+all: fntr sntr ftestdiff stestdiff
 
-testdiff: new_test_results
-	diff expected_test_results new_test_results
+ftestdiff: fntr
+	diff expected_test_results fntr
 
-new_test_results: testall
-	./testall >new_test_results
+stestdiff: sntr
+	diff expected_test_results sntr
 
-testall: *.adb ../src/*.adb ../src/*.ads
-	gprbuild -Ptestall
+fntr: ftestall
+	./ftestall >fntr
 
-badtests: badbox.adb
-	gcc -c -gnatwa -I../src badbox.adb
+sntr: stestall
+	./stestall >sntr
+
+ftestall: *.adb ../src/*.adb ../src/*.ads
+	gprclean -r -Ptestall
+	rm -f fntr
+	rm -f ftestall
+	gprbuild -Ptestall -Xbuild=fast
+	mv testall ftestall
+
+stestall: *.adb ../src/*.adb ../src/*.ads
+	gprclean -r -Ptestall
+	rm -f sntr
+	rm -f stestall
+	gprbuild -Ptestall -Xbuild=debug
+	mv testall stestall
 
 clean:
 	gprclean -r -Ptestall
-	rm -f new_test_results
+	rm -f ftestall
+	rm -f stestall
+	rm -f fntr
+	rm -f sntr
