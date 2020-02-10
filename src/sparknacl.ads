@@ -28,25 +28,29 @@
 ------------------------------------------------------------------------------
 
 with Ada.Unchecked_Conversion;
-with Interfaces;      use Interfaces;
+
+with Interfaces; use Interfaces;
 with Random;
 
 package SPARKNaCl
   with SPARK_Mode => On
 is
-   --==============================
+   --==============================================
    --  Exported types and constants
-   --  or needed by specifications
-   --  of child packages
-   --==============================
+   --
+   --  These are needed by clients, or by the
+   --  specifications of child packages
+   --==============================================
 
-   subtype Byte is Unsigned_8;
-   subtype I32 is Integer_32;
-   subtype N32 is I32 range 0 .. I32'Last;
-   subtype I64 is Integer_64;
+   subtype Byte     is Unsigned_8;
+
+   subtype I32      is Integer_32;
+   subtype N32      is I32 range 0 .. I32'Last;
+
+   subtype I64      is Integer_64;
    subtype I64_Byte is I64 range 0 .. 255;
-   subtype Natural_64 is I64 range 0 .. I64'Last;
 
+   --  Byte_Seq and constrained subtypes thereof
    type Byte_Seq is array (N32 range <>) of Byte;
 
    --  Remove predefined "=" for Byte_Seq (and all subtypes thereof) since it
@@ -59,23 +63,24 @@ is
    subtype Index_32 is I32 range 0 .. 31;
    subtype Index_64 is I32 range 0 .. 63;
 
-   type I64_Seq  is array (N32 range <>) of I64;
-
-   --  A sequence of I64 values, but where each is limited to
-   --  values 0 .. 255;
-   type I64_Byte_Seq  is array (N32 range <>) of I64_Byte;
-
-
    subtype Bytes_8  is Byte_Seq (Index_8);
    subtype Bytes_16 is Byte_Seq (Index_16);
    subtype Bytes_24 is Byte_Seq (Index_24);
    subtype Bytes_32 is Byte_Seq (Index_32);
    subtype Bytes_64 is Byte_Seq (Index_64);
 
-   subtype I64_Seq_64 is I64_Seq (Index_64);
-
    Zero_Bytes_16 : constant Bytes_16 := (others => 0);
    Zero_Bytes_32 : constant Bytes_32 := (others => 0);
+
+
+   --  Sequences of I64 values and subtypes thereof
+   type I64_Seq  is array (N32 range <>) of I64;
+   subtype I64_Seq_64 is I64_Seq (Index_64);
+
+   --  A sequence of I64 values, but where each is limited to
+   --  values 0 .. 255;
+   type I64_Byte_Seq  is array (N32 range <>) of I64_Byte;
+
 
    --------------------------------------------------------
    --  Constant time equality test

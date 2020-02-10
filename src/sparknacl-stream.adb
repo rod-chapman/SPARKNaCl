@@ -22,7 +22,6 @@ is
    --  Local subprogram bodies
    --------------------------------------------------------
 
-   --  POK
    procedure Salsa20_Xor_Local
      (C     :    out Byte_Seq;
       M     : in     Byte_Seq;
@@ -33,9 +32,11 @@ is
    is
       Full_Block_Count : constant I32 := C'Last / 64;
       subtype Offset_Range is I32 range 0 .. (Full_Block_Count * 64);
-      Offset : Offset_Range;
+      subtype Natural_64   is I64 range 0 .. I64'Last;
 
+      Offset       : Offset_Range;
       Final_Offset : I32;
+
       Z : Bytes_16;
       X : Bytes_64;
       U : U32;
@@ -124,7 +125,6 @@ is
    --  Exported subprogram bodies
    --------------------------------------------------------
 
-   --  POK
    procedure Salsa20 (C :    out Byte_Seq; --  Output stream
                       N : in     Salsa20_Nonce; --  Nonce
                       K : in     Salsa20_Key)    --  Key
@@ -135,7 +135,6 @@ is
       Salsa20_Xor_Local (C, Null_M, False, N, K);
    end Salsa20;
 
-   --  POK
    procedure Salsa20_Xor (C :    out Byte_Seq; --  Output stream
                           M : in     Byte_Seq; --  Input message
                           N : in     Salsa20_Nonce; --  Nonce
@@ -145,9 +144,6 @@ is
       Salsa20_Xor_Local (C, M, True, N, K);
    end Salsa20_Xor;
 
-
-
-   --  POK
    procedure HSalsa20 (C :    out Byte_Seq;       --  Output stream
                        N : in     HSalsa20_Nonce; --  Nonce
                        K : in     Salsa20_Key)    --  Key
@@ -157,11 +153,9 @@ is
       Core.HSalsa20 (S, Bytes_16 (N (0 .. 15)), K, Sigma);
       Salsa20 (C, Salsa20_Nonce (N (16 .. 23)), Core.Construct (S));
 
-      --  RCC - Sanitize S here? Not clear if this value is
-      --  sensitive.
+      --  Sanitize S here? Not clear if this value is sensitive.
    end HSalsa20;
 
-   --  POK
    procedure HSalsa20_Xor (C :    out Byte_Seq; --  Output ciphertext
                            M : in     Byte_Seq; --  Input message
                            N : in     HSalsa20_Nonce; --  Nonce
@@ -176,8 +170,7 @@ is
                          N     => Salsa20_Nonce (N (16 .. 23)),
                          K     => Core.Construct (S));
 
-      --  RCC - Sanitize S here? Not clear if this value is
-      --  sensitive.
+      --  Sanitize S here? Not clear if this value is sensitive.
    end HSalsa20_Xor;
 
 end SPARKNaCl.Stream;
