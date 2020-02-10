@@ -1,5 +1,4 @@
 with SPARKNaCl.MAC;
-
 package body SPARKNaCl.Secretbox
   with SPARK_Mode => On
 is
@@ -49,7 +48,6 @@ is
       end if;
    end Create;
 
-   --  POK
    procedure Open
      (M      :    out Byte_Seq; --  Output plaintext
       Status :    out Boolean;

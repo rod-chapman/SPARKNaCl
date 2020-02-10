@@ -5,7 +5,6 @@ with SPARKNaCl.Secretbox;
 package body SPARKNaCl.Cryptobox
   with SPARK_Mode => On
 is
-   --  POK
    procedure Keypair (PK : out Public_Key;
                       SK : out Secret_Key)
    is
@@ -19,49 +18,42 @@ is
       pragma Unreferenced (Raw_SK);
    end Keypair;
 
-   --  POK
    function Construct (K : in Bytes_32) return Secret_Key
    is
    begin
       return Secret_Key'(F => K);
    end Construct;
 
-   --  POK
    function Construct (K : in Bytes_32) return Public_Key
    is
    begin
       return Public_Key'(F => K);
    end Construct;
 
-   --  POK
    function Serialize (K : in Secret_Key) return Bytes_32
    is
    begin
       return K.F;
    end Serialize;
 
-   --  POK
    function Serialize (K : in Public_Key) return Bytes_32
    is
    begin
       return K.F;
    end Serialize;
 
-   --  POK
    procedure Sanitize (K : out Secret_Key)
    is
    begin
       Sanitize (K.F);
    end Sanitize;
 
-   --  POK
    procedure Sanitize (K : out Public_Key)
    is
    begin
       Sanitize (K.F);
    end Sanitize;
 
-   --  POK
    procedure BeforeNM (K  :    out Core.Salsa20_Key;
                        PK : in     Public_Key;
                        SK : in     Secret_Key)
@@ -76,11 +68,10 @@ is
                      C      => Sigma);
       Core.Construct (K, LK);
 
-      --  RCC - Sanitize S and LK here? Not clear if these values are
+      --  Sanitize S and LK here? Not clear if these values are
       --  sensitive.
    end BeforeNM;
 
-   --  POK
    procedure AfterNM (C      :    out Byte_Seq;
                       Status :    out Boolean;
                       M      : in     Byte_Seq;
@@ -91,7 +82,6 @@ is
       Secretbox.Create (C, Status, M, N, K);
    end AfterNM;
 
-   --  POK
    procedure Open_AfterNM
      (M      :    out Byte_Seq; --  Output plaintext
       Status :    out Boolean;
@@ -103,7 +93,6 @@ is
       Secretbox.Open (M, Status, C, N, K);
    end Open_AfterNM;
 
-   --  POK
    procedure Create (C            :    out Byte_Seq;
                      Status       :    out Boolean;
                      M            : in     Byte_Seq;
@@ -116,11 +105,10 @@ is
       BeforeNM (K, Recipient_PK, Sender_SK);
       AfterNM (C, Status, M, N, K);
 
-      --  RCC - Sanitize K here? Not clear if this value is
+      --  Sanitize K here? Not clear if this value is
       --  sensitive.
    end Create;
 
-   --  POK
    procedure Open (M            :    out Byte_Seq;
                    Status       :    out Boolean;
                    C            : in     Byte_Seq;
@@ -133,7 +121,7 @@ is
       BeforeNM (K, Sender_PK, Recipient_SK);
       Open_AfterNM (M, Status, C, N, K);
 
-      --  RCC - Sanitize K here? Not clear if this value is
+      --  Sanitize K here? Not clear if this value is
       --  sensitive.
    end Open;
 

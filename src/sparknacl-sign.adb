@@ -1,10 +1,8 @@
 with SPARKNaCl.Utils;
 with SPARKNaCl.Hashing;
---  with SPARKNaCl.Debug;
 package body SPARKNaCl.Sign
   with SPARK_Mode => On
 is
-
    --============================================
    --  Local constants and types
    --============================================
@@ -91,7 +89,6 @@ is
    --  Local subprogram bodies
    --============================================
 
-   --  POK
    function "+" (Left  : in GF_Vector_4;
                  Right : in GF_Vector_4) return GF_Vector_4
    is
@@ -128,7 +125,6 @@ is
                        Swap : in     Boolean)
         with Global => null;
 
-      --  POK
       procedure CSwap (P, Q : in out GF_Vector_4;
                        Swap : in     Boolean)
       is
@@ -160,15 +156,12 @@ is
       return LP;
    end Scalarmult;
 
-
-   --  POK
    function Scalarbase (S : in Bytes_32) return GF_Vector_4
    is
    begin
       return Scalarmult (Scalarbase_Q, S);
    end Scalarbase;
 
-   --  POK
    function Par_25519 (A : in Normal_GF) return Bit
    is
       D : Bytes_32;
@@ -177,7 +170,6 @@ is
       return (D (0) mod 2);
    end Par_25519;
 
-   --  POK
    function Pack (P : in GF_Vector_4) return Bytes_32
    is
       TX, TY, ZI : Normal_GF;
@@ -603,7 +595,6 @@ is
       return R;
    end ModL;
 
-   --  POK
    function Hash_Reduce (M : in Byte_Seq) return Bytes_32
    is
       R : Hashing.Digest;
@@ -623,8 +614,6 @@ is
       return ModL (X);
    end Hash_Reduce;
 
-
-   --  POK
    procedure Unpackneg (R  :    out GF_Vector_4;
                         OK :    out Boolean;
                         P  : in     Bytes_32)
@@ -637,7 +626,6 @@ is
       function Pow_2523 (I : in Normal_GF) return Normal_GF
         with Global => null;
 
-      --  POK
       function "=" (Left, Right : in Normal_GF) return Boolean
       is
       begin
@@ -645,7 +633,6 @@ is
                        Bytes_32'(Utils.Pack_25519 (Right)));
       end "=";
 
-      --  POK
       function Pow_2523 (I : in Normal_GF) return Normal_GF
       is
          C, C2 : Normal_GF;
@@ -736,10 +723,6 @@ is
       SPARKNaCl.Sanitize (K.F);
    end Sanitize;
 
-
-
-
-   --  POK
    procedure Keypair (PK : out Signing_PK;
                       SK : out Signing_SK)
    is
@@ -768,7 +751,6 @@ is
       pragma Unreferenced (LPK);
    end Keypair;
 
-   --  POK
    procedure Sign (SM :    out Byte_Seq;
                    M  : in     Byte_Seq;
                    SK : in     Signing_SK)
@@ -900,11 +882,10 @@ is
 
       SM (32 .. 63) := ModL (X);
 
-      --  RCC - Sanitize D, H, R and X here? Not clear if these values
+      --  Sanitize D, H, R and X here? Not clear if these values
       --  are sensitive.
    end Sign;
 
-   --  POK
    procedure Open (M      :    out Byte_Seq;
                    Status :    out Boolean;
                    MLen   :    out I32;
@@ -948,7 +929,7 @@ is
       MLen := LN;
       Status := True;
 
-      --  RCC - Sanitize D, H, R and X here? Not clear if these values
+      --  Sanitize D, H, R and X here? Not clear if these values
       --  are sensitive.
    end Open;
 

@@ -49,7 +49,6 @@ is
    function TS64 (U : in U64) return Bytes_8
      with Global => null;
 
-   --  POK
    function TS64 (U : in U64) return Bytes_8
    is
       X : Bytes_8;
@@ -62,8 +61,6 @@ is
       return X;
    end TS64;
 
-
-   --  POK
    procedure Hashblocks
      (X : in out Digest;
       M : in     Byte_Seq)
@@ -109,7 +106,6 @@ is
       function DL64 (X : in Bytes_8) return U64
         with Global => null;
 
-      --  POK
       function DL64 (X : in Bytes_8) return U64
       is
          U : U64 := 0;
@@ -208,8 +204,6 @@ is
 
    end Hashblocks;
 
-
-   --  POK
    procedure Hash (Output :    out Digest;
                    M      : in     Byte_Seq)
    is

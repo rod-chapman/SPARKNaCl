@@ -1,7 +1,6 @@
 package body SPARKNaCl.MAC
   with SPARK_Mode => On
 is
-
    subtype Index_17 is I32 range 0 .. 16;
    subtype Poly_1305_F is U32_Seq (Index_17);
 
@@ -20,7 +19,6 @@ is
    begin
       K.F := X;
    end Construct;
-
 
    function Serialize (K : in Poly_1305_Key) return Bytes_32
    is
@@ -48,7 +46,6 @@ is
                           C : in     Poly_1305_F)
         with Global => null;
 
-      --  POK
       procedure Add_1305 (H : in out Poly_1305_F;
                           C : in     Poly_1305_F)
       is
@@ -172,8 +169,6 @@ is
       end loop;
    end Onetimeauth;
 
-
-   --  POK
    function Onetimeauth_Verify (H : in Bytes_16;
                                 M : in Byte_Seq;
                                 K : in Poly_1305_Key) return Boolean

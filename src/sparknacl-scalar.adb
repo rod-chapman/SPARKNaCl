@@ -6,12 +6,10 @@ is
    Nine : constant Bytes_32 := (9, others => 0);
    GF_121665 : constant Normal_GF := (16#DB41#, 1, others => 0);
 
-
    --------------------------------------------------------
    --  Scalar multiplication
    --------------------------------------------------------
 
-   --  POK
    function Mult (N : in Bytes_32;
                   P : in Bytes_32) return Bytes_32
    is
@@ -77,12 +75,10 @@ is
       return Utils.Pack_25519 (T2);
    end Mult;
 
-   --  POK
    function Mult_Base (N : in Bytes_32) return Bytes_32
    is
    begin
       return Mult (N, Nine);
    end Mult_Base;
-
 
 end SPARKNaCl.Scalar;

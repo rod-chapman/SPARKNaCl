@@ -28,12 +28,10 @@ is
       Y      :    out U32_Seq_16)
      with Global => null;
 
-
    --===============================
    --  Local subprogram bodies
    --===============================
 
-   --  POK
    procedure ST32 (X :    out Bytes_4;
                    U : in     U32)
    is
@@ -45,7 +43,6 @@ is
       end loop;
    end ST32;
 
-   --  POK
    function LD32 (X : in Bytes_4) return U32
    is
       U : U32;
@@ -56,7 +53,6 @@ is
       return Shift_Left (U, 8) or U32 (X (0));
    end LD32;
 
-   --  POK
    procedure Core_Common
      (Input  : in     Bytes_16;
       K      : in     Salsa20_Key;
@@ -146,7 +142,6 @@ is
    --  Salsa20 Core subprograms
    --------------------------------------------------------
 
-   --  POK
    procedure Salsa20 (Output :    out Bytes_64;
                       Input  : in     Bytes_16;
                       K      : in     Salsa20_Key;
@@ -164,7 +159,6 @@ is
       end loop;
    end Salsa20;
 
-   --  POK
    procedure HSalsa20 (Output :    out Bytes_32;
                        Input  : in     Bytes_16;
                        K      : in     Salsa20_Key;
