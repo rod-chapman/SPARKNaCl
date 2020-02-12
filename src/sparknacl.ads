@@ -73,10 +73,6 @@ is
    Zero_Bytes_32 : constant Bytes_32 := (others => 0);
 
 
-   --  Sequences of I64 values and subtypes thereof
-   type I64_Seq  is array (N32 range <>) of I64;
-   subtype I64_Seq_64 is I64_Seq (Index_64);
-
    --  A sequence of I64 values, but where each is limited to
    --  values 0 .. 255;
    type I64_Byte_Seq  is array (N32 range <>) of I64_Byte;
@@ -117,7 +113,6 @@ is
      with Global => null,
           No_Inline;
 
-
 private
    --==============================================
    --  Local types - visible below, in this package
@@ -146,6 +141,11 @@ private
 
    subtype U64_Seq_16 is U64_Seq (Index_16);
    subtype U64_Seq_8  is U64_Seq (Index_8);
+
+   --  Sequences of I64 values and subtypes thereof
+   type I64_Seq  is array (N32 range <>) of I64;
+   subtype I64_Seq_64 is I64_Seq (Index_64);
+
 
    --  Constant Sigma used for initialization of Core Salsa20
    --  function in both Stream and Cryptobox packages
@@ -208,6 +208,9 @@ private
 
    type GF is array (Index_16) of GF_Any_Limb;
 
+   --  GF Product Accumulator - used in "*" to accumulate the
+   --  intermediate results of Left * Right
+   type GF_PA is array (Index_31) of GF_Any_Limb;
 
    -------------------------------------------------------------------------
    subtype GF_Normal_Limb     is I64 range      0 .. 65535;
@@ -375,5 +378,28 @@ private
 
    function Square (A : in Normal_GF) return Normal_GF
      with Global => null;
+
+
+   --  Additional sanitization procedures for local types
+   procedure Sanitize_U64 (R : out U64)
+     with Global => null,
+          No_Inline;
+
+   procedure Sanitize_GF (R : out GF)
+     with Global => null,
+          No_Inline,
+          Post => R in Normal_GF;
+
+   procedure Sanitize_GF_PA (R : out GF_PA)
+     with Global => null,
+          No_Inline;
+
+   procedure Sanitize_I64_Seq (R : out I64_Seq)
+     with Global => null,
+          No_Inline;
+
+   procedure Sanitize_Boolean (R : out Boolean)
+     with Global => null,
+          No_Inline;
 
 end SPARKNaCl;

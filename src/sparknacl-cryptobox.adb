@@ -68,8 +68,9 @@ is
                      C      => Sigma);
       Core.Construct (K, LK);
 
-      --  Sanitize S and LK here? Not clear if these values are
-      --  sensitive.
+      Sanitize (S);
+      Sanitize (LK);
+      pragma Unreferenced (S, LK);
    end BeforeNM;
 
    procedure AfterNM (C      :    out Byte_Seq;
@@ -104,9 +105,8 @@ is
    begin
       BeforeNM (K, Recipient_PK, Sender_SK);
       AfterNM (C, Status, M, N, K);
-
-      --  Sanitize K here? Not clear if this value is
-      --  sensitive.
+      Core.Sanitize (K);
+      pragma Unreferenced (K);
    end Create;
 
    procedure Open (M            :    out Byte_Seq;
@@ -120,9 +120,8 @@ is
    begin
       BeforeNM (K, Sender_PK, Recipient_SK);
       Open_AfterNM (M, Status, C, N, K);
-
-      --  Sanitize K here? Not clear if this value is
-      --  sensitive.
+      Core.Sanitize (K);
+      pragma Unreferenced (K);
    end Open;
 
 end SPARKNaCl.Cryptobox;

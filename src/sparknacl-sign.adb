@@ -52,6 +52,9 @@ is
    --  Local subprogram declarations
    --============================================
 
+   procedure Sanitize_GF_Vector_4 (R : out GF_Vector_4)
+     with Global => null;
+
    --  Replaces function "add" in the TweetNaCl sources
    function "+" (Left  : in GF_Vector_4;
                  Right : in GF_Vector_4) return GF_Vector_4
@@ -94,6 +97,14 @@ is
    --============================================
    --  Local subprogram bodies
    --============================================
+
+   procedure Sanitize_GF_Vector_4 (R : out GF_Vector_4)
+   is
+   begin
+      for I in R'Range loop
+         Sanitize_GF (R (I));
+      end loop;
+   end Sanitize_GF_Vector_4;
 
    function "+" (Left  : in GF_Vector_4;
                  Right : in GF_Vector_4) return GF_Vector_4
@@ -888,8 +899,11 @@ is
 
       SM (32 .. 63) := ModL (X);
 
-      --  Sanitize D, H, R and X here? Not clear if these values
-      --  are sensitive.
+      Sanitize (D);
+      Sanitize (H);
+      Sanitize (R);
+      Sanitize_I64_Seq (X);
+      pragma Unreferenced (D, H, R, X);
    end Sign;
 
    procedure Open (M      :    out Byte_Seq;
@@ -906,26 +920,31 @@ is
       if SM'Length < 64 then
          M := (others => 0);
          Status := False;
+         --  No sanitization required before this return
          return;
       end if;
 
       Unpackneg (Q, Status, Serialize (PK));
       if not Status then
          M := (others => 0);
+         Sanitize_GF_Vector_4 (Q);
          return;
       end if;
 
       M := SM; -- precondition ensures lengths match
       M (32 .. 63) := Serialize (PK);
-
       P := Scalarmult (Q, Hash_Reduce (M));
       Q := Scalarbase (SM (32 .. 63));
+
       --  Call to user-defined "+" for GF_Vector_4
       T := Pack (P + Q);
 
       if not Equal (SM (0 .. 31), T) then
          M := (others => 0);
          Status := False;
+         Sanitize (T);
+         Sanitize_GF_Vector_4 (P);
+         Sanitize_GF_Vector_4 (Q);
          return;
       end if;
 
@@ -935,8 +954,10 @@ is
       MLen := LN;
       Status := True;
 
-      --  Sanitize D, H, R and X here? Not clear if these values
-      --  are sensitive.
+      Sanitize (T);
+      Sanitize_GF_Vector_4 (P);
+      Sanitize_GF_Vector_4 (Q);
+      pragma Unreferenced (T, P, Q);
    end Open;
 
 end SPARKNaCl.Sign;

@@ -8,5 +8,4 @@ is
    --  Same but output in hex
    procedure DHH  (S : in String; D : in I64);
 
-   procedure DHS (S : in String; D : in I64_Seq_64);
 end SPARKNaCl.Debug;

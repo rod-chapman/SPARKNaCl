@@ -64,8 +64,7 @@ is
 
    function "*" (Left, Right : in Normal_GF) return Normal_GF
    is
-      type TA is array (Index_31) of GF_Any_Limb;
-      T  : TA;
+      T  : GF_PA;
       TF : Product_GF;
    begin
       T := (others => 0);
@@ -174,6 +173,11 @@ is
            );
       end loop;
 
+      --  Sanitize T, as per WireGuard sources
+      pragma Warnings (GNATProve, Off, "statement has no effect");
+      Sanitize_GF_PA (T);
+      pragma Unreferenced (T);
+
       --  In SPARKNaCl, we normalize after "*".
       --
       --  Interestingly, in the TweetNaCl sources, only TWO
@@ -232,5 +236,15 @@ is
    --------------------------------------------------------
 
    procedure Sanitize (R : out Byte_Seq) is separate;
+
+   procedure Sanitize_U64 (R : out U64) is separate;
+
+   procedure Sanitize_GF (R : out GF) is separate;
+
+   procedure Sanitize_GF_PA (R : out GF_PA) is separate;
+
+   procedure Sanitize_I64_Seq (R : out I64_Seq) is separate;
+
+   procedure Sanitize_Boolean (R : out Boolean) is separate;
 
 end SPARKNaCl;

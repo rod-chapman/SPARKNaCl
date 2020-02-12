@@ -12,7 +12,7 @@ is
                         Swap : in     Boolean)
    is
       T : U64;
-      C : constant U64 := Bit_To_Swapmask (Swap);
+      C : U64 := Bit_To_Swapmask (Swap);
 
       --  Do NOT try to evaluate the assumption below at run-time
       pragma Assertion_Policy (Assume => Ignore);
@@ -58,6 +58,15 @@ is
                     Q (J) = Q'Loop_Entry (J)))
            );
       end loop;
+
+      --  Sanitize local variables as per the implementation in WireGuard.
+      --  Note that Swap cannot be sanitized here since it is
+      --  an "in" parameter
+      pragma Warnings (GNATProve, Off, "statement has no effect");
+      Sanitize_U64 (T);
+      Sanitize_U64 (C);
+      pragma Unreferenced (T);
+      pragma Unreferenced (C);
    end Sel_25519;
 
    function Pack_25519 (N : in Normal_GF) return Bytes_32
@@ -107,6 +116,8 @@ is
          R (15) := R (15) mod 65536;
 
          Result := R;
+         Sanitize_GF (R);
+         pragma Unreferenced (R);
       end Subtract_P;
 
       function To_Bytes_32 (X : in Normal_GF) return Bytes_32
@@ -153,10 +164,18 @@ is
       Subtract_P (R1, R2, Second_Underflow);
       Sel_25519  (R1, R2, Second_Underflow);
       Sel_25519  (L,  R2, First_Underflow);
+
+      Sanitize_GF (L);
+      Sanitize_GF (R1);
+      Sanitize_Boolean (First_Underflow);
+      Sanitize_Boolean (Second_Underflow);
+
       return To_Bytes_32 (R2);
 
       pragma Unreferenced (R1);
       pragma Unreferenced (L);
+      pragma Unreferenced (First_Underflow);
+      pragma Unreferenced (Second_Underflow);
    end Pack_25519;
 
    function Unpack_25519 (N : in Bytes_32) return Normal_GF
@@ -185,6 +204,9 @@ is
             C := C2;
          end if;
       end loop;
+
+      Sanitize_GF (C2);
+      pragma Unreferenced (C2);
 
       return C;
    end Inv_25519;

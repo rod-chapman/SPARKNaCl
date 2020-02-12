@@ -13,8 +13,8 @@ is
    function Mult (N : in Bytes_32;
                   P : in Bytes_32) return Bytes_32
    is
-      X  : constant Normal_GF := Utils.Unpack_25519 (P);
-      Z2 : constant Bytes_32 :=
+      X  : Normal_GF := Utils.Unpack_25519 (P);
+      Z2 : Bytes_32 :=
          (N (0) and 248) & N (1 .. 30) & ((N (31) and 127) or 64);
 
       Swap  : Boolean;
@@ -71,6 +71,23 @@ is
 
       T1 := Utils.Inv_25519 (C);
       T2 := A2 * T1;
+
+      --  Sanitize as per WireGuard sources
+      pragma Warnings (GNATProve, Off, "statement has no effect");
+      Sanitize_Boolean (Swap);
+      Sanitize (Z2);
+      Sanitize_GF (X);
+      Sanitize_GF (A2);
+      Sanitize_GF (A3);
+      Sanitize_GF (B);
+      Sanitize_GF (B2);
+      Sanitize_GF (C);
+      Sanitize_GF (C2);
+      Sanitize_GF (D);
+      Sanitize_GF (E);
+      Sanitize_GF (F);
+      Sanitize_GF (T1);
+      pragma Unreferenced (Swap, Z2, X, A2, A3, B, B2, C, C2, D, E, F, T1);
 
       return Utils.Pack_25519 (T2);
    end Mult;

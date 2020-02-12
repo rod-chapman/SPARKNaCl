@@ -69,18 +69,4 @@ is
       end if;
    end DHH;
 
-
-   procedure DHS (S : in String; D : in I64_Seq_64)
-   is
-   begin
-      if On then
-         Put_Line (S);
-         for I in D'Range loop
-            I64IO.Put (D (I), Width => 0);
-            Put (' ');
-         end loop;
-         New_Line;
-      end if;
-   end DHS;
-
 end SPARKNaCl.Debug;

@@ -117,8 +117,10 @@ is
          end loop;
       end if;
 
-      --  Sanitize Z and X here? Not clear if these values are
-      --  sensitive.
+      pragma Warnings (GNATProve, Off, "statement has no effect");
+      Sanitize (X);
+      Sanitize (Z);
+      pragma Unreferenced (X, Z);
    end Salsa20_Xor_Local;
 
    --------------------------------------------------------
@@ -153,7 +155,8 @@ is
       Core.HSalsa20 (S, Bytes_16 (N (0 .. 15)), K, Sigma);
       Salsa20 (C, Salsa20_Nonce (N (16 .. 23)), Core.Construct (S));
 
-      --  Sanitize S here? Not clear if this value is sensitive.
+      Sanitize (S);
+      pragma Unreferenced (S);
    end HSalsa20;
 
    procedure HSalsa20_Xor (C :    out Byte_Seq; --  Output ciphertext
@@ -170,7 +173,8 @@ is
                          N     => Salsa20_Nonce (N (16 .. 23)),
                          K     => Core.Construct (S));
 
-      --  Sanitize S here? Not clear if this value is sensitive.
+      Sanitize (S);
+      pragma Unreferenced (S);
    end HSalsa20_Xor;
 
 end SPARKNaCl.Stream;
