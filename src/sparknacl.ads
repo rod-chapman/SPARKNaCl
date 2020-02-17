@@ -281,7 +281,7 @@ private
    --  The upper-bound on Limb 15 is given by substituting I = 14
    --  into the Dynamic_Predicate above, so
    --    (MGFLC - 37 * 14) * MGFLP = 53 * MGFLP
-   --  See the body of Car_Product_To_Seminormal for the full
+   --  See the body of Product_To_Seminormal for the full
    --  proof of this upper-bound
    subtype Seminormal_GF_LSL is I64
      range 0 .. (65535 + 38 * ((53 * MGFLP) / 65536));
