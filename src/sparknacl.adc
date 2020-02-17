@@ -13,5 +13,4 @@ pragma Restrictions (No_Implicit_Dynamic_Code);
 pragma Restrictions (No_Implicit_Heap_Allocations);
 pragma Restrictions (No_Implicit_Protected_Object_Allocations);
 pragma Restrictions (No_Implicit_Task_Allocations);
-pragma Restrictions (No_Recursion);
 pragma Restrictions (No_Relative_Delay);
