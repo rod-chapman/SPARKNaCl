@@ -9,10 +9,6 @@ is
      with SPARK_Mode => Off
    is
    begin
---      for I in Index_16 loop
---         Debug.DHH (I'Img & " => ", LnC_UB (I));
---      end loop;
-
       --  for (i = 0; i < 16; ++i) {
       --    o[(i + 1) % 16] += (i == 15 ? 38 : 1) * (o[i] >> 16);
       --    o[i] &= 0xffff;
@@ -73,7 +69,5 @@ is
       --  on R (0) now, so...
       return New_Seminormal_GF (R);
    end Product_To_Seminormal;
-
-
 
 end SPARKNaCl.Car2;
