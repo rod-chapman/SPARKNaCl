@@ -1,5 +1,5 @@
-with SPARKNaCl.PDebug;
-with SPARKNaCl.Debug;
+--  with SPARKNaCl.PDebug;
+--  with SPARKNaCl.Debug;
 package body SPARKNaCl.Car2
   with SPARK_Mode => On
 is
@@ -78,8 +78,8 @@ is
 --           (R (I + 1) <= (MGFLC - 37 * GF_Any_Limb (I)) * MGFLP);
 
 --  But now we can be much more precise using the functions above...
-         pragma Loop_Invariant (Carry     <= CarryUB (I));
-         pragma Loop_Invariant (R (I + 1) <= LnCUB (I + 1));
+         pragma Loop_Invariant (Carry     <= Carry_UB (I));
+         pragma Loop_Invariant (R (I + 1) <= LnC_UB (I + 1));
 
          pragma Loop_Invariant
            (for all K in Index_16 range I + 2 .. 15 => R (K) = X (K));
@@ -90,7 +90,7 @@ is
       --  and simplify to yield:
       pragma Assert
         (for all K in Index_16 range 0 .. 14 => (R (K) in GF_Normal_Limb));
-      pragma Assert (R (15) <= LnCUB (15));
+      pragma Assert (R (15) <= LnC_UB (15));
 
 --  which is much stronger than what we had before:
 --  pragma Assert (R (15) in 0 .. 53 * MGFLP);
@@ -98,7 +98,7 @@ is
 
       Carry := ASR_16 (R (15));
 
-      pragma Assert (Carry <= CarryUB (15));
+      pragma Assert (Carry <= Carry_UB (15));
 
       R (0) := R (0) + 38 * Carry;
 
