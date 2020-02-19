@@ -1,6 +1,6 @@
-SPARK_Bodies := sparknacl.adb sparknacl-core.adb sparknacl-stream.adb sparknacl-hashing.adb sparknacl-scalar.adb sparknacl-mac.adb sparknacl-secretbox.adb sparknacl-cryptobox.adb sparknacl-sign.adb sparknacl-utils.adb
+SPARK_Bodies := sparknacl.adb sparknacl-core.adb sparknacl-stream.adb sparknacl-hashing.adb sparknacl-scalar.adb sparknacl-mac.adb sparknacl-secretbox.adb sparknacl-cryptobox.adb sparknacl-sign.adb sparknacl-utils.adb sparknacl-car.adb
 
-Non_SPARK_Bodies := sparknacl-debug.adb
+Non_SPARK_Bodies := sparknacl-debug.adb sparknacl-pdebug.adb random.adb sparknacl-sanitize*.adb
 
 all: build
 
