@@ -10,6 +10,8 @@ library project SPARKNaCl is
          for Runtime ("Ada") use "native";
       when "fast" =>
          for Runtime ("Ada") use "native";
+      when "cover" =>
+         for Runtime ("Ada") use "native";
       when "zfp" =>
          for Runtime ("Ada") use "zfp";
          for Excluded_Source_Files use ("sparknacl-debug.ads", "sparknacl-debug.adb");
