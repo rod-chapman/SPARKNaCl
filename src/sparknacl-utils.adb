@@ -104,15 +104,19 @@ is
          end loop;
 
          --  Limb 15 - Subtract MSB of P (16#7FFF#) with carry
+         --  Note that Limb 15 might become negative on underflow
          Carry := ASR_16 (R (14)) mod 2;
          R (15) := T (15) - 16#7FFF# - Carry;
-         --  Note that Limb 15 might be negative now
          R (14) := R (14) mod 65536;
 
+         --  If R (15) is negative, then ASR_16 (R (15)) = -1
+         --  and (-1 mod 2) = 1 = Boolean'Pos (True), so...
          Underflow := Boolean'Val (ASR_16 (R (15)) mod 2);
 
          --  Normalize R (15) now so that R in Normal_GF,
-         --  even if it did Underflow.
+         --  even if it did Underflow. This is OK, since if
+         --  Underflow then the value of Result won't be used
+         --  below.
          R (15) := R (15) mod 65536;
 
          Result := R;
