@@ -88,8 +88,7 @@ is
         0 .. Seminormal_GF_LSL'Last / LM;
       First_Carry : First_Carry_T;
 
-      subtype Later_Carry_T is I64 range 0 .. 1;
-      Carry : Later_Carry_T;
+      Carry : I64_Bit;
 
       subtype Temp_GF is GF
         with Dynamic_Predicate =>
@@ -140,8 +139,7 @@ is
      (X : in Sum_GF)
        return Nearlynormal_GF
    is
-      subtype Carry_T is I64 range 0 .. 1;
-      Carry : Carry_T;
+      Carry : I64_Bit;
 
       subtype Temp_GF is GF
         with Dynamic_Predicate =>

@@ -49,6 +49,7 @@ is
 
    subtype I64      is Integer_64;
    subtype I64_Byte is I64 range 0 .. 255;
+   subtype I64_Bit  is I64 range 0 .. 1;
 
    --  Byte_Seq and constrained subtypes thereof
    type Byte_Seq is array (N32 range <>) of Byte;

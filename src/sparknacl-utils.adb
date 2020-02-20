@@ -95,9 +95,7 @@ is
                             Result    :    out Temp_GF;
                             Underflow :    out Boolean)
       is
-         subtype CBit is I64 range 0 .. 1;
-
-         Carry : CBit;
+         Carry : I64_Bit;
          R     : GF;
       begin
          R := GF_0;
@@ -107,8 +105,8 @@ is
 
          --  Limbs 1 .. 14 - subtract FFFF with carry
          for I in I32 range 1 .. 14 loop
-            Carry := ASR_16 (R (I - 1)) mod 2;
-            R (I) := T (I) - 16#FFFF# - Carry;
+            Carry     := ASR_16 (R (I - 1)) mod 2;
+            R (I)     := T (I) - 16#FFFF# - Carry;
             R (I - 1) := R (I - 1) mod LM;
 
             pragma Loop_Invariant
@@ -119,7 +117,7 @@ is
          --  Limb 15 - Subtract MSL (Most Significant Limb)
          --  of P (16#7FFF#) with carry.
          --  Note that Limb 15 might become negative on underflow
-         Carry := ASR_16 (R (14)) mod 2;
+         Carry  := ASR_16 (R (14)) mod 2;
          R (15) := T (15) - 16#7FFF# - Carry;
 
          --  Historical note: the original version of TweetNaCl had a bug
@@ -191,8 +189,8 @@ is
       Sanitize_Boolean (First_Underflow);
       Sanitize_Boolean (Second_Underflow);
 
-      --  R2 needs to be a Normal_GF here, but the post-conditions
-      --  of Subtract_P and Sel_25510 conspire to make this so.
+      --  R2 needs to be a Normal_GF here. The post-conditions
+      --  of Subtract_P and Sel_25519 conspire to make this so.
       return To_Bytes_32 (R2);
 
       pragma Unreferenced (R1);
