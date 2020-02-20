@@ -7,8 +7,8 @@ is
      (False => 16#0000_0000_0000_0000#,
       True  => 16#FFFF_FFFF_FFFF_FFFF#);
 
-   procedure Sel_25519 (P    : in out Normal_GF;
-                        Q    : in out Normal_GF;
+   procedure Sel_25519 (P    : in out GF;
+                        Q    : in out GF;
                         Swap : in     Boolean)
    is
       T : U64;
@@ -71,25 +71,38 @@ is
 
    function Pack_25519 (N : in Normal_GF) return Bytes_32
    is
-      procedure Subtract_P (T         : in     Normal_GF;
-                            Result    :    out Normal_GF;
+      --  Subtracting P twice from a Normal_GF might result
+      --  in a GF where limb 15 can be negative with lower bound -65536
+      subtype Temp_GF is GF
+        with Dynamic_Predicate =>
+          (Temp_GF (15) in -LM .. LMM1 and
+            (for all K in Index_16 range 0 .. 14 =>
+               Temp_GF (K) in GF_Normal_Limb));
+
+      --  Result := T - P;
+      --  if     Underflow, then Result is not a Normal_GF
+      --  if not Underflow, then Result is     a Normal_GF
+      procedure Subtract_P (T         : in     Temp_GF;
+                            Result    :    out Temp_GF;
                             Underflow :    out Boolean)
-        with Global => null;
+        with Global => null,
+             Post   => Underflow /= (Result in Normal_GF);
 
       function To_Bytes_32 (X : in Normal_GF) return Bytes_32
         with Global => null;
 
-      procedure Subtract_P (T         : in     Normal_GF;
-                            Result    :    out Normal_GF;
+      procedure Subtract_P (T         : in     Temp_GF;
+                            Result    :    out Temp_GF;
                             Underflow :    out Boolean)
       is
          subtype CBit is I64 range 0 .. 1;
+
          Carry : CBit;
          R     : GF;
       begin
          R := GF_0;
 
-         --  Limb 0 - subtract LSB of P, which is 16#FFED#
+         --  Limb 0 - subtract LSL of P, which is 16#FFED#
          R (0) := T (0) - 16#FFED#;
 
          --  Limbs 1 .. 14 - subtract FFFF with carry
@@ -103,23 +116,18 @@ is
                  R (J) in GF_Normal_Limb);
          end loop;
 
-         --  Limb 15 - Subtract MSB of P (16#7FFF#) with carry
+         --  Limb 15 - Subtract MSL (Most Significant Limb)
+         --  of P (16#7FFF#) with carry.
          --  Note that Limb 15 might become negative on underflow
          Carry := ASR_16 (R (14)) mod 2;
          R (15) := T (15) - 16#7FFF# - Carry;
          R (14) := R (14) mod LM;
 
-         --  If R (15) is negative, then ASR_16 (R (15)) = -1
-         --  and (-1 mod 2) = 1 = Boolean'Pos (True), so...
-         Underflow := Boolean'Val (ASR_16 (R (15)) mod 2);
-
-         --  Normalize R (15) now so that R in Normal_GF,
-         --  even if it did Underflow. This is OK, since if
-         --  Underflow then the value of Result won't be used
-         --  below.
-         R (15) := R (15) mod LM;
-
-         Result := R;
+         --  Note that R (15) is not normalized here, so that the
+         --  result of the first subtraction is numerically correct
+         --  as the input to the second.
+         Underflow := R (15) < 0;
+         Result    := R;
          Sanitize_GF (R);
          pragma Unreferenced (R);
       end Subtract_P;
@@ -136,7 +144,7 @@ is
       end To_Bytes_32;
 
       L      : GF;
-      R1, R2 : Normal_GF;
+      R1, R2 : Temp_GF;
 
       First_Underflow  : Boolean;
       Second_Underflow : Boolean;
@@ -169,11 +177,14 @@ is
       Sel_25519  (R1, R2, Second_Underflow);
       Sel_25519  (L,  R2, First_Underflow);
 
+      --  Sanitize local data as per the WireGuard sources
       Sanitize_GF (L);
       Sanitize_GF (R1);
       Sanitize_Boolean (First_Underflow);
       Sanitize_Boolean (Second_Underflow);
 
+      --  R2 needs to be a Normal_GF here, but the post-conditions
+      --  of Subtract_P and Sel_25510 conspire to make this so.
       return To_Bytes_32 (R2);
 
       pragma Unreferenced (R1);

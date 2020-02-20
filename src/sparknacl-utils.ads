@@ -11,13 +11,20 @@ is
    --  public children of SPARKNaCl.
    --===================================================
 
-   --  Constant time conditional swap of P and Q.
-   procedure Sel_25519 (P    : in out Normal_GF;
-                        Q    : in out Normal_GF;
+   --  Constant time conditional swap of P and Q. Note that
+   --  if a Normal_GF is passed in, this property is retained
+   --  on swapping (or not...)  This is required Pack_25519.
+   procedure Sel_25519 (P    : in out GF;
+                        Q    : in out GF;
                         Swap : in     Boolean)
      with Global => null,
-          Contract_Cases => (Swap     => (P = Q'Old and Q = P'Old),
-                             not Swap => (P = P'Old and Q = Q'Old));
+          Contract_Cases =>
+            (Swap => (P = Q'Old and Q = P'Old and
+                     ((P'Old in Normal_GF) = (Q in Normal_GF)) and
+                     ((Q'Old in Normal_GF) = (P in Normal_GF))),
+             not Swap => (P = P'Old and Q = Q'Old) and
+                         ((P'Old in Normal_GF) = (P in Normal_GF)) and
+                         ((Q'Old in Normal_GF) = (Q in Normal_GF)));
 
    --  Reduces N modulo (2**255 - 19) then packs the
    --  value into 32 bytes little-endian.
