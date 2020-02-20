@@ -34,7 +34,7 @@ is
           (for all I in Index_16 =>
              Temp_GF (I) >= 0 and Temp_GF (I) <= MGFLC * MGFLP);
 
-      subtype Carry_Adjustment is I64 range 0 .. (MGFLC * MGFLP) / 65536;
+      subtype Carry_Adjustment is I64 range 0 .. (MGFLC * MGFLP) / LM;
       Carry : Carry_Adjustment;
       R     : Temp_GF;
    begin
@@ -49,7 +49,7 @@ is
          pragma Assert (R (I + 1) = X (I + 1));
 
          R (I + 1) := R (I + 1) + Carry;
-         R (I) := R (I) mod 65536;
+         R (I) := R (I) mod LM;
 
          pragma Loop_Invariant
            (for all K in Index_16 range 0 .. I => (R (K) in GF_Normal_Limb));
@@ -69,13 +69,13 @@ is
 
       Carry := ASR_16 (R (15));
 
-      pragma Assert (Carry <= ((53 * MGFLP) / 65536));
+      pragma Assert (Carry <= ((53 * MGFLP) / LM));
 
-      R (0) := R (0) + 38 * Carry;
+      R (0) := R (0) + R2256 * Carry;
 
       pragma Assert (R (0) in Seminormal_GF_LSL);
 
-      R (15) := R (15) mod 65536;
+      R (15) := R (15) mod LM;
 
       return Seminormal_GF (R);
    end Product_To_Seminormal;
@@ -85,7 +85,7 @@ is
        return Nearlynormal_GF
    is
       subtype First_Carry_T is I64 range
-        0 .. Seminormal_GF_LSL'Last / 65536;
+        0 .. Seminormal_GF_LSL'Last / LM;
       First_Carry : First_Carry_T;
 
       subtype Later_Carry_T is I64 range 0 .. 1;
@@ -103,7 +103,7 @@ is
 
       First_Carry := ASR_16 (R (0));
       R (1) := R (1) + First_Carry;
-      R (0) := R (0) mod 65536;
+      R (0) := R (0) mod LM;
 
       pragma Assert (R (0) in GF_Normal_Limb);
       pragma Assert (R (1) in 0 .. GF_Normal_Limb'Last + First_Carry_T'Last);
@@ -113,11 +113,11 @@ is
       for I in Index_16 range 1 .. 14 loop
          Carry := ASR_16 (R (I));
          R (I + 1) := R (I + 1) + Carry;
-         R (I) := R (I) mod 65536;
+         R (I) := R (I) mod LM;
 
          pragma Loop_Invariant
            (for all K in Index_16 range 0 .. I => (R (K) in GF_Normal_Limb));
-         pragma Loop_Invariant (R (I + 1) in 0 .. 65536);
+         pragma Loop_Invariant (R (I + 1) in 0 .. LM);
          pragma Loop_Invariant
            (for all K in Index_16 range I + 2 .. 15 => R (K) = X (K));
 
@@ -125,12 +125,12 @@ is
 
       pragma Assert
         (for all K in Index_16 range 0 .. 14 => (R (K) in GF_Normal_Limb));
-      pragma Assert (R (15) in 0 .. 65536);
+      pragma Assert (R (15) in 0 .. LM);
 
       Carry := ASR_16 (R (15));
 
-      R (0) := R (0) + 38 * Carry;
-      R (15) := R (15) mod 65536;
+      R (0) := R (0) + R2256 * Carry;
+      R (15) := R (15) mod LM;
 
       return Nearlynormal_GF (R);
    end Seminormal_To_Nearlynormal;
@@ -153,7 +153,7 @@ is
 
       Carry := ASR_16 (R (0));
       R (1) := R (1) + Carry;
-      R (0) := R (0) mod 65536;
+      R (0) := R (0) mod LM;
 
       pragma Assert (R (0) in GF_Normal_Limb);
       pragma Assert (R (1) in 0 .. GF_Sum_Limb'Last + 1);
@@ -163,7 +163,7 @@ is
       for I in Index_16 range 1 .. 14 loop
          Carry := ASR_16 (R (I));
          R (I + 1) := R (I + 1) + Carry;
-         R (I) := R (I) mod 65536;
+         R (I) := R (I) mod LM;
 
          pragma Loop_Invariant
            (for all K in Index_16 range 0 .. I => (R (K) in GF_Normal_Limb));
@@ -179,8 +179,8 @@ is
 
       Carry := ASR_16 (R (15));
 
-      R (0) := R (0) + 38 * Carry;
-      R (15) := R (15) mod 65536;
+      R (0) := R (0) + R2256 * Carry;
+      R (15) := R (15) mod LM;
 
       return Nearlynormal_GF (R);
    end Sum_To_Nearlynormal;
@@ -203,7 +203,7 @@ is
       for I in Index_16 range 0 .. 14 loop
          Carry := ASR_16 (R (I));
          R (I + 1) := R (I + 1) + Carry;
-         R (I) := R (I) mod 65536;
+         R (I) := R (I) mod LM;
 
          pragma Loop_Invariant
            (for all K in Index_16 range 0 .. I => (R (K) in GF_Normal_Limb));
@@ -219,8 +219,8 @@ is
 
       Carry := ASR_16 (R (15));
 
-      R (0) := R (0) + 38 * Carry;
-      R (15) := R (15) mod 65536;
+      R (0) := R (0) + R2256 * Carry;
+      R (15) := R (15) mod LM;
 
       pragma Assert (R in Nearlynormal_GF);
 
@@ -235,23 +235,23 @@ is
    is
       subtype Temp_GF is GF
         with Dynamic_Predicate =>
-        ((Temp_GF (0) in -38 .. 65573) and
+        ((Temp_GF (0) in -R2256 .. LMM1 + R2256) and
            (for all K in Index_16 range 1 .. 15 =>
-              (Temp_GF (K) in -1 .. 65536)));
+              (Temp_GF (K) in -1 .. LM)));
 
       --  True iff the initial value of X and the current
       --  state of G are necessary and sufficient for Carry = 1 after
       --  the I'th loop iteration
       function Carrying_Plus_One (G : in Temp_GF;
                                   I : in Index_16) return Boolean
-      is ((X (0) in 65536 .. 65573) and --  X (O) will carry +1
+      is ((X (0) in LM .. LMM1 + R2256) and --  X (O) will carry +1
             --  ...therefore G (0) will be in 0 .. 37 ...
-          (G (0) = X (0) mod 65536) and
-          (G (0) in 0 .. 37) and
+          (G (0) = X (0) mod LM) and
+          (G (0) in 0 .. R2256 - 1) and
             --  ... AND all values of X (K) between 1 and I
-            --  are 65535 and G (K) = (X (K) + Carry) mod 65536 = 0
+            --  are LMM1 and G (K) = (X (K) + Carry) mod LM = 0
           (for all K in Index_16 range 1 .. I =>
-             (G (K) = 0 and X (K) = 65535)))
+             (G (K) = 0 and X (K) = LMM1)))
         with Global => (Input => X);
 
       --  True iff the initial value of X and the current
@@ -259,14 +259,14 @@ is
       --  the I'th loop iteration
       function Carrying_Minus_One (G : in Temp_GF;
                                    I : in Index_16) return Boolean
-      is ((X (0) in   -38 .. -1) and --  X (O) will carry -1
+      is ((X (0) in   -R2256 .. -1) and --  X (O) will carry -1
           --  ...therefore G (0) will be in 65498 .. 65535 ...
-          (G (0) = X (0) mod 65536) and
-          (G (0) in 65498 .. 65535) and
+          (G (0) = X (0) mod LM) and
+          (G (0) in (LM - R2256) .. LMM1) and
           --  ... AND all values of X (K) between 1 and I
-          --  are 0 and G (K) = (X (K) + Carry) mod 65536 = 65535
+          --  are 0 and G (K) = (X (K) + Carry) mod LM = LMM1
           (for all K in Index_16 range 1 .. I =>
-             (G (K) = 65535 and X (K) = 0)))
+             (G (K) = LMM1 and X (K) = 0)))
         with Global => (Input => X);
 
       subtype Carry_T is I64 range -1 .. 1;
@@ -275,14 +275,14 @@ is
    begin
       --  Expand X's subtype predicate
       pragma Assert
-        ((X (0) in -38 .. 65573) and
+        ((X (0) in -R2256 .. LMM1 + R2256) and
            (for all K in Index_16 range 1 .. 15 =>
               (X (K) in GF_Normal_Limb)));
 
       R := X;
 
       pragma Assert
-        ((R (0) in -38 .. 65573) and
+        ((R (0) in -R2256 .. LMM1 + R2256) and
          (R (0) = X (0)) and
            (for all K in Index_16 range 1 .. 15 =>
               (R (K) in GF_Normal_Limb and R (K) = X (K))));
@@ -290,11 +290,11 @@ is
       --  Carry and normalize limb 0
       Carry := ASR_16 (R (0));
       R (1) := R (1) + Carry;
-      R (0) := R (0) mod 65536;
+      R (0) := R (0) mod LM;
 
       pragma Assert (R (0) in GF_Normal_Limb);
-      pragma Assert (R (0) = X (0) mod 65536);
-      pragma Assert (R (1) in -1 .. 65536);
+      pragma Assert (R (0) = X (0) mod LM);
+      pragma Assert (R (1) in -1 .. LM);
       pragma Assert
         (for all K in Index_16 range 2 .. 15 =>
            (R (K) in GF_Normal_Limb and R (K) = X (K)));
@@ -308,11 +308,11 @@ is
       for I in Index_16 range 1 .. 14 loop
          Carry := ASR_16 (R (I));
          R (I + 1) := R (I + 1) + Carry;
-         R (I) := R (I) mod 65536;
+         R (I) := R (I) mod LM;
 
          pragma Loop_Invariant
            (for all K in Index_16 range 0 .. I => (R (K) in GF_Normal_Limb));
-         pragma Loop_Invariant (R (I + 1) in -1 .. 65536);
+         pragma Loop_Invariant (R (I + 1) in -1 .. LM);
          pragma Loop_Invariant
            (for all K in Index_16 range I + 2 .. 15 => R (K) = X (K));
          pragma Loop_Invariant (R (I + 1) = X (I + 1) + Carry);
@@ -329,7 +329,7 @@ is
       --  Expand loop invariant with I = 14
       pragma Assert
         (for all K in Index_16 range 0 .. 14 => (R (K) in GF_Normal_Limb));
-      pragma Assert (R (15) in -1 .. 65536);
+      pragma Assert (R (15) in -1 .. LM);
       pragma Assert (R (15) = X (15) + Carry);
       pragma Assert
         ((Carry = 1) = Carrying_Plus_One (R, 14));
@@ -338,7 +338,7 @@ is
 
       --  Finally, deal with limb 15
       Carry := ASR_16 (R (15));
-      R (15) := R (15) mod 65536;
+      R (15) := R (15) mod LM;
 
       --  Maintain the invariant, but weaken to an implication
       pragma Assert
@@ -354,7 +354,7 @@ is
       --    if Carry =  0, then it doesn't matter since R (0) in GF_Normal_Limb
       --  Therefore this multiplication and assignment will never overflow and
       --  R (0) remains in GF_Normal_Limb. Phew!
-      R (0) := R (0) + 38 * Carry;
+      R (0) := R (0) + R2256 * Carry;
 
       pragma Assert (R (0) in GF_Normal_Limb);
       return Normal_GF (R);

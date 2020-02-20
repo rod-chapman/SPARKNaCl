@@ -167,7 +167,27 @@ private
       14 => Character'Pos (' '),
       15 => Character'Pos ('k'));
 
+   -------------------------------------------------------------------------
+   --  Constants common to the whole library
+   --
+   --  Some "Huffman-lite coding" is applied to names here - the most
+   --  frequently used constants having abbreviated names.
+   -------------------------------------------------------------------------
 
+   --  GF "Limbs" are stored modulo 65536
+   --
+   --  "LM"   = "Limb Modulus"
+   --  "LMM1" = "Limb Modulus Minus 1"
+   LM   : constant := 65536;
+   LMM1 : constant := 65535;
+
+   --  The modulus of curve 25519 is (2**255 - 19).
+   --  In the reduction of GF values, we sometime need to multiply a limb
+   --  value by 2**256 mod (2**255 - 19), which is actually equal to 38,
+   --  since 2**256 = (2 * (2**255 - 19)) + 38
+   --
+   --  "R2256" = "Remainder of 2**256 (modulo 2**255-19)"
+   R2256 : constant := 38;
 
    -------------------------------------------------------------------------
    --  Bounds on All GF Limbs
@@ -185,26 +205,26 @@ private
    --  Upper bound on GF_Any_Limb
    --
    --  During the "reduction modulo 2**255-19" phase of the "*"
-   --  operation, each limb GF (I) is added to 38 * GF (I + 16)
+   --  operation, each limb GF (I) is added to R2256 * GF (I + 16)
    --  The worst-case upper bound of this result is when I = 0,
    --  where I (0) has upper bound MGFLP an I (16) has upper bound
    --  15 * MGFLP.
    --
    --  Therefore the upper bound of Any_GF_Limb is
-   --   (38 * 15 + 1) * MGFLP = 571 * MGFLP
+   --   (R2256 * 15 + 1) * MGFLP = 571 * MGFLP
    -------------------------------------------------------------------------
 
    --  "Maximum GF Limb Coefficient"
-   MGFLC : constant := (38 * 15) + 1;
+   MGFLC : constant := (R2256 * 15) + 1;
 
    --  In multlying two normalized GFs, a simple product of
    --  two limbs is bounded to 65535**2. This comes up in
    --  predicates and subtypes below, so a named number here
    --  is called for.  The name "MGFLP" is short for
    --  "Maximum GF Limb Product"
-   MGFLP : constant := 65535 * 65535;
+   MGFLP : constant := LMM1 * LMM1;
 
-   subtype GF_Any_Limb is I64 range -65536 .. (MGFLC * MGFLP);
+   subtype GF_Any_Limb is I64 range -LM .. (MGFLC * MGFLP);
 
    type GF is array (Index_16) of GF_Any_Limb;
 
@@ -213,7 +233,7 @@ private
    type GF_PA is array (Index_31) of GF_Any_Limb;
 
    -------------------------------------------------------------------------
-   subtype GF_Normal_Limb     is I64 range      0 .. 65535;
+   subtype GF_Normal_Limb is I64 range 0 .. LMM1;
 
    subtype Normal_GF is GF
      with Dynamic_Predicate =>
@@ -245,13 +265,12 @@ private
    --              which is 0 .. 131070
    --
    --  Finally, to balance the -1 value carried into limb 16, limb 0
-   --  is reduced by 38, so...
+   --  is reduced by R2256, so...
    subtype Difference_GF is GF
      with Dynamic_Predicate =>
-        ((Difference_GF (0) in -37 .. 131033) and
+        ((Difference_GF (0) in (1 - R2256) .. ((2 * LMM1) - R2256 + 1)) and
            (for all K in Index_16 range 1 .. 15 =>
-              Difference_GF (K) in 0 .. 131070));
-   -------------------------------------------------------------------------
+              Difference_GF (K) in 0 .. 2 * LMM1));
 
    -------------------------------------------------------------------------
    --  Subtypes supporting "*" operation on GF
@@ -277,14 +296,14 @@ private
    --
    --  Least Significant Limb ("LSL") of a Seminormal GF.
    --  LSL is initially normalized to 0 .. 65535, but gets
-   --  38 * Carry added to it, where Carry is (Limb 15 / 65536)
+   --  R2256 * Carry added to it, where Carry is (Limb 15 / 65536)
    --  The upper-bound on Limb 15 is given by substituting I = 14
    --  into the Dynamic_Predicate above, so
    --    (MGFLC - 37 * 14) * MGFLP = 53 * MGFLP
    --  See the body of Product_To_Seminormal for the full
    --  proof of this upper-bound
    subtype Seminormal_GF_LSL is I64
-     range 0 .. (65535 + 38 * ((53 * MGFLP) / 65536));
+     range 0 .. (LMM1 + R2256 * ((53 * MGFLP) / LM));
 
    --  Limbs 1 though 15 are in 0 .. 65535, but the
    --  Least Significant Limb 0 is in GF_Seminormal_Product_LSL
@@ -303,10 +322,10 @@ private
    --  3. ONE normalization step to the DIFFERENCE of 2 normalized GFs
    --
    --  The least-significant-limb is normalized to 0 .. 65535, but then
-   --  has +38 or -38 added to it, so its range is...
+   --  has +R2256 or -R2256 added to it, so its range is...
    subtype Nearlynormal_GF is GF
      with Dynamic_Predicate =>
-        ((Nearlynormal_GF (0) in -38 .. 65573) and
+        ((Nearlynormal_GF (0) in -R2256 .. LMM1 + R2256) and
            (for all K in Index_16 range 1 .. 15 =>
               (Nearlynormal_GF (K) in GF_Normal_Limb)));
 
@@ -332,8 +351,8 @@ private
    --  representation
    function ASR_16 (X : in I64) return I64
    is (To_I64 (Shift_Right_Arithmetic (To_U64 (X), 16)))
-     with Post => (if X >= 0 then ASR_16'Result = X / 65536 else
-                                  ASR_16'Result = ((X + 1) / 65536) - 1);
+     with Post => (if X >= 0 then ASR_16'Result = X / LM else
+                                  ASR_16'Result = ((X + 1) / LM) - 1);
    pragma Annotate (GNATprove,
                     False_Positive,
                     "postcondition might fail",

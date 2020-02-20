@@ -29,7 +29,7 @@ is
    --  Note: recursive definition!
    --  function LnC_UB (I : in Index_16) return I64 is
    --     (if I = 0 then (Limb_UB (0))
-   --               else (Limb_UB (I) + (LnC_UB (I - 1) / 65536)));
+   --               else (Limb_UB (I) + (LnC_UB (I - 1) / LM)));
    LnC_UB : constant Limb_LUT :=
      (0  => 16#23AFB8A023B#,
       1  => 16#215FE0EFDA0#,
@@ -49,7 +49,7 @@ is
       15 =>  16#100014FFFF#) with Ghost;
 
    --   function Carry_UB (I : in Index_16) return I64 is
-   --      (LnC_UB (I) / 65536);
+   --      (LnC_UB (I) / LM);
 
    --  Distinct named number here so the table below can be "Ghost".
    Carry_UB_15 : constant := 16#100014#;
@@ -73,9 +73,9 @@ is
       15 =>  Carry_UB_15) with Ghost;
 
    subtype New_Seminormal_GF_LSL is I64
-     range 0 .. 65535 + 38 * Carry_UB_15;
+     range 0 .. LMM1 + R2256 * Carry_UB_15;
 
-   --  Limbs 1 though 15 are in 0 .. 65535, but the
+   --  Limbs 1 though 15 are in GF_Normal_Limb, but the
    --  Least Significant Limb 0 is in GF_Seminormal_Product_LSL
    subtype New_Seminormal_GF is GF
      with Dynamic_Predicate =>

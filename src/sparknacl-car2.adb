@@ -16,13 +16,13 @@ is
 
       for I in I32 range 0 .. 14 loop
          R (I + 1) := R (I + 1) + ASR_16 (R (I));
-         R (I) := R (I) mod 65536;
+         R (I) := R (I) mod LM;
       end loop;
 
       --  Unroll final iteration to avoid the need for a condition
       --  expression inside the loop
-      R (0)  := R (0) + 38 * ASR_16 (R (15));
-      R (15) := R (15) mod 65536;
+      R (0)  := R (0) + R2256 * ASR_16 (R (15));
+      R (15) := R (15) mod LM;
    end Carry;
 
 
@@ -42,9 +42,9 @@ is
       R := X;
 
       for I in Index_16 range 0 .. 14 loop
-         Carry := R (I) / 65536;
+         Carry := R (I) / LM;
          R (I + 1) := R (I + 1) + Carry;
-         R (I) := R (I) mod 65536;
+         R (I) := R (I) mod LM;
 
          pragma Loop_Invariant
            (for all K in Index_16 range 0 .. I => (R (K) in GF_Normal_Limb));
@@ -61,9 +61,9 @@ is
         (for all K in Index_16 range 0 .. 14 => (R (K) in GF_Normal_Limb));
       pragma Assert (R (15) <= LnC_UB (15));
 
-      Carry := R (15) / 65536;
-      R (0) := R (0) + 38 * Carry;
-      R (15) := R (15) mod 65536;
+      Carry := R (15) / LM;
+      R (0) := R (0) + R2256 * Carry;
+      R (15) := R (15) mod LM;
 
       --  The upper-bound on R (15) is sufficient to get a tight upper-bound
       --  on R (0) now, so...

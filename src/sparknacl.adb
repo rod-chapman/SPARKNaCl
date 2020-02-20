@@ -30,25 +30,25 @@ is
    is
       R : GF := (others => 0);
    begin
-      --  For limb 0, we compute the difference, but add 65536 to
+      --  For limb 0, we compute the difference, but add LM to
       --  make sure the result is positive.
-      R (0) := (Left (0) - Right (0)) + 65536;
+      R (0) := (Left (0) - Right (0)) + LM;
 
       for I in Index_16 range 1 .. 15 loop
-         --  Having added 65536 to the previous limb, we also add 65536 to
-         --  each new limb, but subtract 1 to account for the extra 65536 from
+         --  Having added LM to the previous limb, we also add LM to
+         --  each new limb, but subtract 1 to account for the extra LM from
          --  the earlier limb
-         R (I) := (Left (I) - Right (I)) + 65535;
+         R (I) := (Left (I) - Right (I)) + LMM1;
          pragma Loop_Invariant
-           ((R (0) in 1 .. 131071) and
-            (for all K in Index_16 range 1 .. I => R (K) in 0 .. 131070));
+           ((R (0) in 1 .. 2 * LMM1 + 1) and
+            (for all K in Index_16 range 1 .. I => R (K) in 0 .. 2 * LMM1));
       end loop;
 
       --  We now need to carry -1 into limb R (16), but that doesn't
       --  exist, so we carry 2**256 * -1 into limb R (0). As before,
-      --  we know that (2**256) mod (2**255 - 19) = 38, so we add
-      --  38 * -1 to R (0)
-      R (0) := R (0) - 38;
+      --  we know that (2**256) mod (2**255 - 19) = R2256, so we add
+      --  R2256 * -1 to R (0)
+      R (0) := R (0) - R2256;
 
       pragma Assert (R in Difference_GF);
 
@@ -128,6 +128,7 @@ is
 
       --  Substituting I = 15 into the outer loop invariant above,
       --  and eliminating quantifiers with null ranges yields
+      --  the following assertion.
       --
       --  The coefficients of MGFLP in the upper bound for limbs 0 .. 30
       --  form a "pyramid" which peaks at 16 for T (15), like this:
@@ -152,16 +153,16 @@ is
       --
       --  Unfortutely, our limbs don't have enough bits for that to work,
       --  but we're working in mod (2**255 - 19) arithmetic, and we know that
-      --  2**256 mod (2**255 - 19) = 38, so we can multiply by 38 instead.
+      --  2**256 mod (2**255 - 19) = R2256, so we can multiply by that instead.
       --
       --  Given the upper bounds established above, we _can_ prove that
-      --  T (I) + 38 * T (I + 16) WILL fit in 64 bits.
+      --  T (I) + R2256 * T (I + 16) WILL fit in 64 bits.
       for I in Index_15 loop
-         TF (I) := T (I) + 38 * T (I + 16);
+         TF (I) := T (I) + R2256 * T (I + 16);
          pragma Loop_Invariant
            (
             (for all J in Index_15 range 0 .. I =>
-               TF (J) = T (J) + 38 * T (J + 16))
+               TF (J) = T (J) + R2256 * T (J + 16))
             and then
             (for all J in Index_15 range I + 1 .. 14 =>
                TF (J) = 0)

@@ -96,7 +96,7 @@ is
          for I in I32 range 1 .. 14 loop
             Carry := ASR_16 (R (I - 1)) mod 2;
             R (I) := T (I) - 16#FFFF# - Carry;
-            R (I - 1) := R (I - 1) mod 65536;
+            R (I - 1) := R (I - 1) mod LM;
 
             pragma Loop_Invariant
               (for all J in Index_16 range 0 .. I - 1 =>
@@ -107,7 +107,7 @@ is
          --  Note that Limb 15 might become negative on underflow
          Carry := ASR_16 (R (14)) mod 2;
          R (15) := T (15) - 16#7FFF# - Carry;
-         R (14) := R (14) mod 65536;
+         R (14) := R (14) mod LM;
 
          --  If R (15) is negative, then ASR_16 (R (15)) = -1
          --  and (-1 mod 2) = 1 = Boolean'Pos (True), so...
@@ -117,7 +117,7 @@ is
          --  even if it did Underflow. This is OK, since if
          --  Underflow then the value of Result won't be used
          --  below.
-         R (15) := R (15) mod 65536;
+         R (15) := R (15) mod LM;
 
          Result := R;
          Sanitize_GF (R);
