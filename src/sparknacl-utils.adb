@@ -121,6 +121,14 @@ is
          --  Note that Limb 15 might become negative on underflow
          Carry := ASR_16 (R (14)) mod 2;
          R (15) := T (15) - 16#7FFF# - Carry;
+
+         --  Historical note: the original version of TweetNaCl had a bug
+         --  here, with the following line written as
+         --   R (15) := R (15) mod LM;
+         --  If this bug is re-introduced here, then SPARK _does_ report
+         --  this as a type-safety error, since if R (15) is normalized
+         --  but R (14) is not, then the prover is unable to show that
+         --  R is a Temp_GF subtype in the assignment to Result below.
          R (14) := R (14) mod LM;
 
          --  Note that R (15) is not normalized here, so that the
