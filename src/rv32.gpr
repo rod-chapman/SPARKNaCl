@@ -1,0 +1,55 @@
+project RV32 is
+
+   for Languages use ("Ada");
+
+   type Build_Type is ("debug", "fast");
+
+   Build : Build_Type := external("build", "debug");
+
+   for Target use "riscv32-elf";
+   for Runtime ("Ada") use "zfp-hifive1";
+
+   for Excluded_Source_Files use ("sparknacl-debug.ads", "sparknacl-debug.adb", "sparknacl-pdebug.ads", "sparknacl-pdebug.adb", "random.adb");
+
+   package Naming is
+      for Body ("random") use "random_zfp.adb";
+   end Naming;
+
+   Cargs := ("-gnatwa", "-gnaty", "-gnatp");
+
+   package Compiler is
+      case Build is
+         when "debug" =>
+            for Default_Switches ("Ada") use Cargs & ("-g", "-O0");
+         when "fast" =>
+            for Default_Switches ("Ada") use Cargs & ("-O2");
+      end case;
+
+      -- All library code must be compatible with ZFP runtime
+      for Local_Configuration_Pragmas use "sparknacl.adc";
+
+   end Compiler;
+
+   package Builder is
+      case Build is
+         when "debug" =>
+            for Switches ("ada") use Cargs & ("-g", "-s");
+         when "fast" =>
+            for Switches ("ada") use Cargs & ("-s");
+      end case;
+   end Builder;
+
+   package Binder is
+      for Switches ("ada") use ("-E");
+   end Binder;
+
+   package Linker is
+      case Build is
+         when "debug" =>
+            for Switches ("ada") use Cargs & ("-g");
+         when "fast" =>
+            for Switches ("ada") use Cargs & ("");
+      end case;
+   end Linker;
+
+end RV32;
