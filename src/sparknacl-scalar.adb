@@ -33,37 +33,40 @@ is
          Shift := Natural (I and 7);
          Swap  := Boolean'Val (Shift_Right (CB, Shift) mod 2);
 
+         pragma Loop_Invariant (A2 in Normal_GF);
+         pragma Loop_Invariant (B  in Normal_GF);
+         pragma Loop_Invariant (C  in Normal_GF);
+         pragma Loop_Invariant (D  in Normal_GF);
+
          Utils.Sel_25519 (A2, B, Swap);
          Utils.Sel_25519 (C, D, Swap);
 
-         E := A2 + C;
-
+         E  := A2 + C;
          A3 := A2 - C;
 
-         C := B + D;
-
+         C  := B + D;
          B2 := B - D;
 
-         D := Square (E);
-         F := Square (A3);
+         D  := Square (E);
+         F  := Square (A3);
 
          A2 := C * A3;
          C  := B2 * E;
-         E := A2 + C;
+         E  := A2 + C;
 
          A3 := A2 - C;
-         B := Square (A3);
-         C := D - F;
+         B  := Square (A3);
+         C  := D - F;
 
          A2 := C * GF_121665;
          A3 := A2 + D;
 
          C2 := C;
-         C := C2 * A3;
+         C  := C2 * A3;
 
          A2 := D * F;
-         D := B * X;
-         B := Square (E);
+         D  := B * X;
+         B  := Square (E);
 
          Utils.Sel_25519 (A2, B, Swap);
          Utils.Sel_25519 (C, D, Swap);
