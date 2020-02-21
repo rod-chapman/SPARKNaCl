@@ -120,7 +120,6 @@ is
          --  of P (16#7FFF#) with carry.
          --  Note that Limb 15 might become negative on underflow
          Carry  := ASR_16 (R (14)) mod 2;
-         pragma Assert (Carry in I64_Bit);
          R (15) := (T (15) - 16#7FFF#) - Carry;
 
          --  Historical note: the original version of TweetNaCl had a bug
