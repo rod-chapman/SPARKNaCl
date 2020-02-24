@@ -111,6 +111,15 @@ make
 
 should suffice.
 
+A second directory "stress" also contains additional boundary-value and stress-test cases for some of the NaCl functions. A single project file there `stressall.gpr` builds the test driver program - for example:
+
+```
+cd stress
+gprbuild -Pstressall
+./stressall
+```
+
+
 ## Known weaknesses and TBD items
 
 At this time, there are several items to-be-done:
