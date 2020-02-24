@@ -4,4 +4,3 @@ is
 begin
    SPARKNaCl.Tests.Car_Stress;
 end Car_Stress;
-
