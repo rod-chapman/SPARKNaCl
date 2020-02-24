@@ -58,7 +58,7 @@ This release of SPARKNaCl meets most of the goals above. In particular:
 
 * The proof of type safety is "complete" in that the SPARK verification tools discharge all verification conditions for all the contracts and type-safety conditions in the code. In less formal terms, "type safety" means that the code definitely contains no buffer overflow, numeric overflows, division by zero, or anything else that would normally give rise to an exception at run-time in Ada.
 * The proof requires use of all three main proof engines supplied with SPARK (CVC4, Z3 and Alt-Ergo). No one of these is capable of discharging all the VCs on its own.
-* The code contains no undefined behaviour, and does not depend on any unspecified behaviour. Or what would be called "erroneous/bounded erors" in SPARK, like reading uninitialized data.
+* The code contains no undefined behaviour, and does not depend on any unspecified behaviour. Additionally, there is no "erroneous behaviour" and no "bounded erors", such as reading uninitialized data.
 * The NaCl test suite has been re-implemented and passes.
 
 Still on the "to be done" list:
