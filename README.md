@@ -7,17 +7,24 @@ This library is a compact reference implementation of the NaCl crypto library. I
 ## Contents
 
 [Why Bother?](https://github.com/rod-chapman/SPARKNaCl#why-bother)
+
 [Goals](https://github.com/rod-chapman/SPARKNaCl#goals)
-[Challenges](https://github.com/rod-chapman/SPARKNaCl#)
+
+[Challenges](https://github.com/rod-chapman/SPARKNaCl#challenges)
+
 [Current state of the release](https://github.com/rod-chapman/SPARKNaCl#current-state-of-the-release)
+
 [Tools](https://github.com/rod-chapman/SPARKNaCl#tools)
+
 [Reproducing results](https://github.com/rod-chapman/SPARKNaCl#reproducing-results)
+
 [Known weaknesses and TBD items](https://github.com/rod-chapman/SPARKNaCl#known-weaknesses-and-tbd-items)
+
 [Acknowledgements](https://github.com/rod-chapman/SPARKNaCl#acknowledgements)
 
 ## Why Bother?
 
-Given that there are several highly-respected implementationo of NaCl out there, including the designers' own reference implementation, it is perhaps not entirely obvious that the world needs another one.
+Given that there are several highly-respected implementations of NaCl out there, including the designers' own reference implementation, it is perhaps not entirely obvious that the world needs another one.
 
 I first encountered TweetNaCl with some fascination - a fully-fledged modern crypto library in so little code! That got me wondering if SPARK 2014 could even manage to express such code, and how the SPARK verification tools would cope. TweetNaCl sets some serious challenges (see below), so it started out as a bit of fun to see if any or all of it could be re-implemented in SPARK.
 
@@ -25,7 +32,7 @@ I first encountered TweetNaCl with some fascination - a fully-fledged modern cry
 
 SPARKNaCl started out with the simple goal of seeing if an re-implementation of TweetNaCl was even possible in SPARK. We have some form in this area, though, having re-implemented Skein in SPARK some time ago, and (more recently) produced a high-assurance implementation of RFC 4108 for a commercial client.
 
-As the project progress, though, the goals became a little more ambitious:
+As the project progressed, though, the goals became a little more ambitious:
 
 * SPARKNaCl implements the same API and functionality as TweetNaCl.
 * SPARKNaCl passes the NaCl test suite, producing identical results.
@@ -53,7 +60,7 @@ This release of SPARKNaCl meets most of the goals above. In particular:
 * The code contains no undefined behaviour, and does not depend on any unspecified behaviour.
 * The NaCl test suite has been re-implemented and passes.
 
-Still on the "To be done" list:
+Still on the "to be done" list:
 
 * Performance has not yet been assessed or optimized. I have recently taken delivery of a small RISC-V development board that will serve fior performance testing.
 * Code size has not yet been assessed against TweetNaCl.
@@ -116,6 +123,6 @@ At this time, there are several items to-be-done:
 ## Acknowledgements
 
 Many thanks to:
-1. Yannick Moy of [AdaCore](www.adacore.com) who helped with SPARK language and toolset issues.
+1. Yannick Moy of [AdaCore](http://www.adacore.com/) who helped with SPARK language and toolset issues.
 2. [Benoit Viguier](https://benoit.viguier.nl), who kindly offered advice and help with explaining the GF "Carry" operation.
 3. [Jason Donenfeld](https://www.zx2c4.com) for providing pointers to his revised "Carry" algorithm that is used in WireGuard.
