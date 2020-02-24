@@ -129,6 +129,7 @@ At this time, there are several items to-be-done:
   2. Currently, SPARKNaCl applies the GF "Carry" operation more aggressively than in TweetNaCl. For example, SPARKNaCl applies "Carry" after a "+" operation, and applies Carry *three* times after "*". These make proof easier, but come at some cost in performance. Relaxation of these rules remains TBD.
 
 * Code size comparison with TweetNaCl.
+* Structural coverage analysis of the tests against the sources has not yet been performed. I don't expect the results will be very interesting, though. Some support for this does exist in the main project file in the "cover" build target.
 
 ## Acknowledgements
 
