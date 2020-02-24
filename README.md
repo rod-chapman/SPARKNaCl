@@ -2,7 +2,7 @@
 
 SPARK 2014 re-implementation of the [TweetNaCl](https://tweetnacl.cr.yp.to) crypto library.
 
-Copyright (c) 2020 Protean Code Limited.
+Copyright (c) 2020 [Protean Code Limited](http://www.proteancode.com/).
 
 Licence: this work is released under the "simplified 2-clause BSD licence". See
 [here](https://github.com/rod-chapman/SPARKNaCl/blob/master/LICENCE.md) for details.
