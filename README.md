@@ -1,25 +1,44 @@
 # SPARKNaCl
-SPARK 2014 re-implementation of the TweetNaCl crypto library
 
-## TO DO
+SPARK 2014 re-implementation of the TweetNaCl crypto library.
 
-An incomplete list of ideas:
+This library is a compact reference implementation of the NaCl crypto library. It was originally inspired by the TweetNaCl implementation, but offers a completely automated static proof of type-safety (and some correctness properties), reasonable performance, and (unlike TweetNaCl) is readable owing to the large number of explanatory comments and contracts in the code.
 
-1. Complete type safety proofs. Requires detailed understanding of the invariant properties of each "limb" of a GF object. (50 marks)
+## Contents
 
-2. Strengthen types in sparknacl.ads - for example use different named types for each distinct flavour of key and nonce to prevent them being confused. (Done 12/11/19)
+Section Link
 
-3. Use limited-private, volatile types for keys and nonces, and provide an explicit "Sanitize" procedure for them. (Done 18/11/19)
+## Why Bother?
 
-4. Split into one child package for each major functional area, so SPARKNaCl.Secret_Box.Open instead of SPARKNaCl.Crypto_Secretbox_Open for example. (Done 6/11/2019)
+Blah
 
-5. Re-implement body using more Ada idioms, including:
-  - Redeclare the arithmetic operators on GF, so we can use functional infix "C := A * B" style rather than "M (C, A, B)". (Done 12/11/19)
+## Goals
 
-  - Ditto for procedures that return a single "out" parameter of a composite type. Make it a function! (Done 12/11/2019)
+dfd
 
-  - Introduce nesting of local subprograms, particularly those with only one calling subprogram. (Done 12/11/19)
+## Challenges
 
-6. Full performance test against tweetnacl.c
+dfd
 
-7. Structural coverage analysis based on tests/testall.adb run.
+## Current state of the release
+
+dhjfd
+
+## Tools
+
+dfd
+
+## Reproducing results
+
+dfds
+
+## Verification summary
+
+dfd
+
+## Acknowledgements
+
+Many thanks to:
+1. Yannick Moy of [AdaCore](www.adacore.com) who helped with SPARK language and toolset issues.
+2. [Benoit Viguier](https://benoit.viguier.nl), who kindly offered advice and help with explaining the GF "Carry" operation.
+3. [Jason Donenfeld](https://www.zx2c4.com) for providing pointers to his revised "Carry" algorithm that is used in WireGuard.
