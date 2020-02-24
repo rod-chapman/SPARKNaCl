@@ -30,7 +30,7 @@ I first encountered TweetNaCl with some fascination - a fully-fledged modern cry
 
 ## Goals
 
-SPARKNaCl started out with the simple goal of seeing if an re-implementation of TweetNaCl was even possible in SPARK. We have some form in this area, though, having re-implemented Skein in SPARK some time ago, and (more recently) produced a high-assurance implementation of RFC 4108 for a commercial client.
+SPARKNaCl started out with the simple goal of seeing if a re-implementation of TweetNaCl was even possible in SPARK. We have some form in this area, though, having [re-implemented Skein in SPARK](http://www.skein-hash.info/SPARKSkein-release) some time ago, and (more recently) produced a high-assurance implementation of [RFC 4108](https://datatracker.ietf.org/doc/rfc4108/) for a commercial client.
 
 As the project progressed, though, the goals became a little more ambitious:
 
@@ -39,8 +39,8 @@ As the project progressed, though, the goals became a little more ambitious:
 * SPARKNaCl retains "time-constant" algorithms throughout.
 * The entire library has an "auto-active" proof of (at least) type safety. No external user-guided or interactive proof tools (such as Coq) are used. Everything needed to reproduce the proofs are in the code and the contracts.
 * The code is compatible with the GNAT "Zero Footprint" runtime library. This means the code relies on *no* runtime library at all, so it will run on anything from tiny bare-metal targets up to server-class CPUs, on any operating system.
-* Performance of the code should be competetive with the C implementation of TweetNaCl.
-* Code size should be competetive with the C implementation of TweetNaCl.
+* Performance of the code should be competitive with the C implementation of TweetNaCl.
+* Code size should be competitive with the C implementation of TweetNaCl.
 
 ## Challenges
 
@@ -54,11 +54,11 @@ A modern crypto library like TweetNaCl sets some serious challenges for verifica
 
 This release of SPARKNaCl meets most of the goals above. In particular:
 
-* The code retains the "time constant" algorithms from TweetNaCl, but (I would argue) are far more readable. See [SPARKNaCl.Utils.Pack_25519](https://github.com/rod-chapman/SPARKNaCl/blob/master/src/sparknacl-utils.adb) for example.
+* The code retains the "constant time" algorithms from TweetNaCl, but (I would argue) are far more readable. See [SPARKNaCl.Utils.Pack_25519](https://github.com/rod-chapman/SPARKNaCl/blob/master/src/sparknacl-utils.adb) for example.
 
 * The proof of type safety is "complete" in that the SPARK verification tools discharge all verification conditions for all the contracts and type-safety conditions in the code. In less formal terms, "type safety" means that the code definitely contains no buffer overflow, numeric overflows, division by zero, or anything else that would normally give rise to an exception at run-time in Ada.
-* The proof requires use of all three main proof engines supplied with SPARK (CVC4, Z3 and altergo). No one of these is capable of discharging all the VCs on its own.
-* The code contains no undefined behaviour, and does not depend on any unspecified behaviour.
+* The proof requires use of all three main proof engines supplied with SPARK (CVC4, Z3 and Alt-Ergo). No one of these is capable of discharging all the VCs on its own.
+* The code contains no undefined behaviour, and does not depend on any unspecified behaviour. Or what would be called "erroneous/bounded erors" in SPARK, like reading uninitialized data.
 * The NaCl test suite has been re-implemented and passes.
 
 Still on the "to be done" list:
