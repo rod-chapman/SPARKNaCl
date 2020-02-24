@@ -1,6 +1,6 @@
 # SPARKNaCl
 
-SPARK 2014 re-implementation of the TweetNaCl crypto library.
+SPARK 2014 re-implementation of the [TweetNaCl](https://tweetnacl.cr.yp.to) crypto library.
 
 This library is a compact reference implementation of the NaCl crypto library. It was originally inspired by the TweetNaCl implementation, but offers a completely automated static proof of type-safety (and some correctness properties), reasonable performance, and (unlike TweetNaCl) is readable owing to the large number of explanatory comments and contracts in the code.
 
@@ -54,7 +54,8 @@ A modern crypto library like TweetNaCl sets some serious challenges for verifica
 
 This release of SPARKNaCl meets most of the goals above. In particular:
 
-* The code retains the "time constant" algorithms from TweetNaCl, but (I would argue) are far more readable. See `SPARKNaCl.Utils.Pack_25519` for an example.
+* The code retains the "time constant" algorithms from TweetNaCl, but (I would argue) are far more readable. See [SPARKNaCl.Utils.Pack_25519](https://github.com/rod-chapman/SPARKNaCl/blob/master/src/sparknacl-utils.adb) for example.
+
 * The proof of type safety is "complete" in that the SPARK verification tools discharge all verification conditions for all the contracts and type-safety conditions in the code. In less formal terms, "type safety" means that the code definitely contains no buffer overflow, numeric overflows, division by zero, or anything else that would normally give rise to an exception at run-time in Ada.
 * The proof requires use of all three main proof engines supplied with SPARK (CVC4, Z3 and altergo). No one of these is capable of discharging all the VCs on its own.
 * The code contains no undefined behaviour, and does not depend on any unspecified behaviour.
