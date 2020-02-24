@@ -1,7 +1,7 @@
 "Simplified" (2-Clause) BSD licence
 -----------------------------------
 
-Copyright (c) 2019, Protean Code Limited
+Copyright (c) 2020, Protean Code Limited
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

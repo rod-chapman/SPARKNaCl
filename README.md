@@ -2,6 +2,11 @@
 
 SPARK 2014 re-implementation of the [TweetNaCl](https://tweetnacl.cr.yp.to) crypto library.
 
+Copyright (c) 2020 Protean Code Limited.
+
+Licence: this work is released under the "simplified 2-clause BSD licence". See
+[here](https://github.com/rod-chapman/SPARKNaCl/blob/master/LICENCE.md) for details.
+
 This library is a compact reference implementation of the NaCl crypto library. It was originally inspired by the TweetNaCl implementation, but offers a completely automated static proof of type-safety (and some correctness properties), reasonable performance, and (unlike TweetNaCl) is readable owing to the large number of explanatory comments and contracts in the code.
 
 ## Contents
