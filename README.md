@@ -104,7 +104,7 @@ Expected results are in `expected_test_results` the same directory.
 
 A simple `Makefile` is also supplied that builds and runs two variants of `testall.adb` and compares the results:
 
-* A "debug" build with optimization and -O0. This also compiles *all* contracts (pre-conditions, assertions etc.) into the code, so they are checked at run-time. This build is very slow.
+* A "debug" build with optimization at -O0. This also compiles *all* contracts (pre-conditions, assertions etc.) and type-safety checks into the code, so they are checked at run-time. This build is very slow.
 * A "fast" build with no run-time checking and using -O3.
 
 To reproduce:
