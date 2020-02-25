@@ -466,7 +466,7 @@ is
 
             --  Having established that XL (I - 12) in PRL and
             --  Carry in -1 .. 1, we have to prove 2 special cases
-            --  to ensure taht XL (I - 12) + Carry is STILL in PRL.
+            --  to ensure that XL (I - 12) + Carry is STILL in PRL.
             pragma Assert (if Carry = 1 then XL (I - 12) < PRL'Last);
             pragma Assert (if Carry = -1 then XL (I - 12) > PRL'First);
 
