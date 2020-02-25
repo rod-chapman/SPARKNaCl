@@ -68,8 +68,9 @@ This release of SPARKNaCl meets most of the goals above. In particular:
 
 Still on the "to be done" list:
 
-* Performance has not yet been assessed or optimized. I have recently taken delivery of a small RISC-V development board that will serve fior performance testing.
+* Performance has not yet been assessed or optimized. I have recently taken delivery of a small RISC-V development board that will serve for performance testing.
 * Code size has not yet been assessed against TweetNaCl.
+* While GNAT Community Edition 2019 is based on GCC 8.3.1, it would also be interesting to repeat all tests and performance analysis using the recently-released GNAT/LLVM integration.
 
 ## Tools
 
