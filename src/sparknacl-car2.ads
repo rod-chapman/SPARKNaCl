@@ -26,10 +26,13 @@ is
    --     ((MGFLC - 37 * GF_Any_Limb (I)) * MGFLP);
 
    --  LnC = "Limb and Carry"
-   --  Note: recursive definition!
+   --  Note: recursive definition! Needs Annotate aspect
+   --  to force GNATprove to generate an axiomatic definition for it.
+   --
    --  function LnC_UB (I : in Index_16) return I64 is
    --     (if I = 0 then (Limb_UB (0))
-   --               else (Limb_UB (I) + (LnC_UB (I - 1) / LM)));
+   --               else (Limb_UB (I) + (LnC_UB (I - 1) / LM)))
+   --    with Annotate => (GNATprove, Terminating);
    LnC_UB : constant Limb_LUT :=
      (0  => 16#23AFB8A023B#,
       1  => 16#215FE0EFDA0#,
