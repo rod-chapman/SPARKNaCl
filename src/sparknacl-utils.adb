@@ -105,7 +105,7 @@ is
          R (0) := T (0) - 16#FFED#;
 
          --  Limbs 1 .. 14 - subtract FFFF with carry
-         for I in I32 range 1 .. 14 loop
+         for I in Index_16 range 1 .. 14 loop
             Carry     := ASR_16 (R (I - 1)) mod 2;
             R (I)     := T (I) - 16#FFFF# - Carry;
             R (I - 1) := R (I - 1) mod LM;
@@ -113,6 +113,11 @@ is
             pragma Loop_Invariant
               (for all J in Index_16 range 0 .. I - 1 =>
                  R (J) in GF_Normal_Limb);
+            pragma Loop_Invariant
+              (R (I) = T (I) - 16#FFFF# - Carry);
+            pragma Loop_Invariant
+              (for all J in Index_16 range I + 1 .. Index_16'Last =>
+                 R (J) = 0);
             pragma Loop_Invariant (T in Temp_GF);
          end loop;
 
