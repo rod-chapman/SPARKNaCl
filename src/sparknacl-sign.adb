@@ -147,7 +147,7 @@ is
       is
       begin
          for I in Index_4 loop
-            Utils.Sel_25519 (P (I), Q (I), Swap);
+            Utils.CSwap (P (I), Q (I), Swap);
          end loop;
       end CSwap;
 

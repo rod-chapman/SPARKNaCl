@@ -7,9 +7,9 @@ is
      (False => 16#0000_0000_0000_0000#,
       True  => 16#FFFF_FFFF_FFFF_FFFF#);
 
-   procedure Sel_25519 (P    : in out GF;
-                        Q    : in out GF;
-                        Swap : in     Boolean)
+   procedure CSwap (P    : in out GF;
+                    Q    : in out GF;
+                    Swap : in     Boolean)
    is
       T : U64;
       C : U64 := Bit_To_Swapmask (Swap);
@@ -67,7 +67,7 @@ is
       Sanitize_U64 (C);
       pragma Unreferenced (T);
       pragma Unreferenced (C);
-   end Sel_25519;
+   end CSwap;
 
    function Pack_25519 (N : in Normal_GF) return Bytes_32
    is
@@ -163,7 +163,7 @@ is
       Second_Underflow : Boolean;
    begin
       --  Make a variable copy of N so can be passed to
-      --  calls to Sel_25519 below
+      --  calls to CSwap below
       L := N;
 
       --  SPARKNaCl differs from TweetNaCl here, in that Pack_25519
@@ -184,11 +184,11 @@ is
       --     end if;
 
       --  Constant-time version: always do both subtractions, then
-      --  use Sel_25519 to swap the right answer into R2
+      --  use CSwap to swap the right answer into R2
       Subtract_P (L,  R1, First_Underflow);
       Subtract_P (R1, R2, Second_Underflow);
-      Sel_25519  (R1, R2, Second_Underflow);
-      Sel_25519  (L,  R2, First_Underflow);
+      CSwap (R1, R2, Second_Underflow);
+      CSwap (L,  R2, First_Underflow);
 
       --  Sanitize local data as per the WireGuard sources
       Sanitize_GF (L);
@@ -197,7 +197,7 @@ is
       Sanitize_Boolean (Second_Underflow);
 
       --  R2 needs to be a Normal_GF here. The post-conditions
-      --  of Subtract_P and Sel_25519 conspire to make this so.
+      --  of Subtract_P and CSwap conspire to make this so.
       return To_Bytes_32 (R2);
 
       pragma Unreferenced (R1);
@@ -219,22 +219,16 @@ is
 
    function Inv_25519 (I : in Normal_GF) return Normal_GF
    is
-      C, C2 : Normal_GF;
+      C : Normal_GF;
    begin
       C := I;
 
       for A in reverse 0 .. 253 loop
-         --  Need C2 here to avoid aliasing C with C via pass by reference
-         C2 := Square (C);
+         C := Square (C);
          if (A /= 2 and A /= 4) then
-            C := C2 * I;
-         else
-            C := C2;
+            C := C * I;
          end if;
       end loop;
-
-      Sanitize_GF (C2);
-      pragma Unreferenced (C2);
 
       return C;
    end Inv_25519;

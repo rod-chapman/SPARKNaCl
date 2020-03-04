@@ -38,8 +38,8 @@ is
          pragma Loop_Invariant (C  in Normal_GF);
          pragma Loop_Invariant (D  in Normal_GF);
 
-         Utils.Sel_25519 (A2, B, Swap);
-         Utils.Sel_25519 (C, D, Swap);
+         Utils.CSwap (A2, B, Swap);
+         Utils.CSwap (C, D, Swap);
 
          E  := A2 + C;
          A3 := A2 - C;
@@ -68,8 +68,8 @@ is
          D  := B * X;
          B  := Square (E);
 
-         Utils.Sel_25519 (A2, B, Swap);
-         Utils.Sel_25519 (C, D, Swap);
+         Utils.CSwap (A2, B, Swap);
+         Utils.CSwap (C, D, Swap);
       end loop;
 
       T1 := Utils.Inv_25519 (C);

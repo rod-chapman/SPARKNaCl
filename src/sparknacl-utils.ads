@@ -14,9 +14,11 @@ is
    --  Constant time conditional swap of P and Q. Note that
    --  if a Normal_GF is passed in, this property is retained
    --  on swapping (or not...)  This is required Pack_25519.
-   procedure Sel_25519 (P    : in out GF;
-                        Q    : in out GF;
-                        Swap : in     Boolean)
+   --  In the original TweetNaCl sources, this was called
+   --  "sel25519"
+   procedure CSwap (P    : in out GF;
+                    Q    : in out GF;
+                    Swap : in     Boolean)
      with Global => null,
           Contract_Cases =>
             (Swap => (P = Q'Old and Q = P'Old and
