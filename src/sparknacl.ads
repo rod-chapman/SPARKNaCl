@@ -208,7 +208,7 @@ private
    --  During the "reduction modulo 2**255-19" phase of the "*"
    --  operation, each limb GF (I) is added to R2256 * GF (I + 16)
    --  The worst-case upper bound of this result is when I = 0,
-   --  where I (0) has upper bound MGFLP an I (16) has upper bound
+   --  where GF (0) has upper bound MGFLP and GF (16) has upper bound
    --  15 * MGFLP.
    --
    --  Therefore the upper bound of Any_GF_Limb is
@@ -218,7 +218,7 @@ private
    --  "Maximum GF Limb Coefficient"
    MGFLC : constant := (R2256 * 15) + 1;
 
-   --  In multlying two normalized GFs, a simple product of
+   --  In multiplying two normalized GFs, a simple product of
    --  two limbs is bounded to 65535**2. This comes up in
    --  predicates and subtypes below, so a named number here
    --  is called for.  The name "MGFLP" is short for
