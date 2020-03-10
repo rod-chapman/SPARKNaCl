@@ -113,11 +113,6 @@ is
             pragma Loop_Invariant
               (for all J in Index_16 range 0 .. I - 1 =>
                  R (J) in GF_Normal_Limb);
-            pragma Loop_Invariant
-              (R (I) = T (I) - 16#FFFF# - Carry);
-            pragma Loop_Invariant
-              (for all J in Index_16 range I + 1 .. Index_16'Last =>
-                 R (J) = 0);
             pragma Loop_Invariant (T in Temp_GF);
          end loop;
 
