@@ -87,7 +87,9 @@ is
                             Result    :    out Temp_GF;
                             Underflow :    out Boolean)
         with Global => null,
-             Post   => Underflow /= (Result in Normal_GF);
+             Pre    => T (15) >= -16#8000#,
+             Post   => (Result (15) >= T (15) - 16#8000#) and then
+                       (Underflow /= (Result in Normal_GF));
 
       function To_Bytes_32 (X : in Normal_GF) return Bytes_32
         with Global => null;
@@ -113,7 +115,6 @@ is
             pragma Loop_Invariant
               (for all J in Index_16 range 0 .. I - 1 =>
                  R (J) in GF_Normal_Limb);
-            pragma Loop_Invariant (T in Temp_GF);
          end loop;
 
          --  Limb 15 - Subtract MSL (Most Significant Limb)
