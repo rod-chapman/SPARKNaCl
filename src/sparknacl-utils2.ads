@@ -17,6 +17,7 @@ is
                          Result    :    out Temp_GF;
                          Underflow :    out Boolean)
      with Global => null,
+          Pre    => T (15) >= -16#8000#,
           Post   => Underflow /= (Result in Normal_GF);
 
 end SPARKNaCl.Utils2;
