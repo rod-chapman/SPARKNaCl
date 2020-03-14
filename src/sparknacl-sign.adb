@@ -406,6 +406,8 @@ is
                     XL (K) = XL'Loop_Entry (K));
                pragma Loop_Invariant
                  (for all K in Index_64 range I + 1 .. 63 => XL (K) = 0);
+               pragma Loop_Invariant
+                 (for all K in Index_64 => XL (K) in XL51_T);
 
             end loop;
 
@@ -498,10 +500,10 @@ is
             pragma Loop_Invariant
               (for all K in Index_64 range I32'Max (I - 11, 52) .. I - 1 =>
                  XL (K) = XL'Loop_Entry (K));
-
             pragma Loop_Invariant
               (for all K in Index_64 range I .. 63 => XL (K) = 0);
-
+            pragma Loop_Invariant
+              (for all K in Index_64 => XL (K) in XL51_T);
          end loop;
       end Eliminate_Limbs_62_To_32;
 
