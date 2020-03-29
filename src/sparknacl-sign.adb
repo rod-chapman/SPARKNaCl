@@ -230,7 +230,10 @@ is
       XL : XL_Table;
 
       --  "PRL" = "Partially Reduced Limb"
-      subtype PRL is I64 range -128 .. 127;
+      subtype PRL is I64 range -129 .. 128;
+
+      --  "FRL" = "Fully Reduced Limb"
+      subtype FRL is PRL range -128 .. 127;
 
       R     : Bytes_32;
 
@@ -264,7 +267,7 @@ is
              Post => (for all K in Index_64 range 0 .. 30 =>
                        XL (K) = X (K)) and
                      (for all K in Index_64 range 31 .. 50 =>
-                       XL (K) in PRL) and
+                       XL (K) in FRL) and
                      (XL (51) in XL51_T) and
                      (for all K in Index_64 range 52 .. 62 =>
                        XL (K) = X (K)) and
@@ -277,25 +280,25 @@ is
                          XL (K) = X (K) and
                          XL (K) in 0 .. Max_X_Limb) and
                       (for all K in Index_64 range 31 .. 50 =>
-                         XL (K) in PRL) and
+                         XL (K) in FRL) and
                       (XL (51) in XL51_T) and
                       (for all K in Index_64 range 52 .. 62 =>
                          XL (K) = X (K) and
                          XL (K) in 0 .. Max_X_Limb) and
                       (XL (63) = 0)),
              Post => ((for all K in Index_64 range  0 .. 19 =>
-                         XL (K) in PRL) and
+                         XL (K) in FRL) and
                       (for all K in Index_64 range 20 .. 31 =>
-                         XL (K) in -129 .. 128) and
+                         XL (K) in PRL) and
                       (for all K in Index_64 range 32 .. 63 => XL (K) = 0));
 
       procedure Finalize
         with Global => (In_Out => XL,
                         Output => R),
              Pre  => ((for all K in Index_64 range  0 .. 19 =>
-                         XL (K) in PRL) and
+                         XL (K) in FRL) and
                       (for all K in Index_64 range 20 .. 31 =>
-                         XL (K) in -129 .. 128) and
+                         XL (K) in PRL) and
                       (for all K in Index_64 range 32 .. 63 => XL (K) = 0));
 
       procedure Initialize_XL
@@ -343,7 +346,7 @@ is
               ((for all K in Index_64 range 0 .. 30 =>
                   XL (K) = XL'Loop_Entry (K)) and
                (for all K in Index_64 range 31 .. J =>
-                  XL (K) in PRL) and
+                  XL (K) in FRL) and
                (for all K in Index_64 range J + 1 .. 63 =>
                   XL (K) = XL'Loop_Entry (K)));
          end loop;
@@ -352,7 +355,7 @@ is
            ((for all K in Index_64 range 0 .. 30 =>
                XL (K) = X (K)) and
             (for all K in Index_64 range 31 .. 46 =>
-               XL (K) in PRL) and
+               XL (K) in FRL) and
             (for all K in Index_64 range 47 .. 63 =>
                XL (K) = X (K)));
 
@@ -406,11 +409,11 @@ is
 
          pragma Assert
            ((for all K in Index_64 range  0 .. 30 => XL (K) = X (K)) and
-            (for all K in Index_64 range 31 .. 50 => XL (K) in PRL) and
+            (for all K in Index_64 range 31 .. 50 => XL (K) in FRL) and
             (for all K in Index_64 range 51 .. 63 => XL (K) = X (K)));
 
          --  Note XL (51) is adjusted here but is NOT normalized
-         --  to be in PRL... hence it's a special case in the post-
+         --  to be in FRL... hence it's a special case in the post-
          --  condition above.
          XL (51) := XL (51) + Carry;
          pragma Assert (XL (51) in XL51_T);
@@ -437,40 +440,40 @@ is
                     XL (K) = XL'Loop_Entry (K));
                pragma Loop_Invariant
                  (for all K in Index_64 range I - 32 .. J =>
-                    XL (K) in PRL);
+                    XL (K) in FRL);
                pragma Loop_Invariant
                  (for all K in Index_64 range J + 1 .. I32'Min (50, I - 1) =>
                     XL (K) = XL'Loop_Entry (K));
                pragma Loop_Invariant
                  (for all K in Index_64 range J + 1 .. I32'Min (50, I - 1) =>
-                    XL (K) in -129 .. 128);
+                    XL (K) in PRL);
                pragma Loop_Invariant
                  (for all K in Index_64 range I32'Max (I - 11, 52) .. I - 1 =>
                     XL (K) = XL'Loop_Entry (K));
                pragma Loop_Invariant
                  (for all K in Index_64 range I + 1 .. 63 => XL (K) = 0);
                pragma Loop_Invariant
-                 (for all K in Index_64 => XL (K) in -129 .. XL51_T'Last);
+                 (for all K in Index_64 => XL (K) in PRL'First .. XL51_T'Last);
 
             end loop;
 
-            --  16 elements of XL(I-32) .. XL(I-17) are in now PRL
+            --  16 elements of XL(I-32) .. XL(I-17) are in now FRL
             pragma Assert
               (for all K in Index_64 range I - 32 .. I - 17 =>
-                 XL (K) in PRL);
+                 XL (K) in FRL);
 
-            pragma Assert (XL (I - 16) in PRL);
+            pragma Assert (XL (I - 16) in FRL);
             --  Carry is in Carry_T here
             XL (I - 16) := XL (I - 16) + Carry;
             Carry := ASR_8 (XL (I - 16) + 128);
             XL (I - 16) := XL (I - 16) - (Carry * 256);
 
-            --  17 elements of XL are in PRL
+            --  17 elements of XL are in FRL
             pragma Assert
               (for all K in Index_64 range I - 32 .. I - 16 =>
-                 XL (K) in PRL);
+                 XL (K) in FRL);
 
-            pragma Assert (XL (I - 15) in PRL);
+            pragma Assert (XL (I - 15) in FRL);
             --  Now we can start to prove that Carry is converging.
             --  Each further reduction reduces the lower and upper bound
             --  of Carry by about 2**8, except that the addition of 128 and
@@ -480,41 +483,41 @@ is
             Carry := ASR_8 (XL (I - 15) + 128);
             XL (I - 15) := XL (I - 15) - (Carry * 256);
 
-            --  18 elements of XL are in PRL
+            --  18 elements of XL are in FRL
             pragma Assert
               (for all K in Index_64 range I - 32 .. I - 15 =>
-                 XL (K) in PRL);
+                 XL (K) in FRL);
 
-            pragma Assert (XL (I - 14) in PRL);
+            pragma Assert (XL (I - 14) in FRL);
             pragma Assert (Carry in -512 .. 1);
             XL (I - 14) := XL (I - 14) + Carry;
             Carry := ASR_8 (XL (I - 14) + 128);
             XL (I - 14) := XL (I - 14) - (Carry * 256);
 
-            --  19 elements of XL are in PRL
+            --  19 elements of XL are in FRL
             pragma Assert
               (for all K in Index_64 range I - 32 .. I - 14 =>
-                 XL (K) in PRL);
+                 XL (K) in FRL);
 
-            pragma Assert (XL (I - 13) in PRL);
+            pragma Assert (XL (I - 13) in FRL);
             pragma Assert (Carry in -2 .. 1);
             XL (I - 13) := XL (I - 13) + Carry;
             Carry := ASR_8 (XL (I - 13) + 128);
             XL (I - 13) := XL (I - 13) - (Carry * 256);
 
-            --  20 elements of XL are in PRL
+            --  20 elements of XL are in FRL
             pragma Assert
               (for all K in Index_64 range I - 32 .. I - 13 =>
-                 XL (K) in PRL);
+                 XL (K) in FRL);
 
-            pragma Assert (XL (I - 12) in PRL);
+            pragma Assert (XL (I - 12) in FRL);
             pragma Assert (Carry in -1 .. 1);
 
             --  If Carry in -1 .. 1, then the final adjustment of
             --  XL (I - 12) means that this limb can end up being
-            --  -129 or +128
+            --  -129 or +128, so in PRL but not in FRL
             XL (I - 12) := XL (I - 12) + Carry;
-            pragma Assert (XL (I - 12) in -129 .. 128);
+            pragma Assert (XL (I - 12) in PRL);
 
             --  XL (I) is now eliminated, so it gets zeroed out now.
             XL (I) := 0;
@@ -525,12 +528,12 @@ is
 
             pragma Loop_Invariant
               (for all K in Index_64 range I - 32 .. I - 13 =>
-                 XL (K) in PRL);
+                 XL (K) in FRL);
             pragma Loop_Invariant
-              (XL (I - 12) in -129 .. 128);
+              (XL (I - 12) in PRL);
             pragma Loop_Invariant
               (for all K in Index_64 range I - 11 .. I32'Min (50, I - 1) =>
-                 XL (K) in -129 .. 128);
+                 XL (K) in PRL);
 
             --  This is XL (51) for I in 52 .. 63
             pragma Loop_Invariant
@@ -546,7 +549,7 @@ is
             pragma Loop_Invariant
               (for all K in Index_64 range I .. 63 => XL (K) = 0);
             pragma Loop_Invariant
-              (for all K in Index_64 => XL (K) in -129 .. XL51_T'Last);
+              (for all K in Index_64 => XL (K) in PRL'First .. XL51_T'Last);
          end loop;
       end Eliminate_Limbs_62_To_32;
 
@@ -569,7 +572,7 @@ is
          --  Step 1
          Carry := 0;
          for J in Index_32 loop
-            pragma Assert (XL (31) in -129 .. 128);
+            pragma Assert (XL (31) in PRL);
             XL (J) := XL (J) + (Carry - ASR_4 (XL (31)) * L (J));
 
             pragma Assert (XL (J) >= Step1_XL_Limb'First);
@@ -581,13 +584,13 @@ is
             --  Modified limbs 0 .. J are all in I64_Byte
             pragma Loop_Invariant
               (for all K in Index_64 range 0 .. J => XL (K) in I64_Byte);
-            --  Limbs J + 1 .. 31 are unmodified and in PRL
+            --  Limbs J + 1 .. 31 are unmodified and in FRL
             pragma Loop_Invariant
               (for all K in Index_64 range J + 1 .. 31 =>
                  XL (K) = XL'Loop_Entry (K));
             pragma Loop_Invariant
               (for all K in Index_64 range J + 1 .. 31 =>
-                 XL (K) in -129 .. 128);
+                 XL (K) in PRL);
             --  Trailing 32 limbs are all 0
             pragma Loop_Invariant
               (for all K in Index_64 range 32 .. 63 => XL (K) = 0);
