@@ -229,8 +229,11 @@ is
       type XL_Table is array (Index_64) of XL_Limb;
       XL : XL_Table;
 
-      --  "FRL" = "Partially Reduced Limb"
-      subtype FRL is I64 range -128 .. 127;
+      --  "PRL" = "Partially Reduced Limb"
+      subtype PRL is I64 range -129 .. 128;
+
+      --  "FRL" = "Fully Reduced Limb"
+      subtype FRL is PRL range -128 .. 127;
 
       R     : Bytes_32;
 
@@ -286,7 +289,7 @@ is
              Post => ((for all K in Index_64 range  0 .. 19 =>
                          XL (K) in FRL) and
                       (for all K in Index_64 range 20 .. 31 =>
-                         XL (K) in -129 .. 128) and
+                         XL (K) in PRL) and
                       (for all K in Index_64 range 32 .. 63 => XL (K) = 0));
 
       procedure Finalize
@@ -443,14 +446,14 @@ is
                     XL (K) = XL'Loop_Entry (K));
                pragma Loop_Invariant
                  (for all K in Index_64 range J + 1 .. I32'Min (50, I - 1) =>
-                    XL (K) in -129 .. 128);
+                    XL (K) in PRL);
                pragma Loop_Invariant
                  (for all K in Index_64 range I32'Max (I - 11, 52) .. I - 1 =>
                     XL (K) = XL'Loop_Entry (K));
                pragma Loop_Invariant
                  (for all K in Index_64 range I + 1 .. 63 => XL (K) = 0);
                pragma Loop_Invariant
-                 (for all K in Index_64 => XL (K) in -129 .. XL51_T'Last);
+                 (for all K in Index_64 => XL (K) in PRL'First .. XL51_T'Last);
 
             end loop;
 
@@ -512,9 +515,9 @@ is
 
             --  If Carry in -1 .. 1, then the final adjustment of
             --  XL (I - 12) means that this limb can end up being
-            --  -129 or +128
+            --  -129 or +128, so in PRL but not in FRL
             XL (I - 12) := XL (I - 12) + Carry;
-            pragma Assert (XL (I - 12) in -129 .. 128);
+            pragma Assert (XL (I - 12) in PRL);
 
             --  XL (I) is now eliminated, so it gets zeroed out now.
             XL (I) := 0;
@@ -527,10 +530,10 @@ is
               (for all K in Index_64 range I - 32 .. I - 13 =>
                  XL (K) in FRL);
             pragma Loop_Invariant
-              (XL (I - 12) in -129 .. 128);
+              (XL (I - 12) in PRL);
             pragma Loop_Invariant
               (for all K in Index_64 range I - 11 .. I32'Min (50, I - 1) =>
-                 XL (K) in -129 .. 128);
+                 XL (K) in PRL);
 
             --  This is XL (51) for I in 52 .. 63
             pragma Loop_Invariant
@@ -546,7 +549,7 @@ is
             pragma Loop_Invariant
               (for all K in Index_64 range I .. 63 => XL (K) = 0);
             pragma Loop_Invariant
-              (for all K in Index_64 => XL (K) in -129 .. XL51_T'Last);
+              (for all K in Index_64 => XL (K) in PRL'First .. XL51_T'Last);
          end loop;
       end Eliminate_Limbs_62_To_32;
 
