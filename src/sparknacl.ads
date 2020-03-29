@@ -78,6 +78,10 @@ is
    --  values 0 .. 255;
    type I64_Byte_Seq  is array (N32 range <>) of I64_Byte;
 
+   --  Sequences of I64 values and subtypes thereof
+   type I64_Seq  is array (N32 range <>) of I64;
+   subtype I64_Seq_64 is I64_Seq (Index_64);
+
 
    --------------------------------------------------------
    --  Constant time equality test
@@ -142,10 +146,6 @@ private
 
    subtype U64_Seq_16 is U64_Seq (Index_16);
    subtype U64_Seq_8  is U64_Seq (Index_8);
-
-   --  Sequences of I64 values and subtypes thereof
-   type I64_Seq  is array (N32 range <>) of I64;
-   subtype I64_Seq_64 is I64_Seq (Index_64);
 
 
    --  Constant Sigma used for initialization of Core Salsa20
