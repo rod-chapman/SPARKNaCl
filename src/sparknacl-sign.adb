@@ -622,33 +622,33 @@ is
          --  each limb mod 256
          declare
             --  In Step 3, XL(I+1) is added to ASR_8(XL(I)), so we need to know
-            --  the range of the ASR_8(XL(I)). We do this statically here
-            --  to simplify proof by expanding the definition of ASR_8, taking
-            --  advantage of the fact that Step2_XL_Limb'First is negative
-            --  and Step2_XL_Limb'Last is positive
+            --  the range of the ASR_8(XL(I)). A precise characterisation
+            --  of the bounds on XL (I+1) would be non-linear, so we fall
+            --  back on a linear over-approximation here, which suffices.
 
-            --  RCC comment here
-            XLD : constant := 10;
-            subtype FCT is I64 range -XLD .. XLD;
-            FC : FCT;
+            --  Max XL Carry - max magnitude of carry from XL(I) to XL(I+1)
+            MXLC : constant := 10;
+            --  Step 3 Carry
+            subtype S3CT is I64 range -MXLC .. MXLC;
+            S3C : S3CT;
          begin
             for I in Index_32 loop
 
                pragma Assert (XL (I) >=
-                                Step2_XL_Limb'First - XLD * I64 (I));
-               FC := ASR_8 (XL (I));
-               XL (I + 1) := XL (I + 1) + FC;
+                                Step2_XL_Limb'First - MXLC * I64 (I));
+               S3C := ASR_8 (XL (I));
+               XL (I + 1) := XL (I + 1) + S3C;
                R (I) := Byte (XL (I) mod 256);
 
                pragma Loop_Invariant (XL (0) = XL'Loop_Entry (0));
                pragma Loop_Invariant
                  (for all K in Index_32 range 0 .. I =>
                     XL (K + 1) >=
-                    Step2_XL_Limb'First - (XLD * (I64 (K) + 1)));
+                    Step2_XL_Limb'First - (MXLC * (I64 (K) + 1)));
                pragma Loop_Invariant
                  (for all K in Index_32 range 0 .. I =>
                     XL (K + 1) <=
-                    Step2_XL_Limb'Last + (XLD * (I64 (K) + 1)));
+                    Step2_XL_Limb'Last + (MXLC * (I64 (K) + 1)));
                pragma Loop_Invariant
                  (for all K in Index_32 range I + 1 .. 31 =>
                     XL (K + 1) in Step2_XL_Limb);
