@@ -298,7 +298,7 @@ is
              Pre  => ((for all K in Index_64 range  0 .. 19 =>
                          XL (K) in FRL) and
                       (for all K in Index_64 range 20 .. 31 =>
-                         XL (K) in -129 .. 128) and
+                         XL (K) in PRL) and
                       (for all K in Index_64 range 32 .. 63 => XL (K) = 0));
 
       procedure Initialize_XL
