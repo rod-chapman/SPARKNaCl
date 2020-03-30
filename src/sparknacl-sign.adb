@@ -572,7 +572,7 @@ is
          --  Step 1
          Carry := 0;
          for J in Index_32 loop
-            pragma Assert (XL (31) in -129 .. 128);
+            pragma Assert (XL (31) in PRL);
             XL (J) := XL (J) + (Carry - ASR_4 (XL (31)) * L (J));
 
             pragma Assert (XL (J) >= Step1_XL_Limb'First);
@@ -590,7 +590,7 @@ is
                  XL (K) = XL'Loop_Entry (K));
             pragma Loop_Invariant
               (for all K in Index_64 range J + 1 .. 31 =>
-                 XL (K) in -129 .. 128);
+                 XL (K) in PRL);
             --  Trailing 32 limbs are all 0
             pragma Loop_Invariant
               (for all K in Index_64 range 32 .. 63 => XL (K) = 0);
