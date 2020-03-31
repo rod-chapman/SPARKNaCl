@@ -559,6 +559,7 @@ is
          Final_Carry_Max : constant := 9;
 
          subtype Final_Carry_T is I64 range Final_Carry_Min .. Final_Carry_Max;
+
          subtype Step1_XL_Limb is I64 range
            (Final_Carry_Min * 256) ..
            ((Final_Carry_Max + 1) * 256) - 1;
@@ -641,17 +642,17 @@ is
                R (I) := Byte (XL (I) mod 256);
 
                pragma Loop_Invariant (XL (0) = XL'Loop_Entry (0));
+               pragma Loop_Invariant (XL (0) in Step2_XL_Limb);
+               pragma Loop_Invariant (if I <= 30 then XL (32) = 0);
                pragma Loop_Invariant
-                 (for all K in Index_32 range 0 .. I =>
-                    XL (K + 1) >=
-                    Step2_XL_Limb'First - (MXLC * (I64 (K) + 1)));
+                 (for all K in Index_32 range 1 .. 31 =>
+                    XL (K) >= Step2_XL_Limb'First - (MXLC * I64 (K)));
                pragma Loop_Invariant
-                 (for all K in Index_32 range 0 .. I =>
-                    XL (K + 1) <=
-                    Step2_XL_Limb'Last + (MXLC * (I64 (K) + 1)));
+                 (for all K in Index_32 range 1 .. 31 =>
+                    XL (K) <= Step2_XL_Limb'Last + (MXLC * I64 (K)));
                pragma Loop_Invariant
-                 (for all K in Index_32 range I + 1 .. 31 =>
-                    XL (K + 1) in Step2_XL_Limb);
+                 (for all K in Index_32 range I + 2 .. 31 =>
+                    XL (K) in Step2_XL_Limb);
             end loop;
          end;
       end Finalize;
