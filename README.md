@@ -11,6 +11,8 @@ This library is a compact reference implementation of the NaCl crypto library. I
 
 ## Contents
 
+[Latest news](https://github.com/rod-chapman/SPARKNaCl#latest-news)
+
 [Why Bother?](https://github.com/rod-chapman/SPARKNaCl#why-bother)
 
 [Goals](https://github.com/rod-chapman/SPARKNaCl#goals)
@@ -26,6 +28,18 @@ This library is a compact reference implementation of the NaCl crypto library. I
 [Known weaknesses and TBD items](https://github.com/rod-chapman/SPARKNaCl#known-weaknesses-and-tbd-items)
 
 [Acknowledgements](https://github.com/rod-chapman/SPARKNaCl#acknowledgements)
+
+## Latest news
+
+A few changes have been made since the initial public release of this repo.  Specifically, as of 1st April 2020:
+
+* Yannick Moy from AdaCore pointed out that there had been a [soundness issue](https://github.com/OCamlPro/alt-ergo/issues/248) with alt-ergo 2.3.0 (the version that shipped with GNAT Community 2019), so I decided to put a bit more work in and refactor the proofs to remove the need for alt-ergo. All the proofs now discharge OK with only CVC4 and Z3, and the project settings file has been updated to reflect that.
+
+* All proofs have been reproduced OK on both MacOS and Linux using GNAT Community 2019.
+
+* The project file has been updated to set a "steps limit" for CVC4 and Z3 and to disable memory limits and timeouts in both provers. This shiould give consistent results on all platforms.
+
+* A longer blog entry has beeb written aboout the Utils.Pack_25519 function and how it works and verifies in SPARK. This will appear on [blog.adacore.com](https://blog.adacore.com) shortly.
 
 ## Why Bother?
 
@@ -62,7 +76,7 @@ This release of SPARKNaCl meets most of the goals above. In particular:
 * The code retains the "constant time" algorithms from TweetNaCl, but (I would argue) are far more readable. See [SPARKNaCl.Utils.Pack_25519](https://github.com/rod-chapman/SPARKNaCl/blob/master/src/sparknacl-utils.adb) for example.
 
 * The proof of type safety is "complete" in that the SPARK verification tools discharge all verification conditions for all the contracts and type-safety conditions in the code. In less formal terms, "type safety" means that the code definitely contains no buffer overflow, numeric overflows, division by zero, or anything else that would normally give rise to an exception at run-time in Ada.
-* The proof requires use of all three main proof engines supplied with SPARK (CVC4, Z3 and Alt-Ergo). No one of these is capable of discharging all the VCs on its own.
+* The proof requires use of two of the main proof engines supplied with SPARK (CVC4, Z3). No one of these is capable of discharging all the VCs on its own.
 * The code contains no undefined behaviour, and does not depend on any unspecified behaviour. Additionally, there is no "erroneous behaviour" and no "bounded erors", such as reading uninitialized data.
 * The NaCl test suite has been re-implemented and passes.
 
@@ -95,7 +109,7 @@ To see *only* failed proofs (of which there should be none), do
 gnatprove -Psparknacl --report=fail
 ```
 
-**NOTE**: the project file sets a fairly long timeout (60s) for the proof tools, which should suffice on most machines to discharge all the proofs. Slower machines might fail.
+**NOTE**: the project file sets a "steps limit" of 14000 for CVC4 and Z3, and no timeout or memory limit on the provers. THis should give the same results on all machines.
 
 ### Tests
 
