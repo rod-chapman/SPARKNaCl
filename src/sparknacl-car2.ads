@@ -33,6 +33,11 @@ is
    --     (if I = 0 then (Limb_UB (0))
    --               else (Limb_UB (I) + (LnC_UB (I - 1) / LM)))
    --    with Annotate => (GNATprove, Terminating);
+
+   --  Value of LnC_UB (0) mod 65536
+   --  Needed below to derive tight upper bound on result
+   --  LnC_UB_0_Mod_65536 : constant := 16#23B#;
+
    LnC_UB : constant Limb_LUT :=
      (0  => 16#23AFB8A023B#,
       1  => 16#215FE0EFDA0#,
@@ -92,5 +97,10 @@ is
     (X : in Product_GF)
        return New_Seminormal_GF
      with Global => null;
+
+--   function Seminormal_To_Normal
+--     (X : in New_Seminormal_GF)
+--       return Normal_GF
+--     with Global => null;
 
 end SPARKNaCl.Car2;

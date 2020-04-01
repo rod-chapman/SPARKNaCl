@@ -70,4 +70,14 @@ is
       return New_Seminormal_GF (R);
    end Product_To_Seminormal;
 
+--   function Seminormal_To_Normal
+--     (X : in New_Seminormal_GF)
+--       return Normal_GF
+--   is
+--
+--   begin
+--
+--   end Seminormal_To_Normal;
+
+
 end SPARKNaCl.Car2;
