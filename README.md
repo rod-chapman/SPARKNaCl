@@ -37,9 +37,9 @@ A few changes have been made since the initial public release of this repo.  Spe
 
 * All proofs have been reproduced OK on both MacOS and Linux using GNAT Community 2019.
 
-* The project file has been updated to set a "steps limit" for CVC4 and Z3 and to disable memory limits and timeouts in both provers. This shiould give consistent results on all platforms.
+* The project file has been updated to set a "steps limit" for CVC4 and Z3 and to disable memory limits and timeouts in both provers. This should give consistent results on all platforms.
 
-* A longer blog entry has beeb written aboout the Utils.Pack_25519 function and how it works and verifies in SPARK. This will appear on [blog.adacore.com](https://blog.adacore.com) shortly.
+* A longer blog entry has been written aboout the Utils.Pack_25519 function and how it works and verifies in SPARK. This will appear on [blog.adacore.com](https://blog.adacore.com) shortly.
 
 ## Why Bother?
 
