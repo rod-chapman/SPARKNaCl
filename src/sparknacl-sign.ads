@@ -14,6 +14,9 @@ is
                       SK : out Signing_SK)
      with Global => Random.Entropy;
 
+   procedure Construct (R : in Bytes_64; SK : out Signing_SK)
+     with Global => null;
+
    function Serialize (K : in Signing_SK) return Bytes_64
      with Global => null;
 

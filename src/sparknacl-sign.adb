@@ -784,6 +784,12 @@ is
       return K.F;
    end Serialize;
 
+   procedure Construct (R : in Bytes_64; SK : out Signing_SK)
+   is
+   begin
+      SK.F := R;
+   end Construct;
+
    procedure Sanitize (K : out Signing_PK)
    is
    begin
