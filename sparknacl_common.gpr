@@ -11,8 +11,6 @@ project SPARKNaCl_Common is
 
    for Source_Files use ();
 
-   for Runtime ("Ada") use "native";
-
    package Compiler is
       case Build is
          when "debug" =>

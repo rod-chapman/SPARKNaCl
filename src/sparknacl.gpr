@@ -6,8 +6,7 @@ library project SPARKNaCl is
    for Library_Dir use "../lib";
 
    case SPARKNaCl_Common.Build is
-      when "debug" | "fast" | "cover" => 
-         for Runtime ("Ada") use "native";
+      when "debug" | "fast" | "cover" =>
          for Excluded_Source_Files use ("random_zfp.adb");
       when "zfp" =>
          for Runtime ("Ada") use "zfp";
@@ -18,11 +17,11 @@ library project SPARKNaCl is
       case SPARKNaCl_Common.Build is
          when "zfp" =>
             for Body ("random") use "random_zfp.adb";
-	 when others =>
+         when others =>
             for Body ("random") use "random.adb";
       end case;
    end Naming;
-	    
+
    package Compiler is
       for Default_Switches ("Ada") use
          SPARKNaCl_Common.Compiler'Default_Switches ("Ada");
