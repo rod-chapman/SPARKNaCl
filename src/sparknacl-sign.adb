@@ -1,6 +1,6 @@
 with SPARKNaCl.Utils;
 with SPARKNaCl.Hashing;
---  with SPARKNaCl.Debug;
+with SPARKNaCl.Debug;
 package body SPARKNaCl.Sign
   with SPARK_Mode => On
 is
@@ -92,6 +92,7 @@ is
    --============================================
 
    procedure Sanitize_GF_Vector_4 (R : out GF_Vector_4)
+     with SPARK_Mode => Off
    is
    begin
       for I in R'Range loop
@@ -101,6 +102,7 @@ is
 
    function "+" (Left  : in GF_Vector_4;
                  Right : in GF_Vector_4) return GF_Vector_4
+     with SPARK_Mode => Off
    is
       A, B, C, D, E, F, G, H, T : GF;
    begin
@@ -126,6 +128,7 @@ is
 
    function Scalarmult (Q : in GF_Vector_4;
                         S : in Bytes_32) return GF_Vector_4
+     with SPARK_Mode => Off
    is
       CB     : Byte;
       Swap   : Boolean;
@@ -167,12 +170,14 @@ is
    end Scalarmult;
 
    function Scalarbase (S : in Bytes_32) return GF_Vector_4
+     with SPARK_Mode => Off
    is
    begin
       return Scalarmult (Scalarbase_Q, S);
    end Scalarbase;
 
    function Par_25519 (A : in Normal_GF) return Bit
+     with SPARK_Mode => Off
    is
       D : Bytes_32;
    begin
@@ -181,6 +186,7 @@ is
    end Par_25519;
 
    function Pack (P : in GF_Vector_4) return Bytes_32
+     with SPARK_Mode => Off
    is
       TX, TY, ZI : Normal_GF;
       R : Bytes_32;
@@ -273,7 +279,7 @@ is
                        XL (K) = X (K)) and
                      (XL (63) = 0);
 
-      procedure Eliminate_Limbs_62_To_32
+      procedure Eliminate_Limb_62
         with Global => (Proof_In => X,
                         In_Out   => XL),
              Pre  => ((for all K in Index_64 range 0 .. 30 =>
@@ -285,7 +291,11 @@ is
                       (for all K in Index_64 range 52 .. 62 =>
                          XL (K) = X (K) and
                          XL (K) in 0 .. Max_X_Limb) and
-                      (XL (63) = 0)),
+                      (XL (63) = 0));
+
+      procedure Eliminate_Limbs_61_To_32
+        with Global => (Proof_In => X,
+                        In_Out   => XL),
              Post => ((for all K in Index_64 range  0 .. 19 =>
                          XL (K) in FRL) and
                       (for all K in Index_64 range 20 .. 31 =>
@@ -299,7 +309,18 @@ is
                          XL (K) in FRL) and
                       (for all K in Index_64 range 20 .. 31 =>
                          XL (K) in PRL) and
-                      (for all K in Index_64 range 32 .. 63 => XL (K) = 0));
+                        (for all K in Index_64 range 32 .. 63 => XL (K) = 0));
+
+      procedure PXL (S : in String);
+
+      procedure PXL (S : in String)
+      is
+      begin
+         Debug.DH (S, 0);
+         for I in Index_64 loop
+            Debug.DH (I'Img & " => ", XL (I));
+         end loop;
+      end PXL;
 
       procedure Initialize_XL
       is
@@ -310,6 +331,7 @@ is
             pragma Loop_Invariant
               (for all A in Index_64 range 0 .. K => XL (A) = XL_Limb (X (A)));
          end loop;
+         PXL ("After Initialize_XL");
       end Initialize_XL;
 
       procedure Eliminate_Limb_63
@@ -418,14 +440,181 @@ is
          XL (51) := XL (51) + Carry;
          pragma Assert (XL (51) in XL51_T);
          XL (63) := 0;
+         PXL ("After Eliminate_Limb_63");
       end Eliminate_Limb_63;
 
-      procedure Eliminate_Limbs_62_To_32
+      procedure Eliminate_Limb_62
       is
          Carry      : Carry_T;
          Adjustment : Adjustment_T;
       begin
-         for I in reverse I32 range 32 .. 62 loop
+         Carry := 0;
+
+         Adjustment := (16 * L (30 - 30)) * XL (62);
+         XL (30) := XL (30) + Carry - Adjustment;
+         Carry := ASR_8 (XL (30) + 128);
+         XL (30) := XL (30) - (Carry * 256);
+
+         Adjustment := (16 * L (31 - 30)) * XL (62);
+         XL (31) := XL (31) + Carry - Adjustment;
+         Carry := ASR_8 (XL (31) + 128);
+         XL (31) := XL (31) - (Carry * 256);
+
+         Adjustment := (16 * L (32 - 30)) * XL (62);
+         XL (32) := XL (32) + Carry - Adjustment;
+         Carry := ASR_8 (XL (32) + 128);
+         XL (32) := XL (32) - (Carry * 256);
+
+         Adjustment := (16 * L (33 - 30)) * XL (62);
+         XL (33) := XL (33) + Carry - Adjustment;
+         Carry := ASR_8 (XL (33) + 128);
+         XL (33) := XL (33) - (Carry * 256);
+
+         Adjustment := (16 * L (34 - 30)) * XL (62);
+         XL (34) := XL (34) + Carry - Adjustment;
+         Carry := ASR_8 (XL (34) + 128);
+         XL (34) := XL (34) - (Carry * 256);
+
+         Adjustment := (16 * L (35 - 30)) * XL (62);
+         XL (35) := XL (35) + Carry - Adjustment;
+         Carry := ASR_8 (XL (35) + 128);
+         XL (35) := XL (35) - (Carry * 256);
+
+         Adjustment := (16 * L (36 - 30)) * XL (62);
+         XL (36) := XL (36) + Carry - Adjustment;
+         Carry := ASR_8 (XL (36) + 128);
+         XL (36) := XL (36) - (Carry * 256);
+
+         Adjustment := (16 * L (37 - 30)) * XL (62);
+         XL (37) := XL (37) + Carry - Adjustment;
+         Carry := ASR_8 (XL (37) + 128);
+         XL (37) := XL (37) - (Carry * 256);
+
+         Adjustment := (16 * L (38 - 30)) * XL (62);
+         XL (38) := XL (38) + Carry - Adjustment;
+         Carry := ASR_8 (XL (38) + 128);
+         XL (38) := XL (38) - (Carry * 256);
+
+         Adjustment := (16 * L (39 - 30)) * XL (62);
+         XL (39) := XL (39) + Carry - Adjustment;
+         Carry := ASR_8 (XL (39) + 128);
+         XL (39) := XL (39) - (Carry * 256);
+
+         Adjustment := (16 * L (40 - 30)) * XL (62);
+         XL (40) := XL (40) + Carry - Adjustment;
+         Carry := ASR_8 (XL (40) + 128);
+         XL (40) := XL (40) - (Carry * 256);
+
+         Adjustment := (16 * L (41 - 30)) * XL (62);
+         XL (41) := XL (41) + Carry - Adjustment;
+         Carry := ASR_8 (XL (41) + 128);
+         XL (41) := XL (41) - (Carry * 256);
+
+         Adjustment := (16 * L (42 - 30)) * XL (62);
+         XL (42) := XL (42) + Carry - Adjustment;
+         Carry := ASR_8 (XL (42) + 128);
+         XL (42) := XL (42) - (Carry * 256);
+
+         Adjustment := (16 * L (43 - 30)) * XL (62);
+         XL (43) := XL (43) + Carry - Adjustment;
+         Carry := ASR_8 (XL (43) + 128);
+         XL (43) := XL (43) - (Carry * 256);
+
+         Adjustment := (16 * L (44 - 30)) * XL (62);
+         XL (44) := XL (44) + Carry - Adjustment;
+         Carry := ASR_8 (XL (44) + 128);
+         XL (44) := XL (44) - (Carry * 256);
+
+         Adjustment := (16 * L (45 - 30)) * XL (62);
+         XL (45) := XL (45) + Carry - Adjustment;
+         Carry := ASR_8 (XL (45) + 128);
+         XL (45) := XL (45) - (Carry * 256);
+
+
+         --  As above, this loop iterates over limbs 0 .. 15 of L
+         --  leaving the final four (zero) limbs unrolled below.
+--         for J in I32 range 30 .. 45 loop
+--            Adjustment := (16 * L (J - 30)) * XL (62);
+--            XL (J) := XL (J) + Carry - Adjustment;
+--            Carry := ASR_8 (XL (J) + 128);
+--            XL (J) := XL (J) - (Carry * 256);
+--         end loop;
+
+         --  16 elements of XL(62-32) .. XL(62-17) are in now FRL
+         pragma Assert
+           (for all K in Index_64 range 30 .. 45 =>
+              XL (K) in FRL);
+
+         pragma Assert (XL (46) in FRL);
+         --  Carry is in Carry_T here
+         XL (46) := XL (46) + Carry;
+         Carry := ASR_8 (XL (46) + 128);
+         XL (46) := XL (46) - (Carry * 256);
+
+         --  17 elements of XL are in FRL
+         pragma Assert
+           (for all K in Index_64 range 30 .. 46 =>
+              XL (K) in FRL);
+
+         pragma Assert (XL (47) in FRL);
+         --  Now we can start to prove that Carry is converging.
+         --  Each further reduction reduces the lower and upper bound
+         --  of Carry by about 2**8, except that the addition of 128 and
+         --  ASR_8 actually mean that Carry converges on the range -1 .. 1
+         pragma Assert (Carry in -2**17 .. 64);
+         XL (47) := XL (47) + Carry;
+         Carry := ASR_8 (XL (47) + 128);
+         XL (47) := XL (47) - (Carry * 256);
+
+         --  18 elements of XL are in FRL
+         pragma Assert
+           (for all K in Index_64 range 30 .. 47 =>
+              XL (K) in FRL);
+
+         pragma Assert (XL (48) in FRL);
+         pragma Assert (Carry in -512 .. 1);
+         XL (48) := XL (48) + Carry;
+         Carry := ASR_8 (XL (48) + 128);
+         XL (48) := XL (48) - (Carry * 256);
+
+         --  19 elements of XL are in FRL
+         pragma Assert
+           (for all K in Index_64 range 30 .. 48 =>
+              XL (K) in FRL);
+
+         pragma Assert (XL (49) in FRL);
+         pragma Assert (Carry in -2 .. 1);
+         XL (49) := XL (49) + Carry;
+         Carry := ASR_8 (XL (49) + 128);
+         XL (49) := XL (49) - (Carry * 256);
+
+         --  20 elements of XL are in FRL
+         pragma Assert
+           (for all K in Index_64 range 30 .. 49 =>
+              XL (K) in FRL);
+
+         pragma Assert (XL (50) in FRL);
+         pragma Assert (Carry in -1 .. 1);
+
+         pragma Assert (not (XL (50) = 127 and Carry = 1));
+
+         --  If Carry in -1 .. 1, then the final adjustment of
+         --  XL (50) means that this limb can end up being
+         --  -129 or +128, so in PRL but not in FRL
+         XL (50) := XL (50) + Carry;
+         pragma Assert (XL (50) in PRL);
+
+         --  XL (62) is now eliminated, so it gets zeroed out now.
+         XL (62) := 0;
+      end Eliminate_Limb_62;
+
+      procedure Eliminate_Limbs_61_To_32
+        with SPARK_Mode => Off
+      is
+         Carry      : Carry_T;
+         Adjustment : Adjustment_T;
+      begin
+         for I in reverse I32 range 32 .. 61 loop
             Carry := 0;
             --  As above, this loop iterates over limbs 0 .. 15 of L
             --  leaving the final four (zero) limbs unrolled below.
@@ -551,9 +740,10 @@ is
             pragma Loop_Invariant
               (for all K in Index_64 => XL (K) in PRL'First .. XL51_T'Last);
          end loop;
-      end Eliminate_Limbs_62_To_32;
+      end Eliminate_Limbs_61_To_32;
 
       procedure Finalize
+        with SPARK_Mode => Off
       is
          Final_Carry_Min : constant := -9;
          Final_Carry_Max : constant := 9;
@@ -660,7 +850,8 @@ is
    begin
       Initialize_XL;
       Eliminate_Limb_63;
-      Eliminate_Limbs_62_To_32;
+      Eliminate_Limb_62;
+      Eliminate_Limbs_61_To_32;
 
       pragma Warnings (GNATProve, Off, "unused assignment");
       --  Unused assignment to XL here expected
@@ -669,6 +860,7 @@ is
    end ModL;
 
    function Hash_Reduce (M : in Byte_Seq) return Bytes_32
+     with SPARK_Mode => Off
    is
       R : Hashing.Digest;
       X : I64_Seq_64;
@@ -690,6 +882,7 @@ is
    procedure Unpackneg (R  :    out GF_Vector_4;
                         OK :    out Boolean;
                         P  : in     Bytes_32)
+     with SPARK_Mode => Off
    is
       --  Local, time-constant equality test for GF
       --  In the original TweetNaCl sources, this is called eq25519
@@ -804,6 +997,7 @@ is
 
    procedure Keypair (PK : out Signing_PK;
                       SK : out Signing_SK)
+     with SPARK_Mode => Off
    is
       D   : Bytes_64;
       LPK : Bytes_32;
@@ -833,6 +1027,7 @@ is
    procedure Sign (SM :    out Byte_Seq;
                    M  : in     Byte_Seq;
                    SK : in     Signing_SK)
+     with SPARK_Mode => Off
    is
       subtype Byte_Product is I64 range 0 .. MBP;
 
@@ -973,6 +1168,7 @@ is
                    MLen   :    out I32;
                    SM     : in     Byte_Seq;
                    PK     : in     Signing_PK)
+     with SPARK_Mode => Off
    is
       T    : Bytes_32;
       P, Q : GF_Vector_4;
