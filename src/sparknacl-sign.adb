@@ -796,33 +796,51 @@ is
       SPARKNaCl.Sanitize (K.F);
    end Sanitize;
 
-   procedure Keypair (PK : out Signing_PK;
-                      SK : out Signing_SK)
+   procedure Keypair_From_Bytes (SK_Raw : in     Bytes_32; -- random please!
+                                 PK     :    out Signing_PK;
+                                 SK     :    out Signing_SK)
+
    is
       D   : Bytes_64;
       LPK : Bytes_32;
-      RB  : Bytes_32;
    begin
-      RB  := Utils.Random_Bytes_32;
-
-      Hashing.Hash (D, RB);
+      Hashing.Hash (D, SK_Raw);
       D (0)  := D (0) and 248;
       D (31) := (D (31) and 127) or 64;
 
       LPK := Pack (Scalarbase (D (0 .. 31)));
 
       PK.F := LPK;
-      SK.F := RB & LPK;
+      SK.F := SK_Raw & LPK;
+
+      --  Sanitize intermediate values used in key generation
+      pragma Warnings (GNATProve, Off, "statement has no effect");
+      Sanitize (D);
+      Sanitize (LPK);
+      pragma Unreferenced (D);
+      pragma Unreferenced (LPK);
+   end Keypair_From_Bytes;
+
+   procedure Keypair (PK : out Signing_PK;
+                      SK : out Signing_SK)
+   is
+      RB  : Bytes_32;
+   begin
+      RB  := Utils.Random_Bytes_32;
+      Keypair_From_Bytes (RB, PK, SK);
 
       --  Sanitize intermediate values used in key generation
       pragma Warnings (GNATProve, Off, "statement has no effect");
       Sanitize (RB);
-      Sanitize (D);
-      Sanitize (LPK);
       pragma Unreferenced (RB);
-      pragma Unreferenced (D);
-      pragma Unreferenced (LPK);
    end Keypair;
+
+   procedure PK_From_Bytes (PK_Raw : in     Bytes_32;
+                            PK     :    out Signing_PK)
+   is
+   begin
+      PK.F := PK_Raw;
+   end PK_From_Bytes;
 
    procedure Sign (SM :    out Byte_Seq;
                    M  : in     Byte_Seq;

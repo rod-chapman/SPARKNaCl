@@ -14,6 +14,15 @@ is
                       SK : out Signing_SK)
      with Global => Random.Entropy;
 
+   procedure Keypair_From_Bytes (SK_Raw : in     Bytes_32; -- random please!
+                                 PK     :    out Signing_PK;
+                                 SK     :    out Signing_SK)
+     with Global => null;
+
+   procedure PK_From_Bytes (PK_Raw : in     Bytes_32;
+                            PK     :    out Signing_PK)
+     with Global => null;
+
    function Serialize (K : in Signing_SK) return Bytes_64
      with Global => null;
 
@@ -36,6 +45,9 @@ is
           Pre    => (for all K in Index_64 => X (K) in 0 .. Max_X_Limb);
    --
 
+   --  The length of a signature block that is prepended to a message
+   --  when signed.
+   Sign_Bytes : constant := 64;
 
    procedure Sign (SM :    out Byte_Seq;
                    M  : in     Byte_Seq;
@@ -43,9 +55,9 @@ is
      with Global => null,
           Pre => (M'First   = 0 and
                   SM'First  = 0 and
-                  M'Last   <= N32'Last - 64) and then
-                 (SM'Length = M'Length + 64 and
-                  SM'Last   = M'Last + 64);
+                  M'Last   <= N32'Last - Sign_Bytes) and then
+                 (SM'Length = M'Length + Sign_Bytes and
+                  SM'Last   = M'Last + Sign_Bytes);
 
    procedure Open (M      :    out Byte_Seq;
                    Status :    out Boolean;
@@ -57,7 +69,7 @@ is
                  SM'First  = 0 and
                  SM'Length = M'Length and
                  SM'Last   = M'Last and
-                 SM'Length >= 64;
+                 SM'Length >= Sign_Bytes;
 
 private
    --  Note - also limited types here in the full view to ensure
