@@ -241,6 +241,7 @@ is
       --  state of G are necessary and sufficient for Carry = 1 after
       --  the I'th loop iteration
       function Carrying_Plus_One (G : in Temp_GF;
+                                  X : in Nearlynormal_GF;
                                   I : in Index_16) return Boolean
       is ((X (0) in LM .. LMM1 + R2256) and --  X (O) will carry +1
             --  ...therefore G (0) will be in 0 .. 37 ...
@@ -249,13 +250,13 @@ is
             --  ... AND all values of X (K) between 1 and I
             --  are LMM1 and G (K) = (X (K) + Carry) mod LM = 0
           (for all K in Index_16 range 1 .. I =>
-             (G (K) = 0 and X (K) = LMM1)))
-        with Global => (Input => X);
+             (G (K) = 0 and X (K) = LMM1)));
 
       --  True iff the initial value of X and the current
       --  state of G are necessary and sufficient for Carry = -1 after
       --  the I'th loop iteration
       function Carrying_Minus_One (G : in Temp_GF;
+                                   X : in Nearlynormal_GF;
                                    I : in Index_16) return Boolean
       is ((X (0) in   -R2256 .. -1) and --  X (O) will carry -1
           --  ...therefore G (0) will be in 65498 .. 65535 ...
@@ -264,8 +265,7 @@ is
           --  ... AND all values of X (K) between 1 and I
           --  are 0 and G (K) = (X (K) + Carry) mod LM = LMM1
           (for all K in Index_16 range 1 .. I =>
-             (G (K) = LMM1 and X (K) = 0)))
-        with Global => (Input => X);
+             (G (K) = LMM1 and X (K) = 0)));
 
       subtype Carry_T is I64 range -1 .. 1;
       Carry : Carry_T;
@@ -299,9 +299,9 @@ is
 
       --  Establish the crux invariant
       pragma Assert
-        ((Carry = 1) = Carrying_Plus_One (R, 0));
+        ((Carry = 1) = Carrying_Plus_One (R, X, 0));
       pragma Assert
-        ((Carry = -1) = Carrying_Minus_One (R, 0));
+        ((Carry = -1) = Carrying_Minus_One (R, X, 0));
 
       for I in Index_16 range 1 .. 14 loop
          Carry := ASR_16 (R (I));
@@ -319,9 +319,9 @@ is
          --  of Carry after I loop iterations to the _initial_
          --  value of X, and therefore the value of R (0)
          pragma Loop_Invariant
-           ((Carry = 1) = Carrying_Plus_One (R, I));
+           ((Carry = 1) = Carrying_Plus_One (R, X, I));
          pragma Loop_Invariant
-           ((Carry = -1) = Carrying_Minus_One (R, I));
+           ((Carry = -1) = Carrying_Minus_One (R, X, I));
       end loop;
 
       --  Expand loop invariant with I = 14
@@ -330,9 +330,9 @@ is
       pragma Assert (R (15) in -1 .. LM);
       pragma Assert (R (15) = X (15) + Carry);
       pragma Assert
-        ((Carry = 1) = Carrying_Plus_One (R, 14));
+        ((Carry = 1) = Carrying_Plus_One (R, X, 14));
       pragma Assert
-        ((Carry = -1) = Carrying_Minus_One (R, 14));
+        ((Carry = -1) = Carrying_Minus_One (R, X, 14));
 
       --  Finally, deal with limb 15
       Carry := ASR_16 (R (15));
@@ -340,9 +340,9 @@ is
 
       --  Maintain the invariant, but weaken to an implication
       pragma Assert
-        (if (Carry = 1)  then Carrying_Plus_One (R, 15));
+        (if (Carry = 1)  then Carrying_Plus_One (R, X, 15));
       pragma Assert
-        (if (Carry = -1) then Carrying_Minus_One (R, 15));
+        (if (Carry = -1) then Carrying_Minus_One (R, X, 15));
       pragma Assert
         (for all K in Index_16 range 0 .. 15 => (R (K) in GF_Normal_Limb));
 
