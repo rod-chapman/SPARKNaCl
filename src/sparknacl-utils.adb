@@ -204,6 +204,9 @@ is
 
    function Unpack_25519 (N : in Bytes_32) return Normal_GF
    is
+      --  Initialization of O here _is_ needed to establish its
+      --  subtype predicate
+      pragma Warnings (GNATProve, Off, "initialization of * has no effect");
       O : Normal_GF := GF_0;
    begin
       for I in Index_16 loop
