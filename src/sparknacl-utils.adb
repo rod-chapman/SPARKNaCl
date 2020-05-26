@@ -204,16 +204,18 @@ is
 
    function Unpack_25519 (N : in Bytes_32) return Normal_GF
    is
-      --  Initialization of O here _is_ needed to establish its
-      --  subtype predicate
-      pragma Warnings (GNATProve, Off, "initialization of * has no effect");
-      O : Normal_GF := GF_0;
+      O : GF with Relaxed_Initialization;
    begin
-      for I in Index_16 loop
-         O (I) := I64 (N (2 * I)) + (I64 (N (2 * I + 1)) * 256);
-      end loop;
-      O (15) := O (15) mod 32768;
-      return O;
+      begin
+         for I in Index_16 loop
+            O (I) := I64 (N (2 * I)) + (I64 (N (2 * I + 1)) * 256);
+            pragma Loop_Invariant
+              (for all J in Index_16 range 0 .. I =>
+                 O (J)'Initialized and then O (J) in GF_Normal_Limb);
+         end loop;
+         O (15) := O (15) mod 32768;
+      end;
+      return Normal_GF (O);
    end Unpack_25519;
 
    function Inv_25519 (I : in Normal_GF) return Normal_GF
