@@ -33,11 +33,12 @@ project SPARKNaCl_Common is
                                       "--no-counterexample",
                                       "--no-loop-unrolling",
                                       "--level=4",
-                                      "--prover=cvc4,z3",
+                                      "--prover=z3,cvc4",
                                       "--timeout=0",
                                       "--memlimit=0",
                                       "--steps=14000",
                                       "--report=statistics");
+      for Proof_Switches ("sparknacl-utils.adb") use ("--prover=cvc4,z3");
    end Prove;
 
    package Builder is
