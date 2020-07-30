@@ -27,7 +27,7 @@ project SPARKNaCl_Common is
 
    package Prove is
       for Proof_Switches ("Ada") use ("--proof=per_path",
-                                      "-j8",
+                                      "-j16",
                                       "--no-global-generation",
                                       "--no-inlining",
                                       "--no-counterexample",
