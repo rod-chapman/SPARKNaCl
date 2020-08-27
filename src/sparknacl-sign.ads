@@ -53,11 +53,13 @@ is
                    M  : in     Byte_Seq;
                    SK : in     Signing_SK)
      with Global => null,
+          Relaxed_Initialization => SM,
           Pre => (M'First   = 0 and
                   SM'First  = 0 and
                   M'Last   <= N32'Last - Sign_Bytes) and then
                  (SM'Length = M'Length + Sign_Bytes and
-                  SM'Last   = M'Last + Sign_Bytes);
+                  SM'Last   = M'Last + Sign_Bytes),
+          Post => SM'Initialized;
 
    procedure Open (M      :    out Byte_Seq;
                    Status :    out Boolean;

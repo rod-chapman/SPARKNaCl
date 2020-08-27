@@ -8,7 +8,6 @@ pragma Restrictions (No_Enumeration_Maps);
 pragma Restrictions (No_Finalization);
 pragma Restrictions (No_Fixed_Point);
 pragma Restrictions (No_Floating_Point);
-pragma Restrictions (No_Implicit_Loops);
 pragma Restrictions (No_Implicit_Dynamic_Code);
 pragma Restrictions (No_Implicit_Heap_Allocations);
 pragma Restrictions (No_Implicit_Protected_Object_Allocations);

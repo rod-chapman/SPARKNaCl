@@ -54,10 +54,6 @@ is
    --  Byte_Seq and constrained subtypes thereof
    type Byte_Seq is array (N32 range <>) of Byte;
 
-   --  Remove predefined "=" for Byte_Seq (and all subtypes thereof) since it
-   --  is not guaranteed to be constant-time. See function Equal below.
-   function "=" (Left, Right : in Byte_Seq) return Boolean is abstract;
-
    subtype Index_8  is I32 range 0 .. 7;
    subtype Index_16 is I32 range 0 .. 15;
    subtype Index_24 is I32 range 0 .. 23;

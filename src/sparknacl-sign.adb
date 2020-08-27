@@ -858,7 +858,13 @@ is
       D (31) := (D (31) and 127) or 64;
 
       --  Precondition guarantees that SM is 64 bytes longer than M, so
-      SM := Zero_Bytes_32 & D (32 .. 63) & M;
+      --  Don't use "&" here to avoid allocation of a dynamic-sized
+      --  object on the stack
+      SM (0  .. 31)      := Zero_Bytes_32;
+      SM (32 .. 63)      := D (32 .. 63);
+      SM (64 .. SM'Last) := M;
+      pragma Assert (SM'Initialized and
+                     (SM = Zero_Bytes_32 & D (32 .. 63) & M));
 
       R := Hash_Reduce (SM (32 .. SM'Last));
 
