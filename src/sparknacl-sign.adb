@@ -102,25 +102,38 @@ is
    function "+" (Left  : in GF_Vector_4;
                  Right : in GF_Vector_4) return GF_Vector_4
    is
-      A, B, C, D, E, F, G, H, T : GF;
+      A, B, C, D, E, H : GF;
    begin
-      A := (Left (1) - Left (0)) * (Right (1) - Right (0));
+      --  Compute A, using B as a temporary
+      A := (Left (1) - Left (0));
+      B := (Right (1) - Right (0));
+      A := A * B;
 
-      B := (Left (0) + Left (1)) * (Right (0) + Right (1));
+      --  Compute B, using C as a temporary
+      B := (Left (0) + Left (1));
+      C := (Right (0) + Right (1));
+      B := B * C;
 
-      C := (Left (3) * Right (3)) * GF_D2;
+      --  Compute C, using C as a temporary
+      C := (Left (3) * Right (3));
+      C := C * GF_D2;
 
-      T := Left (2) * Right (2);
-      D := T + T;
+      --  Compute D, using E as a temporary
+      E := Left (2) * Right (2);
+      D := E + E;
 
       E  := B - A;
-      F  := D - C;
-      G  := D + C;
       H  := B + A;
 
-      return GF_Vector_4'(0 => E * F,
-                          1 => H * G,
-                          2 => G * F,
+      --  We are now done with A and B, so these variables can now
+      --  be re-used in place of the original local variables F and G
+      --  respectively. This saves yet more stack.
+      A  := D - C;
+      B  := D + C;
+
+      return GF_Vector_4'(0 => E * A,
+                          1 => H * B,
+                          2 => B * A,
                           3 => E * H);
    end "+";
 
