@@ -36,7 +36,7 @@ project SPARKNaCl_Common is
                                       "--prover=z3,cvc4",
                                       "--timeout=0",
                                       "--memlimit=0",
-                                      "--steps=14000",
+                                      "--steps=20000",
                                       "--report=statistics");
       for Proof_Switches ("sparknacl-utils.adb") use ("--prover=cvc4,z3");
    end Prove;
