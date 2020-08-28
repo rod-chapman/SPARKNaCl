@@ -865,19 +865,41 @@ is
       H, R : Bytes_32;
       X    : I64_Seq_64;
       T    : Byte_Product;
+
+      procedure Initialize_SM (X : out Byte_Seq)
+        with Global  => (Input  => (M, D)),
+             Depends => (X => (M, D)),
+             Annotate => (GNATProve, False_Positive,
+                          "missing self-dependency",
+                          "Total initialization by proof"),
+             Pre => (M'First   = 0 and
+                     X'First  = 0 and
+                     M'Last   <= N32'Last - Sign_Bytes) and then
+                    (X'Length = M'Length + Sign_Bytes and
+                     X'Last   = M'Last + Sign_Bytes),
+             Post => (X = Zero_Bytes_32 & D (32 .. 63) & M) and
+                     X'Initialized,
+             Relaxed_Initialization => X,
+             Inline;
+
+      procedure Initialize_SM (X : out Byte_Seq)
+      is
+      begin
+         --  Precondition ensures SM is exactly 64 bytes longer than M.
+         --  Don't use "&" here to avoid allocation of a dynamic-sized
+         --  object on the stack.
+         X (0  .. 31)     := Zero_Bytes_32;
+         X (32 .. 63)     := D (32 .. 63);
+         X (64 .. X'Last) := M;
+      end Initialize_SM;
+
+
    begin
       Hashing.Hash (D, Serialize (SK) (0 .. 31));
       D (0)  := D (0) and 248;
       D (31) := (D (31) and 127) or 64;
 
-      --  Precondition guarantees that SM is 64 bytes longer than M, so
-      --  Don't use "&" here to avoid allocation of a dynamic-sized
-      --  object on the stack
-      SM (0  .. 31)      := Zero_Bytes_32;
-      SM (32 .. 63)      := D (32 .. 63);
-      SM (64 .. SM'Last) := M;
-      pragma Assert (SM'Initialized and
-                     (SM = Zero_Bytes_32 & D (32 .. 63) & M));
+      Initialize_SM (SM);
 
       R := Hash_Reduce (SM (32 .. SM'Last));
 
