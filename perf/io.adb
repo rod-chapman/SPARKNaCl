@@ -1,4 +1,3 @@
-with HAL;
 with HAL.UART;
 with FE310.UART;
 with FE310.Device;
@@ -19,7 +18,7 @@ package body IO is
       B : HAL.UART.UART_Data_8b (0 .. 0);
       S : HAL.UART.UART_Status;
    begin
-      B (0) := Character'Pos (C);   
+      B (0) := Character'Pos (C);
       FE310.UART.Transmit (FE310.Device.UART0, B, S);
       pragma Unreferenced (S);
    end Put;
@@ -68,6 +67,24 @@ package body IO is
       Put (S (First .. S'Last));
    end Put;
 
+   procedure Put (X : UInt64)
+   is
+      Int   : UInt64 := X;
+      S     : String (1 .. UInt64'Width);
+      First : Natural := S'Last + 1;
+      Val   : UInt64;
+   begin
+      loop
+         Val := Int rem 10;
+         Int := (Int - Val) / 10;
+         First := First - 1;
+         S (First) := Character'Val (Character'Pos ('0') + Val);
+         exit when Int = 0;
+      end loop;
+
+      Put (S (First .. S'Last));
+   end Put;
+
    ---------
    -- Put --
    ---------
@@ -97,7 +114,7 @@ package body IO is
       Put (BToC (B mod 16));
       Put ("# ");
    end Put;
-   
+
    procedure Put  (S : in String; D : in Byte_Seq)
    is
    begin

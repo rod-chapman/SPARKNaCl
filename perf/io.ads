@@ -1,9 +1,12 @@
+with HAL;       use HAL;
 with SPARKNaCl; use SPARKNaCl;
 package IO is
 
    procedure Put (X : Integer);
    --  Output integer to specified file, or to current output file, same
    --  output as if Ada.Text_IO.Integer_IO had been instantiated for Integer.
+
+   procedure Put (X : UInt64);
 
    procedure Put (C : Character);
    --  Output character to specified file, or to current output file
