@@ -1,13 +1,18 @@
+with HAL; use HAL;
 with HiFive1.LEDs; use HiFive1.LEDs;
-
 with FE310;
+with FE310.CLINT;
 with FE310.Time; use FE310.Time;
+
+with Interfaces; use Interfaces;
 
 with IO;
 
 with SPARKNaCl;      use SPARKNaCl;
 with SPARKNaCl.Sign; use SPARKNaCl.Sign;
 with SPARKNaCl.Sign.Utils; use SPARKNaCl.Sign.Utils;
+
+with TweetNaCl_API;
 
 procedure Main is
    M : constant Byte_Seq (0 .. 255) := (0 => 16#55#, others => 16#aa#);
@@ -26,6 +31,23 @@ procedure Main is
       16#03#, 16#25#, 16#5B#, 16#EF#, 16#A3#, 16#4E#, 16#31#, 16#D4#,
       16#35#, 16#A1#, 16#A2#, 16#E2#, 16#FF#, 16#AA#, 16#EA#, 16#72#,
       16#82#, 16#82#, 16#D2#, 16#D0#, 16#93#, 16#6C#, 16#19#, 16#10#);
+
+   T1, T2, T3 : UInt64;
+
+
+   procedure Tweet_Sign (SM :    out Byte_Seq;
+                         M  : in     Byte_Seq;
+                         SK : in     Signing_SK)
+   is
+      SMLen : Unsigned_64;
+   begin
+      TweetNaCl_API.Crypto_Sign (SM,
+                                 SMLen,
+                                 M,
+                                 M'Length,
+                                 SK);
+   end Tweet_Sign;
+
 
 begin
    --  The SPI flash clock divider should be as small as possible to increase
@@ -54,10 +76,32 @@ begin
 
    SPARKNaCl.Sign.Sign (SM, M, SK);
 
-   IO.Put ("SM (0 ..63) is", SM (0 .. 63));
-   
+   IO.Put ("SPARK SM (0 ..63) is", SM (0 .. 63));
+
    Turn_Off (Red_LED);
-   IO.Put_Line ("Done");
+
+   Turn_On (Green_LED);
+   SM := (others => 0);
+   Tweet_Sign (SM, M, SK);
+   IO.Put ("Tweet SM (0 ..63) is", SM (0 .. 63));
+   Turn_Off (Green_LED);
+
+
+   IO.Put_Line ("Null timing test:");
+   T1 := FE310.CLINT.Machine_Time;
+   T2 := FE310.CLINT.Machine_Time;
+   T3 := T2 - T1;
+   IO.Put (T3);
+   IO.New_Line;
+
+
+   IO.Put_Line ("One second test:");
+   T1 := FE310.CLINT.Machine_Time;
+   Delay_S (1);
+   T2 := FE310.CLINT.Machine_Time;
+   T3 := T2 - T1;
+   IO.Put (T3);
+   IO.New_Line;
 
    --  Blinky!
    loop
