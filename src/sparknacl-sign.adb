@@ -868,10 +868,7 @@ is
 
       procedure Initialize_SM (X : out Byte_Seq)
         with Global  => (Input  => (M, D)),
-             Depends => (X => (M, D)),
-             Annotate => (GNATProve, False_Positive,
-                          "missing self-dependency",
-                          "Total initialization by proof"),
+             Depends => (X => (X, M, D)),
              Pre => (M'First   = 0 and
                      X'First  = 0 and
                      M'Last   <= N32'Last - Sign_Bytes) and then
