@@ -338,11 +338,10 @@ is
       Carry := ASR_16 (R (15));
       R (15) := R (15) mod LM;
 
-      --  Maintain the invariant, but weaken to an implication
       pragma Assert
-        (if (Carry = 1)  then Carrying_Plus_One (R, X, 15));
+        ((Carry = 1) = Carrying_Plus_One (R, X, 15));
       pragma Assert
-        (if (Carry = -1) then Carrying_Minus_One (R, X, 15));
+        ((Carry = -1) = Carrying_Minus_One (R, X, 15));
       pragma Assert
         (for all K in Index_16 range 0 .. 15 => (R (K) in GF_Normal_Limb));
 
