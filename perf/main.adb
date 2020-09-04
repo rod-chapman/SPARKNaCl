@@ -37,6 +37,10 @@ procedure Main is
 
    procedure Tweet_Sign (SM :    out Byte_Seq;
                          M  : in     Byte_Seq;
+                         SK : in     Signing_SK);
+
+   procedure Tweet_Sign (SM :    out Byte_Seq;
+                         M  : in     Byte_Seq;
                          SK : in     Signing_SK)
    is
       SMLen : Unsigned_64;
@@ -74,19 +78,6 @@ begin
    Turn_On (Red_LED);
    IO.Put_Line ("Hello2");
 
-   SPARKNaCl.Sign.Sign (SM, M, SK);
-
-   IO.Put ("SPARK SM (0 ..63) is", SM (0 .. 63));
-
-   Turn_Off (Red_LED);
-
-   Turn_On (Green_LED);
-   SM := (others => 0);
-   Tweet_Sign (SM, M, SK);
-   IO.Put ("Tweet SM (0 ..63) is", SM (0 .. 63));
-   Turn_Off (Green_LED);
-
-
    IO.Put_Line ("Null timing test:");
    T1 := FE310.CLINT.Machine_Time;
    T2 := FE310.CLINT.Machine_Time;
@@ -102,6 +93,31 @@ begin
    T3 := T2 - T1;
    IO.Put (T3);
    IO.New_Line;
+
+
+   T1 := FE310.CLINT.Machine_Time;
+   SPARKNaCl.Sign.Sign (SM, M, SK);
+   T2 := FE310.CLINT.Machine_Time;
+   T3 := T2 - T1;
+   IO.Put (T3);
+   IO.New_Line;
+
+   IO.Put ("SPARK SM (0 ..63) is", SM (0 .. 63));
+
+   Turn_Off (Red_LED);
+
+   Turn_On (Green_LED);
+
+   T1 := FE310.CLINT.Machine_Time;
+   Tweet_Sign (SM, M, SK);
+   T2 := FE310.CLINT.Machine_Time;
+   T3 := T2 - T1;
+   IO.Put (T3);
+   IO.New_Line;
+
+   IO.Put ("Tweet SM (0 ..63) is", SM (0 .. 63));
+   Turn_Off (Green_LED);
+
 
    --  Blinky!
    loop
