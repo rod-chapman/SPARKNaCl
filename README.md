@@ -31,7 +31,16 @@ This library is a compact reference implementation of the NaCl crypto library. I
 
 ## Latest news
 
-A few changes have been made since the initial public release of this repo.  Specifically, as of 1st April 2020:
+### 4th September 2020
+
+* We have also completed worst-case stack usage analysis using GNATStack. This pointed out that there was a dynamic object being allocated on the stack in SPARKNaCl.Sign.Sign (owing to the use of the "&" operator to initialize the "out" parameter SM of procedure Sign.) This need for a dynamic object has been removed by refactoring the code slightly and using the new "Relaxed_Initialization" aspect that is supported in the 2020 SPARK language and toolset.  See the new procedure SPARKNaCl.Sign.Sign.Initialize_SM for details.
+
+* GNATStack now report a worst-case stack usage of 5648 bytes for a call to SPARKNaCl.Sign.Sign.
+
+* The sources have been updated to yield 100% automated proof using the SPARK Community 2020 release of the toolset. To achieve this, we re-enable Alt-Ergo and increase the Steps limit for all provers.
+
+
+### 1st April 2020
 
 * Yannick Moy from AdaCore pointed out that there had been a [soundness issue](https://github.com/OCamlPro/alt-ergo/issues/248) with alt-ergo 2.3.0 (the version that shipped with GNAT Community 2019), so I decided to put a bit more work in and refactor the proofs to remove the need for alt-ergo. All the proofs now discharge OK with only CVC4 and Z3, and the project settings file has been updated to reflect that.
 
