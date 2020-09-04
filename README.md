@@ -98,7 +98,9 @@ Still on the "to be done" list:
 
 ## Tools
 
-All development work has been done with the [Community 2019 Edition of GNAT and SPARK](https://www.adacore.com/community), which are freely available. Most development work has been done on MacOS, although test results have been successfully reproduced on 64-bit Linux and Windows 10.
+All development work has been done with the [Community 2020 Edition of GNAT and SPARK](https://www.adacore.com/community), which are freely available. Most development work has been done on MacOS, although test results have been successfully reproduced on 64-bit Linux and Windows 10. Performance testing additionally requires the GNAT 32-bit RISC-V cross compiler from the same source.
+
+The GNATStack tool runs on Linux and uses the output of the RISC-V cross compiler to drive its analysis.  GNATStack was built from source, but this is not available in the Community release of GNAT. To obtain the GNATStack sources, you will need a GNAT Pro subscription from AdaCore.
 
 ## Reproducing results
 
