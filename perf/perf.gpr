@@ -10,7 +10,7 @@ project Perf is
   for Object_Dir use ".";
   for Create_Missing_Dirs use "True";
 
-  type Build_Type is ("O0", "O1");
+  type Build_Type is ("O0", "O1", "O2", "O3");
   Build : Build_Type := external ("BUILD", "O0");
   Callgraph_Switch := ("-fcallgraph-info=su,da");
 
@@ -23,12 +23,23 @@ project Perf is
   package Compiler is
     case Build is
 
+      when "O3" =>
+        for Default_Switches ("Ada") use
+          ("-O3");
+        for Default_Switches ("C") use
+          ("-O3");
+
+      when "O2" =>
+        for Default_Switches ("Ada") use
+          ("-O2");
+        for Default_Switches ("C") use
+          ("-O2");
+
       when "O1" =>
         for Default_Switches ("Ada") use
-          ("-O1",     -- Optimization
-           "-gnatn"); -- Enable inlining
+          ("-O1");
         for Default_Switches ("C") use
-          ("-O1");    -- No optimization
+          ("-O1");
 
       when "O0" =>
         for Default_Switches ("Ada") use
@@ -43,11 +54,14 @@ project Perf is
          "-ffunction-sections", -- Create a linker section for each function
          "-fdata-sections");    -- Create a linker section for each data
 
-    for Default_Switches ("ada") use Compiler'Default_Switches ("Ada") &
+    for Default_Switches ("Ada") use
+        Compiler'Default_Switches ("Ada") &
         Callgraph_Switch &
         ("-g",       -- Debug info
-         "-gnatp",   -- Supress checks
-         "-gnatwa",  -- All warnings
+         "-gnatn",   -- Enable inlining
+         "-gnatp",   -- Suppress all runtime checks
+	 "-gnaty",   -- Style checking on
+         "-gnatwae", -- All warnings and treat them as errors
          "-gnatw_A", -- Turn off warnings for anonymous allocators
          "-gnatQ",   -- Don't quit. Generate ALI and tree files even if illegalities
          "-gnatw.X", -- Disable warnings for No_Exception_Propagation

@@ -1,7 +1,7 @@
 all: main.hex
 
-main: main.adb io.adb
-	gprbuild -v -Pperf
+main: main.adb io.adb io.ads tweetnacl_api.ads tweetnacl.c
+	gprbuild -Pperf
 	@grep "^.data" main.map
 	@grep "^.bss" main.map
 	@grep "__stack_start =" main.map
@@ -21,4 +21,9 @@ run: main.hex
 clean:
 	rm -f main.hex
 	rm -f main.map
+	rm -f d.ci
+	rm -f devurandom.ci
+	rm -f graph.vcg
+	rm -f tweetnacl.ci
+	rm -f undefined.ciu
 	gprclean -Pperf
