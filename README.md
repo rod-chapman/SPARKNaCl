@@ -33,12 +33,13 @@ This library is a compact reference implementation of the NaCl crypto library. I
 
 ### 4th September 2020
 
-* We have also completed worst-case stack usage analysis using GNATStack. This pointed out that there was a dynamic object being allocated on the stack in SPARKNaCl.Sign.Sign (owing to the use of the "&" operator to initialize the "out" parameter SM of procedure Sign.) This need for a dynamic object has been removed by refactoring the code slightly and using the new "Relaxed_Initialization" aspect that is supported in the 2020 SPARK language and toolset.  See the new procedure SPARKNaCl.Sign.Sign.Initialize_SM for details.
+* We have completed worst-case stack usage analysis using GNATStack. This pointed out that there was a dynamic object being allocated on the stack in SPARKNaCl.Sign.Sign (owing to the use of the "&" operator to initialize the "out" parameter SM of procedure Sign.) This need for a dynamic object has been removed by refactoring the code slightly and using the new "Relaxed_Initialization" aspect that is supported in the 2020 SPARK language and toolset.  See the new procedure SPARKNaCl.Sign.Sign.Initialize_SM for details.
 
-* GNATStack now report a worst-case stack usage of 5648 bytes for a call to SPARKNaCl.Sign.Sign.
+* GNATStack now reports a worst-case stack usage of 5648 bytes for a call to SPARKNaCl.Sign.Sign, when compiled for 32-bit RISC-V. Stack usage results for the other main API calls will follow.
 
 * The sources have been updated to yield 100% automated proof using the SPARK Community 2020 release of the toolset. To achieve this, we re-enable Alt-Ergo and increase the Steps limit for all provers.
 
+* A new sub-directory "perf" has been added, containing the beginnings of a performance testing framework and main program. The target for performance testing is a SiFive HiFive1 Revision B DevBoard. This contains a 32-bit RISC-V SoC. Performance results and tuning are in progress.
 
 ### 1st April 2020
 
