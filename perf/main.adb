@@ -34,6 +34,7 @@ procedure Main is
 
    T1, T2, T3 : UInt64;
 
+   CPU_Hz1, CPU_Hz2 : UInt32;
 
    procedure Tweet_Sign (SM :    out Byte_Seq;
                          M  : in     Byte_Seq;
@@ -54,6 +55,8 @@ procedure Main is
 
 
 begin
+   CPU_Hz1 := FE310.CPU_Frequency;
+
    --  The SPI flash clock divider should be as small as possible to increase
    --  the execution speed of instructions that are not yet in the instruction
    --  cache.
@@ -68,6 +71,15 @@ begin
    FE310.Use_Crystal_Oscillator;
 
    HiFive1.LEDs.Initialize;
+
+   CPU_Hz2 := FE310.CPU_Frequency;
+
+   IO.Put ("CPU Frequency reset was: ");
+   IO.Put (UInt64 (CPU_Hz1));
+   IO.New_Line;
+   IO.Put ("CPU Frequency now is:    ");
+   IO.Put (UInt64 (CPU_Hz2));
+   IO.New_Line;
 
    Turn_On (Green_LED);
    IO.Put_Line ("Hello1");
