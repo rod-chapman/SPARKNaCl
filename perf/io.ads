@@ -22,7 +22,7 @@ package IO is
    --  Output new line character to specified file, or to current output file
 
    procedure Put (B : in Byte);
-   
+
    procedure Put (S : in String; D : in Byte_Seq);
 
 end IO;

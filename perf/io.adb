@@ -120,10 +120,10 @@ package body IO is
    begin
       Put_Line (S);
       for I in D'Range loop
-	 Put (D (I));
-	 if I mod 8 = 7 then
-	    New_Line;
-	 end if;
+         Put (D (I));
+         if I mod 8 = 7 then
+            New_Line;
+         end if;
       end loop;
       New_Line;
    end Put;
