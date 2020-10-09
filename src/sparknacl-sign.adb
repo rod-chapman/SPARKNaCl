@@ -1,6 +1,5 @@
 with SPARKNaCl.Utils;
 with SPARKNaCl.Hashing;
---  with SPARKNaCl.Debug;
 package body SPARKNaCl.Sign
   with SPARK_Mode => On
 is
@@ -865,6 +864,7 @@ is
       H, R : Bytes_32;
       X    : I64_Seq_64;
       T    : Byte_Product;
+      P    : GF_Vector_4;
 
       procedure Initialize_SM (X : out Byte_Seq)
         with Global  => (Input  => (M, D)),
@@ -897,11 +897,11 @@ is
       D (31) := (D (31) and 127) or 64;
 
       Initialize_SM (SM);
-
       R := Hash_Reduce (SM (32 .. SM'Last));
 
-      SM (0 .. 31) := Pack (Scalarbase (R));
+      P := Scalarbase (R);
 
+      SM (0 .. 31) := Pack (P);
       SM (32 .. 63) := Serialize (SK) (32 .. 63);
 
       H := Hash_Reduce (SM);
@@ -989,7 +989,6 @@ is
            );
       end loop;
 
-
       --  Substitute I = 31
       pragma Assert
         (
@@ -1015,8 +1014,22 @@ is
       Sanitize (H);
       Sanitize (R);
       Sanitize_I64_Seq (X);
+
       pragma Unreferenced (D, H, R, X);
    end Sign;
+
+   procedure Sign2 (SM                   :    out Byte_Seq;
+                    M                    : in     Byte_Seq;
+                    SK                   : in     Signing_SK;
+                    Hash_SK_Time         :    out Unsigned_64;
+                    Hash_Reduce_SM1_Time :    out Unsigned_64;
+                    Scalarbase_R_Time    :    out Unsigned_64;
+                    Pack_P_Time          :    out Unsigned_64;
+                    Hash_Reduce_SM2_Time :    out Unsigned_64;
+                    Initialize_X_Time    :    out Unsigned_64;
+                    Assign_X_Time        :    out Unsigned_64;
+                    ModL_X_Time          :    out Unsigned_64)
+   is separate;
 
    procedure Open (M      :    out Byte_Seq;
                    Status :    out Boolean;

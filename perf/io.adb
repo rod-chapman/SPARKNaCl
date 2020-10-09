@@ -2,7 +2,6 @@ with HAL.UART;
 with FE310.UART;
 with FE310.Device;
 
-with Interfaces; use Interfaces;
 package body IO is
 
    type BToCT is array (Byte range 0 .. 15) of Character;
@@ -70,7 +69,7 @@ package body IO is
    procedure Put (X : UInt64)
    is
       Int   : UInt64 := X;
-      S     : String (1 .. UInt64'Width);
+      S     : String (1 .. UInt64'Width) := (others => ' ');
       First : Natural := S'Last + 1;
       Val   : UInt64;
    begin
@@ -82,7 +81,8 @@ package body IO is
          exit when Int = 0;
       end loop;
 
-      Put (S (First .. S'Last));
+      --  Fixed width output
+      Put (S);
    end Put;
 
    ---------
@@ -103,6 +103,14 @@ package body IO is
    procedure Put_Line (S : String) is
    begin
       Put (S);
+      New_Line;
+   end Put_Line;
+
+   procedure Put_Line (S : String; X : Unsigned_64)
+   is
+   begin
+      Put (S);
+      Put (UInt64 (X));
       New_Line;
    end Put_Line;
 

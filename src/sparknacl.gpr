@@ -1,4 +1,6 @@
 with "../sparknacl_common.gpr";
+with "../../AdaCore/Ada_Drivers_Library/boards/HiFive1_rev_B/hifive1_rev_b_zfp.gpr";
+
 library project SPARKNaCl is
 
    for Library_Name use "SPARKNaCl";

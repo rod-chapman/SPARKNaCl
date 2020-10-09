@@ -1,6 +1,9 @@
 #include "tweetnacl.h"
 #include "d.h"
 
+#include "tweetcount.h"
+#include "fenceit.h"
+
 #define FOR(i,n) for (i = 0;i < n;++i)
 #define sv static void
 
@@ -287,6 +290,9 @@ sv car25519(gf o)
 {
   int i;
   i64 c;
+
+  tweet_gf_car++;
+
   FOR(i,16) {
     o[i]+=(1LL<<16);
     c=o[i]>>16;
@@ -355,18 +361,27 @@ sv unpack25519(gf o, const u8 *n)
 sv A(gf o,const gf a,const gf b)
 {
   int i;
+
+  tweet_gf_add++;
+
   FOR(i,16) o[i]=a[i]+b[i];
 }
 
 sv Z(gf o,const gf a,const gf b)
 {
   int i;
+
+  tweet_gf_sub++;
+
   FOR(i,16) o[i]=a[i]-b[i];
 }
 
 sv M(gf o,const gf a,const gf b)
 {
   i64 i,j,t[31];
+
+  tweet_gf_mul++;
+
   FOR(i,31) t[i]=0;
   FOR(i,16) FOR(j,16) t[i+j]+=a[i]*b[j];
   FOR(i,15) t[i]+=38*t[i+16];
@@ -557,7 +572,9 @@ int crypto_hashblocks(u8 *x,const u8 *m,u64 n)
     FOR(i,80) {
       FOR(j,8) b[j] = a[j];
       t = a[7] + Sigma1(a[4]) + Ch(a[4],a[5],a[6]) + K[i] + w[i%16];
+      fenceit();
       b[7] = t + Sigma0(a[0]) + Maj(a[0],a[1],a[2]);
+      fenceit();
       b[3] += t;
       FOR(j,8) a[(j+1)%8] = b[j];
       if (i%16 == 15)
@@ -771,6 +788,86 @@ int crypto_sign(u8 *sm,u64 *smlen,const u8 *m,u64 n,const u8 *sk)
   FOR(i,32) FOR(j,32) x[i+j] += h[i] * (u64) d[j];
   modL(sm + 32,x);
 
+  return 0;
+}
+
+extern u64 _rv32_read_cycle(void);
+
+int crypto_sign2
+  (u8 *sm,
+   u64 *smlen,
+   const u8 *m,
+   u64 n,
+   const u8 *sk,
+   /* Timings */
+   u64 *hash_sk,
+   u64 *hash_reduce_sm1,
+   u64 *scalarbase_r,
+   u64 *pack_p,
+   u64 *hash_reduce_sm2,
+   u64 *initialize_x,
+   u64 *assign_x,
+   u64 *modl_x)
+{
+  u8 d[64],h[64],r[64];
+  i64 i,j,x[64];
+  gf p[4];
+  u64 t1, t2, t3, t4, t5, t6, t7, t8, t9;
+
+  t1 = _rv32_read_cycle();
+
+  crypto_hash(d, sk, 32);
+  d[0] &= 248;
+  d[31] &= 127;
+  d[31] |= 64;
+
+  t2 = _rv32_read_cycle();
+
+  *smlen = n+64;
+  FOR(i,n) sm[64 + i] = m[i];
+  FOR(i,32) sm[32 + i] = d[32 + i];
+
+  crypto_hash(r, sm+32, n+32);
+
+  reduce(r);
+
+  t3 = _rv32_read_cycle();
+
+  scalarbase(p,r);
+
+  t4 = _rv32_read_cycle();
+
+  pack(sm,p);
+
+  t5 = _rv32_read_cycle();
+
+  FOR(i,32) sm[i+32] = sk[i+32];
+  crypto_hash(h,sm,n + 64);
+  reduce(h);
+
+  t6 = _rv32_read_cycle();
+
+  FOR(i,64) x[i] = 0;
+  FOR(i,32) x[i] = (u64) r[i];
+
+  t7 = _rv32_read_cycle();
+
+  FOR(i,32) FOR(j,32) x[i+j] += h[i] * (u64) d[j];
+
+  t8 = _rv32_read_cycle();
+
+  modL(sm + 32,x);
+
+  t9 = _rv32_read_cycle();
+
+  *hash_sk = (t2 - t1);
+  *hash_reduce_sm1 = (t3 - t2);
+  *scalarbase_r = (t4 - t3);
+  *pack_p = (t5 - t4);
+  *hash_reduce_sm2 = (t6 - t5);
+  *initialize_x = (t7 - t6);
+  *assign_x = (t8 - t7);
+  *modl_x = (t9 - t8);
   return 0;
 }
 

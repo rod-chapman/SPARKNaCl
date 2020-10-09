@@ -1,4 +1,5 @@
 with SPARKNaCl.Car;
+--  with SPARKNaCl.Count; use SPARKNaCl.Count;
 package body SPARKNaCl
   with SPARK_Mode => On
 is
@@ -10,6 +11,8 @@ is
    is
       R : Sum_GF := (others => 0);
    begin
+--      GF_Add := GF_Add + 1;
+
       for I in Index_16 loop
          R (I) := Left (I) + Right (I);
          pragma Loop_Invariant
@@ -30,6 +33,8 @@ is
    is
       R : GF := (others => 0);
    begin
+--      GF_Sub := GF_Sub + 1;
+
       --  For limb 0, we compute the difference, but add LM to
       --  make sure the result is positive.
       R (0) := (Left (0) - Right (0)) + LM;
@@ -67,6 +72,8 @@ is
       T  : GF_PA;
       TF : Product_GF;
    begin
+--      GF_Mul := GF_Mul + 1;
+
       T := (others => 0);
 
       --  "Textbook" ladder multiplication
