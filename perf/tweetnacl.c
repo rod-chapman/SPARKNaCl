@@ -291,7 +291,7 @@ sv car25519(gf o)
   int i;
   i64 c;
 
-  tweet_gf_car++;
+//  tweet_gf_car++;
 
   FOR(i,16) {
     o[i]+=(1LL<<16);
@@ -362,7 +362,7 @@ sv A(gf o,const gf a,const gf b)
 {
   int i;
 
-  tweet_gf_add++;
+//  tweet_gf_add++;
 
   FOR(i,16) o[i]=a[i]+b[i];
 }
@@ -371,7 +371,7 @@ sv Z(gf o,const gf a,const gf b)
 {
   int i;
 
-  tweet_gf_sub++;
+//  tweet_gf_sub++;
 
   FOR(i,16) o[i]=a[i]-b[i];
 }
@@ -380,7 +380,7 @@ sv M(gf o,const gf a,const gf b)
 {
   i64 i,j,t[31];
 
-  tweet_gf_mul++;
+//  tweet_gf_mul++;
 
   FOR(i,31) t[i]=0;
   FOR(i,16) FOR(j,16) t[i+j]+=a[i]*b[j];
