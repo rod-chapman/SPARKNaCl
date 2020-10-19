@@ -1,23 +1,24 @@
 with SPARKNaCl.Car;
---  with SPARKNaCl.Count; use SPARKNaCl.Count;
 package body SPARKNaCl
   with SPARK_Mode => On
 is
    --===============================
-   --  Local subprogram bodies
+   --  Exported subprogram bodies
    --===============================
 
    function "+" (Left, Right : in Normal_GF) return Normal_GF
    is
-      R : Sum_GF := (others => 0);
+      R : GF with Relaxed_Initialization;
    begin
---      GF_Add := GF_Add + 1;
-
       for I in Index_16 loop
          R (I) := Left (I) + Right (I);
          pragma Loop_Invariant
+           (for all J in Index_16 range 0 .. I => R (J)'Initialized);
+         pragma Loop_Invariant
            (for all J in Index_16 range 0 .. I => R (J) in GF_Sum_Limb);
       end loop;
+
+      pragma Assert (R'Initialized and then R in Sum_GF);
 
       --  In SPARKNaCl, we _always_ normalize after "+" to simplify proof.
       --  This sacrifices some performance for proof automation.
@@ -31,13 +32,13 @@ is
 
    function "-" (Left, Right : in Normal_GF) return Normal_GF
    is
-      R : GF := (others => 0);
+      R : GF with Relaxed_Initialization;
    begin
---      GF_Sub := GF_Sub + 1;
-
       --  For limb 0, we compute the difference, but add LM to
       --  make sure the result is positive.
       R (0) := (Left (0) - Right (0)) + LM;
+
+      pragma Assert (R (0)'Initialized);
 
       for I in Index_16 range 1 .. 15 loop
          --  Having added LM to the previous limb, we also add LM to
@@ -45,9 +46,13 @@ is
          --  the earlier limb
          R (I) := (Left (I) - Right (I)) + LMM1;
          pragma Loop_Invariant
+           (for all K in Index_16 range 0 .. I => R (K)'Initialized);
+         pragma Loop_Invariant
            ((R (0) in 1 .. 2 * LMM1 + 1) and
             (for all K in Index_16 range 1 .. I => R (K) in 0 .. 2 * LMM1));
       end loop;
+
+      pragma Assert (R'Initialized);
 
       --  We now need to carry -1 into limb R (16), but that doesn't
       --  exist, so we carry 2**256 * -1 into limb R (0). As before,
@@ -70,10 +75,8 @@ is
    function "*" (Left, Right : in Normal_GF) return Normal_GF
    is
       T  : GF_PA;
-      TF : Product_GF;
+      TF : GF with Relaxed_Initialization;
    begin
---      GF_Mul := GF_Mul + 1;
-
       T := (others => 0);
 
       --  "Textbook" ladder multiplication
@@ -153,8 +156,6 @@ is
             T (K) <= (31 - I64 (K)) * MGFLP)
         );
 
-      TF := (15 => T (15), others => 0);
-
       --  To "carry" the value in limbs 16 .. 30 and above down into
       --  limbs 0 .. 14, we need to multiply each upper limb by 2**256.
       --
@@ -166,20 +167,25 @@ is
       --  T (I) + R2256 * T (I + 16) WILL fit in 64 bits.
       for I in Index_15 loop
          TF (I) := T (I) + R2256 * T (I + 16);
+
+         pragma Loop_Invariant
+           (for all J in Index_15 range 0 .. I => TF (J)'Initialized);
+
          pragma Loop_Invariant
            (
             (for all J in Index_15 range 0 .. I =>
                TF (J) = T (J) + R2256 * T (J + 16))
-            and then
-            (for all J in Index_15 range I + 1 .. 14 =>
-               TF (J) = 0)
-            and then
-              TF (15) = T (15)
-            and then
-              --  Force the subtype predicate check here
-              TF in Product_GF
            );
       end loop;
+
+      pragma Assert
+        (for all J in Index_15 => TF (J)'Initialized);
+
+      TF (15) := T (15);
+
+      pragma Assert (TF'Initialized);
+      pragma Assert (TF in Product_GF);
+
 
       --  Sanitize T, as per WireGuard sources
       pragma Warnings (GNATProve, Off, "statement has no effect");
@@ -205,10 +211,6 @@ is
    begin
       return A * A;
    end Square;
-
-   --===============================
-   --  Exported subprogram bodies
-   --===============================
 
    --------------------------------------------------------
    --  Constant time equality test
