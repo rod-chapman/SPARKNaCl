@@ -135,12 +135,12 @@ is
      (X : in Sum_GF)
        return Nearlynormal_GF
    is
-      Carry : I64_Bit;
+      Carry : Boolean;
       R     : GF with Relaxed_Initialization;
    begin
-      Carry := ASR_16 (X (0));
+      Carry := X (0) >= LM;
       R (0) := X (0) mod LM;
-      R (1) := X (1) + Carry;
+      R (1) := X (1) + Boolean'Pos (Carry);
 
       pragma Assert
         (R (0)'Initialized and then R (0) in GF_Normal_Limb);
@@ -148,9 +148,9 @@ is
         (R (1)'Initialized and then R (1) in 0 .. GF_Sum_Limb'Last + 1);
 
       for I in Index_16 range 1 .. 14 loop
-         Carry := ASR_16 (R (I));
+         Carry := R (I) >= LM;
          R (I) := R (I) mod LM;
-         R (I + 1) := X (I + 1) + Carry;
+         R (I + 1) := X (I + 1) + Boolean'Pos (Carry);
 
          pragma Loop_Invariant
            (for all K in Index_16 range 0 .. I + 1 => (R (K)'Initialized));
@@ -165,9 +165,9 @@ is
         (for all K in Index_16 range 0 .. 14 => (R (K) in GF_Normal_Limb));
       pragma Assert (R (15) in 0 .. GF_Sum_Limb'Last + 1);
 
-      Carry := ASR_16 (R (15));
+      Carry := R (15) >= LM;
 
-      R (0) := R (0) + R2256 * Carry;
+      R (0) := R (0) + R2256 * Boolean'Pos (Carry);
       R (15) := R (15) mod LM;
 
       return Nearlynormal_GF (R);
