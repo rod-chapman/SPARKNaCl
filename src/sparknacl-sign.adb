@@ -165,14 +165,18 @@ is
              3 => GF_0);
       LQ := Q;
 
-      for I in reverse U32 range 0 .. 255 loop
-         CB   := S (I32 (Shift_Right (I, 3)));
-         Swap := Boolean'Val (Shift_Right (CB, Natural (I and 7)) mod 2);
+      --  For each byte of S, starting at the MSB
+      for I in reverse Index_32 loop
+         CB := S (I);
+         --  For each bit of CB, starting with bit 7 (the MSB)
+         for J in reverse Natural range 0 .. 7 loop
+            Swap := Boolean'Val (Shift_Right (CB, J) mod 2);
 
-         CSwap (LP, LQ, Swap);
-         Add (LQ, LP);
-         Double (LP);
-         CSwap (LP, LQ, Swap);
+            CSwap (LP, LQ, Swap);
+            Add (LQ, LP);
+            Double (LP);
+            CSwap (LP, LQ, Swap);
+         end loop;
       end loop;
 
       return LP;
