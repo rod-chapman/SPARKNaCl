@@ -56,8 +56,11 @@ is
      with Global => null;
 
    --  Replaces function "add" in the TweetNaCl sources
-   function "+" (Left  : in GF_Vector_4;
-                 Right : in GF_Vector_4) return GF_Vector_4
+   procedure Add (Left  : in out GF_Vector_4;
+                  Right : in     GF_Vector_4)
+     with Global => null;
+
+   procedure Double (P : in out GF_Vector_4)
      with Global => null;
 
    function Scalarmult (Q : in GF_Vector_4;
@@ -98,8 +101,8 @@ is
       end loop;
    end Sanitize_GF_Vector_4;
 
-   function "+" (Left  : in GF_Vector_4;
-                 Right : in GF_Vector_4) return GF_Vector_4
+   procedure Add (Left  : in out GF_Vector_4;
+                  Right : in     GF_Vector_4)
    is
       A, B, C, D, E, H : GF;
    begin
@@ -130,11 +133,19 @@ is
       A  := D - C;
       B  := D + C;
 
-      return GF_Vector_4'(0 => E * A,
-                          1 => H * B,
-                          2 => B * A,
-                          3 => E * H);
-   end "+";
+      Left := GF_Vector_4'(0 => E * A,
+                           1 => H * B,
+                           2 => B * A,
+                           3 => E * H);
+   end Add;
+
+   procedure Double (P : in out GF_Vector_4)
+   is
+      --  Ada's anti-aliasing rules require an extra copy here.
+      T : constant GF_Vector_4 := P;
+   begin
+      Add (P, T);
+   end Double;
 
    function Scalarmult (Q : in GF_Vector_4;
                         S : in Bytes_32) return GF_Vector_4
@@ -155,7 +166,6 @@ is
             Utils.CSwap (P (I), Q (I), Swap);
          end loop;
       end CSwap;
-
    begin
       LP := (0 => GF_0,
              1 => GF_1,
@@ -168,10 +178,8 @@ is
          Swap := Boolean'Val (Shift_Right (CB, Natural (I and 7)) mod 2);
 
          CSwap (LP, LQ, Swap);
-
-         --  Note user-defined "+" for GF_Vector_4 called here
-         LQ := LQ + LP;
-         LP := LP + LP;
+         Add (LQ, LP);
+         Double (LP);
          CSwap (LP, LQ, Swap);
       end loop;
 
@@ -1062,7 +1070,8 @@ is
       Q := Scalarbase (SM (32 .. 63));
 
       --  Call to user-defined "+" for GF_Vector_4
-      T := Pack (P + Q);
+      Add (P, Q);
+      T := Pack (P);
 
       if not Equal (SM (0 .. 31), T) then
          M := (others => 0);
