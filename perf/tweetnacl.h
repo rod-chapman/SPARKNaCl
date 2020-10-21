@@ -197,6 +197,8 @@ extern int crypto_secretbox_xsalsa20poly1305_tweet_open(unsigned char *,const un
 #define crypto_secretbox_xsalsa20poly1305_BOXZEROBYTES crypto_secretbox_xsalsa20poly1305_tweet_BOXZEROBYTES
 #define crypto_secretbox_xsalsa20poly1305_VERSION crypto_secretbox_xsalsa20poly1305_tweet_VERSION
 #define crypto_secretbox_xsalsa20poly1305_IMPLEMENTATION "crypto_secretbox/xsalsa20poly1305/tweet"
+
+
 #define crypto_sign_PRIMITIVE "ed25519"
 #define crypto_sign crypto_sign_ed25519
 #define crypto_sign_open crypto_sign_ed25519_open
@@ -221,6 +223,26 @@ extern int crypto_sign_ed25519_tweet_keypair(unsigned char *,unsigned char *);
 #define crypto_sign_ed25519_SECRETKEYBYTES crypto_sign_ed25519_tweet_SECRETKEYBYTES
 #define crypto_sign_ed25519_VERSION crypto_sign_ed25519_tweet_VERSION
 #define crypto_sign_ed25519_IMPLEMENTATION "crypto_sign/ed25519/tweet"
+
+#define crypto_sign2 crypto_sign2_ed25519
+extern int crypto_sign2_ed25519_tweet
+   (unsigned char *,
+    unsigned long long *,
+    const unsigned char *,
+    unsigned long long,
+    const unsigned char *,
+    /* Timings */
+    unsigned long long *,
+    unsigned long long *,
+    unsigned long long *,
+    unsigned long long *,
+    unsigned long long *,
+    unsigned long long *,
+    unsigned long long *,
+    unsigned long long *);
+#define crypto_sign2_ed25519 crypto_sign2_ed25519_tweet
+
+
 #define crypto_stream_PRIMITIVE "xsalsa20"
 #define crypto_stream crypto_stream_xsalsa20
 #define crypto_stream_xor crypto_stream_xsalsa20_xor

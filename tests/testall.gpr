@@ -1,5 +1,5 @@
 with "../sparknacl_common.gpr";
-with "../src/sparknacl.gpr";
+with "../src/sparknacl_host.gpr";
 project Testall is
 
    for Main use ("testall.adb");

@@ -1,5 +1,6 @@
-with HAL;       use HAL;
-with SPARKNaCl; use SPARKNaCl;
+with HAL;        use HAL;
+with SPARKNaCl;  use SPARKNaCl;
+with Interfaces; use Interfaces;
 package IO is
 
    procedure Put (X : Integer);
@@ -15,8 +16,10 @@ package IO is
    --  Output string to specified file, or to current output file
 
    procedure Put_Line (S : String);
-   --  Output string followed by new line to specified file, or to
-   --  current output file.
+   --  Output string followed by new line to stdout
+
+   procedure Put_Line (S : String; X : Unsigned_64);
+   --  Output string followed by X, then new line to stdout
 
    procedure New_Line (Spacing : Positive := 1);
    --  Output new line character to specified file, or to current output file

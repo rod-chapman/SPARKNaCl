@@ -241,7 +241,7 @@ private
    --  Subtypes supporting "+" operation on GF
    --
    --  In a "+" operation, intermediate result limbs peak at +131070, so
-   subtype GF_Sum_Limb is I64 range 0 .. 131070;
+   subtype GF_Sum_Limb is I64 range 0 .. (LMM1 * 2);
 
    subtype Sum_GF is GF
      with Dynamic_Predicate =>

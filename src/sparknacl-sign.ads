@@ -61,6 +61,27 @@ is
                   SM'Last   = M'Last + Sign_Bytes),
           Post => SM'Initialized;
 
+   --  As above, but returning elapsed time per phase in cycles
+   procedure Sign2 (SM                   :    out Byte_Seq;
+                    M                    : in     Byte_Seq;
+                    SK                   : in     Signing_SK;
+                    Hash_SK_Time         :    out Unsigned_64;
+                    Hash_Reduce_SM1_Time :    out Unsigned_64;
+                    Scalarbase_R_Time    :    out Unsigned_64;
+                    Pack_P_Time          :    out Unsigned_64;
+                    Hash_Reduce_SM2_Time :    out Unsigned_64;
+                    Initialize_X_Time    :    out Unsigned_64;
+                    Assign_X_Time        :    out Unsigned_64;
+                    ModL_X_Time          :    out Unsigned_64)
+     with Global => null,
+          Relaxed_Initialization => SM,
+          Pre => (M'First   = 0 and
+                  SM'First  = 0 and
+                  M'Last   <= N32'Last - Sign_Bytes) and then
+                 (SM'Length = M'Length + Sign_Bytes and
+                  SM'Last   = M'Last + Sign_Bytes),
+          Post => SM'Initialized;
+
    procedure Open (M      :    out Byte_Seq;
                    Status :    out Boolean;
                    MLen   :    out I32;

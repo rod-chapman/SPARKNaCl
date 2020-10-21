@@ -1,5 +1,4 @@
 with "../sparknacl_common.gpr";
-with "../../AdaCore/Ada_Drivers_Library/boards/HiFive1_rev_B/hifive1_rev_b_zfp.gpr";
 
 library project SPARKNaCl is
 
@@ -21,6 +20,7 @@ library project SPARKNaCl is
             for Body ("random") use "random_zfp.adb";
          when others =>
             for Body ("random") use "random.adb";
+            for Body ("sparknacl.sign.sign2") use "sparknacl-sign-sign2h.adb";
       end case;
    end Naming;
 

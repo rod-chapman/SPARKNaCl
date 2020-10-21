@@ -1,6 +1,5 @@
 with SPARKNaCl.Utils;
 with SPARKNaCl.Hashing;
---  with SPARKNaCl.Debug;
 package body SPARKNaCl.Sign
   with SPARK_Mode => On
 is
@@ -57,8 +56,11 @@ is
      with Global => null;
 
    --  Replaces function "add" in the TweetNaCl sources
-   function "+" (Left  : in GF_Vector_4;
-                 Right : in GF_Vector_4) return GF_Vector_4
+   procedure Add (Left  : in out GF_Vector_4;
+                  Right : in     GF_Vector_4)
+     with Global => null;
+
+   procedure Double (P : in out GF_Vector_4)
      with Global => null;
 
    function Scalarmult (Q : in GF_Vector_4;
@@ -99,43 +101,43 @@ is
       end loop;
    end Sanitize_GF_Vector_4;
 
-   function "+" (Left  : in GF_Vector_4;
-                 Right : in GF_Vector_4) return GF_Vector_4
+   procedure Add (Left  : in out GF_Vector_4;
+                  Right : in     GF_Vector_4)
    is
-      A, B, C, D, E, H : GF;
+      L0 : GF renames Left (0);
+      L1 : GF renames Left (1);
+      R0 : GF renames Right (0);
+      R1 : GF renames Right (1);
+      A, B, C, D, E, F : GF;
    begin
-      --  Compute A, using B as a temporary
-      A := (Left (1) - Left (0));
-      B := (Right (1) - Right (0));
-      A := A * B;
+      A := (L1 - L0) * (R1 - R0);
+      B := (L0 + L1) * (R0 + R1);
+      C := (Left (3) * Right (3)) * GF_D2;
 
-      --  Compute B, using C as a temporary
-      B := (Left (0) + Left (1));
-      C := (Right (0) + Right (1));
-      B := B * C;
-
-      --  Compute C, using C as a temporary
-      C := (Left (3) * Right (3));
-      C := C * GF_D2;
-
-      --  Compute D, using E as a temporary
-      E := Left (2) * Right (2);
-      D := E + E;
+      D := Left (2) * Right (2);
+      D := D + D;
 
       E  := B - A;
-      H  := B + A;
+      F  := B + A;
 
       --  We are now done with A and B, so these variables can now
-      --  be re-used in place of the original local variables F and G
-      --  respectively. This saves yet more stack.
+      --  be re-used. This saves yet more stack.
       A  := D - C;
       B  := D + C;
 
-      return GF_Vector_4'(0 => E * A,
-                          1 => H * B,
-                          2 => B * A,
-                          3 => E * H);
-   end "+";
+      Left := GF_Vector_4'(0 => E * A,
+                           1 => F * B,
+                           2 => B * A,
+                           3 => E * F);
+   end Add;
+
+   procedure Double (P : in out GF_Vector_4)
+   is
+      --  Ada's anti-aliasing rules require an extra copy here.
+      T : constant GF_Vector_4 := P;
+   begin
+      Add (P, T);
+   end Double;
 
    function Scalarmult (Q : in GF_Vector_4;
                         S : in Bytes_32) return GF_Vector_4
@@ -156,7 +158,6 @@ is
             Utils.CSwap (P (I), Q (I), Swap);
          end loop;
       end CSwap;
-
    begin
       LP := (0 => GF_0,
              1 => GF_1,
@@ -164,16 +165,18 @@ is
              3 => GF_0);
       LQ := Q;
 
-      for I in reverse U32 range 0 .. 255 loop
-         CB   := S (I32 (Shift_Right (I, 3)));
-         Swap := Boolean'Val (Shift_Right (CB, Natural (I and 7)) mod 2);
+      --  For each byte of S, starting at the MSB
+      for I in reverse Index_32 loop
+         CB := S (I);
+         --  For each bit of CB, starting with bit 7 (the MSB)
+         for J in reverse Natural range 0 .. 7 loop
+            Swap := Boolean'Val (Shift_Right (CB, J) mod 2);
 
-         CSwap (LP, LQ, Swap);
-
-         --  Note user-defined "+" for GF_Vector_4 called here
-         LQ := LQ + LP;
-         LP := LP + LP;
-         CSwap (LP, LQ, Swap);
+            CSwap (LP, LQ, Swap);
+            Add (LQ, LP);
+            Double (LP);
+            CSwap (LP, LQ, Swap);
+         end loop;
       end loop;
 
       return LP;
@@ -865,6 +868,7 @@ is
       H, R : Bytes_32;
       X    : I64_Seq_64;
       T    : Byte_Product;
+      P    : GF_Vector_4;
 
       procedure Initialize_SM (X : out Byte_Seq)
         with Global  => (Input  => (M, D)),
@@ -897,11 +901,11 @@ is
       D (31) := (D (31) and 127) or 64;
 
       Initialize_SM (SM);
-
       R := Hash_Reduce (SM (32 .. SM'Last));
 
-      SM (0 .. 31) := Pack (Scalarbase (R));
+      P := Scalarbase (R);
 
+      SM (0 .. 31) := Pack (P);
       SM (32 .. 63) := Serialize (SK) (32 .. 63);
 
       H := Hash_Reduce (SM);
@@ -989,7 +993,6 @@ is
            );
       end loop;
 
-
       --  Substitute I = 31
       pragma Assert
         (
@@ -1015,8 +1018,22 @@ is
       Sanitize (H);
       Sanitize (R);
       Sanitize_I64_Seq (X);
+
       pragma Unreferenced (D, H, R, X);
    end Sign;
+
+   procedure Sign2 (SM                   :    out Byte_Seq;
+                    M                    : in     Byte_Seq;
+                    SK                   : in     Signing_SK;
+                    Hash_SK_Time         :    out Unsigned_64;
+                    Hash_Reduce_SM1_Time :    out Unsigned_64;
+                    Scalarbase_R_Time    :    out Unsigned_64;
+                    Pack_P_Time          :    out Unsigned_64;
+                    Hash_Reduce_SM2_Time :    out Unsigned_64;
+                    Initialize_X_Time    :    out Unsigned_64;
+                    Assign_X_Time        :    out Unsigned_64;
+                    ModL_X_Time          :    out Unsigned_64)
+   is separate;
 
    procedure Open (M      :    out Byte_Seq;
                    Status :    out Boolean;
@@ -1049,7 +1066,8 @@ is
       Q := Scalarbase (SM (32 .. 63));
 
       --  Call to user-defined "+" for GF_Vector_4
-      T := Pack (P + Q);
+      Add (P, Q);
+      T := Pack (P);
 
       if not Equal (SM (0 .. 31), T) then
          M := (others => 0);
