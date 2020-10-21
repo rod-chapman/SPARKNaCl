@@ -1,5 +1,7 @@
 all: fntr sntr ftestdiff stestdiff
 
+fall: fntr ftestdiff
+
 ftestdiff: fntr
 	diff expected_test_results fntr
 
