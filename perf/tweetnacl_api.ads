@@ -53,4 +53,12 @@ is
      with Import,
           Convention => C,
           Link_Name  => "tweet_reset";
+
+   procedure Crypto_Scalarmult (Q :    out Bytes_32;
+                                N : in     Bytes_32;
+                                P : in     Bytes_32)
+     with Import,
+          Convention => C,
+          Link_Name  => "crypto_scalarmult_curve25519_tweet";
+
 end TweetNaCl_API;
