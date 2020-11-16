@@ -1,2 +1,1 @@
-__stack_size = 8*1024;
-
+__stack_size = 11*1024;
