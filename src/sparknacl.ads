@@ -393,8 +393,8 @@ private
      with Global => null;
 
    function Square (A : in Normal_GF) return Normal_GF
-     with Inline_Always,
-          Global => null;
+     is (A * A)
+     with Global => null;
 
 
    --  Additional sanitization procedures for local types

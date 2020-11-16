@@ -206,12 +206,6 @@ is
                  (Car.Product_To_Seminormal (TF)));
    end "*";
 
-   function Square (A : in Normal_GF) return Normal_GF
-   is
-   begin
-      return A * A;
-   end Square;
-
    --------------------------------------------------------
    --  Constant time equality test
    --------------------------------------------------------
