@@ -76,50 +76,39 @@ is
    is
       T  : GF_PA;
       TF : GF with Relaxed_Initialization;
+      LT : GF_Normal_Limb;
    begin
       T := (others => 0);
 
       --  "Textbook" ladder multiplication
       for I in Index_16 loop
-         for J in Index_16 loop
-            T (I + J) := T (I + J) + (Left (I) * Right (J));
 
-            pragma Loop_Invariant
-              (
-               --  Lower bound
-               (for all K in Index_31 => T (K) >= 0) and
+         --  Manual unroll and PRE of the inner loop here gives a significant
+         --  performance gain at all optimization levels, preserves proof,
+         --  and avoids the need for a complex inner loop invariant.
+         --
+         --  for J in Index_16 loop
+         --     T (I + J) := T (I + J) + (Left (I) * Right (J));
+         --  end loop;
 
-               --  rising from 1 to I
-               (for all K in Index_31 range 0 .. (I - 1)   =>
-                  T (K) <= (I64 (K + 1) * MGFLP)) and
+         LT := Left (I);
+         T (I)      := T (I)      + (LT * Right (0));
+         T (I + 1)  := T (I + 1)  + (LT * Right (1));
+         T (I + 2)  := T (I + 2)  + (LT * Right (2));
+         T (I + 3)  := T (I + 3)  + (LT * Right (3));
+         T (I + 4)  := T (I + 4)  + (LT * Right (4));
+         T (I + 5)  := T (I + 5)  + (LT * Right (5));
+         T (I + 6)  := T (I + 6)  + (LT * Right (6));
+         T (I + 7)  := T (I + 7)  + (LT * Right (7));
+         T (I + 8)  := T (I + 8)  + (LT * Right (8));
+         T (I + 9)  := T (I + 9)  + (LT * Right (9));
+         T (I + 10) := T (I + 10) + (LT * Right (10));
+         T (I + 11) := T (I + 11) + (LT * Right (11));
+         T (I + 12) := T (I + 12) + (LT * Right (12));
+         T (I + 13) := T (I + 13) + (LT * Right (13));
+         T (I + 14) := T (I + 14) + (LT * Right (14));
+         T (I + 15) := T (I + 15) + (LT * Right (15));
 
-               --  flat at I + 1, just written
-               (for all K in Index_31 range I .. I32'Min (15, I + J) =>
-                  T (K) <= (I64 (I + 1) * MGFLP)) and
-
-               --  flat at I, not written yet
-               (for all K in Index_31 range I + J + 1 .. 15 =>
-                  T (K) <= (I64 (I) * MGFLP)) and
-
-               --  falling from I to 1, just written
-               (for all K in Index_31 range 16 .. (I + J) =>
-                  T (K) <= (I64 (16 + I) - I64 (K)) * MGFLP) and
-
-               --  falling, from I to 1, but not written yet
-               (for all K in Index_31 range
-                  I32'Max (16, I + J + 1) .. (I + 15) =>
-                  T (K) <= (I64 (15 + I) - I64 (K)) * MGFLP) and
-
-               --  Zeroes - never written
-               (for all K in Index_31 range I + 16 .. 30   =>
-                  T (K) = 0)
-              );
-
-
-         end loop;
-
-         --  Substituting J = 15 into the nested invariant above,
-         --  and eliminating quantifiers with null ranges yields:
          pragma Loop_Invariant
            (
             --  Lower bound
