@@ -116,18 +116,16 @@ is
    begin
       A := (L1 - L0) * (R1 - R0);
       B := (L0 + L1) * (R0 + R1);
-      C := (L3 * R3) * GF_D2;
-
-      D := L2 * R2;
-      D := D + D;
-
-      E  := B - A;
-      F  := B + A;
+      E := B - A;
+      F := B + A;
 
       --  We are now done with A and B, so these variables can now
       --  be re-used. This saves yet more stack.
-      A  := D - C;
-      B  := D + C;
+      C := (L3 * R3) * GF_D2;
+      D := L2 * R2;
+      D := D + D;
+      A := D - C;
+      B := D + C;
 
       --  Assign to Left element-by-element to avoid extra
       --  temporary and copy needed by an aggregate assignment.
