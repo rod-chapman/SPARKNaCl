@@ -106,15 +106,19 @@ is
    is
       L0 : GF renames Left (0);
       L1 : GF renames Left (1);
+      L2 : GF renames Left (2);
+      L3 : GF renames Left (3);
       R0 : GF renames Right (0);
       R1 : GF renames Right (1);
+      R2 : GF renames Right (2);
+      R3 : GF renames Right (3);
       A, B, C, D, E, F : GF;
    begin
       A := (L1 - L0) * (R1 - R0);
       B := (L0 + L1) * (R0 + R1);
-      C := (Left (3) * Right (3)) * GF_D2;
+      C := (L3 * R3) * GF_D2;
 
-      D := Left (2) * Right (2);
+      D := L2 * R2;
       D := D + D;
 
       E  := B - A;
@@ -125,10 +129,12 @@ is
       A  := D - C;
       B  := D + C;
 
-      Left := GF_Vector_4'(0 => E * A,
-                           1 => F * B,
-                           2 => B * A,
-                           3 => E * F);
+      --  Assign to Left element-by-element to avoid extra
+      --  temporary and copy needed by an aggregate assignment.
+      L0 := E * A;
+      L1 := F * B;
+      L2 := B * A;
+      L3 := E * F;
    end Add;
 
    procedure Double (P : in out GF_Vector_4)
