@@ -69,6 +69,9 @@ project TSize is
          "-gnatwU",  -- Disable warnings for unreferenced entities
          "-ffunction-sections", -- Create a linker section for each function
          "-fdata-sections");    -- Create a linker section for each data
+
+      for Local_Configuration_Pragmas use "perf.adc";
+
   end Compiler;
 
   package Linker is
