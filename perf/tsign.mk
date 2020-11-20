@@ -1,4 +1,4 @@
-all: tsign.hex
+all: tsign.hex tsign.asm
 
 tsign: tsign.adb io.adb io.ads tweetnacl_api.ads tweetnacl.c
 	gprbuild -Ptsign -v
@@ -11,6 +11,9 @@ tsign: tsign.adb io.adb io.ads tweetnacl_api.ads tweetnacl.c
 
 tsign.hex: tsign
 	riscv32-elf-objcopy -O ihex tsign tsign.hex
+
+tsign.asm: tsign
+	riscv32-elf-objdump -S tsign >tsign.asm
 
 testcsr: testcsr.adb io.ads
 	gprbuild -Ptestcsr

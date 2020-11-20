@@ -1,4 +1,4 @@
-all: tsm.hex
+all: tsm.hex tsm.asm
 
 tsm: tsm.adb io.adb io.ads tweetnacl_api.ads tweetnacl.c
 	gprbuild -Ptsm -v
@@ -11,6 +11,9 @@ tsm: tsm.adb io.adb io.ads tweetnacl_api.ads tweetnacl.c
 
 tsm.hex: tsm
 	riscv32-elf-objcopy -O ihex tsm tsm.hex
+
+tsm.asm: tsm
+	riscv32-elf-objdump -S tsm >tsm.asm
 
 testcsr: testcsr.adb io.ads
 	gprbuild -Ptestcsr
