@@ -61,6 +61,33 @@ is
       return X;
    end TS64;
 
+   --  Big-Endian 8 bytes to U64. The input bytes are in
+   --  X (I) (the MSB) through X (I + 8) (the LSB)
+   function DL64 (X : in Byte_Seq;
+                  I : in N32) return U64
+     with Global => null,
+          Pre => X'Length >= 8 and then
+                 I >= X'First and then
+                 I <= X'Last - 7;
+
+   function DL64 (X : in Byte_Seq;
+                  I : in N32) return U64
+   is
+      LSW, MSW : U32;
+   begin
+      --  Doing this in two 32-bit groups avoids the need
+      --  for 64-bit shifts on 32-bit machines.
+      MSW := Shift_Left (U32 (X (I)),     24) or
+             Shift_Left (U32 (X (I + 1)), 16) or
+             Shift_Left (U32 (X (I + 2)), 8) or
+                         U32 (X (I + 3));
+      LSW := Shift_Left (U32 (X (I + 4)), 24) or
+             Shift_Left (U32 (X (I + 5)), 16) or
+             Shift_Left (U32 (X (I + 6)), 8) or
+                         U32 (X (I + 7));
+      return Shift_Left (U64 (MSW), 32) or U64 (LSW);
+   end DL64;
+
    procedure Hashblocks
      (X : in out Digest;
       M : in     Byte_Seq)
@@ -103,28 +130,15 @@ is
       is (RR64 (X, 19) xor RR64 (X, 61) xor Shift_Right (X, 6))
         with Global => null;
 
-      function DL64 (X : in Bytes_8) return U64
-        with Global => null;
-
-      function DL64 (X : in Bytes_8) return U64
-      is
-         U : U64 := 0;
-      begin
-         for I in X'Range loop
-            U := Shift_Left (U, 8) or U64 (X (I));
-         end loop;
-         return U;
-      end DL64;
-
    begin
-      A := (0 => DL64 (Bytes_8 (X (0 .. 7))),
-            1 => DL64 (Bytes_8 (X (8 .. 15))),
-            2 => DL64 (Bytes_8 (X (16 .. 23))),
-            3 => DL64 (Bytes_8 (X (24 .. 31))),
-            4 => DL64 (Bytes_8 (X (32 .. 39))),
-            5 => DL64 (Bytes_8 (X (40 .. 47))),
-            6 => DL64 (Bytes_8 (X (48 .. 55))),
-            7 => DL64 (Bytes_8 (X (56 .. 63))));
+      A := (0 => DL64 (X, 0),
+            1 => DL64 (X, 8),
+            2 => DL64 (X, 16),
+            3 => DL64 (X, 24),
+            4 => DL64 (X, 32),
+            5 => DL64 (X, 40),
+            6 => DL64 (X, 48),
+            7 => DL64 (X, 56));
       Z := A;
 
       LN := I64 (M'Length);
@@ -137,22 +151,22 @@ is
               (LN in 128 .. M'Length) and
               (CB in M'First .. (M'Last - 127)));
 
-         W := (0  => DL64 (Bytes_8 (M (CB + 0 .. CB + 7))),
-               1  => DL64 (Bytes_8 (M (CB + 8 .. CB + 15))),
-               2  => DL64 (Bytes_8 (M (CB + 16 .. CB + 23))),
-               3  => DL64 (Bytes_8 (M (CB + 24 .. CB + 31))),
-               4  => DL64 (Bytes_8 (M (CB + 32 .. CB + 39))),
-               5  => DL64 (Bytes_8 (M (CB + 40 .. CB + 47))),
-               6  => DL64 (Bytes_8 (M (CB + 48 .. CB + 55))),
-               7  => DL64 (Bytes_8 (M (CB + 56 .. CB + 63))),
-               8  => DL64 (Bytes_8 (M (CB + 64 .. CB + 71))),
-               9  => DL64 (Bytes_8 (M (CB + 72 .. CB + 79))),
-               10 => DL64 (Bytes_8 (M (CB + 80 .. CB + 87))),
-               11 => DL64 (Bytes_8 (M (CB + 88 .. CB + 95))),
-               12 => DL64 (Bytes_8 (M (CB + 96 .. CB + 103))),
-               13 => DL64 (Bytes_8 (M (CB + 104 .. CB + 111))),
-               14 => DL64 (Bytes_8 (M (CB + 112 .. CB + 119))),
-               15 => DL64 (Bytes_8 (M (CB + 120 .. CB + 127))));
+         W := (0  => DL64 (M, CB),
+               1  => DL64 (M, CB + 8),
+               2  => DL64 (M, CB + 16),
+               3  => DL64 (M, CB + 24),
+               4  => DL64 (M, CB + 32),
+               5  => DL64 (M, CB + 40),
+               6  => DL64 (M, CB + 48),
+               7  => DL64 (M, CB + 56),
+               8  => DL64 (M, CB + 64),
+               9  => DL64 (M, CB + 72),
+               10 => DL64 (M, CB + 80),
+               11 => DL64 (M, CB + 88),
+               12 => DL64 (M, CB + 96),
+               13 => DL64 (M, CB + 104),
+               14 => DL64 (M, CB + 112),
+               15 => DL64 (M, CB + 120));
 
          for I in Index_80 loop
 
