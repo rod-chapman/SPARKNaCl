@@ -1,0 +1,16 @@
+pragma Restrictions (No_Tasking);
+pragma Restrictions (No_Allocators);
+pragma Restrictions (No_Anonymous_Allocators);
+pragma Restrictions (No_Delay);
+pragma Restrictions (No_Dispatching_Calls);
+pragma Restrictions (No_Enumeration_Maps);
+pragma Restrictions (No_Finalization);
+pragma Restrictions (No_Fixed_Point);
+pragma Restrictions (No_Floating_Point);
+pragma Restrictions (No_Implicit_Dynamic_Code);
+pragma Restrictions (No_Implicit_Heap_Allocations);
+pragma Restrictions (No_Implicit_Protected_Object_Allocations);
+pragma Restrictions (No_Implicit_Task_Allocations);
+pragma Restrictions (No_Recursion);
+pragma Restrictions (No_Relative_Delay);
+pragma Assume_No_Invalid_Values (On);
