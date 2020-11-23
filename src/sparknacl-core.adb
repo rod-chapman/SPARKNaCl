@@ -62,6 +62,20 @@ is
    is
       W : U32_Seq_16;
       T : U32_Seq_4;
+
+      --  Common to all iterations of the inner loop,
+      --  so factored out here.
+      procedure Adjust_T
+        with Global => (In_Out => T);
+
+      procedure Adjust_T
+      is
+      begin
+         T (1) := T (1) xor RL32 (T (0) + T (3), 7);
+         T (2) := T (2) xor RL32 (T (1) + T (0), 9);
+         T (3) := T (3) xor RL32 (T (2) + T (1), 13);
+         T (0) := T (0) xor RL32 (T (3) + T (2), 18);
+      end Adjust_T;
    begin
       W := (others => 0);
       --  In C this is a loop, but we unroll and make single
@@ -89,22 +103,81 @@ is
       Y := X;
 
       for I in Index_20 loop
-         for J in Index_4 loop
-            T := (0 => X ((5 * J) mod 16),
-                  1 => X ((5 * J + 4) mod 16),
-                  2 => X ((5 * J + 8) mod 16),
-                  3 => X ((5 * J + 12) mod 16));
+         --  This inner loop has been unrolled manually and
+         --  simplified in SPARKNaCl.
+         --
+         --  ORIGINAL CODE:
+         --  for J in Index_4 loop
+         --     T := (0 => X ((5 * J) mod 16),
+         --           1 => X ((5 * J + 4) mod 16),
+         --           2 => X ((5 * J + 8) mod 16),
+         --           3 => X ((5 * J + 12) mod 16));
 
-            T (1) := T (1) xor RL32 (T (0) + T (3), 7);
-            T (2) := T (2) xor RL32 (T (1) + T (0), 9);
-            T (3) := T (3) xor RL32 (T (2) + T (1), 13);
-            T (0) := T (0) xor RL32 (T (3) + T (2), 18);
+         --     T (1) := T (1) xor RL32 (T (0) + T (3), 7);
+         --     T (2) := T (2) xor RL32 (T (1) + T (0), 9);
+         --     T (3) := T (3) xor RL32 (T (2) + T (1), 13);
+         --     T (0) := T (0) xor RL32 (T (3) + T (2), 18);
 
-            W (4 * J + ((J + 0) mod 4)) := T (0);
-            W (4 * J + ((J + 1) mod 4)) := T (1);
-            W (4 * J + ((J + 2) mod 4)) := T (2);
-            W (4 * J + ((J + 3) mod 4)) := T (3);
-         end loop;
+         --     W (4 * J + ((J + 0) mod 4)) := T (0);
+         --     W (4 * J + ((J + 1) mod 4)) := T (1);
+         --     W (4 * J + ((J + 2) mod 4)) := T (2);
+         --     W (4 * J + ((J + 3) mod 4)) := T (3);
+         --  end loop;
+
+         --  Begin loop unrolling --
+         --  Iteration with J = 0 --
+         T := (0 => X (0),
+               1 => X (4),
+               2 => X (8),
+               3 => X (12));
+
+         Adjust_T;
+
+         W (0) := T (0);
+         W (1) := T (1);
+         W (2) := T (2);
+         W (3) := T (3);
+
+         --  Iteration with J = 1 --
+         T := (0 => X (5),
+               1 => X (9),
+               2 => X (13),
+               3 => X (1));
+
+         Adjust_T;
+
+         W (5) := T (0);
+         W (6) := T (1);
+         W (7) := T (2);
+         W (4) := T (3);
+
+         --  Iteration with J = 2 --
+         T := (0 => X (10),
+               1 => X (14),
+               2 => X (2),
+               3 => X (6));
+
+         Adjust_T;
+
+         W (10) := T (0);
+         W (11) := T (1);
+         W (8)  := T (2);
+         W (9)  := T (3);
+
+         --  Iteration with J = 3 --
+         T := (0 => X (15),
+               1 => X (3),
+               2 => X (7),
+               3 => X (11));
+
+         Adjust_T;
+
+         W (15) := T (0);
+         W (12) := T (1);
+         W (13) := T (2);
+         W (14) := T (3);
+         --  End loop unrolling  --
+
          X := W;
       end loop;
    end Core_Common;
