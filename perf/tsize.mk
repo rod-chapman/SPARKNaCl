@@ -4,6 +4,7 @@ SIZE_OBJS := sparknacl.o sparknacl-car.o sparknacl-core.o sparknacl-cryptobox.o 
 
 sizes.txt: tsize.adb io.adb io.ads tweetnacl_api.ads tweetnacl.c
 	gprbuild -Ptsize -v
+	riscv32-elf-objdump -S tsize >tsize.asm
 	riscv32-elf-strip $(SIZE_OBJS)
 	riscv32-elf-strip tweetnacl.o
 	@echo "Results for SPARKNaCl"
