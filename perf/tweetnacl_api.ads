@@ -1,6 +1,8 @@
 with SPARKNaCl;         use SPARKNaCl;
 with SPARKNaCl.Sign;    use SPARKNaCl.Sign;
 with SPARKNaCl.Hashing; use SPARKNaCl.Hashing;
+with SPARKNaCl.Stream;  use SPARKNaCl.Stream;
+with SPARKNaCl.Core;    use SPARKNaCl.Core;
 with Interfaces;        use Interfaces;
 package TweetNaCl_API
 is
@@ -60,5 +62,14 @@ is
      with Import,
           Convention => C,
           Link_Name  => "crypto_scalarmult_curve25519_tweet";
+
+
+   procedure HSalsa20 (C    :    out Byte_Seq;       --  Output stream
+                       CLen : in     Unsigned_64;
+                       N    : in     HSalsa20_Nonce; --  Nonce
+                       K    : in     Salsa20_Key)   --  Key
+     with Import,
+          Convention => C,
+          Link_Name  => "crypto_stream_xsalsa20_tweet";
 
 end TweetNaCl_API;
