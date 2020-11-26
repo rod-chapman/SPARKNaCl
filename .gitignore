@@ -6,3 +6,6 @@
 **/*.cswi
 **/*.lexch
 gnatinspect.db
+obj/
+lib/
+alire/
