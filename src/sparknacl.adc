@@ -2,7 +2,6 @@ pragma Restrictions (No_Tasking);
 pragma Restrictions (No_Allocators);
 pragma Restrictions (No_Anonymous_Allocators);
 pragma Restrictions (No_Delay);
-pragma Restrictions (No_Dispatch);
 pragma Restrictions (No_Dispatching_Calls);
 pragma Restrictions (No_Enumeration_Maps);
 pragma Restrictions (No_Finalization);
