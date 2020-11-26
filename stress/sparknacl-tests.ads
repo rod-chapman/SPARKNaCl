@@ -8,8 +8,6 @@ is
 
    procedure Car_Stress;
 
-   procedure Car2_Stress;
-
    procedure Diff_Car_Stress;
 
    procedure Pack_Stress;
