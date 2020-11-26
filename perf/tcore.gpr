@@ -1,4 +1,5 @@
 with "../../AdaCore/Ada_Drivers_Library/boards/HiFive1_rev_B/hifive1_rev_b_zfp.gpr";
+with "../sparknacl.gpr";
 
 project TCore is
 
@@ -6,51 +7,18 @@ project TCore is
   for Target use "riscv32-elf";
   for Main use ("tcore.adb");
   for Languages use ("Ada", "C", "Asm");
-  for Source_Dirs use (".", "../src");
+  for Source_Dirs use (".");
   for Object_Dir use ".";
   for Create_Missing_Dirs use "True";
 
-  type Build_Type is ("O0", "O1", "O2", "O3");
-  Build : Build_Type := external ("BUILD", "O0");
   Callgraph_Switch := ("-fcallgraph-info=su,da");
 
-  for Excluded_Source_Files use ("sparknacl-debug.ads", "sparknacl-debug.adb", "sparknacl-pdebug.ads", "sparknacl-pdebug.adb", "random.adb");
-
-  package Naming is
-    for Body ("random") use "random_zfp.adb";
-  end Naming;
-
   package Compiler is
-    case Build is
-
-      when "O3" =>
-        for Default_Switches ("Ada") use
-          ("-O3");
-        for Default_Switches ("C") use
-          ("-O3");
-
-      when "O2" =>
-        for Default_Switches ("Ada") use
-          ("-O2");
-        for Default_Switches ("C") use
-          ("-O2");
-
-      when "O1" =>
-        for Default_Switches ("Ada") use
-          ("-O1");
-        for Default_Switches ("C") use
-          ("-O1");
-
-      when "O0" =>
-        for Default_Switches ("Ada") use
-          ("-O0");    -- No optimization
-        for Default_Switches ("C") use
-          ("-O0");    -- No optimization
-    end case;
 
     for Default_Switches ("C") use Compiler'Default_Switches ("C") &
         Callgraph_Switch &
         ("-g",                  -- Debug info
+         "-O0",
          "-ffunction-sections", -- Create a linker section for each function
          "-fdata-sections");    -- Create a linker section for each data
 
@@ -58,7 +26,7 @@ project TCore is
         Compiler'Default_Switches ("Ada") &
         Callgraph_Switch &
         ("-g",       -- Debug info
-         "-gnatn",   -- Enable inlining
+         "-O0",
          "-gnatp",   -- Suppress all runtime checks
          "-gnaty",   -- Style checking on
          "-gnatwae", -- All warnings and treat them as errors
