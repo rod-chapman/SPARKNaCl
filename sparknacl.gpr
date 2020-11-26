@@ -1,4 +1,4 @@
-project Sparknacl is
+library project Sparknacl is
 
    for Library_Name use "Sparknacl";
    for Library_Version use "0.0.0";
@@ -126,5 +126,13 @@ project Sparknacl is
                                       "--report=statistics");
       for Proof_Switches ("sparknacl-utils.adb") use ("--prover=cvc4,z3");
    end Prove;
+
+
+   --  All the main NaCl entry points
+   Stack_Entry_Points := ("-esparknacl.sign.open,sparknacl.sign.sign,sparknacl.sign.keypair,sparknacl.cryptobox.create,sparknacl.cryptobox.open,sparknacl.cryptobox.keypair,sparknacl.secretbox.create,sparknacl.secretbox.open,sparknacl.core.salsa20,sparknacl.core.hsalsa20,sparknacl.stream.salsa20,sparknacl.stream.salsa20_xor,sparknacl.stream.hsalsa20,sparknacl.stream.hsalsa20_xor,sparknacl.mac.onetimeauth,sparknacl.mac.onetimeauth_verify,sparknacl.hashing.hash,sparknacl.hashing.hashblocks,sparknacl.scalar.mult,sparknacl.scalar.mult_base,sparknacl.equal,sparknacl.random_bytes");
+
+   package Stack is
+      for Switches use ("-Wa", "-u 128", "-np", "-v") & Stack_Entry_Points;
+   end Stack;
 
 end Sparknacl;
