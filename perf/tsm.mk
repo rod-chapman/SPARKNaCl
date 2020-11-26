@@ -1,7 +1,8 @@
 all: tsm.hex tsm.asm
 
 tsm: tsm.adb io.adb io.ads tweetnacl_api.ads tweetnacl.c
-	gprbuild -Ptsm -v
+	gprbuild -Ptsm -v -XSPARKNACL_RUNTIME_MODE=zfp -XSPARKNACL_RUNTIME_CHECKS=disabled -XSPARKNACL_CONTRACTS=disabled
+	@mv main.map tsm.map
 	@grep "^.data" tsm.map
 	@grep "^.bss" tsm.map
 	@grep "__stack_start =" tsm.map
@@ -14,9 +15,6 @@ tsm.hex: tsm
 
 tsm.asm: tsm
 	riscv32-elf-objdump -S tsm >tsm.asm
-
-testcsr: testcsr.adb io.ads
-	gprbuild -Ptestcsr
 
 stack: tsm
 	gnatstack -Ptsm
@@ -32,4 +30,4 @@ clean:
 	rm -f graph.vcg
 	rm -f tweetnacl.ci
 	rm -f undefined.ciu
-	gprclean -Ptsm -r
+	gprclean -Ptsm

@@ -1,7 +1,8 @@
 all: tsign.hex tsign.asm
 
 tsign: tsign.adb io.adb io.ads tweetnacl_api.ads tweetnacl.c
-	gprbuild -Ptsign -v
+	gprbuild -Ptsign -v -XSPARKNACL_RUNTIME_MODE=zfp -XSPARKNACL_RUNTIME_CHECKS=disabled -XSPARKNACL_CONTRACTS=disabled
+	@mv main.map tsign.map
 	@grep "^.data" tsign.map
 	@grep "^.bss" tsign.map
 	@grep "__stack_start =" tsign.map
@@ -14,9 +15,6 @@ tsign.hex: tsign
 
 tsign.asm: tsign
 	riscv32-elf-objdump -S tsign >tsign.asm
-
-testcsr: testcsr.adb io.ads
-	gprbuild -Ptestcsr
 
 stack: tsign
 	gnatstack -Ptsign
@@ -32,4 +30,4 @@ clean:
 	rm -f graph.vcg
 	rm -f tweetnacl.ci
 	rm -f undefined.ciu
-	gprclean -Ptsign -r
+	gprclean -Ptsign

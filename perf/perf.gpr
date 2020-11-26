@@ -1,0 +1,55 @@
+with "../../AdaCore/Ada_Drivers_Library/boards/HiFive1_rev_B/hifive1_rev_b_zfp.gpr";
+with "../sparknacl.gpr";
+
+abstract project Perf is
+
+  for Runtime ("ada") use HiFive1_rev_B_ZFP'Runtime ("Ada");
+  for Target use "riscv32-elf";
+  for Languages use ("Ada", "C", "Asm");
+  for Source_Dirs use ();
+  for Object_Dir use ".";
+  for Create_Missing_Dirs use "True";
+
+  Callgraph_Switch := ("-fcallgraph-info=su,da");
+
+  package Compiler is
+
+    for Default_Switches ("C") use Compiler'Default_Switches ("C") &
+        Callgraph_Switch &
+        ("-g",                  -- Debug info
+         "-O0",
+         "-ffunction-sections", -- Create a linker section for each function
+         "-fdata-sections");    -- Create a linker section for each data
+
+    for Default_Switches ("Ada") use
+        Compiler'Default_Switches ("Ada") &
+        Callgraph_Switch &
+        ("-g",       -- Debug info
+         "-O0",
+         "-gnatp",   -- Suppress all runtime checks
+         "-gnaty",   -- Style checking on
+         "-gnatwae", -- All warnings and treat them as errors
+         "-gnatw_A", -- Turn off warnings for anonymous allocators
+         "-gnatRms", -- Output representation info for subprograms
+         "-gnatQ",   -- Don't quit. Generate ALI and tree files even if illegalities
+         "-gnatw.X", -- Disable warnings for No_Exception_Propagation
+         "-ffunction-sections", -- Create a linker section for each function
+         "-fdata-sections");    -- Create a linker section for each data
+  end Compiler;
+
+  package Linker is
+     Local_Linker_Switches := ("-T", "perf.ld");
+     for Default_Switches ("Ada") use
+       Local_Linker_Switches &
+       HiFive1_rev_B_ZFP.Linker_Switches &
+       ("-Wl,--print-memory-usage",
+        "-Wl,-Map=main.map",
+        "-Wl,--gc-sections");
+  end Linker;
+
+  package Ide is
+     for Program_Host use ":3333";
+     for Communication_Protocol use "remote";
+  end Ide;
+
+end Perf;
