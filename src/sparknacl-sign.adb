@@ -48,9 +48,17 @@ is
                                            2 => GF_1,
                                            3 => GF_XY);
 
+   --  MBP = "Max Byte Product"
+   MBP        : constant := (255 * 255);
+   Max_X_Limb : constant := (32 * MBP) + 255;
+
    --============================================
    --  Local subprogram declarations
    --============================================
+
+   function ModL (X : in I64_Seq_64) return Bytes_32
+     with Global => null,
+          Pre    => (for all K in Index_64 => X (K) in 0 .. Max_X_Limb);
 
    procedure Sanitize_GF_Vector_4 (R : out GF_Vector_4)
      with Global => null;
