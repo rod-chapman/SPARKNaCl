@@ -1,9 +1,10 @@
-with SPARKNaCl;         use SPARKNaCl;
-with SPARKNaCl.Sign;    use SPARKNaCl.Sign;
-with SPARKNaCl.Hashing; use SPARKNaCl.Hashing;
-with SPARKNaCl.Stream;  use SPARKNaCl.Stream;
-with SPARKNaCl.Core;    use SPARKNaCl.Core;
-with Interfaces;        use Interfaces;
+with SPARKNaCl;           use SPARKNaCl;
+with SPARKNaCl.Sign;      use SPARKNaCl.Sign;
+with SPARKNaCl.Cryptobox; use SPARKNaCl.Cryptobox;
+with SPARKNaCl.Hashing;   use SPARKNaCl.Hashing;
+with SPARKNaCl.Stream;    use SPARKNaCl.Stream;
+with SPARKNaCl.Core;      use SPARKNaCl.Core;
+with Interfaces;          use Interfaces;
 package TweetNaCl_API
 is
    GF_Add : Unsigned_64
@@ -50,6 +51,17 @@ is
      with Import,
           Convention => C,
           Link_Name  => "crypto_hash_sha512_tweet";
+
+   procedure Crypto_Box
+     (C            :    out Byte_Seq;
+      M            : in     Byte_Seq;
+      MLen         : in     Unsigned_64;
+      N            : in     Stream.HSalsa20_Nonce;
+      Recipient_PK : in     Public_Key;
+      Sender_SK    : in     Secret_Key)
+     with Import,
+          Convention => C,
+          Link_Name  => "crypto_box_curve25519xsalsa20poly1305_tweet";
 
    procedure Reset
      with Import,
