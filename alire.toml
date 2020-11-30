@@ -1,0 +1,7 @@
+name = "sparknacl"
+description = "Shiny new project"
+version = "0.0.0"
+
+authors = ["Rod Chapman"]
+maintainers = ["Rod Chapman <rod@proteancode.com>"]
+maintainers-logins = ["rod-chapman"]
