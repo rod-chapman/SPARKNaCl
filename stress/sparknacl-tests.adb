@@ -53,6 +53,7 @@ is
       C    : Product_GF;
       SN   : Seminormal_GF;
       NGF  : Nearlynormal_GF;
+      R    : Normal_GF;
    begin
       --  Case 1 - using typed API
       A := (0 .. 14 => 65535, 15 => 65535 + 2**32);
@@ -61,6 +62,8 @@ is
       PDebug.DH ("Case 1 - SN is", SN);
       NGF := Car.Seminormal_To_Nearlynormal (SN);
       PDebug.DH ("Case 1 - NGF is", NGF);
+      R := Car.Nearlynormal_To_Normal (NGF);
+      PDebug.DH ("Case 1 - R is", R);
 
       --  Case 2 Upper bounds on all limbs of a Product_GF
       C := (0 => MGFLC * MGFLP,
@@ -82,6 +85,40 @@ is
       PDebug.DH ("Case 2 - C is", C);
       SN := Car.Product_To_Seminormal (C);
       PDebug.DH ("Case 2 - SN is", SN);
+      NGF := Car.Seminormal_To_Nearlynormal (SN);
+      PDebug.DH ("Case 2 - NGF is", NGF);
+      R := Car.Nearlynormal_To_Normal (NGF);
+      PDebug.DH ("Case 2 - R is", R);
+
+
+      --  Intermediate (pre-normalization) result of
+      --  Square (Normal_GF'(others => 16#FFFF))
+      A := (16#23AFB8A023B#,
+            16#215FBD40216#,
+            16#1F0FC1E01F1#,
+            16#1CBFC6801CC#,
+            16#1A6FCB201A7#,
+            16#181FCFC0182#,
+            16#15CFD46015D#,
+            16#137FD900138#,
+            16#112FDDA0113#,
+            16#EDFE2400EE#,
+            16#C8FE6E00C9#,
+            16#A3FEB800A4#,
+            16#7EFF02007F#,
+            16#59FF4C005A#,
+            16#34FF960035#,
+            16#FFFE00010#);
+      PDebug.DH ("Case 3 - A is", A);
+      SN := Car.Product_To_Seminormal (A);
+      PDebug.DH ("Case 3 - SN is", SN);
+      NGF := Car.Seminormal_To_Nearlynormal (SN);
+      PDebug.DH ("Case 3 - NGF is", NGF);
+      R := Car.Nearlynormal_To_Normal (NGF);
+      PDebug.DH ("Case 3 - R is", R);
+
+
+
    end Car_Stress;
 
    procedure Diff_Car_Stress
