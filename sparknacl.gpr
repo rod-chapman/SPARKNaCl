@@ -15,12 +15,12 @@ library project Sparknacl is
 
    type Enabled_Kind is ("enabled", "disabled");
    Compile_Checks : Enabled_Kind := External ("SPARKNACL_COMPILE_CHECKS", "enabled");
-   Runtime_Checks : Enabled_Kind := External ("SPARKNACL_RUNTIME_CHECKS", "enabled");
+   Runtime_Checks : Enabled_Kind := External ("SPARKNACL_RUNTIME_CHECKS", "disabled");
    Style_Checks : Enabled_Kind := External ("SPARKNACL_STYLE_CHECKS", "enabled");
-   Contracts_Checks : Enabled_Kind := External ("SPARKNACL_CONTRACTS", "enabled");
+   Contracts_Checks : Enabled_Kind := External ("SPARKNACL_CONTRACTS", "disabled");
 
    type Build_Kind is ("debug", "O1", "O2", "O3");
-   Build_Mode : Build_Kind := External ("SPARKNACL_BUILD_MODE", "debug");
+   Build_Mode : Build_Kind := External ("SPARKNACL_BUILD_MODE", "O2");
 
    type Runtime_Kind is ("full", "zfp");
    Runtime_Mode : Runtime_Kind := External ("SPARKNACL_RUNTIME_MODE", "full");
