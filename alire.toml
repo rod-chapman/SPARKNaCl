@@ -10,6 +10,9 @@ authors = ["Rod Chapman"]
 maintainers = ["Rod Chapman <rod@proteancode.com>"]
 maintainers-logins = ["rod-chapman"]
 
+[[depends-on]]
+gnat = ">=2020"
+
 [gpr-externals]
 SPARKNACL_RUNTIME_MODE = ["full", "zfp"]
 SPARKNACL_BUILD_MODE = ["debug", "O1", "O2", "O3"]
