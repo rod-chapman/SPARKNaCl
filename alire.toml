@@ -1,0 +1,18 @@
+name = "sparknacl"
+description = "Verified SPARK 2014 re-implementation of TweetNaCl cryptographic library"
+long-description = "SPARK 2014 re-implementation of TweetNaCl cryptographic library, with fully automated proofs of type safety and some correctness properties"
+version = "1.0.0"
+tags = ["spark", "cryptography", "security", "nacl", "curve25519", "ed25519", "tweetnacl"]
+licenses = ["BSD 2-Clauses"]
+website = "https://github.com/rod-chapman/SPARKNaCl"
+
+authors = ["Rod Chapman"]
+maintainers = ["Rod Chapman <rod@proteancode.com>"]
+maintainers-logins = ["rod-chapman"]
+
+[[depends-on]]
+gnat = ">=2020"
+
+[gpr-externals]
+SPARKNACL_RUNTIME_MODE = ["full", "zfp"]
+SPARKNACL_BUILD_MODE = ["debug", "O1", "O2", "O3"]

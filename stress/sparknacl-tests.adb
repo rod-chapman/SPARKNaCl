@@ -2,7 +2,6 @@ with SPARKNaCl.PDebug;
 with SPARKNaCl.Debug;
 with SPARKNaCl.Utils;
 with SPARKNaCl.Car;
-with SPARKNaCl.Car2;
 with Ada.Text_IO; use Ada.Text_IO;
 package body SPARKNaCl.Tests
 is
@@ -48,46 +47,6 @@ is
       PDebug.DH ("Result is", C);
    end GF_Stress;
 
-   procedure Car2_Stress
-   is
-      R : GF;
-   begin
-      --  Intermediate (pre-normalization) result of
-      --  Square (Normal_GF'(others => 16#FFFF))
-      R := (16#23AFB8A023B#,
-            16#215FBD40216#,
-            16#1F0FC1E01F1#,
-            16#1CBFC6801CC#,
-            16#1A6FCB201A7#,
-            16#181FCFC0182#,
-            16#15CFD46015D#,
-            16#137FD900138#,
-            16#112FDDA0113#,
-            16#EDFE2400EE#,
-            16#C8FE6E00C9#,
-            16#A3FEB800A4#,
-            16#7EFF02007F#,
-            16#59FF4C005A#,
-            16#34FF960035#,
-            16#FFFE00010#);
-
-
-      PDebug.DH ("Max product R is ", R);
-      Car2.Carry (R);
-      PDebug.DH ("Max product R after 1 CARRY is ", R);
-
-      R := (16#25_FFFF#, 16#FDA0#, others => 65535);
-      PDebug.DH ("Difficult Nearly R is ", R);
-      Car2.Carry (R);
-      PDebug.DH ("Difficult Nearly R after 1 CARRY is ", R);
-
-      PDebug.DH ("R2 is ", R);
-      Car2.Carry (R);
-      PDebug.DH ("R3 is ", R);
-      Car2.Carry (R);
-      PDebug.DH ("R4 is ", R);
-   end Car2_Stress;
-
    procedure Car_Stress
    is
       A    : GF;
@@ -95,45 +54,15 @@ is
       SN   : Seminormal_GF;
       NGF  : Nearlynormal_GF;
    begin
-      --  Case 1
+      --  Case 1 - using typed API
       A := (0 .. 14 => 65535, 15 => 65535 + 2**32);
-      PDebug.DH ("Case 1 - A1 is", A);
-      Car2.Carry (A);
-      PDebug.DH ("A2 is", A);
-      Car2.Carry (A);
-      PDebug.DH ("A3 is", A);
-      Car2.Carry (A);
-      PDebug.DH ("A4 is", A);
-
-      --  Case 2
-      A := (0 .. 15 => 131070); -- max result of a "+" intermediate result
-      PDebug.DH ("Case 2 - A1 is", A);
-      Car2.Carry (A);
-      PDebug.DH ("A2 is", A);
-      Car2.Carry (A);
-      PDebug.DH ("A3 is", A);
-
-      --  Case 3 - Removed
-
-      --  Case 4.1
-      A := (0 .. 14 => 65535, 15 => 65535 + 2**32);
-      PDebug.DH ("Case 4.1 - A is", A);
-      Car2.Carry (A);
-      PDebug.DH ("Case 4.1 - SN is", A);
-      Car2.Carry (A);
-      PDebug.DH ("Case 4.1 - NGF is", A);
-      Car2.Carry (A);
-      PDebug.DH ("Case 4.1 - NGF2 is", A);
-
-      --  Case 4.2 - using typed API
-      A := (0 .. 14 => 65535, 15 => 65535 + 2**32);
-      PDebug.DH ("Case 4.2 - A is", A);
+      PDebug.DH ("Case 1 - A is", A);
       SN := Car.Product_To_Seminormal (A);
-      PDebug.DH ("Case 4.2 - SN is", SN);
+      PDebug.DH ("Case 1 - SN is", SN);
       NGF := Car.Seminormal_To_Nearlynormal (SN);
-      PDebug.DH ("Case 4.2- NGF is", NGF);
+      PDebug.DH ("Case 1 - NGF is", NGF);
 
-      --  Case 5 Upper bounds on all limbs of a Product_GF
+      --  Case 2 Upper bounds on all limbs of a Product_GF
       C := (0 => MGFLC * MGFLP,
             1 => (MGFLC - 37 * 1) * MGFLP,
             2 => (MGFLC - 37 * 2) * MGFLP,
@@ -150,9 +79,9 @@ is
             13 => (MGFLC - 37 * 13) * MGFLP,
             14 => (MGFLC - 37 * 14) * MGFLP,
             15 => (MGFLC - 37 * 15) * MGFLP);
-      PDebug.DH ("Case 5 - C is", C);
+      PDebug.DH ("Case 2 - C is", C);
       SN := Car.Product_To_Seminormal (C);
-      PDebug.DH ("Case 5 - SN is", SN);
+      PDebug.DH ("Case 2 - SN is", SN);
    end Car_Stress;
 
    procedure Diff_Car_Stress

@@ -8,7 +8,9 @@ with Interfaces; use Interfaces;
 
 with IO;
 
---  Create dependencies to force recompilation of the whole library
+--  Create dependencies to force recompilation of the whole libraryw
+pragma Warnings (Off);
+
 with SPARKNaCl;      use SPARKNaCl;
 with SPARKNaCl.Core;
 with SPARKNaCl.Cryptobox;
@@ -28,6 +30,7 @@ with RISCV.CSR; use RISCV.CSR;
 with FE310.Performance_Monitor; use FE310.Performance_Monitor;
 
 procedure TSize is
+
    subtype U64 is Unsigned_64;
 
    M : constant Byte_Seq (0 .. 255) := (0 => 16#55#, others => 16#aa#);
@@ -48,14 +51,6 @@ procedure TSize is
 
    T1, T2 : UInt64;
 
-   Hash_SK_Time,
-   Hash_Reduce_SM1_Time,
-   Hash_Reduce_SM2_Time,
-   Scalarbase_R_Time,
-   Pack_P_Time,
-   Initialize_X_Time,
-   Assign_X_Time,
-   ModL_X_Time,
    Total_Time   : Unsigned_64;
 
    CPU_Hz1, CPU_Hz2 : UInt32;
@@ -65,18 +60,6 @@ procedure TSize is
    procedure Tweet_Sign (SM :    out Byte_Seq;
                          M  : in     Byte_Seq;
                          SK : in     Signing_SK);
-
-   procedure Tweet_Sign2 (SM :    out Byte_Seq;
-                          M  : in     Byte_Seq;
-                          SK : in     Signing_SK;
-                          Hash_SK_Time : out Unsigned_64;
-                          Hash_Reduce_SM1_Time : out Unsigned_64;
-                          Scalarbase_R_Time    : out Unsigned_64;
-                          Pack_P_Time          : out Unsigned_64;
-                          Hash_Reduce_SM2_Time : out Unsigned_64;
-                          Initialize_X_Time    : out Unsigned_64;
-                          Assign_X_Time        : out Unsigned_64;
-                          ModL_X_Time          : out Unsigned_64);
 
    procedure Tweet_Sign (SM :    out Byte_Seq;
                          M  : in     Byte_Seq;
@@ -91,52 +74,14 @@ procedure TSize is
                                  SK);
    end Tweet_Sign;
 
-   procedure Tweet_Sign2 (SM :    out Byte_Seq;
-                          M  : in     Byte_Seq;
-                          SK : in     Signing_SK;
-                          Hash_SK_Time : out Unsigned_64;
-                          Hash_Reduce_SM1_Time : out Unsigned_64;
-                          Scalarbase_R_Time    : out Unsigned_64;
-                          Pack_P_Time          : out Unsigned_64;
-                          Hash_Reduce_SM2_Time : out Unsigned_64;
-                          Initialize_X_Time    : out Unsigned_64;
-                          Assign_X_Time        : out Unsigned_64;
-                          ModL_X_Time          : out Unsigned_64)
-   is
-      SMLen : Unsigned_64;
-   begin
-      TweetNaCl_API.Crypto_Sign2 (SM,
-                                  SMLen,
-                                  M,
-                                  M'Length,
-                                  SK,
-                                  Hash_SK_Time,
-                                  Hash_Reduce_SM1_Time,
-                                  Scalarbase_R_Time,
-                                  Pack_P_Time,
-                                  Hash_Reduce_SM2_Time,
-                                  Initialize_X_Time,
-                                  Assign_X_Time,
-                                  ModL_X_Time);
-   end Tweet_Sign2;
-
    procedure Report
    is
    begin
-      IO.Put_Line ("Hash SK:         ", Hash_SK_Time);
-      IO.Put_Line ("Hash_Reduce SM1: ", Hash_Reduce_SM1_Time);
-      IO.Put_Line ("Scalarbase R:    ", Scalarbase_R_Time);
-      IO.Put_Line ("Pack P:          ", Pack_P_Time);
-      IO.Put_Line ("Hash_Reduce SM2: ", Hash_Reduce_SM2_Time);
-      IO.Put_Line ("Initialize X:    ", Initialize_X_Time);
-      IO.Put_Line ("Assign X:        ", Assign_X_Time);
-      IO.Put_Line ("ModL X:          ", ModL_X_Time);
       IO.Put      ("Total:           ");
       IO.Put      (UInt64 (Total_Time));
       IO.Put_Line (" cycles");
    end Report;
 
-   pragma Unreferenced (Tweet_Sign);
 begin
    CPU_Hz1 := FE310.CPU_Frequency;
 
@@ -189,16 +134,7 @@ begin
    IO.Put_Line ("SPARKNaCl.Sign test");
    SPARKNaCl.Count.Reset;
    T1 := Mcycle.Read;
-
-   SPARKNaCl.Sign.Sign2 (SM1, M, SK,
-                         Hash_SK_Time,
-                         Hash_Reduce_SM1_Time,
-                         Scalarbase_R_Time,
-                         Pack_P_Time,
-                         Hash_Reduce_SM2_Time,
-                         Initialize_X_Time,
-                         Assign_X_Time,
-                         ModL_X_Time);
+   SPARKNaCl.Sign.Sign (SM1, M, SK);
    T2 := Mcycle.Read;
    Total_Time := Unsigned_64 (T2 - T1);
    Report;
@@ -210,16 +146,7 @@ begin
    IO.Put_Line ("TweetNaCl.Sign test");
    TweetNaCl_API.Reset;
    T1 := Mcycle.Read;
-   Tweet_Sign2
-     (SM2, M, SK,
-      Hash_SK_Time,
-      Hash_Reduce_SM1_Time,
-      Scalarbase_R_Time,
-      Pack_P_Time,
-      Hash_Reduce_SM2_Time,
-      Initialize_X_Time,
-      Assign_X_Time,
-      ModL_X_Time);
+   Tweet_Sign (SM2, M, SK);
    T2 := Mcycle.Read;
    Total_Time := Unsigned_64 (T2 - T1);
 

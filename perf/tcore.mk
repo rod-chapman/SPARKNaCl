@@ -1,7 +1,8 @@
 all: tcore.hex tcore.asm
 
 tcore: tcore.adb io.adb io.ads tweetnacl_api.ads tweetnacl.c
-	gprbuild -Ptcore -v
+	gprbuild -Ptcore -v -XSPARKNACL_RUNTIME_MODE=zfp -XSPARKNACL_RUNTIME_CHECKS=disabled -XSPARKNACL_CONTRACTS=disabled
+	@mv main.map tcore.map
 	@grep "^.data" tcore.map
 	@grep "^.bss" tcore.map
 	@grep "__stack_start =" tcore.map
@@ -14,9 +15,6 @@ tcore.hex: tcore
 
 tcore.asm: tcore
 	riscv32-elf-objdump -S tcore >tcore.asm
-
-testcsr: testcsr.adb io.ads
-	gprbuild -Ptestcsr
 
 stack: tcore
 	gnatstack -Ptcore

@@ -1,0 +1,138 @@
+library project Sparknacl is
+
+   for Library_Name use "Sparknacl";
+   for Library_Version use "0.0.0";
+
+   for Source_Dirs use ("src");
+   for Object_Dir use "obj";
+   for Create_Missing_Dirs use "True";
+   for Library_Dir use "lib";
+
+   type Library_Type_Type is ("relocatable", "static", "static-pic");
+   Library_Type : Library_Type_Type :=
+     external ("SPARKNACL_LIBRARY_TYPE", external ("LIBRARY_TYPE", "static"));
+   for Library_Kind use Library_Type;
+
+   type Enabled_Kind is ("enabled", "disabled");
+   Compile_Checks : Enabled_Kind := External ("SPARKNACL_COMPILE_CHECKS", "enabled");
+   Runtime_Checks : Enabled_Kind := External ("SPARKNACL_RUNTIME_CHECKS", "enabled");
+   Style_Checks : Enabled_Kind := External ("SPARKNACL_STYLE_CHECKS", "enabled");
+   Contracts_Checks : Enabled_Kind := External ("SPARKNACL_CONTRACTS", "enabled");
+
+   type Build_Kind is ("debug", "O1", "O2", "O3");
+   Build_Mode : Build_Kind := External ("SPARKNACL_BUILD_MODE", "debug");
+
+   type Runtime_Kind is ("full", "zfp");
+   Runtime_Mode : Runtime_Kind := External ("SPARKNACL_RUNTIME_MODE", "full");
+
+   Callgraph_Switch := ("-fcallgraph-info=su,da");
+
+   Compile_Checks_Switches := ();
+   case Compile_Checks is
+      when "enabled" =>
+         Compile_Checks_Switches :=
+           ("-gnatwa",  -- All warnings
+            "-gnatwe"); -- Warnings as errors
+      when others => null;
+   end case;
+
+   Runtime_Checks_Switches := ();
+   case Runtime_Checks is
+      when "enabled" => null;
+      when others =>
+         Runtime_Checks_Switches :=
+           ("-gnatp"); -- Supress checks
+   end case;
+
+   Style_Checks_Switches := ();
+   case Style_Checks is
+      when "enabled" => null;
+         Style_Checks_Switches :=
+           ("-gnaty");    -- style checks on
+      when others => null;
+   end case;
+
+   Contracts_Switches := ();
+   case Contracts_Checks is
+      when "enabled" => null;
+         Contracts_Switches :=
+           ("-gnata"); --  Enable assertions and contracts
+      when others =>
+   end case;
+
+   Build_Switches := ();
+   case Build_Mode is
+      when "debug" =>
+         Build_Switches := ("-g",   -- Debug info
+                            "-O0"); -- No optimization
+      when "O1" =>
+         Build_Switches := ("-O1",     -- Optimization
+                            "-gnatn"); -- Enable inlining
+      when "O2" =>
+         Build_Switches := ("-O2",     -- Optimization
+                            "-gnatn"); -- Enable inlining
+      when "O3" =>
+         Build_Switches := ("-O3",     -- Optimization
+                            "-gnatn"); -- Enable inlining
+   end case;
+
+   case Runtime_Mode is
+      when "zfp" =>
+         for Runtime ("Ada") use "zfp";
+         for Excluded_Source_Files use ("sparknacl-debug.ads", "sparknacl-debug.adb", "sparknacl-pdebug.ads", "sparknacl-pdebug.adb", "random.adb");
+      when others =>
+         for Excluded_Source_Files use ("random_zfp.adb");
+   end case;
+
+   package Naming is
+      case Runtime_Mode is
+         when "zfp" =>
+            for Body ("random") use "random_zfp.adb";
+         when others =>
+            for Body ("random") use "random.adb";
+      end case;
+   end Naming;
+
+   package Compiler is
+      for Default_Switches ("Ada") use
+        Compile_Checks_Switches &
+        Callgraph_Switch &
+        Build_Switches &
+        Runtime_Checks_Switches &
+        Style_Checks_Switches &
+        Contracts_Switches &
+        ("-gnatw.X") & -- Disable warnings for No_Exception_Propagation
+        ("-gnatQ");    -- Don't quit. Generate ALI and tree files even if illegalities
+
+      for Local_Configuration_Pragmas use "src/sparknacl.adc";
+   end Compiler;
+
+   package Binder is
+      for Switches ("Ada") use ("-Es"); --  Symbolic traceback
+   end Binder;
+
+   package Prove is
+      for Proof_Switches ("Ada") use ("--proof=per_path",
+                                      "-j16",
+                                      "--no-global-generation",
+                                      "--no-inlining",
+                                      "--no-counterexample",
+                                      "--no-loop-unrolling",
+                                      "--level=4",
+                                      "--prover=z3,cvc4,altergo",
+                                      "--timeout=0",
+                                      "--memlimit=0",
+                                      "--steps=200000",
+                                      "--report=statistics");
+      for Proof_Switches ("sparknacl-utils.adb") use ("--prover=cvc4,z3");
+   end Prove;
+
+
+   --  All the main NaCl entry points
+   Stack_Entry_Points := ("-esparknacl.sign.open,sparknacl.sign.sign,sparknacl.sign.keypair,sparknacl.cryptobox.create,sparknacl.cryptobox.open,sparknacl.cryptobox.keypair,sparknacl.secretbox.create,sparknacl.secretbox.open,sparknacl.core.salsa20,sparknacl.core.hsalsa20,sparknacl.stream.salsa20,sparknacl.stream.salsa20_xor,sparknacl.stream.hsalsa20,sparknacl.stream.hsalsa20_xor,sparknacl.mac.onetimeauth,sparknacl.mac.onetimeauth_verify,sparknacl.hashing.hash,sparknacl.hashing.hashblocks,sparknacl.scalar.mult,sparknacl.scalar.mult_base,sparknacl.equal,sparknacl.random_bytes");
+
+   package Stack is
+      for Switches use ("-Wa", "-u 128", "-np", "-v") & Stack_Entry_Points;
+   end Stack;
+
+end Sparknacl;
