@@ -9,6 +9,8 @@ Licence: this work is released under the "simplified 2-clause BSD licence". See
 
 This library is a compact reference implementation of the NaCl crypto library. It was originally inspired by the TweetNaCl implementation, but offers a completely automated static proof of type-safety (and some correctness properties), reasonable performance, and (unlike TweetNaCl) is readable owing to the large number of explanatory comments and contracts in the code.
 
+[![Alire](https://img.shields.io/endpoint?url=https://alire.ada.dev/badges/sparknacl.json)](https://alire.ada.dev/crates/sparknacl.html)
+
 ## Contents
 
 [Latest news](https://github.com/rod-chapman/SPARKNaCl#latest-news)
