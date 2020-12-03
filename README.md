@@ -33,6 +33,12 @@ This library is a compact reference implementation of the NaCl crypto library. I
 
 ## Latest news
 
+### 3rd December 2020
+
+* SPARKNaCl is now available through the [ALIRE](https://alire.ada.dev/) package manager. Click on the ALIRE badge above to be taken to its entry in the ALIRE index.
+
+* Performance analysis and tuning has been going well. A full write-up of the results will be coming soon.
+
 ### 4th September 2020
 
 * We have completed worst-case stack usage analysis using GNATStack. This pointed out that there was a dynamic object being allocated on the stack in SPARKNaCl.Sign.Sign (owing to the use of the "&" operator to initialize the "out" parameter SM of procedure Sign.) This need for a dynamic object has been removed by refactoring the code slightly and using the new "Relaxed_Initialization" aspect that is supported in the 2020 SPARK language and toolset.  See the new procedure SPARKNaCl.Sign.Sign.Initialize_SM for details.
