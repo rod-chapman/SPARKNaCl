@@ -25,7 +25,7 @@ stestall: *.adb ../src/*.adb ../src/*.ads
 	gprclean -r -Ptestall
 	rm -f sntr
 	rm -f stestall
-	gprbuild -Ptestall
+	gprbuild -Ptestall -XSPARKNACL_RUNTIME_CHECKS=enabled -XSPARKNACL_CONTRACTS=enabled -XSPARKNACL_BUILD_MODE=debug
 	mv testall stestall
 
 clean:
