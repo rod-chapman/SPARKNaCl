@@ -1,7 +1,7 @@
 all: tsign.hex tsign.asm
 
 tsign: tsign.adb io.adb io.ads tweetnacl_api.ads tweetnacl.c
-	gprbuild -Ptsign -v -XSPARKNACL_RUNTIME_MODE=zfp -XSPARKNACL_RUNTIME_CHECKS=disabled -XSPARKNACL_CONTRACTS=disabled
+	gprbuild -Ptsign -v -XSPARKNACL_RUNTIME_MODE=zfp -XSPARKNACL_RUNTIME_CHECKS=disabled -XSPARKNACL_CONTRACTS=disabled -XSPARKNACL_BUILD_MODE=debug
 	@mv main.map tsign.map
 	@grep "^.data" tsign.map
 	@grep "^.bss" tsign.map
