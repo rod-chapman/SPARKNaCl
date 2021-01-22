@@ -12,20 +12,22 @@ abstract project Perf is
 
   Callgraph_Switch := ("-fcallgraph-info=su,da");
 
+  Opt_Switch := ("-O2");
+
   package Compiler is
 
     for Default_Switches ("C") use Compiler'Default_Switches ("C") &
         Callgraph_Switch &
+        Opt_Switch &
         ("-g",                  -- Debug info
-         "-O0",
          "-ffunction-sections", -- Create a linker section for each function
          "-fdata-sections");    -- Create a linker section for each data
 
     for Default_Switches ("Ada") use
         Compiler'Default_Switches ("Ada") &
         Callgraph_Switch &
+        Opt_Switch &
         ("-g",       -- Debug info
-         "-O0",
          "-gnatp",   -- Suppress all runtime checks
          "-gnaty",   -- Style checking on
          "-gnatwae", -- All warnings and treat them as errors
