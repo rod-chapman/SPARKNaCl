@@ -101,6 +101,8 @@ library project Sparknacl is
         Runtime_Checks_Switches &
         Style_Checks_Switches &
         Contracts_Switches &
+        ("-ffunction-sections") & -- Create a linker section for each function
+        ("-fdata-sections") &    -- Create a linker section for each data area
         ("-gnatw.X") & -- Disable warnings for No_Exception_Propagation
         ("-gnatQ");    -- Don't quit. Generate ALI and tree files even if illegalities
 
