@@ -30,4 +30,4 @@ clean:
 	rm -f graph.vcg
 	rm -f tweetnacl.ci
 	rm -f undefined.ciu
-	gprclean -Ptsign
+	gprclean -Ptsign -r
