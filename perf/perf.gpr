@@ -35,6 +35,7 @@ abstract project Perf is
          "-gnatRms", -- Output representation info for subprograms
          "-gnatQ",   -- Don't quit. Generate ALI and tree files even if illegalities
          "-gnatw.X", -- Disable warnings for No_Exception_Propagation
+         "-march=rv32im", -- No compressed instructions please
          "-ffunction-sections", -- Create a linker section for each function
          "-fdata-sections");    -- Create a linker section for each data
   end Compiler;

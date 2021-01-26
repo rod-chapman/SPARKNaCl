@@ -25,6 +25,10 @@ library project Sparknacl is
    type Runtime_Kind is ("full", "zfp");
    Runtime_Mode : Runtime_Kind := External ("SPARKNACL_RUNTIME_MODE", "full");
 
+   --  Extend this list to add any options for specific targets and see below
+   type Target_Arch_Kind is ("unspecified", "rv32im");
+   Target_Arch : Target_Arch_Kind := External ("SPARKNACL_TARGET_ARCH", "unspecified");
+
    Callgraph_Switch := ("-fcallgraph-info=su,da");
 
    Compile_Checks_Switches := ();
@@ -54,10 +58,10 @@ library project Sparknacl is
 
    Contracts_Switches := ();
    case Contracts_Checks is
-      when "enabled" => null;
+      when "enabled" =>
          Contracts_Switches :=
            ("-gnata"); --  Enable assertions and contracts
-      when others =>
+      when others => null;
    end case;
 
    Build_Switches := ();
@@ -74,6 +78,14 @@ library project Sparknacl is
       when "O3" =>
          Build_Switches := ("-O3",     -- Optimization
                             "-gnatn"); -- Enable inlining
+   end case;
+
+   --  Extend this case choice for any other target/architecture specific switches
+   case Target_Arch is
+      when "rv32im" =>
+         Build_Switches := Build_Switches &
+           ("-march=rv32im"); -- RV32IM but NO Compressed instructions please!
+      when others => null;
    end case;
 
    case Runtime_Mode is
