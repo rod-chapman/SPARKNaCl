@@ -57,7 +57,8 @@ is
    --============================================
 
    function ModL (X : in I64_Seq_64) return Bytes_32
-     with Global => null,
+     with Pure_Function,
+          Global => null,
           Pre    => (for all K in Index_64 => X (K) in 0 .. Max_X_Limb);
 
    procedure Sanitize_GF_Vector_4 (R : out GF_Vector_4)
@@ -65,27 +66,33 @@ is
 
    --  Replaces function "add" in the TweetNaCl sources
    function "+" (Left, Right : in GF_Vector_4) return GF_Vector_4
-     with Global => null;
+     with Pure_Function,
+          Global => null;
 
    function Scalarmult (Q : in GF_Vector_4;
                         S : in Bytes_32) return GF_Vector_4
-     with Global => null;
+     with Pure_Function,
+          Global => null;
 
    function Scalarbase (S : in Bytes_32) return GF_Vector_4
-     with Global => null;
+     with Pure_Function,
+          Global => null;
 
    function Pack (P : in GF_Vector_4) return Bytes_32
-     with Global => null;
+     with Pure_Function,
+          Global => null;
 
    subtype Bit is Byte range 0 .. 1;
 
    function Par_25519 (A : in Normal_GF) return Bit
-     with Global => null;
+     with Pure_Function,
+          Global => null;
 
    --  SPARKNaCl introduces this function to combine Hash and Reduce into
    --  a single call. Former procedure Reduce removed.
    function Hash_Reduce (M : in Byte_Seq) return Bytes_32
-     with Global => null;
+     with Pure_Function,
+          Global => null;
 
    procedure Unpackneg (R  :    out GF_Vector_4;
                         OK :    out Boolean;
@@ -709,10 +716,12 @@ is
       --  Local, time-constant equality test for GF
       --  In the original TweetNaCl sources, this is called eq25519
       function "=" (Left, Right : in Normal_GF) return Boolean
-        with Global => null;
+        with Pure_Function,
+             Global => null;
 
       function Pow_2523 (I : in Normal_GF) return Normal_GF
-        with Global => null;
+        with Pure_Function,
+             Global => null;
 
       function "=" (Left, Right : in Normal_GF) return Boolean
       is

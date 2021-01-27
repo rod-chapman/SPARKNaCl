@@ -85,7 +85,8 @@ is
 
    --  Primitive operation of Byte_Seq, so inheritable
    function Equal (X, Y : in Byte_Seq) return Boolean
-     with Global => null,
+     with Pure_Function,
+          Global => null,
           Pre    => X'First = Y'First and
                     X'Last  = Y'Last,
           Post   => Equal'Result =
@@ -384,17 +385,21 @@ private
    --===============================
 
    function "+" (Left, Right : in Normal_GF) return Normal_GF
-     with Global => null;
+     with Pure_Function,
+          Global => null;
 
    function "-" (Left, Right : in Normal_GF) return Normal_GF
-     with Global => null;
+     with Pure_Function,
+          Global => null;
 
    function "*" (Left, Right : in Normal_GF) return Normal_GF
-     with Global => null;
+     with Pure_Function,
+          Global => null;
 
    function Square (A : in Normal_GF) return Normal_GF
      is (A * A)
-     with Global => null;
+     with Pure_Function,
+          Global => null;
 
 
    --  Additional sanitization procedures for local types

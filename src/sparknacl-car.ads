@@ -17,30 +17,35 @@ is
    function Product_To_Seminormal
     (X : in Product_GF)
        return Seminormal_GF
-     with Global => null;
+     with Pure_Function,
+          Global => null;
 
    --  Supporting "*"
    function Seminormal_To_Nearlynormal
      (X : in Seminormal_GF)
        return Nearlynormal_GF
-     with Global => null;
+     with Pure_Function,
+          Global => null;
 
    --  Supporting "+"
    function Sum_To_Nearlynormal
      (X : in Sum_GF)
        return Nearlynormal_GF
-     with Global => null;
+     with Pure_Function,
+          Global => null;
 
    --  Supporting "-"
    function Difference_To_Nearlynormal
      (X : in Difference_GF)
        return Nearlynormal_GF
-     with Global => null;
+     with Pure_Function,
+          Global => null;
 
    --  Supporting "*", "+" and "-"
    function Nearlynormal_To_Normal
      (X : in Nearlynormal_GF)
        return Normal_GF
-     with Global => null;
+     with Pure_Function,
+          Global => null;
 
 end SPARKNaCl.Car;
