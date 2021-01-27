@@ -114,31 +114,25 @@ is
 
    function "+" (Left, Right : in GF_Vector_4) return GF_Vector_4
    is
-      L0 : GF renames Left (0);
-      L1 : GF renames Left (1);
-      L2 : GF renames Left (2);
-      L3 : GF renames Left (3);
-      R0 : GF renames Right (0);
-      R1 : GF renames Right (1);
-      R2 : GF renames Right (2);
-      R3 : GF renames Right (3);
-      A, B, C, D, E, F : GF;
+      A, B, C, D, E, F : Normal_GF;
+
+      function Double (X : in Normal_GF) return Normal_GF
+        is (X + X)
+        with Pure_Function,
+             Global => null;
    begin
-      A := (L1 - L0) * (R1 - R0);
-      B := (L0 + L1) * (R0 + R1);
+      A := (Left (1) - Left (0)) * (Right (1) - Right (0));
+      B := (Left (0) + Left (1)) * (Right (0) + Right (1));
       E := B - A;
       F := B + A;
 
       --  We are now done with A and B, so these variables can now
       --  be re-used. This saves yet more stack.
-      C := (L3 * R3) * GF_D2;
-      D := L2 * R2;
-      D := D + D;
+      C := (Left (3) * Right (3)) * GF_D2;
+      D := Double (Left (2) * Right (2));
       A := D - C;
       B := D + C;
 
-      --  Assign to Left element-by-element to avoid extra
-      --  temporary and copy needed by an aggregate assignment.
       return GF_Vector_4'(0 => E * A,
                           1 => F * B,
                           2 => B * A,
