@@ -114,7 +114,7 @@ is
 
    function "+" (Left, Right : in GF_Vector_4) return GF_Vector_4
    is
-      A, B, C, D, E, F : Normal_GF;
+      A, B, C, D, E, F, G, H : Normal_GF;
 
       function Double (X : in Normal_GF) return Normal_GF
         is (X + X)
@@ -123,20 +123,18 @@ is
    begin
       A := (Left (1) - Left (0)) * (Right (1) - Right (0));
       B := (Left (0) + Left (1)) * (Right (0) + Right (1));
-      E := B - A;
-      F := B + A;
-
-      --  We are now done with A and B, so these variables can now
-      --  be re-used. This saves yet more stack.
       C := (Left (3) * Right (3)) * GF_D2;
       D := Double (Left (2) * Right (2));
-      A := D - C;
-      B := D + C;
 
-      return GF_Vector_4'(0 => E * A,
-                          1 => F * B,
-                          2 => B * A,
-                          3 => E * F);
+      E := D - C;
+      F := D + C;
+      G := B - A;
+      H := B + A;
+
+      return GF_Vector_4'(0 => G * E,
+                          1 => H * F,
+                          2 => F * E,
+                          3 => G * H);
    end "+";
 
    function Scalarmult (Q : in GF_Vector_4;
