@@ -64,11 +64,7 @@ is
      with Global => null;
 
    --  Replaces function "add" in the TweetNaCl sources
-   procedure Add (Left  : in out GF_Vector_4;
-                  Right : in     GF_Vector_4)
-     with Global => null;
-
-   procedure Double (P : in out GF_Vector_4)
+   function "+" (Left, Right : in GF_Vector_4) return GF_Vector_4
      with Global => null;
 
    function Scalarmult (Q : in GF_Vector_4;
@@ -109,8 +105,7 @@ is
       end loop;
    end Sanitize_GF_Vector_4;
 
-   procedure Add (Left  : in out GF_Vector_4;
-                  Right : in     GF_Vector_4)
+   function "+" (Left, Right : in GF_Vector_4) return GF_Vector_4
    is
       L0 : GF renames Left (0);
       L1 : GF renames Left (1);
@@ -137,19 +132,11 @@ is
 
       --  Assign to Left element-by-element to avoid extra
       --  temporary and copy needed by an aggregate assignment.
-      L0 := E * A;
-      L1 := F * B;
-      L2 := B * A;
-      L3 := E * F;
-   end Add;
-
-   procedure Double (P : in out GF_Vector_4)
-   is
-      --  Ada's anti-aliasing rules require an extra copy here.
-      T : constant GF_Vector_4 := P;
-   begin
-      Add (P, T);
-   end Double;
+      return GF_Vector_4'(0 => E * A,
+                          1 => F * B,
+                          2 => B * A,
+                          3 => E * F);
+   end "+";
 
    function Scalarmult (Q : in GF_Vector_4;
                         S : in Bytes_32) return GF_Vector_4
@@ -185,8 +172,8 @@ is
             Swap := Boolean'Val (Shift_Right (CB, J) mod 2);
 
             CSwap (LP, LQ, Swap);
-            Add (LQ, LP);
-            Double (LP);
+            LQ := LQ + LP;
+            LP := LP + LP;
             CSwap (LP, LQ, Swap);
          end loop;
       end loop;
@@ -1065,7 +1052,7 @@ is
       Q := Scalarbase (SM (32 .. 63));
 
       --  Call to user-defined "+" for GF_Vector_4
-      Add (P, Q);
+      P := P + Q;
       T := Pack (P);
 
       if not Equal (SM (0 .. 31), T) then
