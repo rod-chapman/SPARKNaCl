@@ -1,9 +1,6 @@
 #include "tweetnacl.h"
 #include "d.h"
 
-#include "tweetcount.h"
-#include "fenceit.h"
-
 #define FOR(i,n) for (i = 0;i < n;++i)
 #define sv static void
 
@@ -291,8 +288,6 @@ sv car25519(gf o)
   int i;
   i64 c;
 
-//  tweet_gf_car++;
-
   FOR(i,16) {
     o[i]+=(1LL<<16);
     c=o[i]>>16;
@@ -362,8 +357,6 @@ sv A(gf o,const gf a,const gf b)
 {
   int i;
 
-//  tweet_gf_add++;
-
   FOR(i,16) o[i]=a[i]+b[i];
 }
 
@@ -371,16 +364,12 @@ sv Z(gf o,const gf a,const gf b)
 {
   int i;
 
-//  tweet_gf_sub++;
-
   FOR(i,16) o[i]=a[i]-b[i];
 }
 
 sv M(gf o,const gf a,const gf b)
 {
   i64 i,j,t[31];
-
-//  tweet_gf_mul++;
 
   FOR(i,31) t[i]=0;
   FOR(i,16) FOR(j,16) t[i+j]+=a[i]*b[j];
@@ -572,9 +561,7 @@ int crypto_hashblocks(u8 *x,const u8 *m,u64 n)
     FOR(i,80) {
       FOR(j,8) b[j] = a[j];
       t = a[7] + Sigma1(a[4]) + Ch(a[4],a[5],a[6]) + K[i] + w[i%16];
-      fenceit();
       b[7] = t + Sigma0(a[0]) + Maj(a[0],a[1],a[2]);
-      fenceit();
       b[3] += t;
       FOR(j,8) a[(j+1)%8] = b[j];
       if (i%16 == 15)
