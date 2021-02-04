@@ -20,6 +20,7 @@ abstract project Perf is
         Callgraph_Switch &
         Opt_Switch &
         ("-g",                  -- Debug info
+         "-march=rv32im",       -- No compressed instructions for C
          "-ffunction-sections", -- Create a linker section for each function
          "-fdata-sections");    -- Create a linker section for each data
 
