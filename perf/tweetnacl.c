@@ -285,15 +285,15 @@ sv set25519(gf r, const gf a)
 
 sv car25519(gf o)
 {
-  int i;
-  i64 c;
-
-  FOR(i,16) {
-    o[i]+=(1LL<<16);
-    c=o[i]>>16;
-    o[(i+1)*(i<15)]+=c-1+37*(c-1)*(i==15);
-    o[i]-=c<<16;
-  }
+    // Faster version owing to WireGuard, and also unroll the final
+    // iteration
+    int i;
+    for (i = 0; i < 15; ++i) {
+        o[(i + 1)] += (o[i] >> 16);
+        o[i] &= 0xffff;
+    }
+    o[0] += 38 * (o[15] >> 16);
+    o[15] &= 0xffff;
 }
 
 sv sel25519(gf p,gf q,int b)
@@ -369,10 +369,32 @@ sv Z(gf o,const gf a,const gf b)
 
 sv M(gf o,const gf a,const gf b)
 {
-  i64 i,j,t[31];
+  i64 lt,i,j,t[31];
 
   FOR(i,31) t[i]=0;
-  FOR(i,16) FOR(j,16) t[i+j]+=a[i]*b[j];
+
+  FOR(i,16)
+  {
+    // Inner loop unrolled and refactored as per SPARKNaCl
+    lt = a[i];
+    t[i]  +=lt*b[0];
+    t[i+1]+=lt*b[1];
+    t[i+2]+=lt*b[2];
+    t[i+3]+=lt*b[3];
+    t[i+4]+=lt*b[4];
+    t[i+5]+=lt*b[5];
+    t[i+6]+=lt*b[6];
+    t[i+7]+=lt*b[7];
+    t[i+8]+=lt*b[8];
+    t[i+9]+=lt*b[9];
+    t[i+10]+=lt*b[10];
+    t[i+11]+=lt*b[11];
+    t[i+12]+=lt*b[12];
+    t[i+13]+=lt*b[13];
+    t[i+14]+=lt*b[14];
+    t[i+15]+=lt*b[15];
+  }
+
   FOR(i,15) t[i]+=38*t[i+16];
   FOR(i,16) o[i]=t[i];
 
@@ -662,17 +684,23 @@ sv pack(u8 *r,gf p[4])
 
 sv scalarmult(gf p[4],gf q[4],const u8 *s)
 {
-  int i;
+  int i,j;
   set25519(p[0],gf0);
   set25519(p[1],gf1);
   set25519(p[2],gf1);
   set25519(p[3],gf0);
-  for (i = 255;i >= 0;--i) {
-    u8 b = (s[i/8]>>(i&7))&1;
-    cswap(p,q,b);
-    add(q,p);
-    add(p,p);
-    cswap(p,q,b);
+
+  // Refactored as per SPARKNaCl to move assigment to
+  // cb out of inner loop.
+  for (i = 31;i >= 0;--i) {
+    u8 cb = s[i];
+    for (j = 7;j >= 0;--j) {
+      u8 b = (cb >> j)&1;
+      cswap(p,q,b);
+      add(q,p);
+      add(p,p);
+      cswap(p,q,b);
+    }
   }
 }
 
