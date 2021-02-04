@@ -145,6 +145,12 @@ begin
 
    Turn_Off (Green_LED);
 
+   if SM1 = SM2 then
+      IO.Put_Line ("PASS!");
+   else
+      IO.Put_Line ("FAIL!");
+   end if;
+
    --  Blinky!
    loop
       Turn_On (Red_LED);
