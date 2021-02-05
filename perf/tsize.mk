@@ -3,7 +3,7 @@ all: sizes.txt
 SIZE_OBJS := ../obj/sparknacl.o ../obj/sparknacl-car.o ../obj/sparknacl-core.o ../obj/sparknacl-cryptobox.o ../obj/sparknacl-hashing.o ../obj/sparknacl-mac.o ../obj/sparknacl-scalar.o ../obj/sparknacl-secretbox.o ../obj/sparknacl-sign.o ../obj/sparknacl-sign-utils.o ../obj/sparknacl-stream.o ../obj/sparknacl-utils.o
 
 sizes.txt: tsize.adb io.adb io.ads tweetnacl_api.ads tweetnacl.c
-	gprbuild -Ptsize -v -XSPARKNACL_RUNTIME_MODE=zfp -XSPARKNACL_RUNTIME_CHECKS=disabled -XSPARKNACL_CONTRACTS=disabled
+	gprbuild -Ptsize -v -XSPARKNACL_RUNTIME_MODE=zfp -XSPARKNACL_RUNTIME_CHECKS=disabled -XSPARKNACL_CONTRACTS=disabled -XSPARKNACL_TARGET_ARCH=rv32im -XSPARKNACL_BUILD_MODE=O2
 	@mv main.map tsize.map
 	riscv32-elf-objdump -S tsize >tsize.asm
 	riscv32-elf-strip $(SIZE_OBJS)
@@ -33,4 +33,4 @@ clean:
 	rm -f graph.vcg
 	rm -f tweetnacl.ci
 	rm -f undefined.ciu
-	gprclean -Ptsize
+	gprclean -Ptsize -r
