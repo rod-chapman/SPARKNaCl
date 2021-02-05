@@ -26,7 +26,7 @@ library project Sparknacl is
    Runtime_Mode : Runtime_Kind := External ("SPARKNACL_RUNTIME_MODE", "full");
 
    --  Extend this list to add any options for specific targets and see below
-   type Target_Arch_Kind is ("unspecified", "rv32im");
+   type Target_Arch_Kind is ("unspecified", "rv32im", "rv32imc", "rv32imc_f4l4");
    Target_Arch : Target_Arch_Kind := External ("SPARKNACL_TARGET_ARCH", "unspecified");
 
    Callgraph_Switch := ("-fcallgraph-info=su,da");
@@ -84,7 +84,15 @@ library project Sparknacl is
    case Target_Arch is
       when "rv32im" =>
          Build_Switches := Build_Switches &
-           ("-march=rv32im"); -- RV32IM but NO Compressed instructions please!
+           ("-march=rv32im"); -- RV32IM but NO Compressed instructions
+      when "rv32imc" =>
+         Build_Switches := Build_Switches &
+           ("-march=rv32imc"); -- RV32IM with Compressed instructions
+      when "rv32imc_f4l4" =>
+         Build_Switches := Build_Switches &
+           ("-march=rv32imc") & -- Compressed instructions but all BBs on 4-byte alignment
+           ("-falign-functions=4") &
+           ("-falign-labels=4");
       when others => null;
    end case;
 
