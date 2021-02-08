@@ -17,7 +17,7 @@ tsign.asm: tsign
 	riscv32-elf-objdump -S tsign >tsign.asm
 
 stack: tsign
-	gnatstack -Ptsign -p -v -XSPARKNACL_RUNTIME_MODE=zfp -XSPARKNACL_RUNTIME_CHECKS=disabled -XSPARKNACL_CONTRACTS=disabled -XSPARKNACL_TARGET_ARCH=rv32im -XSPARKNACL_BUILD_MODE=debug
+	gnatstack -Ptsign -p -v -XSPARKNACL_RUNTIME_MODE=zfp -XSPARKNACL_RUNTIME_CHECKS=disabled -XSPARKNACL_CONTRACTS=disabled -XSPARKNACL_TARGET_ARCH=rv32im -XSPARKNACL_BUILD_MODE=debug -esparknacl.sign.sign
 
 run: tsign.hex
 	cp tsign.hex /media/rchapman/HiFive
