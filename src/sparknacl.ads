@@ -224,7 +224,7 @@ private
    MGFLP : constant := LMM1 * LMM1;
 
    subtype GF64_Any_Limb is I64 range -LM .. (MGFLC * MGFLP);
-   subtype GF32_Any_Limb is I32 range (1 - R2256) .. ((2 * LMM1) - R2256 + 1);
+   subtype GF32_Any_Limb is I32 range -LM .. (2 * LMM1) + 1;
 
    type GF64 is array (Index_16) of GF64_Any_Limb;
    type GF32 is array (Index_16) of GF32_Any_Limb;
@@ -363,6 +363,10 @@ private
    is (To_I64 (Shift_Right_Arithmetic (To_U64 (X), 16)))
      with Post => (if X >= 0 then ASR64_16'Result = X / LM else
                                   ASR64_16'Result = ((X + 1) / LM) - 1);
+   pragma Annotate (GNATprove,
+                    False_Positive,
+                    "postcondition might fail",
+                    "From definition of arithmetic shift right");
 
    --  returns equivalent of X >> 16 in C, doing an arithmetic
    --  shift right when X is negative, assuming 2's complement
