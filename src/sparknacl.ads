@@ -243,7 +243,7 @@ private
 
    subtype Normal_GF is GF32
      with Dynamic_Predicate =>
-       (for all I in Index_16 => Normal_GF32 (I) in GF32_Normal_Limb);
+       (for all I in Index_16 => Normal_GF (I) in GF32_Normal_Limb);
 
    -------------------------------------------------------------------------
 
@@ -296,7 +296,7 @@ private
        (for all I in Index_16 =>
          Product_GF (I) >= 0 and
          Product_GF (I) <=
-           (MGFLC - 37 * GF_Any_Limb (I)) * MGFLP);
+           (MGFLC - 37 * GF64_Any_Limb (I)) * MGFLP);
 
    ----------------------------------------------------------------------
    --  A "Seminormal GF" is the result of applying a single
@@ -423,7 +423,7 @@ private
 
 
    --  Additional sanitization procedures for local types
-   procedure Sanitize_U32 (R : out U64)
+   procedure Sanitize_U32 (R : out U32)
      with Global => null,
           No_Inline;
 

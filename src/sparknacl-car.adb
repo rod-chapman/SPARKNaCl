@@ -46,9 +46,9 @@ is
          Carry := ASR64_16 (R (I));
 
          pragma Assert
-           (X (I + 1) <= (MGFLC - 37 * GF_Any_Limb (I + 1)) * MGFLP);
+           (X (I + 1) <= (MGFLC - 37 * GF64_Any_Limb (I + 1)) * MGFLP);
          pragma Assert
-           (X (I) <= (MGFLC - 37 * GF_Any_Limb (I)) * MGFLP);
+           (X (I) <= (MGFLC - 37 * GF64_Any_Limb (I)) * MGFLP);
 
          R (I) := R (I) mod LM;
          R (I + 1) := X (I + 1) + Carry;
@@ -60,7 +60,7 @@ is
          pragma Loop_Invariant (R (I + 1)'Initialized);
          pragma Loop_Invariant (R (I + 1) >= 0);
          pragma Loop_Invariant
-           (R (I + 1) <= (MGFLC - 37 * GF_Any_Limb (I)) * MGFLP);
+           (R (I + 1) <= (MGFLC - 37 * GF64_Any_Limb (I)) * MGFLP);
 
       end loop;
 
@@ -77,18 +77,33 @@ is
 
       R (0) := R (0) + R2256 * Carry;
 
-      pragma Assert (R (0) in Seminormal_GF_LSL);
-
+      pragma Assert (R (0) >= I64(Seminormal_GF_LSL'First) and
+                     R (0) <= I64(Seminormal_GF_LSL'Last));
       R (15) := R (15) mod LM;
 
-      return Seminormal_GF (R);
+      return Seminormal_GF'(0  => I32 (R (0)),
+                            1  => I32 (R (1)),
+                            2  => I32 (R (2)),
+                            3  => I32 (R (3)),
+                            4  => I32 (R (4)),
+                            5  => I32 (R (5)),
+                            6  => I32 (R (6)),
+                            7  => I32 (R (7)),
+                            8  => I32 (R (8)),
+                            9  => I32 (R (9)),
+                            10 => I32 (R (10)),
+                            11 => I32 (R (11)),
+                            12 => I32 (R (12)),
+                            13 => I32 (R (13)),
+                            14 => I32 (R (14)),
+                            15 => I32 (R (15)));
    end Product_To_Seminormal;
 
    function Seminormal_To_Nearlynormal
      (X : in Seminormal_GF)
        return Nearlynormal_GF
    is
-      subtype First_Carry_T is I64 range
+      subtype First_Carry_T is I32 range
         0 .. Seminormal_GF_LSL'Last / LM;
       First_Carry : First_Carry_T;
 
@@ -225,7 +240,7 @@ is
       --  True iff the initial value of X and the current
       --  state of G are necessary and sufficient for Carry = 1 after
       --  the I'th loop iteration
-      function Carrying_Plus_One (G : in GF;
+      function Carrying_Plus_One (G : in GF32;
                                   X : in Nearlynormal_GF;
                                   I : in Index_16) return Boolean
       is ((X (0) in LM .. LMM1 + R2256) and --  X (O) will carry +1
@@ -244,7 +259,7 @@ is
       --  True iff the initial value of X and the current
       --  state of G are necessary and sufficient for Carry = -1 after
       --  the I'th loop iteration
-      function Carrying_Minus_One (G : in GF;
+      function Carrying_Minus_One (G : in GF32;
                                    X : in Nearlynormal_GF;
                                    I : in Index_16) return Boolean
       is ((X (0) in   -R2256 .. -1) and --  X (O) will carry -1
