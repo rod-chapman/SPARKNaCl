@@ -223,19 +223,32 @@ private
    --  "Maximum GF Limb Product"
    MGFLP : constant := LMM1 * LMM1;
 
-   subtype GF64_Any_Limb is I64 range -LM .. (MGFLC * MGFLP);
-   subtype GF32_Any_Limb is I32 range -LM .. (2 * LMM1) + 1;
-
-   type GF64 is array (Index_16) of GF64_Any_Limb;
+   --  The max value of a GF32_Any_Limb is the upper bound on digit 0
+   --  following ONE application of Product_To_Seminormal_GF to the
+   --  intermidiate result of a "*" operation. This value is actually
+   --  a bit less than 2**27 which justifies that subsequence normalization
+   --  steps can all be done in 32-bir arithmetic.
+   --
+   --  See the declaration of Seminormal_GF_LSL below for detail of
+   --  how this value is derived.
+   GF32_Any_Limb_Max : constant := (LMM1 + R2256 * ((53 * MGFLP) / LM));
+   subtype GF32_Any_Limb is I32
+     range -LM .. GF32_Any_Limb_Max;
    type GF32 is array (Index_16) of GF32_Any_Limb;
+
+
+   --  In the "*" operator for GF, intermediate results require
+   --  64 bit integers before being normalized, so...
+   subtype GF64_Any_Limb is I64 range -LM .. (MGFLC * MGFLP);
+   type GF64 is array (Index_16) of GF64_Any_Limb;
 
    --  GF64 Product Accumulator - used in "*" to accumulate the
    --  intermediate results of Left * Right
    type GF64_PA is array (Index_31) of GF64_Any_Limb;
 
    -------------------------------------------------------------------------
-   subtype GF64_Normal_Limb is I64 range 0 .. LMM1;
-   subtype GF32_Normal_Limb is I32 range 0 .. LMM1;
+   subtype GF64_Normal_Limb is GF64_Any_Limb range 0 .. LMM1;
+   subtype GF32_Normal_Limb is GF32_Any_Limb range 0 .. LMM1;
 
    subtype Normal_GF64 is GF64
      with Dynamic_Predicate =>
@@ -276,7 +289,7 @@ private
    --  is reduced by R2256, so...
    subtype Difference_GF is GF32
      with Dynamic_Predicate =>
-        ((Difference_GF (0) in GF32_Any_Limb'First .. GF32_Any_Limb'Last) and
+        ((Difference_GF (0) in (1 - R2256) .. (2 * LMM1) + 1) and
            (for all K in Index_16 range 1 .. 15 =>
               Difference_GF (K) in 0 .. 2 * LMM1));
 
@@ -310,8 +323,8 @@ private
    --    (MGFLC - 37 * 14) * MGFLP = 53 * MGFLP
    --  See the body of Product_To_Seminormal for the full
    --  proof of this upper-bound
-   subtype Seminormal_GF_LSL is I32
-     range 0 .. (LMM1 + R2256 * ((53 * MGFLP) / LM));
+   subtype Seminormal_GF_LSL is GF32_Any_Limb
+     range 0 .. GF32_Any_Limb_Max;
 
    --  Limbs 1 though 15 are in 0 .. 65535, but the
    --  Least Significant Limb 0 is in GF_Seminormal_Product_LSL

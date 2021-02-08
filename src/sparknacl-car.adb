@@ -78,8 +78,8 @@ is
       R (0)  := R (0) + R2256 * Carry;
       R (15) := R (15) mod LM;
 
-      pragma Assert (R (0) >= I64(Seminormal_GF_LSL'First) and
-                     R (0) <= I64(Seminormal_GF_LSL'Last));
+      pragma Assert (R (0) >= I64 (Seminormal_GF_LSL'First) and
+                     R (0) <= I64 (Seminormal_GF_LSL'Last));
       pragma Assert
         (for all K in Index_16 range 1 .. 15 => (R (K) in GF64_Normal_Limb));
 
@@ -349,9 +349,9 @@ is
         (for all K in Index_16 range 0 .. 15 => (R (K) in GF32_Normal_Limb));
 
       --  At last, we know that:
-      --    if Carry = +1, then R (0) in 0 .. 37
-      --    if Carry = -1, then R (0) in 65498 .. 65535
-      --    if Carry =  0, then it doesn't matter since R (0) in GF32_Normal_Limb
+      --  if Carry = +1, then R (0) in 0 .. 37
+      --  if Carry = -1, then R (0) in 65498 .. 65535
+      --  if Carry =  0, then it doesn't matter since R (0) in GF32_Normal_Limb
       --  Therefore this multiplication and assignment will never overflow and
       --  R (0) remains in GF32_Normal_Limb. Phew!
       R (0) := R (0) + R2256 * Carry;
