@@ -5,23 +5,23 @@ with SPARKNaCl.Car;
 with Ada.Text_IO; use Ada.Text_IO;
 package body SPARKNaCl.Tests
 is
-   GF_2 : constant GF := (2, others => 0);
+   GF_2 : constant GF32 := (2, others => 0);
 
-   P : constant GF := (0      => 16#FFED#,
-                       15     => 16#7FFF#,
-                       others => 16#FFFF#);
+   P : constant GF32 := (0      => 16#FFED#,
+                         15     => 16#7FFF#,
+                         others => 16#FFFF#);
 
-   P_Minus_1 : constant GF := (0      => 16#FFEC#,
-                               15     => 16#7FFF#,
-                               others => 16#FFFF#);
+   P_Minus_1 : constant GF32 := (0      => 16#FFEC#,
+                                 15     => 16#7FFF#,
+                                 others => 16#FFFF#);
 
-   P_Plus_1 : constant GF := (0      => 16#FFEE#,
-                              15     => 16#7FFF#,
-                              others => 16#FFFF#);
+   P_Plus_1 : constant GF32 := (0      => 16#FFEE#,
+                                15     => 16#7FFF#,
+                                others => 16#FFFF#);
 
    procedure GF_Stress
    is
-      A, B, C : GF;
+      A, B, C : GF32;
       D       : Product_GF;
    begin
       Put_Line ("GF_Stress case 1 - 0 * 0");
@@ -49,7 +49,7 @@ is
 
    procedure Car_Stress
    is
-      A    : GF;
+      A    : GF64;
       C    : Product_GF;
       SN   : Seminormal_GF;
       NGF  : Nearlynormal_GF;
@@ -57,7 +57,7 @@ is
    begin
       --  Case 1 - using typed API
       A := (0 .. 14 => 65535, 15 => 65535 + 2**32);
-      PDebug.DH ("Case 1 - A is", A);
+      PDebug.DH64 ("Case 1 - A is", A);
       SN := Car.Product_To_Seminormal (A);
       PDebug.DH ("Case 1 - SN is", SN);
       NGF := Car.Seminormal_To_Nearlynormal (SN);
@@ -82,7 +82,7 @@ is
             13 => (MGFLC - 37 * 13) * MGFLP,
             14 => (MGFLC - 37 * 14) * MGFLP,
             15 => (MGFLC - 37 * 15) * MGFLP);
-      PDebug.DH ("Case 2 - C is", C);
+      PDebug.DH64 ("Case 2 - C is", C);
       SN := Car.Product_To_Seminormal (C);
       PDebug.DH ("Case 2 - SN is", SN);
       NGF := Car.Seminormal_To_Nearlynormal (SN);
@@ -109,7 +109,7 @@ is
             16#59FF4C005A#,
             16#34FF960035#,
             16#FFFE00010#);
-      PDebug.DH ("Case 3 - A is", A);
+      PDebug.DH64 ("Case 3 - A is", A);
       SN := Car.Product_To_Seminormal (A);
       PDebug.DH ("Case 3 - SN is", SN);
       NGF := Car.Seminormal_To_Nearlynormal (SN);
@@ -137,7 +137,7 @@ is
       R := Car.Nearlynormal_To_Normal (C);
       PDebug.DH ("Case 2 - R is", R);
 
-      for I in I64 range 65536 .. 65573 loop
+      for I in I32 range 65536 .. 65573 loop
          C (0) := I;
          PDebug.DH ("Case 3," & I'Img & " C is", C);
          R := Car.Nearlynormal_To_Normal (C);
@@ -145,7 +145,7 @@ is
       end loop;
 
       C := (others => 0);
-      for I in I64 range -38 .. -1 loop
+      for I in I32 range -38 .. -1 loop
          C (0) := I;
          PDebug.DH ("Case 4," & I'Img & " C is", C);
          R := Car.Nearlynormal_To_Normal (C);
@@ -159,11 +159,11 @@ is
 
    procedure Pack_Stress
    is
-      A : GF;
+      A : GF32;
       R : Bytes_32;
-      Two_P : constant GF := P * GF_2;
-      Two_P_Minus_1 : constant GF := Two_P - GF_1;
-      Two_P_Plus_1 : constant GF := Two_P + GF_1;
+      Two_P : constant GF32 := P * GF_2;
+      Two_P_Minus_1 : constant GF32 := Two_P - GF_1;
+      Two_P_Plus_1 : constant GF32 := Two_P + GF_1;
    begin
       A := (others => 0);
       PDebug.DH ("Pack Stress - Case 1 - A is", A);

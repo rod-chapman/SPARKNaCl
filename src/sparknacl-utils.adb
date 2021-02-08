@@ -2,27 +2,27 @@ package body SPARKNaCl.Utils
   with SPARK_Mode => On
 is
 
-   type Bit_To_Swapmask_Table is array (Boolean) of U64;
+   type Bit_To_Swapmask_Table is array (Boolean) of U32;
    Bit_To_Swapmask : constant Bit_To_Swapmask_Table :=
-     (False => 16#0000_0000_0000_0000#,
-      True  => 16#FFFF_FFFF_FFFF_FFFF#);
+     (False => 16#0000_0000#,
+      True  => 16#FFFF_FFFF#);
 
-   procedure CSwap (P    : in out GF;
-                    Q    : in out GF;
+   procedure CSwap (P    : in out GF32;
+                    Q    : in out GF32;
                     Swap : in     Boolean)
    is
-      T : U64;
-      C : U64 := Bit_To_Swapmask (Swap);
+      T : U32;
+      C : U32 := Bit_To_Swapmask (Swap);
 
       --  Do NOT try to evaluate the assumption below at run-time
       pragma Assertion_Policy (Assume => Ignore);
    begin
       --  We need this axiom
       pragma Assume
-        (for all K in I64 => To_I64 (To_U64 (K)) = K);
+        (for all K in I32 => To_I32 (To_U32 (K)) = K);
 
       for I in Index_16 loop
-         T := C and (To_U64 (P (I)) xor To_U64 (Q (I)));
+         T := C and (To_U32 (P (I)) xor To_U32 (Q (I)));
 
          --  Case 1 - "Swap"
          --   Swap -> C = 16#FFFF....# -> T = P(I) xor Q (I) ->
@@ -35,17 +35,17 @@ is
          --   Q (I) xor T = Q (I)
          pragma Assert
            ((if Swap then
-              (T = (To_U64 (P (I)) xor To_U64 (Q (I))) and then
-               To_I64 (To_U64 (P (I)) xor T) = Q (I) and then
-               To_I64 (To_U64 (Q (I)) xor T) = P (I))
+              (T = (To_U32 (P (I)) xor To_U32 (Q (I))) and then
+               To_I32 (To_U32 (P (I)) xor T) = Q (I) and then
+               To_I32 (To_U32 (Q (I)) xor T) = P (I))
              else
               (T = 0 and then
-               To_I64 (To_U64 (P (I)) xor T) = P (I) and then
-               To_I64 (To_U64 (Q (I)) xor T) = Q (I)))
+               To_I32 (To_U32 (P (I)) xor T) = P (I) and then
+               To_I32 (To_U32 (Q (I)) xor T) = Q (I)))
            );
 
-         P (I) := To_I64 (To_U64 (P (I)) xor T);
-         Q (I) := To_I64 (To_U64 (Q (I)) xor T);
+         P (I) := To_I32 (To_U32 (P (I)) xor T);
+         Q (I) := To_I32 (To_U32 (Q (I)) xor T);
 
          pragma Loop_Invariant
            (if Swap then
@@ -63,8 +63,8 @@ is
       --  Note that Swap cannot be sanitized here since it is
       --  an "in" parameter
       pragma Warnings (GNATProve, Off, "statement has no effect");
-      Sanitize_U64 (T);
-      Sanitize_U64 (C);
+      Sanitize_U32 (T);
+      Sanitize_U32 (C);
       pragma Unreferenced (T);
       pragma Unreferenced (C);
    end CSwap;
@@ -73,12 +73,12 @@ is
    is
       --  Subtracting P twice from a Normal_GF might result
       --  in a GF where limb 15 can be negative with lower bound -65536
-      subtype Temp_GF_MSL is I64 range -LM .. LMM1;
-      subtype Temp_GF is GF
+      subtype Temp_GF_MSL is I32 range -LM .. LMM1;
+      subtype Temp_GF is GF32
         with Dynamic_Predicate =>
           (Temp_GF (15) in Temp_GF_MSL and
             (for all K in Index_16 range 0 .. 14 =>
-               Temp_GF (K) in GF_Normal_Limb));
+               Temp_GF (K) in GF32_Normal_Limb));
 
       --  Result := T - P;
       --  if     Underflow, then Result is not a Normal_GF
@@ -98,8 +98,8 @@ is
                             Result    :    out Temp_GF;
                             Underflow :    out Boolean)
       is
-         Carry : I64_Bit;
-         R     : GF;
+         Carry : I32_Bit;
+         R     : GF32;
       begin
          R := GF_0;
 
@@ -108,19 +108,19 @@ is
 
          --  Limbs 1 .. 14 - subtract FFFF with carry
          for I in Index_16 range 1 .. 14 loop
-            Carry     := ASR_16 (R (I - 1)) mod 2;
+            Carry     := ASR32_16 (R (I - 1)) mod 2;
             R (I)     := T (I) - 16#FFFF# - Carry;
             R (I - 1) := R (I - 1) mod LM;
 
             pragma Loop_Invariant
               (for all J in Index_16 range 0 .. I - 1 =>
-                 R (J) in GF_Normal_Limb);
+                 R (J) in GF32_Normal_Limb);
          end loop;
 
          --  Limb 15 - Subtract MSL (Most Significant Limb)
          --  of P (16#7FFF#) with carry.
          --  Note that Limb 15 might become negative on underflow
-         Carry  := ASR_16 (R (14)) mod 2;
+         Carry  := ASR32_16 (R (14)) mod 2;
          R (15) := (T (15) - 16#7FFF#) - Carry;
 
          --  Historical note: the original version of TweetNaCl had a bug
@@ -137,7 +137,7 @@ is
          --  as the input to the second.
          Underflow := R (15) < 0;
          Result    := R;
-         Sanitize_GF (R);
+         Sanitize_GF32 (R);
          pragma Unreferenced (R);
       end Subtract_P;
 
@@ -152,7 +152,7 @@ is
          return Result;
       end To_Bytes_32;
 
-      L      : GF;
+      L      : GF32;
       R1, R2 : Temp_GF;
 
       First_Underflow  : Boolean;
@@ -187,8 +187,8 @@ is
       CSwap (L,  R2, First_Underflow);
 
       --  Sanitize local data as per the WireGuard sources
-      Sanitize_GF (L);
-      Sanitize_GF (R1);
+      Sanitize_GF32 (L);
+      Sanitize_GF32 (R1);
       Sanitize_Boolean (First_Underflow);
       Sanitize_Boolean (Second_Underflow);
 
@@ -204,14 +204,14 @@ is
 
    function Unpack_25519 (N : in Bytes_32) return Normal_GF
    is
-      O : GF with Relaxed_Initialization;
+      O : GF32 with Relaxed_Initialization;
    begin
       begin
          for I in Index_16 loop
-            O (I) := I64 (N (2 * I)) + (I64 (N (2 * I + 1)) * 256);
+            O (I) := I32 (N (2 * I)) + (I32 (N (2 * I + 1)) * 256);
             pragma Loop_Invariant
               (for all J in Index_16 range 0 .. I =>
-                 O (J)'Initialized and then O (J) in GF_Normal_Limb);
+                 O (J)'Initialized and then O (J) in GF32_Normal_Limb);
          end loop;
          O (15) := O (15) mod 32768;
       end;

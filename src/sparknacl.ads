@@ -46,6 +46,7 @@ is
 
    subtype I32      is Integer_32;
    subtype N32      is I32 range 0 .. I32'Last;
+   subtype I32_Bit  is I32 range 0 .. 1;
 
    subtype I64      is Integer_64;
    subtype I64_Byte is I64 range 0 .. 255;
@@ -222,29 +223,38 @@ private
    --  "Maximum GF Limb Product"
    MGFLP : constant := LMM1 * LMM1;
 
-   subtype GF_Any_Limb is I64 range -LM .. (MGFLC * MGFLP);
+   subtype GF64_Any_Limb is I64 range -LM .. (MGFLC * MGFLP);
+   subtype GF32_Any_Limb is I32 range (1 - R2256) .. ((2 * LMM1) - R2256 + 1);
 
-   type GF is array (Index_16) of GF_Any_Limb;
+   type GF64 is array (Index_16) of GF64_Any_Limb;
+   type GF32 is array (Index_16) of GF32_Any_Limb;
 
-   --  GF Product Accumulator - used in "*" to accumulate the
+   --  GF64 Product Accumulator - used in "*" to accumulate the
    --  intermediate results of Left * Right
-   type GF_PA is array (Index_31) of GF_Any_Limb;
+   type GF64_PA is array (Index_31) of GF64_Any_Limb;
 
    -------------------------------------------------------------------------
-   subtype GF_Normal_Limb is I64 range 0 .. LMM1;
+   subtype GF64_Normal_Limb is I64 range 0 .. LMM1;
+   subtype GF32_Normal_Limb is I32 range 0 .. LMM1;
 
-   subtype Normal_GF is GF
+   subtype Normal_GF64 is GF64
      with Dynamic_Predicate =>
-       (for all I in Index_16 => Normal_GF (I) in GF_Normal_Limb);
+       (for all I in Index_16 => Normal_GF64 (I) in GF64_Normal_Limb);
+
+   subtype Normal_GF is GF32
+     with Dynamic_Predicate =>
+       (for all I in Index_16 => Normal_GF32 (I) in GF32_Normal_Limb);
+
    -------------------------------------------------------------------------
+
 
    -------------------------------------------------------------------------
    --  Subtypes supporting "+" operation on GF
    --
    --  In a "+" operation, intermediate result limbs peak at +131070, so
-   subtype GF_Sum_Limb is I64 range 0 .. (LMM1 * 2);
+   subtype GF_Sum_Limb is I32 range 0 .. (LMM1 * 2);
 
-   subtype Sum_GF is GF
+   subtype Sum_GF is GF32
      with Dynamic_Predicate =>
        (for all I in Index_16 => Sum_GF (I) in GF_Sum_Limb);
    -------------------------------------------------------------------------
@@ -264,9 +274,9 @@ private
    --
    --  Finally, to balance the -1 value carried into limb 16, limb 0
    --  is reduced by R2256, so...
-   subtype Difference_GF is GF
+   subtype Difference_GF is GF32
      with Dynamic_Predicate =>
-        ((Difference_GF (0) in (1 - R2256) .. ((2 * LMM1) - R2256 + 1)) and
+        ((Difference_GF (0) in GF32_Any_Limb'First .. GF32_Any_Limb'Last) and
            (for all K in Index_16 range 1 .. 15 =>
               Difference_GF (K) in 0 .. 2 * LMM1));
 
@@ -281,7 +291,7 @@ private
    --
    --  Lower-bound here is 0 since "*" always takes Normal_GF
    --  parameters, so an intermediate limb can never be negative.
-   subtype Product_GF is GF
+   subtype Product_GF is GF64
      with Dynamic_Predicate =>
        (for all I in Index_16 =>
          Product_GF (I) >= 0 and
@@ -300,16 +310,16 @@ private
    --    (MGFLC - 37 * 14) * MGFLP = 53 * MGFLP
    --  See the body of Product_To_Seminormal for the full
    --  proof of this upper-bound
-   subtype Seminormal_GF_LSL is I64
+   subtype Seminormal_GF_LSL is I32
      range 0 .. (LMM1 + R2256 * ((53 * MGFLP) / LM));
 
    --  Limbs 1 though 15 are in 0 .. 65535, but the
    --  Least Significant Limb 0 is in GF_Seminormal_Product_LSL
-   subtype Seminormal_GF is GF
+   subtype Seminormal_GF is GF32
      with Dynamic_Predicate =>
        (Seminormal_GF (0) in Seminormal_GF_LSL and
          (for all I in Index_16 range 1 .. 15 =>
-           Seminormal_GF (I) in GF_Normal_Limb));
+           Seminormal_GF (I) in GF32_Normal_Limb));
 
    ------------------------------------------------------------------------
    --  A "Nearly-normal GF" is the result of applying either:
@@ -321,11 +331,11 @@ private
    --
    --  The least-significant-limb is normalized to 0 .. 65535, but then
    --  has +R2256 or -R2256 added to it, so its range is...
-   subtype Nearlynormal_GF is GF
+   subtype Nearlynormal_GF is GF32
      with Dynamic_Predicate =>
         ((Nearlynormal_GF (0) in -R2256 .. LMM1 + R2256) and
            (for all K in Index_16 range 1 .. 15 =>
-              (Nearlynormal_GF (K) in GF_Normal_Limb)));
+              (Nearlynormal_GF (K) in GF32_Normal_Limb)));
 
    ------------------------------------------------------------------------
 
@@ -343,14 +353,24 @@ private
 
    function To_U64 is new Ada.Unchecked_Conversion (I64, U64);
    function To_I64 is new Ada.Unchecked_Conversion (U64, I64);
+   function To_U32 is new Ada.Unchecked_Conversion (I32, U32);
+   function To_I32 is new Ada.Unchecked_Conversion (U32, I32);
 
    --  returns equivalent of X >> 16 in C, doing an arithmetic
    --  shift right when X is negative, assuming 2's complement
    --  representation
-   function ASR_16 (X : in I64) return I64
+   function ASR64_16 (X : in I64) return I64
    is (To_I64 (Shift_Right_Arithmetic (To_U64 (X), 16)))
-     with Post => (if X >= 0 then ASR_16'Result = X / LM else
-                                  ASR_16'Result = ((X + 1) / LM) - 1);
+     with Post => (if X >= 0 then ASR64_16'Result = X / LM else
+                                  ASR64_16'Result = ((X + 1) / LM) - 1);
+
+   --  returns equivalent of X >> 16 in C, doing an arithmetic
+   --  shift right when X is negative, assuming 2's complement
+   --  representation
+   function ASR32_16 (X : in I32) return I32
+   is (To_I32 (Shift_Right_Arithmetic (To_U32 (X), 16)))
+     with Post => (if X >= 0 then ASR32_16'Result = X / LM else
+                                  ASR32_16'Result = ((X + 1) / LM) - 1);
    pragma Annotate (GNATprove,
                     False_Positive,
                     "postcondition might fail",
@@ -403,16 +423,20 @@ private
 
 
    --  Additional sanitization procedures for local types
+   procedure Sanitize_U32 (R : out U64)
+     with Global => null,
+          No_Inline;
+
    procedure Sanitize_U64 (R : out U64)
      with Global => null,
           No_Inline;
 
-   procedure Sanitize_GF (R : out GF)
+   procedure Sanitize_GF32 (R : out GF32)
      with Global => null,
           No_Inline,
           Post => R in Normal_GF;
 
-   procedure Sanitize_GF_PA (R : out GF_PA)
+   procedure Sanitize_GF64_PA (R : out GF64_PA)
      with Global => null,
           No_Inline;
 
