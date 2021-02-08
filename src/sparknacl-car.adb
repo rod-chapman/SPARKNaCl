@@ -75,28 +75,30 @@ is
 
       pragma Assert (Carry <= ((53 * MGFLP) / LM));
 
-      R (0) := R (0) + R2256 * Carry;
+      R (0)  := R (0) + R2256 * Carry;
+      R (15) := R (15) mod LM;
 
       pragma Assert (R (0) >= I64(Seminormal_GF_LSL'First) and
                      R (0) <= I64(Seminormal_GF_LSL'Last));
-      R (15) := R (15) mod LM;
+      pragma Assert
+        (for all K in Index_16 range 1 .. 15 => (R (K) in GF64_Normal_Limb));
 
-      return Seminormal_GF'(0  => I32 (R (0)),
-                            1  => I32 (R (1)),
-                            2  => I32 (R (2)),
-                            3  => I32 (R (3)),
-                            4  => I32 (R (4)),
-                            5  => I32 (R (5)),
-                            6  => I32 (R (6)),
-                            7  => I32 (R (7)),
-                            8  => I32 (R (8)),
-                            9  => I32 (R (9)),
-                            10 => I32 (R (10)),
-                            11 => I32 (R (11)),
-                            12 => I32 (R (12)),
-                            13 => I32 (R (13)),
-                            14 => I32 (R (14)),
-                            15 => I32 (R (15)));
+      return Seminormal_GF'(0  => Seminormal_GF_LSL (R (0)),
+                            1  => GF32_Normal_Limb (R (1)),
+                            2  => GF32_Normal_Limb (R (2)),
+                            3  => GF32_Normal_Limb (R (3)),
+                            4  => GF32_Normal_Limb (R (4)),
+                            5  => GF32_Normal_Limb (R (5)),
+                            6  => GF32_Normal_Limb (R (6)),
+                            7  => GF32_Normal_Limb (R (7)),
+                            8  => GF32_Normal_Limb (R (8)),
+                            9  => GF32_Normal_Limb (R (9)),
+                            10 => GF32_Normal_Limb (R (10)),
+                            11 => GF32_Normal_Limb (R (11)),
+                            12 => GF32_Normal_Limb (R (12)),
+                            13 => GF32_Normal_Limb (R (13)),
+                            14 => GF32_Normal_Limb (R (14)),
+                            15 => GF32_Normal_Limb (R (15)));
    end Product_To_Seminormal;
 
    function Seminormal_To_Nearlynormal
