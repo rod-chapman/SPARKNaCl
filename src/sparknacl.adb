@@ -8,7 +8,7 @@ is
 
    function "+" (Left, Right : in Normal_GF) return Normal_GF
    is
-      R : GF with Relaxed_Initialization;
+      R : GF32 with Relaxed_Initialization;
    begin
       for I in Index_16 loop
          R (I) := Left (I) + Right (I);
@@ -32,7 +32,7 @@ is
 
    function "-" (Left, Right : in Normal_GF) return Normal_GF
    is
-      R : GF with Relaxed_Initialization;
+      R : GF32 with Relaxed_Initialization;
    begin
       --  For limb 0, we compute the difference, but add LM to
       --  make sure the result is positive.
@@ -74,9 +74,9 @@ is
 
    function "*" (Left, Right : in Normal_GF) return Normal_GF
    is
-      T  : GF_PA;
-      TF : GF with Relaxed_Initialization;
-      LT : GF_Normal_Limb;
+      T  : GF64_PA;
+      TF : GF64 with Relaxed_Initialization;
+      LT : GF64_Normal_Limb;
    begin
       T := (others => 0);
 
@@ -91,23 +91,23 @@ is
          --     T (I + J) := T (I + J) + (Left (I) * Right (J));
          --  end loop;
 
-         LT := Left (I);
-         T (I)      := T (I)      + (LT * Right (0));
-         T (I + 1)  := T (I + 1)  + (LT * Right (1));
-         T (I + 2)  := T (I + 2)  + (LT * Right (2));
-         T (I + 3)  := T (I + 3)  + (LT * Right (3));
-         T (I + 4)  := T (I + 4)  + (LT * Right (4));
-         T (I + 5)  := T (I + 5)  + (LT * Right (5));
-         T (I + 6)  := T (I + 6)  + (LT * Right (6));
-         T (I + 7)  := T (I + 7)  + (LT * Right (7));
-         T (I + 8)  := T (I + 8)  + (LT * Right (8));
-         T (I + 9)  := T (I + 9)  + (LT * Right (9));
-         T (I + 10) := T (I + 10) + (LT * Right (10));
-         T (I + 11) := T (I + 11) + (LT * Right (11));
-         T (I + 12) := T (I + 12) + (LT * Right (12));
-         T (I + 13) := T (I + 13) + (LT * Right (13));
-         T (I + 14) := T (I + 14) + (LT * Right (14));
-         T (I + 15) := T (I + 15) + (LT * Right (15));
+         LT := I64 (Left (I));
+         T (I)      := T (I)      + (LT * I64 (Right (0)));
+         T (I + 1)  := T (I + 1)  + (LT * I64 (Right (1)));
+         T (I + 2)  := T (I + 2)  + (LT * I64 (Right (2)));
+         T (I + 3)  := T (I + 3)  + (LT * I64 (Right (3)));
+         T (I + 4)  := T (I + 4)  + (LT * I64 (Right (4)));
+         T (I + 5)  := T (I + 5)  + (LT * I64 (Right (5)));
+         T (I + 6)  := T (I + 6)  + (LT * I64 (Right (6)));
+         T (I + 7)  := T (I + 7)  + (LT * I64 (Right (7)));
+         T (I + 8)  := T (I + 8)  + (LT * I64 (Right (8)));
+         T (I + 9)  := T (I + 9)  + (LT * I64 (Right (9)));
+         T (I + 10) := T (I + 10) + (LT * I64 (Right (10)));
+         T (I + 11) := T (I + 11) + (LT * I64 (Right (11)));
+         T (I + 12) := T (I + 12) + (LT * I64 (Right (12)));
+         T (I + 13) := T (I + 13) + (LT * I64 (Right (13)));
+         T (I + 14) := T (I + 14) + (LT * I64 (Right (14)));
+         T (I + 15) := T (I + 15) + (LT * I64 (Right (15)));
 
          pragma Loop_Invariant
            (
@@ -178,7 +178,7 @@ is
 
       --  Sanitize T, as per WireGuard sources
       pragma Warnings (GNATProve, Off, "statement has no effect");
-      Sanitize_GF_PA (T);
+      Sanitize_GF64_PA (T);
       pragma Unreferenced (T);
 
       --  In SPARKNaCl, we normalize after "*".
@@ -230,11 +230,13 @@ is
 
    procedure Sanitize (R : out Byte_Seq) is separate;
 
+   procedure Sanitize_U32 (R : out U32) is separate;
+
    procedure Sanitize_U64 (R : out U64) is separate;
 
-   procedure Sanitize_GF (R : out GF) is separate;
+   procedure Sanitize_GF32 (R : out GF32) is separate;
 
-   procedure Sanitize_GF_PA (R : out GF_PA) is separate;
+   procedure Sanitize_GF64_PA (R : out GF64_PA) is separate;
 
    procedure Sanitize_I64_Seq (R : out I64_Seq) is separate;
 

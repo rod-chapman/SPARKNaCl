@@ -108,7 +108,7 @@ is
    is
    begin
       for I in R'Range loop
-         Sanitize_GF (R (I));
+         Sanitize_GF32 (R (I));
       end loop;
    end Sanitize_GF_Vector_4;
 

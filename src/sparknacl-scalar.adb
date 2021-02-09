@@ -85,14 +85,14 @@ is
       pragma Warnings (GNATProve, Off, "statement has no effect");
       Sanitize_Boolean (Swap);
       Sanitize (Z);
-      Sanitize_GF (X);
-      Sanitize_GF (A);
-      Sanitize_GF (B);
-      Sanitize_GF (C);
-      Sanitize_GF (D);
-      Sanitize_GF (E);
-      Sanitize_GF (F);
-      Sanitize_GF (T);
+      Sanitize_GF32 (X);
+      Sanitize_GF32 (A);
+      Sanitize_GF32 (B);
+      Sanitize_GF32 (C);
+      Sanitize_GF32 (D);
+      Sanitize_GF32 (E);
+      Sanitize_GF32 (F);
+      Sanitize_GF32 (T);
       pragma Unreferenced (Swap, Z, X, A, B, C, D, E, F, T);
 
       return Result;
