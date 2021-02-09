@@ -2,7 +2,7 @@
 
 SPARK 2014 re-implementation of the [TweetNaCl](https://tweetnacl.cr.yp.to) crypto library.
 
-Copyright (c) 2020 [Protean Code Limited](http://www.proteancode.com/).
+Copyright (c) 2020,2021 [Protean Code Limited](http://www.proteancode.com/).
 
 Licence: this work is released under the "simplified 2-clause BSD licence". See
 [here](https://github.com/rod-chapman/SPARKNaCl/blob/master/LICENCE.md) for details.
@@ -32,6 +32,14 @@ This library is a compact reference implementation of the NaCl crypto library. I
 [Acknowledgements](https://github.com/rod-chapman/SPARKNaCl#acknowledgements)
 
 ## Latest news
+
+### 9th February 2021
+
+* Results of performance analysis and tuning now written up [here](https://blog.adacore.com/performance-analysis-and-tuning-of-sparknacl).
+
+* There's more to come...in the final stages of writing that blog entry, I realized how I could save a few more million CPU cycles. I'll be writing this one up separately, since it illustrates another interesting topic: proof-based refactoring.
+
+* A new release incorporating those performance improvements will be published in ALIRE.
 
 ### 3rd December 2020
 
