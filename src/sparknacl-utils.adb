@@ -2,14 +2,19 @@ package body SPARKNaCl.Utils
   with SPARK_Mode => On
 is
 
-   type Bit_To_Swapmask_Table is array (Boolean) of U16;
-   Bit_To_Swapmask : constant Bit_To_Swapmask_Table :=
+   type Bit_To_Swapmask_Table16 is array (Boolean) of U16;
+   Bit_To_Swapmask16 : constant Bit_To_Swapmask_Table16 :=
      (False => 16#0000#,
       True  => 16#FFFF#);
 
-   procedure CSwap (P    : in out Normal_GF;
-                    Q    : in out Normal_GF;
-                    Swap : in     Boolean)
+   type Bit_To_Swapmask_Table32 is array (Boolean) of U32;
+   Bit_To_Swapmask32 : constant Bit_To_Swapmask_Table32 :=
+     (False => 16#0000_0000#,
+      True  => 16#FFFF_FFFF#);
+
+   procedure CSwap16 (P    : in out Normal_GF;
+                      Q    : in out Normal_GF;
+                      Swap : in     Boolean)
    is
       T : U16;
       C : U16 := Bit_To_Swapmask (Swap);
@@ -67,7 +72,7 @@ is
       Sanitize_U16 (C);
       pragma Unreferenced (T);
       pragma Unreferenced (C);
-   end CSwap;
+   end CSwap16;
 
    function Pack_25519 (N : in Normal_GF) return Bytes_32
    is
