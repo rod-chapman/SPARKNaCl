@@ -22,7 +22,13 @@ is
       CB    : Byte;
       Shift : Natural;
 
-      A, B, C, D, E, F, T : Normal_GF;
+      A, B, C, D, E, F : Normal_GF;
+
+      --  Additional temporaries needed to avoid aliasing of
+      --  function results and their arguments. This enables RSO
+      --  in all function/operator calls below.
+      T1, T2 : Normal_GF;
+
       Result : Bytes_32;
    begin
       B := X;
@@ -44,27 +50,27 @@ is
          --  Single binary operator or unary function call per statement to
          --  avoid introduction of a compiler-generated temporary that we
          --  won't be able to sanitize.
-         E := A + C;
-         A := A - C;
+         E  := A + C;
+         T1 := A - C;
 
-         C := B + D;
-         B := B - D;
+         C  := B + D;
+         T2 := B - D;
 
          D := Square (E);
-         F := Square (A);
+         F := Square (T1);
 
-         A := C * A;
-         C := B * E;
+         A := C * T1;
+         C := T2 * E;
          E := A + C;
 
-         A := A - C;
-         B := Square (A);
-         C := D - F;
+         T2 := A - C;
+         B  := Square (T2);
+         T1 := D - F;
 
-         A := C * GF_121665;
-         A := A + D;
+         A  := T1 * GF_121665;
+         T2 := A + D;
 
-         C := C * A;
+         C := T1 * T2;
 
          A := D * F;
          D := B * X;
@@ -77,9 +83,9 @@ is
       --  Compute Result in 3 steps here to avoid introducing a
       --  compiler-generated temporary which we won't be able
       --  to sanitize.
-      T := Utils.Inv_25519 (C);
-      T := A * T;
-      Result := Utils.Pack_25519 (T);
+      T1 := Utils.Inv_25519 (C);
+      T2 := A * T1;
+      Result := Utils.Pack_25519 (T2);
 
       --  Sanitize as per WireGuard sources
       pragma Warnings (GNATProve, Off, "statement has no effect");
@@ -92,8 +98,9 @@ is
       Sanitize_GF32 (D);
       Sanitize_GF32 (E);
       Sanitize_GF32 (F);
-      Sanitize_GF32 (T);
-      pragma Unreferenced (Swap, Z, X, A, B, C, D, E, F, T);
+      Sanitize_GF32 (T1);
+      Sanitize_GF32 (T2);
+      pragma Unreferenced (Swap, Z, X, A, B, C, D, E, F, T1, T2);
 
       return Result;
    end Mult;
