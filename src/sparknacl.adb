@@ -230,6 +230,8 @@ is
 
    procedure Sanitize (R : out Byte_Seq) is separate;
 
+   procedure Sanitize_U16 (R : out U16) is separate;
+
    procedure Sanitize_U32 (R : out U32) is separate;
 
    procedure Sanitize_U64 (R : out U64) is separate;

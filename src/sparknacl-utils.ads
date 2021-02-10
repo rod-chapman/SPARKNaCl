@@ -16,8 +16,8 @@ is
    --  on swapping (or not...)  This is required Pack_25519.
    --  In the original TweetNaCl sources, this was called
    --  "sel25519"
-   procedure CSwap (P    : in out GF32;
-                    Q    : in out GF32;
+   procedure CSwap (P    : in out Normal_GF;
+                    Q    : in out Normal_GF;
                     Swap : in     Boolean)
      with Global => null,
           Contract_Cases =>

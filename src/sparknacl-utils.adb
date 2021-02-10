@@ -2,27 +2,27 @@ package body SPARKNaCl.Utils
   with SPARK_Mode => On
 is
 
-   type Bit_To_Swapmask_Table is array (Boolean) of U32;
+   type Bit_To_Swapmask_Table is array (Boolean) of U16;
    Bit_To_Swapmask : constant Bit_To_Swapmask_Table :=
-     (False => 16#0000_0000#,
-      True  => 16#FFFF_FFFF#);
+     (False => 16#0000#,
+      True  => 16#FFFF#);
 
-   procedure CSwap (P    : in out GF32;
-                    Q    : in out GF32;
+   procedure CSwap (P    : in out Normal_GF;
+                    Q    : in out Normal_GF;
                     Swap : in     Boolean)
    is
-      T : U32;
-      C : U32 := Bit_To_Swapmask (Swap);
+      T : U16;
+      C : U16 := Bit_To_Swapmask (Swap);
 
-      --  Do NOT try to evaluate the assumption below at run-time
-      pragma Assertion_Policy (Assume => Ignore);
+--      --  Do NOT try to evaluate the assumption below at run-time
+--      pragma Assertion_Policy (Assume => Ignore);
    begin
-      --  We need this axiom
-      pragma Assume
-        (for all K in I32 => To_I32 (To_U32 (K)) = K);
+--      --  We need this axiom
+--      pragma Assume
+--        (for all K in I32 => To_I32 (To_U32 (K)) = K);
 
       for I in Index_16 loop
-         T := C and (To_U32 (P (I)) xor To_U32 (Q (I)));
+         T := C and (P (I) xor Q (I));
 
          --  Case 1 - "Swap"
          --   Swap -> C = 16#FFFF....# -> T = P(I) xor Q (I) ->
@@ -35,17 +35,17 @@ is
          --   Q (I) xor T = Q (I)
          pragma Assert
            ((if Swap then
-              (T = (To_U32 (P (I)) xor To_U32 (Q (I))) and then
-               To_I32 (To_U32 (P (I)) xor T) = Q (I) and then
-               To_I32 (To_U32 (Q (I)) xor T) = P (I))
+              (T = (P (I) xor Q (I)) and then
+               (P (I) xor T) = Q (I) and then
+               (Q (I) xor T) = P (I))
              else
               (T = 0 and then
-               To_I32 (To_U32 (P (I)) xor T) = P (I) and then
-               To_I32 (To_U32 (Q (I)) xor T) = Q (I)))
+               (P (I) xor T) = P (I) and then
+               (Q (I) xor T) = Q (I)))
            );
 
-         P (I) := To_I32 (To_U32 (P (I)) xor T);
-         Q (I) := To_I32 (To_U32 (Q (I)) xor T);
+         P (I) := P (I) xor T;
+         Q (I) := Q (I) xor T;
 
          pragma Loop_Invariant
            (if Swap then
@@ -63,8 +63,8 @@ is
       --  Note that Swap cannot be sanitized here since it is
       --  an "in" parameter
       pragma Warnings (GNATProve, Off, "statement has no effect");
-      Sanitize_U32 (T);
-      Sanitize_U32 (C);
+      Sanitize_U16 (T);
+      Sanitize_U16 (C);
       pragma Unreferenced (T);
       pragma Unreferenced (C);
    end CSwap;
@@ -89,7 +89,7 @@ is
         with Global => null,
              Pre    => T (15) >= -16#8000#,
              Post   => (Result (15) >= T (15) - 16#8000#) and then
-                       (Underflow /= (Result in Normal_GF));
+                       (Underflow /= (Result in Normal_GF32));
 
       function To_Bytes_32 (X : in Normal_GF) return Bytes_32
         with Global => null;
@@ -101,7 +101,7 @@ is
          Carry : I32_Bit;
          R     : GF32;
       begin
-         R := GF_0;
+         R := GF32_0;
 
          --  Limb 0 - subtract LSL of P, which is 16#FFED#
          R (0) := T (0) - 16#FFED#;
