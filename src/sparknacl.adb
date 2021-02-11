@@ -80,8 +80,6 @@ is
    begin
       T := (others => 0);
 
-      pragma Assert (for all K in Index_31 => T (K) >= 0);
-
       --  "Textbook" ladder multiplication
       for I in Index_16 loop
 
@@ -95,9 +93,6 @@ is
 
          LT := I64 (Left (I));
          T (I)      := T (I)      + (LT * I64 (Right (0)));
-
-         pragma Assert (for all K in Index_31 => T (K) >= 0);
-
          T (I + 1)  := T (I + 1)  + (LT * I64 (Right (1)));
          T (I + 2)  := T (I + 2)  + (LT * I64 (Right (2)));
          T (I + 3)  := T (I + 3)  + (LT * I64 (Right (3)));
