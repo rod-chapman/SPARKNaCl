@@ -44,8 +44,8 @@ is
          pragma Loop_Invariant (A in Normal_GF and B in Normal_GF and
                                 C in Normal_GF and D in Normal_GF);
 
-         Utils.CSwap (A, B, Swap);
-         Utils.CSwap (C, D, Swap);
+         Utils.CSwap16 (A, B, Swap);
+         Utils.CSwap16 (C, D, Swap);
 
          --  Single binary operator or unary function call per statement to
          --  avoid introduction of a compiler-generated temporary that we
@@ -76,8 +76,8 @@ is
          D := B * X;
          B := Square (E);
 
-         Utils.CSwap (A, B, Swap);
-         Utils.CSwap (C, D, Swap);
+         Utils.CSwap16 (A, B, Swap);
+         Utils.CSwap16 (C, D, Swap);
       end loop;
 
       --  Compute Result in 3 steps here to avoid introducing a
@@ -91,15 +91,15 @@ is
       pragma Warnings (GNATProve, Off, "statement has no effect");
       Sanitize_Boolean (Swap);
       Sanitize (Z);
-      Sanitize_GF32 (X);
-      Sanitize_GF32 (A);
-      Sanitize_GF32 (B);
-      Sanitize_GF32 (C);
-      Sanitize_GF32 (D);
-      Sanitize_GF32 (E);
-      Sanitize_GF32 (F);
-      Sanitize_GF32 (T1);
-      Sanitize_GF32 (T2);
+      Sanitize_GF16 (X);
+      Sanitize_GF16 (A);
+      Sanitize_GF16 (B);
+      Sanitize_GF16 (C);
+      Sanitize_GF16 (D);
+      Sanitize_GF16 (E);
+      Sanitize_GF16 (F);
+      Sanitize_GF16 (T1);
+      Sanitize_GF16 (T2);
       pragma Unreferenced (Swap, Z, X, A, B, C, D, E, F, T1, T2);
 
       return Result;

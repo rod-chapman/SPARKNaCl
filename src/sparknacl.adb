@@ -11,7 +11,7 @@ is
       R : GF32 with Relaxed_Initialization;
    begin
       for I in Index_16 loop
-         R (I) := Left (I) + Right (I);
+         R (I) := I32 (Left (I)) + I32 (Right (I));
          pragma Loop_Invariant
            (for all J in Index_16 range 0 .. I => R (J)'Initialized);
          pragma Loop_Invariant
@@ -36,7 +36,7 @@ is
    begin
       --  For limb 0, we compute the difference, but add LM to
       --  make sure the result is positive.
-      R (0) := (Left (0) - Right (0)) + LM;
+      R (0) := (I32 (Left (0)) - I32 (Right (0))) + LM;
 
       pragma Assert (R (0)'Initialized);
 
@@ -44,7 +44,7 @@ is
          --  Having added LM to the previous limb, we also add LM to
          --  each new limb, but subtract 1 to account for the extra LM from
          --  the earlier limb
-         R (I) := (Left (I) - Right (I)) + LMM1;
+         R (I) := (I32 (Left (I)) - I32 (Right (I))) + LMM1;
          pragma Loop_Invariant
            (for all K in Index_16 range 0 .. I => R (K)'Initialized);
          pragma Loop_Invariant
@@ -80,6 +80,8 @@ is
    begin
       T := (others => 0);
 
+      pragma Assert (for all K in Index_31 => T (K) >= 0);
+
       --  "Textbook" ladder multiplication
       for I in Index_16 loop
 
@@ -93,6 +95,9 @@ is
 
          LT := I64 (Left (I));
          T (I)      := T (I)      + (LT * I64 (Right (0)));
+
+         pragma Assert (for all K in Index_31 => T (K) >= 0);
+
          T (I + 1)  := T (I + 1)  + (LT * I64 (Right (1)));
          T (I + 2)  := T (I + 2)  + (LT * I64 (Right (2)));
          T (I + 3)  := T (I + 3)  + (LT * I64 (Right (3)));
@@ -235,6 +240,8 @@ is
    procedure Sanitize_U32 (R : out U32) is separate;
 
    procedure Sanitize_U64 (R : out U64) is separate;
+
+   procedure Sanitize_GF16 (R : out Normal_GF) is separate;
 
    procedure Sanitize_GF32 (R : out GF32) is separate;
 

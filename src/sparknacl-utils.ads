@@ -21,12 +21,8 @@ is
                       Swap : in     Boolean)
      with Global => null,
           Contract_Cases =>
-            (Swap => (P = Q'Old and Q = P'Old and
-                     ((P'Old in Normal_GF) = (Q in Normal_GF)) and
-                     ((Q'Old in Normal_GF) = (P in Normal_GF))),
-             not Swap => (P = P'Old and Q = Q'Old) and
-                         ((P'Old in Normal_GF) = (P in Normal_GF)) and
-                         ((Q'Old in Normal_GF) = (Q in Normal_GF)));
+            (Swap => (P = Q'Old and Q = P'Old),
+             not Swap => (P = P'Old and Q = Q'Old));
 
    --  Reduces N modulo (2**255 - 19) then packs the
    --  value into 32 bytes little-endian.

@@ -237,7 +237,6 @@ private
      range -LM .. GF32_Any_Limb_Max;
    type GF32 is array (Index_16) of GF32_Any_Limb;
 
-
    --  In the "*" operator for GF, intermediate results require
    --  64 bit integers before being normalized, so...
    subtype GF64_Any_Limb is I64 range -LM .. (MGFLC * MGFLP);
@@ -260,8 +259,8 @@ private
      with Dynamic_Predicate =>
        (for all I in Index_16 => Normal_GF32 (I) in GF32_Normal_Limb);
 
-
-   type Normal_GF is array (Index_16) of GF16_Normal_Limb;
+   type Normal_GF is array (Index_16) of GF16_Normal_Limb
+     with Alignment => 4;
 
    -------------------------------------------------------------------------
 

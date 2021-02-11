@@ -357,7 +357,22 @@ is
       R (0) := R (0) + R2256 * Carry;
 
       pragma Assert (R (0) in GF32_Normal_Limb);
-      return Normal_GF (R);
+      return Normal_GF'(0  => U16 (R (0)),
+                        1  => U16 (R (1)),
+                        2  => U16 (R (2)),
+                        3  => U16 (R (3)),
+                        4  => U16 (R (4)),
+                        5  => U16 (R (5)),
+                        6  => U16 (R (6)),
+                        7  => U16 (R (7)),
+                        8  => U16 (R (8)),
+                        9  => U16 (R (9)),
+                        10 => U16 (R (10)),
+                        11 => U16 (R (11)),
+                        12 => U16 (R (12)),
+                        13 => U16 (R (13)),
+                        14 => U16 (R (14)),
+                        15 => U16 (R (15)));
    end Nearlynormal_To_Normal;
 
 end SPARKNaCl.Car;
