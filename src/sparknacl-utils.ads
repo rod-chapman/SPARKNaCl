@@ -16,17 +16,13 @@ is
    --  on swapping (or not...)  This is required Pack_25519.
    --  In the original TweetNaCl sources, this was called
    --  "sel25519"
-   procedure CSwap (P    : in out GF32;
-                    Q    : in out GF32;
-                    Swap : in     Boolean)
+   procedure CSwap16 (P    : in out Normal_GF;
+                      Q    : in out Normal_GF;
+                      Swap : in     Boolean)
      with Global => null,
           Contract_Cases =>
-            (Swap => (P = Q'Old and Q = P'Old and
-                     ((P'Old in Normal_GF) = (Q in Normal_GF)) and
-                     ((Q'Old in Normal_GF) = (P in Normal_GF))),
-             not Swap => (P = P'Old and Q = Q'Old) and
-                         ((P'Old in Normal_GF) = (P in Normal_GF)) and
-                         ((Q'Old in Normal_GF) = (Q in Normal_GF)));
+            (Swap => (P = Q'Old and Q = P'Old),
+             not Swap => (P = P'Old and Q = Q'Old));
 
    --  Reduces N modulo (2**255 - 19) then packs the
    --  value into 32 bytes little-endian.

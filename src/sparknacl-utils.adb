@@ -2,17 +2,99 @@ package body SPARKNaCl.Utils
   with SPARK_Mode => On
 is
 
-   type Bit_To_Swapmask_Table is array (Boolean) of U32;
-   Bit_To_Swapmask : constant Bit_To_Swapmask_Table :=
+   type Bit_To_Swapmask_Table16 is array (Boolean) of U16;
+   Bit_To_Swapmask16 : constant Bit_To_Swapmask_Table16 :=
+     (False => 16#0000#,
+      True  => 16#FFFF#);
+
+   type Bit_To_Swapmask_Table32 is array (Boolean) of U32;
+   Bit_To_Swapmask32 : constant Bit_To_Swapmask_Table32 :=
      (False => 16#0000_0000#,
       True  => 16#FFFF_FFFF#);
 
-   procedure CSwap (P    : in out GF32;
-                    Q    : in out GF32;
-                    Swap : in     Boolean)
+   procedure CSwap32 (P    : in out GF32;
+                      Q    : in out GF32;
+                      Swap : in     Boolean)
+     with Global => null,
+          Contract_Cases =>
+            (Swap => (P = Q'Old and Q = P'Old and
+                     ((P'Old in Normal_GF32) = (Q in Normal_GF32)) and
+                     ((Q'Old in Normal_GF32) = (P in Normal_GF32))),
+             not Swap => (P = P'Old and Q = Q'Old) and
+                         ((P'Old in Normal_GF32) = (P in Normal_GF32)) and
+                         ((Q'Old in Normal_GF32) = (Q in Normal_GF32)));
+
+
+   procedure CSwap16 (P    : in out Normal_GF;
+                      Q    : in out Normal_GF;
+                      Swap : in     Boolean)
+   is
+      T : U16;
+      C : U16 := Bit_To_Swapmask16 (Swap);
+
+--      --  Do NOT try to evaluate the assumption below at run-time
+--      pragma Assertion_Policy (Assume => Ignore);
+   begin
+--      --  We need this axiom
+--      pragma Assume
+--        (for all K in I32 => To_I32 (To_U32 (K)) = K);
+
+      for I in Index_16 loop
+         T := C and (P (I) xor Q (I));
+
+         --  Case 1 - "Swap"
+         --   Swap -> C = 16#FFFF....# -> T = P(I) xor Q (I) ->
+         --   P (I) xor T = Q (I) and
+         --   Q (I) xor T = P (I)
+         --
+         --  Case 2 - "Don't Swap"
+         --   not Swap -> C = 0 -> T = 0 ->
+         --   P (I) xor T = P (I) and
+         --   Q (I) xor T = Q (I)
+         pragma Assert
+           ((if Swap then
+              (T = (P (I) xor Q (I)) and then
+               (P (I) xor T) = Q (I) and then
+               (Q (I) xor T) = P (I))
+             else
+              (T = 0 and then
+               (P (I) xor T) = P (I) and then
+               (Q (I) xor T) = Q (I)))
+           );
+
+         P (I) := P (I) xor T;
+         Q (I) := Q (I) xor T;
+
+         pragma Loop_Invariant
+           (if Swap then
+              (for all J in Index_16 range 0 .. I =>
+                   (P (J) = Q'Loop_Entry (J) and
+                    Q (J) = P'Loop_Entry (J)))
+            else
+              (for all J in Index_16 range 0 .. I =>
+                   (P (J) = P'Loop_Entry (J) and
+                    Q (J) = Q'Loop_Entry (J)))
+           );
+      end loop;
+
+      --  Sanitize local variables as per the implementation in WireGuard.
+      --  Note that Swap cannot be sanitized here since it is
+      --  an "in" parameter
+      pragma Warnings (GNATProve, Off, "statement has no effect");
+      Sanitize_U16 (T);
+      Sanitize_U16 (C);
+      pragma Unreferenced (T);
+      pragma Unreferenced (C);
+   end CSwap16;
+
+
+
+   procedure CSwap32 (P    : in out GF32;
+                      Q    : in out GF32;
+                      Swap : in     Boolean)
    is
       T : U32;
-      C : U32 := Bit_To_Swapmask (Swap);
+      C : U32 := Bit_To_Swapmask32 (Swap);
 
       --  Do NOT try to evaluate the assumption below at run-time
       pragma Assertion_Policy (Assume => Ignore);
@@ -67,7 +149,10 @@ is
       Sanitize_U32 (C);
       pragma Unreferenced (T);
       pragma Unreferenced (C);
-   end CSwap;
+   end CSwap32;
+
+
+
 
    function Pack_25519 (N : in Normal_GF) return Bytes_32
    is
@@ -80,6 +165,28 @@ is
             (for all K in Index_16 range 0 .. 14 =>
                Temp_GF (K) in GF32_Normal_Limb));
 
+      --  Expand a NormaL_16 (16 bit limbs) to 32-bit limbs
+      function To_GF32 (X : in Normal_GF) return GF32
+        is (GF32'(0  => GF32_Any_Limb (X (0)),
+                  1  => GF32_Any_Limb (X (1)),
+                  2  => GF32_Any_Limb (X (2)),
+                  3  => GF32_Any_Limb (X (3)),
+                  4  => GF32_Any_Limb (X (4)),
+                  5  => GF32_Any_Limb (X (5)),
+                  6  => GF32_Any_Limb (X (6)),
+                  7  => GF32_Any_Limb (X (7)),
+                  8  => GF32_Any_Limb (X (8)),
+                  9  => GF32_Any_Limb (X (9)),
+                  10 => GF32_Any_Limb (X (10)),
+                  11 => GF32_Any_Limb (X (11)),
+                  12 => GF32_Any_Limb (X (12)),
+                  13 => GF32_Any_Limb (X (13)),
+                  14 => GF32_Any_Limb (X (14)),
+                  15 => GF32_Any_Limb (X (15))))
+        with Global => null,
+             Pure_Function;
+
+
       --  Result := T - P;
       --  if     Underflow, then Result is not a Normal_GF
       --  if not Underflow, then Result is     a Normal_GF
@@ -89,9 +196,9 @@ is
         with Global => null,
              Pre    => T (15) >= -16#8000#,
              Post   => (Result (15) >= T (15) - 16#8000#) and then
-                       (Underflow /= (Result in Normal_GF));
+                       (Underflow /= (Result in Normal_GF32));
 
-      function To_Bytes_32 (X : in Normal_GF) return Bytes_32
+      function To_Bytes_32 (X : in Normal_GF32) return Bytes_32
         with Global => null;
 
       procedure Subtract_P (T         : in     Temp_GF;
@@ -101,7 +208,7 @@ is
          Carry : I32_Bit;
          R     : GF32;
       begin
-         R := GF_0;
+         R := GF32_0;
 
          --  Limb 0 - subtract LSL of P, which is 16#FFED#
          R (0) := T (0) - 16#FFED#;
@@ -141,7 +248,7 @@ is
          pragma Unreferenced (R);
       end Subtract_P;
 
-      function To_Bytes_32 (X : in Normal_GF) return Bytes_32
+      function To_Bytes_32 (X : in Normal_GF32) return Bytes_32
       is
          Result : Bytes_32 := Zero_Bytes_32;
       begin
@@ -160,7 +267,7 @@ is
    begin
       --  Make a variable copy of N so can be passed to
       --  calls to CSwap below
-      L := N;
+      L := To_GF32 (N);
 
       --  SPARKNaCl differs from TweetNaCl here, in that Pack_25519
       --  takes a Normal_GF parameter N, so no further normalization
@@ -183,8 +290,8 @@ is
       --  use CSwap to swap the right answer into R2
       Subtract_P (L,  R1, First_Underflow);
       Subtract_P (R1, R2, Second_Underflow);
-      CSwap (R1, R2, Second_Underflow);
-      CSwap (L,  R2, First_Underflow);
+      CSwap32 (R1, R2, Second_Underflow);
+      CSwap32 (L,  R2, First_Underflow);
 
       --  Sanitize local data as per the WireGuard sources
       Sanitize_GF32 (L);
@@ -204,18 +311,18 @@ is
 
    function Unpack_25519 (N : in Bytes_32) return Normal_GF
    is
-      O : GF32 with Relaxed_Initialization;
+      O : Normal_GF with Relaxed_Initialization;
    begin
       begin
          for I in Index_16 loop
-            O (I) := I32 (N (2 * I)) + (I32 (N (2 * I + 1)) * 256);
+            O (I) := U16 (N (2 * I)) + (U16 (N (2 * I + 1)) * 256);
             pragma Loop_Invariant
               (for all J in Index_16 range 0 .. I =>
-                 O (J)'Initialized and then O (J) in GF32_Normal_Limb);
+                 O (J)'Initialized);
          end loop;
          O (15) := O (15) mod 32768;
       end;
-      return Normal_GF (O);
+      return O;
    end Unpack_25519;
 
    function Inv_25519 (I : in Normal_GF) return Normal_GF

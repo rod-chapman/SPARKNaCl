@@ -11,7 +11,7 @@ is
       R : GF32 with Relaxed_Initialization;
    begin
       for I in Index_16 loop
-         R (I) := Left (I) + Right (I);
+         R (I) := I32 (Left (I)) + I32 (Right (I));
          pragma Loop_Invariant
            (for all J in Index_16 range 0 .. I => R (J)'Initialized);
          pragma Loop_Invariant
@@ -36,7 +36,7 @@ is
    begin
       --  For limb 0, we compute the difference, but add LM to
       --  make sure the result is positive.
-      R (0) := (Left (0) - Right (0)) + LM;
+      R (0) := (I32 (Left (0)) - I32 (Right (0))) + LM;
 
       pragma Assert (R (0)'Initialized);
 
@@ -44,7 +44,7 @@ is
          --  Having added LM to the previous limb, we also add LM to
          --  each new limb, but subtract 1 to account for the extra LM from
          --  the earlier limb
-         R (I) := (Left (I) - Right (I)) + LMM1;
+         R (I) := (I32 (Left (I)) - I32 (Right (I))) + LMM1;
          pragma Loop_Invariant
            (for all K in Index_16 range 0 .. I => R (K)'Initialized);
          pragma Loop_Invariant
@@ -74,6 +74,13 @@ is
 
    function "*" (Left, Right : in Normal_GF) return Normal_GF
    is
+      --  A lemma to establish bounds on multiplication
+      procedure Prove_Mult (X : I64; Y : U16) with
+        Ghost,
+        Pre  => X in GF64_Normal_Limb,
+        Post => X * I64 (Y) in 0 .. MGFLP;
+      procedure Prove_Mult (X : I64; Y : U16) is null;
+
       T  : GF64_PA;
       TF : GF64 with Relaxed_Initialization;
       LT : GF64_Normal_Limb;
@@ -92,21 +99,37 @@ is
          --  end loop;
 
          LT := I64 (Left (I));
+         Prove_Mult (LT, Right (0));
          T (I)      := T (I)      + (LT * I64 (Right (0)));
+         Prove_Mult (LT, Right (1));
          T (I + 1)  := T (I + 1)  + (LT * I64 (Right (1)));
+         Prove_Mult (LT, Right (2));
          T (I + 2)  := T (I + 2)  + (LT * I64 (Right (2)));
+         Prove_Mult (LT, Right (3));
          T (I + 3)  := T (I + 3)  + (LT * I64 (Right (3)));
+         Prove_Mult (LT, Right (4));
          T (I + 4)  := T (I + 4)  + (LT * I64 (Right (4)));
+         Prove_Mult (LT, Right (5));
          T (I + 5)  := T (I + 5)  + (LT * I64 (Right (5)));
+         Prove_Mult (LT, Right (6));
          T (I + 6)  := T (I + 6)  + (LT * I64 (Right (6)));
+         Prove_Mult (LT, Right (7));
          T (I + 7)  := T (I + 7)  + (LT * I64 (Right (7)));
+         Prove_Mult (LT, Right (8));
          T (I + 8)  := T (I + 8)  + (LT * I64 (Right (8)));
+         Prove_Mult (LT, Right (9));
          T (I + 9)  := T (I + 9)  + (LT * I64 (Right (9)));
+         Prove_Mult (LT, Right (10));
          T (I + 10) := T (I + 10) + (LT * I64 (Right (10)));
+         Prove_Mult (LT, Right (11));
          T (I + 11) := T (I + 11) + (LT * I64 (Right (11)));
+         Prove_Mult (LT, Right (12));
          T (I + 12) := T (I + 12) + (LT * I64 (Right (12)));
+         Prove_Mult (LT, Right (13));
          T (I + 13) := T (I + 13) + (LT * I64 (Right (13)));
+         Prove_Mult (LT, Right (14));
          T (I + 14) := T (I + 14) + (LT * I64 (Right (14)));
+         Prove_Mult (LT, Right (15));
          T (I + 15) := T (I + 15) + (LT * I64 (Right (15)));
 
          pragma Loop_Invariant
@@ -230,9 +253,13 @@ is
 
    procedure Sanitize (R : out Byte_Seq) is separate;
 
+   procedure Sanitize_U16 (R : out U16) is separate;
+
    procedure Sanitize_U32 (R : out U32) is separate;
 
    procedure Sanitize_U64 (R : out U64) is separate;
+
+   procedure Sanitize_GF16 (R : out Normal_GF) is separate;
 
    procedure Sanitize_GF32 (R : out GF32) is separate;
 

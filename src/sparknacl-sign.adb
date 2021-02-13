@@ -108,7 +108,7 @@ is
    is
    begin
       for I in R'Range loop
-         Sanitize_GF32 (R (I));
+         Sanitize_GF16 (R (I));
       end loop;
    end Sanitize_GF_Vector_4;
 
@@ -153,7 +153,7 @@ is
       is
       begin
          for I in Index_4 loop
-            Utils.CSwap (P (I), Q (I), Swap);
+            Utils.CSwap16 (P (I), Q (I), Swap);
          end loop;
       end CSwap;
    begin

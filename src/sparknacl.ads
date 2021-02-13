@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------------
---  Copyright (c) 2020, Protean Code Limited
+--  Copyright (c) 2020,2021 Protean Code Limited
 --  All rights reserved.
 --
 --  "Simplified" (2-Clause) BSD Licence
@@ -122,6 +122,7 @@ private
    --  body and in the bodies of child packages
    --==============================================
 
+   subtype U16 is Unsigned_16;
    subtype U32 is Unsigned_32;
    subtype U64 is Unsigned_64;
 
@@ -236,7 +237,6 @@ private
      range -LM .. GF32_Any_Limb_Max;
    type GF32 is array (Index_16) of GF32_Any_Limb;
 
-
    --  In the "*" operator for GF, intermediate results require
    --  64 bit integers before being normalized, so...
    subtype GF64_Any_Limb is I64 range -LM .. (MGFLC * MGFLP);
@@ -249,14 +249,18 @@ private
    -------------------------------------------------------------------------
    subtype GF64_Normal_Limb is GF64_Any_Limb range 0 .. LMM1;
    subtype GF32_Normal_Limb is GF32_Any_Limb range 0 .. LMM1;
+   subtype GF16_Normal_Limb is U16;
 
    subtype Normal_GF64 is GF64
      with Dynamic_Predicate =>
        (for all I in Index_16 => Normal_GF64 (I) in GF64_Normal_Limb);
 
-   subtype Normal_GF is GF32
+   subtype Normal_GF32 is GF32
      with Dynamic_Predicate =>
-       (for all I in Index_16 => Normal_GF (I) in GF32_Normal_Limb);
+       (for all I in Index_16 => Normal_GF32 (I) in GF32_Normal_Limb);
+
+   type Normal_GF is array (Index_16) of GF16_Normal_Limb
+     with Alignment => 4;
 
    -------------------------------------------------------------------------
 
@@ -356,8 +360,9 @@ private
    --  Constants, used in more than one child package
    --=================================================
 
-   GF_0      : constant Normal_GF := (others => 0);
-   GF_1      : constant Normal_GF := (1, others => 0);
+   GF_0      : constant Normal_GF   := (others => 0);
+   GF32_0    : constant Normal_GF32 := (others => 0);
+   GF_1      : constant Normal_GF   := (1, others => 0);
 
 
    --==================
@@ -444,11 +449,20 @@ private
      with Global => null,
           No_Inline;
 
+   procedure Sanitize_U16 (R : out U16)
+     with Global => null,
+          No_Inline;
+
    procedure Sanitize_U64 (R : out U64)
      with Global => null,
           No_Inline;
 
    procedure Sanitize_GF32 (R : out GF32)
+     with Global => null,
+          No_Inline,
+          Post => R in Normal_GF32;
+
+   procedure Sanitize_GF16 (R : out Normal_GF)
      with Global => null,
           No_Inline,
           Post => R in Normal_GF;
