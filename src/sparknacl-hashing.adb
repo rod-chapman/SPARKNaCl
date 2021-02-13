@@ -55,6 +55,7 @@ is
       T : U64 := U;
    begin
       for I in reverse Index_8 loop
+         pragma Loop_Optimize (No_Unroll);
          X (I) := Byte (T mod 256);
          T := Shift_Right (T, 8);
       end loop;
@@ -145,6 +146,8 @@ is
       CB := M'First; -- Current block base offset
 
       while (LN >= 128) loop
+         pragma Loop_Optimize (No_Unroll);
+
          pragma Warnings (Off, "lower bound test*");
          pragma Loop_Invariant
            ((LN + I64 (CB) = I64 (M'Last) + 1) and
@@ -169,6 +172,7 @@ is
                15 => DL64 (M, CB + 120));
 
          for I in Index_80 loop
+            pragma Loop_Optimize (No_Unroll);
 
             pragma Loop_Invariant ((LN + I64 (CB) = I64 (M'Last) + 1) and
                                      (LN in 128 .. M'Length) and
@@ -192,6 +196,7 @@ is
 
             if (I mod 16 = 15) then
                for J in Index_16 loop
+                  pragma Loop_Optimize (No_Unroll);
                   W (J) := W (J) + W ((J + 9) mod 16) +
                     LC_Sigma0 (W ((J + 1) mod 16)) +
                     LC_Sigma1 (W ((J + 14) mod 16));
@@ -201,6 +206,7 @@ is
          end loop;
 
          for I in Index_8 loop
+            pragma Loop_Optimize (No_Unroll);
             A (I) := A (I) + Z (I);
             Z (I) := A (I);
          end loop;
@@ -213,6 +219,7 @@ is
 
 
       for I in Index_8 loop
+         pragma Loop_Optimize (No_Unroll);
          X (8 * I .. (8 * I + 7)) := TS64 (Z (I));
       end loop;
 
