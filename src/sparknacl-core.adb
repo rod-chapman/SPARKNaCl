@@ -38,6 +38,7 @@ is
       T : U32 := U;
    begin
       for I in X'Range loop
+         pragma Loop_Optimize (No_Unroll);
          X (I) := Byte (T mod 256);
          T := Shift_Right (T, 8);
       end loop;
@@ -103,6 +104,7 @@ is
       Y := X;
 
       for I in Index_20 loop
+         pragma Loop_Optimize (No_Unroll);
          --  This inner loop has been unrolled manually and
          --  simplified in SPARKNaCl.
          --
@@ -228,6 +230,7 @@ is
       --  derives Output from X, Y
       Output := (others => 0);
       for I in Index_16 loop
+         pragma Loop_Optimize (No_Unroll);
          ST32 (Output (4 * I .. 4 * I + 3), X (I) + Y (I));
       end loop;
    end Salsa20;
@@ -244,16 +247,19 @@ is
       --  HSalsa20 output stage
       --  derives Output from X, Y, C, Input
       for I in Index_16 loop
+         pragma Loop_Optimize (No_Unroll);
          X (I) := X (I) + Y (I);
       end loop;
 
       for I in Index_4 loop
+         pragma Loop_Optimize (No_Unroll);
          X (5 * I) := X (5 * I) - LD32 (C (4 * I .. 4 * I + 3));
          X (6 + I) := X (6 + I) - LD32 (Input (4 * I .. 4 * I + 3));
       end loop;
 
       Output := (others => 0);
       for I in Index_4 loop
+         pragma Loop_Optimize (No_Unroll);
          ST32 (Output (4 * I .. 4 * I + 3), X (5 * I));
          ST32 (Output (4 * I + 16 .. 4 * I + 19), X (6 + I));
       end loop;

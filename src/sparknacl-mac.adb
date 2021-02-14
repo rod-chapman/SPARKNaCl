@@ -52,6 +52,7 @@ is
          U : U32 := 0;
       begin
          for J in Index_17 loop
+            pragma Loop_Optimize (No_Unroll);
             U := U + H (J) + C (J);
             H (J) := U and 255;
             U := Shift_Right (U, 8);
@@ -84,6 +85,7 @@ is
       M_Offset := 0;
 
       while (N > 0) loop
+         pragma Loop_Optimize (No_Unroll);
 
          C := (others => 0);
 
@@ -93,6 +95,7 @@ is
            (N + I64 (M_Offset) = M'Length);
 
          while  ((J < 16) and (I64 (J) < N)) loop
+            pragma Loop_Optimize (No_Unroll);
             pragma Loop_Invariant
               (N + I64 (M_Offset) = M'Length and
                  M_Offset + J in M'Range);
@@ -116,8 +119,11 @@ is
          Add_1305 (H, C);
 
          for I in Index_17 loop
+            pragma Loop_Optimize (No_Unroll);
+
             X (I) := 0;
             for P in Index_17 loop
+               pragma Loop_Optimize (No_Unroll);
                X (I) := X (I) + H (P) *
                         (if P <= I then R (I - P) else 320 * R (I + 17 - P));
             end loop;
@@ -127,6 +133,7 @@ is
          U := 0;
 
          for P in Index_16 loop
+            pragma Loop_Optimize (No_Unroll);
             U := U + H (P);
             H (P) := U and 255;
             U := Shift_Right (U, 8);
@@ -137,6 +144,7 @@ is
          U := 5 * Shift_Right (U, 2);
 
          for P in Index_16 loop
+            pragma Loop_Optimize (No_Unroll);
             U := U + H (P);
             H (P) := U and 255;
             U := Shift_Right (U, 8);
@@ -153,6 +161,7 @@ is
       S := -Shift_Right (H (16), 7);
 
       for P in Index_17 loop
+         pragma Loop_Optimize (No_Unroll);
          H (P) := H (P) xor (S and (G (P) xor H (P)));
       end loop;
 
@@ -165,6 +174,7 @@ is
       Add_1305 (H, C);
 
       for P in Index_16 loop
+         pragma Loop_Optimize (No_Unroll);
          Output (P) := Byte (H (P) mod 256);
       end loop;
    end Onetimeauth;
