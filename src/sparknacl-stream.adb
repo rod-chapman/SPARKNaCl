@@ -54,6 +54,8 @@ is
 
       if B >= 64 then
          loop
+            pragma Loop_Optimize (No_Unroll);
+
             pragma Loop_Invariant
               ((B + I64 (Offset) = C'Length) and then
                (I64 (Offset) <= (C'Length - B)) and then
@@ -62,6 +64,8 @@ is
             Core.Salsa20 (X, Z, K, Sigma);
 
             for I in Index_64 loop
+               pragma Loop_Optimize (No_Unroll);
+
                pragma Loop_Invariant
                  ((Offset + I) in C'Range and
                     (if Xor_M then (Offset + I) in M'Range));
@@ -73,6 +77,7 @@ is
 
             U := 1;
             for I in I32 range 8 .. 15 loop
+               pragma Loop_Optimize (No_Unroll);
                U := U + U32 (Z (I));
                Z (I) := Byte (U mod 256);
                U := Shift_Right (U, 8);
@@ -106,6 +111,7 @@ is
          Core.Salsa20 (X, Z, K, Sigma);
 
          for I in I32 range 0 .. I32 (B - 1) loop
+            pragma Loop_Optimize (No_Unroll);
             pragma Loop_Invariant
               ((Final_Offset + I) in C'Range and
                  (if Xor_M then (Final_Offset + I) in M'Range));

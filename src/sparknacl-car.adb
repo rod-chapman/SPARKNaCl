@@ -43,6 +43,7 @@ is
         (R (1)'Initialized and then R (1) in 0 .. MGFLC * MGFLP);
 
       for I in Index_16 range 1 .. 14 loop
+         pragma Loop_Optimize (No_Unroll);
          Carry := ASR64_16 (R (I));
 
          pragma Assert
@@ -122,6 +123,7 @@ is
       pragma Assert (R (1) in 0 .. GF32_Normal_Limb'Last + First_Carry_T'Last);
 
       for I in Index_16 range 1 .. 14 loop
+         pragma Loop_Optimize (No_Unroll);
          Carry := ASR32_16 (R (I));
          R (I) := R (I) mod LM;
          R (I + 1) := X (I + 1) + Carry;
@@ -165,6 +167,7 @@ is
         (R (1)'Initialized and then R (1) in 0 .. GF_Sum_Limb'Last + 1);
 
       for I in Index_16 range 1 .. 14 loop
+         pragma Loop_Optimize (No_Unroll);
          Carry := R (I) >= LM;
          R (I) := R (I) mod LM;
          R (I + 1) := X (I + 1) + Boolean'Pos (Carry);
@@ -207,6 +210,7 @@ is
       pragma Assert (R (1)'Initialized);
 
       for I in Index_16 range 1 .. 14 loop
+         pragma Loop_Optimize (No_Unroll);
          Carry := ASR32_16 (R (I));
          R (I) := R (I) mod LM;
          R (I + 1) := X (I + 1) + Carry;
@@ -304,6 +308,7 @@ is
         ((Carry = -1) = Carrying_Minus_One (R, X, 0));
 
       for I in Index_16 range 1 .. 14 loop
+         pragma Loop_Optimize (No_Unroll);
          Carry := ASR32_16 (R (I));
          R (I) := R (I) mod LM;
          R (I + 1) := X (I + 1) + Carry;

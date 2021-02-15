@@ -40,6 +40,7 @@ is
 --        (for all K in I32 => To_I32 (To_U32 (K)) = K);
 
       for I in Index_16 loop
+         pragma Loop_Optimize (No_Unroll);
          T := C and (P (I) xor Q (I));
 
          --  Case 1 - "Swap"
@@ -104,6 +105,7 @@ is
         (for all K in I32 => To_I32 (To_U32 (K)) = K);
 
       for I in Index_16 loop
+         pragma Loop_Optimize (No_Unroll);
          T := C and (To_U32 (P (I)) xor To_U32 (Q (I)));
 
          --  Case 1 - "Swap"
@@ -215,6 +217,7 @@ is
 
          --  Limbs 1 .. 14 - subtract FFFF with carry
          for I in Index_16 range 1 .. 14 loop
+            pragma Loop_Optimize (No_Unroll);
             Carry     := ASR32_16 (R (I - 1)) mod 2;
             R (I)     := T (I) - 16#FFFF# - Carry;
             R (I - 1) := R (I - 1) mod LM;
@@ -253,6 +256,7 @@ is
          Result : Bytes_32 := Zero_Bytes_32;
       begin
          for I in Index_16 loop
+            pragma Loop_Optimize (No_Unroll);
             Result (2 * I)     := Byte (X (I) mod 256);
             Result (2 * I + 1) := Byte (X (I) / 256);
          end loop;
@@ -315,6 +319,7 @@ is
    begin
       begin
          for I in Index_16 loop
+            pragma Loop_Optimize (No_Unroll);
             O (I) := U16 (N (2 * I)) + (U16 (N (2 * I + 1)) * 256);
             pragma Loop_Invariant
               (for all J in Index_16 range 0 .. I =>
@@ -332,6 +337,7 @@ is
       C := I;
 
       for A in reverse 0 .. 253 loop
+         pragma Loop_Optimize (No_Unroll);
          C := Square (C);
          if (A /= 2 and A /= 4) then
             C := C * I;
@@ -346,6 +352,7 @@ is
       Result : Bytes_32;
    begin
       for I in Result'Range loop
+         pragma Loop_Optimize (No_Unroll);
          Result (I) := Random.Random_Byte;
       end loop;
       return Result;

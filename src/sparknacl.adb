@@ -11,6 +11,7 @@ is
       R : GF32 with Relaxed_Initialization;
    begin
       for I in Index_16 loop
+         pragma Loop_Optimize (No_Unroll);
          R (I) := I32 (Left (I)) + I32 (Right (I));
          pragma Loop_Invariant
            (for all J in Index_16 range 0 .. I => R (J)'Initialized);
@@ -41,6 +42,7 @@ is
       pragma Assert (R (0)'Initialized);
 
       for I in Index_16 range 1 .. 15 loop
+         pragma Loop_Optimize (No_Unroll);
          --  Having added LM to the previous limb, we also add LM to
          --  each new limb, but subtract 1 to account for the extra LM from
          --  the earlier limb
@@ -90,6 +92,7 @@ is
       --  "Textbook" ladder multiplication
       for I in Index_16 loop
 
+         pragma Loop_Optimize (No_Unroll);
          --  Manual unroll and PRE of the inner loop here gives a significant
          --  performance gain at all optimization levels, preserves proof,
          --  and avoids the need for a complex inner loop invariant.
@@ -178,6 +181,7 @@ is
       --  Given the upper bounds established above, we _can_ prove that
       --  T (I) + R2256 * T (I + 16) WILL fit in 64 bits.
       for I in Index_15 loop
+         pragma Loop_Optimize (No_Unroll);
          TF (I) := T (I) + R2256 * T (I + 16);
 
          pragma Loop_Invariant
@@ -227,6 +231,7 @@ is
       D : Boolean := True;
    begin
       for I in N32 range X'Range loop
+         pragma Loop_Optimize (No_Unroll);
          D := D and (X (I) = Y (I));
          pragma Loop_Invariant
            (D = (for all J in N32 range X'First .. I => X (J) = Y (J)));
@@ -243,6 +248,7 @@ is
    is
    begin
       for I in R'Range loop
+         pragma Loop_Optimize (No_Unroll);
          R (I) := Random.Random_Byte;
       end loop;
    end Random_Bytes;

@@ -108,6 +108,7 @@ is
    is
    begin
       for I in R'Range loop
+         pragma Loop_Optimize (No_Unroll);
          Sanitize_GF16 (R (I));
       end loop;
    end Sanitize_GF_Vector_4;
@@ -153,6 +154,7 @@ is
       is
       begin
          for I in Index_4 loop
+            pragma Loop_Optimize (No_Unroll);
             Utils.CSwap16 (P (I), Q (I), Swap);
          end loop;
       end CSwap;
@@ -165,9 +167,11 @@ is
 
       --  For each byte of S, starting at the MSB
       for I in reverse Index_32 loop
+         pragma Loop_Optimize (No_Unroll);
          CB := S (I);
          --  For each bit of CB, starting with bit 7 (the MSB)
          for J in reverse Natural range 0 .. 7 loop
+            pragma Loop_Optimize (No_Unroll);
             Swap := Boolean'Val (Shift_Right (CB, J) mod 2);
 
             CSwap (LP, LQ, Swap);
@@ -320,6 +324,7 @@ is
       begin
          XL := (others => 0);
          for K in Index_64 loop
+            pragma Loop_Optimize (No_Unroll);
             XL (K) := XL_Limb (X (K));
             pragma Loop_Invariant
               (for all A in Index_64 range 0 .. K => XL (A) = XL_Limb (X (A)));
@@ -351,6 +356,7 @@ is
          --  and manually unroll the final 4 iterations where L (16)
          --  through L (19) are all zero.
          for J in I32 range 31 .. 46 loop
+            pragma Loop_Optimize (No_Unroll);
             Adjustment := (16 * L (J - 31)) * XL (63);
             XL (J) := XL (J) + Carry - Adjustment;
             Carry := ASR_8 (XL (J) + 128);
@@ -440,10 +446,12 @@ is
          Adjustment : Adjustment_T;
       begin
          for I in reverse I32 range 32 .. 62 loop
+            pragma Loop_Optimize (No_Unroll);
             Carry := 0;
             --  As above, this loop iterates over limbs 0 .. 15 of L
             --  leaving the final four (zero) limbs unrolled below.
             for J in I32 range (I - 32) .. (I - 17) loop
+               pragma Loop_Optimize (No_Unroll);
                Adjustment := (16 * L (J - (I - 32))) * XL (I);
                XL (J) := XL (J) + Carry - Adjustment;
                Carry := ASR_8 (XL (J) + 128);
@@ -587,6 +595,7 @@ is
          --  Step 1
          Carry := 0;
          for J in Index_32 loop
+            pragma Loop_Optimize (No_Unroll);
             pragma Assert (XL (31) in PRL);
             XL (J) := XL (J) + (Carry - ASR_4 (XL (31)) * L (J));
 
@@ -620,6 +629,7 @@ is
 
          --  Step 2
          for J in Index_32 loop
+            pragma Loop_Optimize (No_Unroll);
             XL (J) := XL (J) - Carry * L (J);
             pragma Loop_Invariant
               (for all K in Index_32 range 0 .. J =>
@@ -648,6 +658,7 @@ is
             S3C : S3CT;
          begin
             for I in Index_32 loop
+               pragma Loop_Optimize (No_Unroll);
 
                pragma Assert (XL (I) >=
                                 Step2_XL_Limb'First - MXLC * I64 (I));
@@ -690,6 +701,7 @@ is
       Hashing.Hash (R, M);
       X := (others => 0);
       for I in Index_64 loop
+         pragma Loop_Optimize (No_Unroll);
          X (I) := I64 (R (I));
          pragma Loop_Invariant
            (for all K in Index_64 range 0 .. I => X (K) in I64_Byte);
@@ -730,6 +742,7 @@ is
          --  Note that 2**252 - 3 = 16#1111_1111 .. 1101#
          --  with only "bit 1" set to 0
          for A in reverse 0 .. 250 loop
+            pragma Loop_Optimize (No_Unroll);
             C2 := Square (C);
             if A = 1 then
                C := C2;
@@ -912,6 +925,7 @@ is
 
       X := (others => 0);
       for I in Index_32 loop
+         pragma Loop_Optimize (No_Unroll);
          X (I) := I64 (R (I));
          pragma Loop_Invariant
            ((for all K in N32 range     0 .. I  => X (K) in I64_Byte) and
@@ -927,7 +941,9 @@ is
       pragma Warnings (Off, "explicit membership test may be optimized");
 
       for I in Index_32 loop
+         pragma Loop_Optimize (No_Unroll);
          for J in Index_32 loop
+            pragma Loop_Optimize (No_Unroll);
             T := Byte_Product (H (I)) * Byte_Product (D (J));
             X (I + J) := X (I + J) + T;
 
