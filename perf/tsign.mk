@@ -1,5 +1,7 @@
 all: tsign.hex tsign.asm
 
+SIZE_OBJS := ../obj/sparknacl.o ../obj/sparknacl-car.o ../obj/sparknacl-core.o ../obj/sparknacl-cryptobox.o ../obj/sparknacl-hashing.o ../obj/sparknacl-mac.o ../obj/sparknacl-scalar.o ../obj/sparknacl-secretbox.o ../obj/sparknacl-sign.o ../obj/sparknacl-sign-utils.o ../obj/sparknacl-stream.o ../obj/sparknacl-utils.o
+
 tsign: tsign.adb io.adb io.ads tweetnacl_api.ads tweetnacl.c
 	gprbuild -Ptsign -v -XSPARKNACL_RUNTIME_MODE=zfp -XSPARKNACL_RUNTIME_CHECKS=disabled -XSPARKNACL_CONTRACTS=disabled  -XSPARKNACL_TARGET_ARCH=rv32im -XSPARKNACL_BUILD_MODE=debug
 	@mv main.map tsign.map
@@ -18,6 +20,10 @@ tsign.asm: tsign
 
 stack: tsign
 	gnatstack -Ptsign -p -v -XSPARKNACL_RUNTIME_MODE=zfp -XSPARKNACL_RUNTIME_CHECKS=disabled -XSPARKNACL_CONTRACTS=disabled -XSPARKNACL_TARGET_ARCH=rv32im -XSPARKNACL_BUILD_MODE=debug -esparknacl.sign.sign
+
+size:	tsign
+	riscv32-elf-strip $(SIZE_OBJS)
+	riscv32-elf-size -t $(SIZE_OBJS)
 
 run: tsign.hex
 	cp tsign.hex /media/rchapman/HiFive
