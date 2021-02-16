@@ -19,14 +19,14 @@ library project Sparknacl is
    Style_Checks : Enabled_Kind := External ("SPARKNACL_STYLE_CHECKS", "enabled");
    Contracts_Checks : Enabled_Kind := External ("SPARKNACL_CONTRACTS", "disabled");
 
-   type Build_Kind is ("debug", "O1", "O2", "O3");
+   type Build_Kind is ("debug", "O1", "O2", "O3", "Os");
    Build_Mode : Build_Kind := External ("SPARKNACL_BUILD_MODE", "O2");
 
    type Runtime_Kind is ("full", "zfp");
    Runtime_Mode : Runtime_Kind := External ("SPARKNACL_RUNTIME_MODE", "full");
 
    --  Extend this list to add any options for specific targets and see below
-   type Target_Arch_Kind is ("unspecified", "rv32im", "rv32imc", "rv32imc_f4l4");
+   type Target_Arch_Kind is ("unspecified", "rv32im", "rv32imc", "rv32imc_a4");
    Target_Arch : Target_Arch_Kind := External ("SPARKNACL_TARGET_ARCH", "unspecified");
 
    Callgraph_Switch := ("-fcallgraph-info=su,da");
@@ -78,6 +78,8 @@ library project Sparknacl is
       when "O3" =>
          Build_Switches := ("-O3",     -- Optimization
                             "-gnatn"); -- Enable inlining
+      when "Os" =>
+         Build_Switches := ("-Os");     -- Optimize for small code size, no inlining
    end case;
 
    --  Extend this case choice for any other target/architecture specific switches
@@ -88,10 +90,12 @@ library project Sparknacl is
       when "rv32imc" =>
          Build_Switches := Build_Switches &
            ("-march=rv32imc"); -- RV32IM with Compressed instructions
-      when "rv32imc_f4l4" =>
+      when "rv32imc_a4" =>
          Build_Switches := Build_Switches &
            ("-march=rv32imc") & -- Compressed instructions but all BBs on 4-byte alignment
            ("-falign-functions=4") &
+           ("-falign-jumps=4") &
+           ("-falign-loops=4") &
            ("-falign-labels=4");
       when others => null;
    end case;
