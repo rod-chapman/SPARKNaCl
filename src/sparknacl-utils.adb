@@ -12,6 +12,7 @@ is
      (False => 16#0000_0000#,
       True  => 16#FFFF_FFFF#);
 
+   --  Constant-time conditional swap for a GF32 (32-bit limbs)
    procedure CSwap32 (P    : in out GF32;
                       Q    : in out GF32;
                       Swap : in     Boolean)
@@ -25,20 +26,14 @@ is
                          ((Q'Old in Normal_GF32) = (Q in Normal_GF32)));
 
 
+   --  Constant-time conditional swap for a Normal_GF (16-bit limbs)
    procedure CSwap16 (P    : in out Normal_GF;
                       Q    : in out Normal_GF;
                       Swap : in     Boolean)
    is
       T : U16;
       C : U16 := Bit_To_Swapmask16 (Swap);
-
---      --  Do NOT try to evaluate the assumption below at run-time
---      pragma Assertion_Policy (Assume => Ignore);
    begin
---      --  We need this axiom
---      pragma Assume
---        (for all K in I32 => To_I32 (To_U32 (K)) = K);
-
       for I in Index_16 loop
          pragma Loop_Optimize (No_Unroll);
          T := C and (P (I) xor Q (I));
