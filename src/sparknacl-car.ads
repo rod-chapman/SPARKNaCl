@@ -27,13 +27,6 @@ is
      with Pure_Function,
           Global => null;
 
-   --  Supporting "+"
-   function Sum_To_Nearlynormal
-     (X : in Sum_GF)
-       return Nearlynormal_GF
-     with Pure_Function,
-          Global => null;
-
    --  Supporting "-"
    function Difference_To_Nearlynormal
      (X : in Difference_GF)

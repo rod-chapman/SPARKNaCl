@@ -150,49 +150,6 @@ is
       return Nearlynormal_GF (R);
    end Seminormal_To_Nearlynormal;
 
-   function Sum_To_Nearlynormal
-     (X : in Sum_GF)
-       return Nearlynormal_GF
-   is
-      Carry : Boolean;
-      R     : GF32 with Relaxed_Initialization;
-   begin
-      Carry := X (0) >= LM;
-      R (0) := X (0) mod LM;
-      R (1) := X (1) + Boolean'Pos (Carry);
-
-      pragma Assert
-        (R (0)'Initialized and then R (0) in GF32_Normal_Limb);
-      pragma Assert
-        (R (1)'Initialized and then R (1) in 0 .. GF_Sum_Limb'Last + 1);
-
-      for I in Index_16 range 1 .. 14 loop
-         pragma Loop_Optimize (No_Unroll);
-         Carry := R (I) >= LM;
-         R (I) := R (I) mod LM;
-         R (I + 1) := X (I + 1) + Boolean'Pos (Carry);
-
-         pragma Loop_Invariant
-           (for all K in Index_16 range 0 .. I + 1 => (R (K)'Initialized));
-         pragma Loop_Invariant
-           (for all K in Index_16 range 0 .. I => (R (K) in GF32_Normal_Limb));
-         pragma Loop_Invariant (R (I + 1) in 0 .. GF_Sum_Limb'Last + 1);
-
-      end loop;
-
-      pragma Assert (R'Initialized);
-      pragma Assert
-        (for all K in Index_16 range 0 .. 14 => (R (K) in GF32_Normal_Limb));
-      pragma Assert (R (15) in 0 .. GF_Sum_Limb'Last + 1);
-
-      Carry := R (15) >= LM;
-
-      R (0) := R (0) + R2256 * Boolean'Pos (Carry);
-      R (15) := R (15) mod LM;
-
-      return Nearlynormal_GF (R);
-   end Sum_To_Nearlynormal;
-
    function Difference_To_Nearlynormal
      (X : in Difference_GF)
        return Nearlynormal_GF
