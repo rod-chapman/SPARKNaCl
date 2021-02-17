@@ -8,27 +8,37 @@ is
 
    function "+" (Left, Right : in Normal_GF) return Normal_GF
    is
-      R : GF32 with Relaxed_Initialization;
+      subtype ILT is I32 range 0 .. (LMM1 * 2) + 1;
+      T     : ILT;
+      Carry : I32_Bit;
+      R     : GF32 with Relaxed_Initialization;
    begin
+      Carry := 0;
+
+      --  In this implementation, we compute and add Carry
+      --  as we go along
       for I in Index_16 loop
          pragma Loop_Optimize (No_Unroll);
-         R (I) := I32 (Left (I)) + I32 (Right (I));
+         T := I32 (Left (I)) + I32 (Right (I)) + Carry;
+         R (I) := T mod LM;
+         Carry := T / LM;
          pragma Loop_Invariant
            (for all J in Index_16 range 0 .. I => R (J)'Initialized);
          pragma Loop_Invariant
-           (for all J in Index_16 range 0 .. I => R (J) in GF_Sum_Limb);
+           (for all J in Index_16 range 0 .. I => R (J) in GF32_Normal_Limb);
       end loop;
 
-      pragma Assert (R'Initialized and then R in Sum_GF);
+      pragma Assert (R'Initialized and then R in Normal_GF32);
 
-      --  In SPARKNaCl, we _always_ normalize after "+" to simplify proof.
-      --  This sacrifices some performance for proof automation.
-      --
-      --  In future, it might be possible to remove normalization here
-      --  if the functions in SPARKNaCl.Car can be proven to handle the
-      --  larger range of limbs that result.  TBD.
-      return Car.Nearlynormal_To_Normal
-        (Car.Sum_To_Nearlynormal (R));
+      --  The "Carry" from limb 15 can only be 0 or 1, so we
+      --  multiply that by R2256 and add to limb 0. R is then a
+      --  "Nearlynormal_GF", so only a _single_ call to
+      --  Car.Nearlynormal_To_Normal is required
+      R (0) := R (0) + (R2256 * Carry);
+
+      pragma Assert (R'Initialized and then R in Nearlynormal_GF);
+
+      return Car.Nearlynormal_To_Normal (R);
    end "+";
 
    function "-" (Left, Right : in Normal_GF) return Normal_GF
