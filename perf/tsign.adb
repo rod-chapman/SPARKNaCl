@@ -12,8 +12,6 @@ with SPARKNaCl;      use SPARKNaCl;
 with SPARKNaCl.Sign; use SPARKNaCl.Sign;
 with SPARKNaCl.Sign.Utils; use SPARKNaCl.Sign.Utils;
 
-with SPARKNaCl.Count;
-
 with TweetNaCl_API;
 
 with RISCV.CSR; use RISCV.CSR;
@@ -122,7 +120,6 @@ begin
    IO.Put_Line ("One second test (CLINT):  ", U64 (T2 - T1));
 
    IO.Put_Line ("SPARKNaCl.Sign test");
-   SPARKNaCl.Count.Reset;
    T1 := Mcycle.Read;
 
    SPARKNaCl.Sign.Sign (SM1, M, SK);
