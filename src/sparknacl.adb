@@ -1,3 +1,4 @@
+--  with SPARKNaCl.PDebug;
 with SPARKNaCl.Car;
 package body SPARKNaCl
   with SPARK_Mode => On
@@ -43,45 +44,37 @@ is
 
    function "-" (Left, Right : in Normal_GF) return Normal_GF
    is
-      R : GF32 with Relaxed_Initialization;
+      subtype ILT is I32 range -LM .. LMM1;
+      T     : ILT;
+      Carry : I32 range -1 .. 0;
+      R     : GF32 with Relaxed_Initialization;
    begin
-      --  For limb 0, we compute the difference, but add LM to
-      --  make sure the result is positive.
-      R (0) := (I32 (Left (0)) - I32 (Right (0))) + LM;
+      Carry := 0;
 
-      pragma Assert (R (0)'Initialized);
-
-      for I in Index_16 range 1 .. 15 loop
+      --  In this implementation, we compute and add Carry
+      --  as we go along
+      for I in Index_16 loop
          pragma Loop_Optimize (No_Unroll);
-         --  Having added LM to the previous limb, we also add LM to
-         --  each new limb, but subtract 1 to account for the extra LM from
-         --  the earlier limb
-         R (I) := (I32 (Left (I)) - I32 (Right (I))) + LMM1;
+         T := I32 (Left (I)) - I32 (Right (I)) + Carry;
+         R (I) := T mod LM;
+         Carry := ASR32_16 (T);
          pragma Loop_Invariant
-           (for all K in Index_16 range 0 .. I => R (K)'Initialized);
+           (for all J in Index_16 range 0 .. I => R (J)'Initialized);
          pragma Loop_Invariant
-           ((R (0) in 1 .. 2 * LMM1 + 1) and
-            (for all K in Index_16 range 1 .. I => R (K) in 0 .. 2 * LMM1));
+           (for all J in Index_16 range 0 .. I => R (J) in GF32_Normal_Limb);
       end loop;
 
-      pragma Assert (R'Initialized);
+      pragma Assert (R'Initialized and then R in Normal_GF32);
 
-      --  We now need to carry -1 into limb R (16), but that doesn't
-      --  exist, so we carry 2**256 * -1 into limb R (0). As before,
-      --  we know that (2**256) mod (2**255 - 19) = R2256, so we add
-      --  R2256 * -1 to R (0)
-      R (0) := R (0) - R2256;
+      --  The "Carry" from limb 15 can only be 0 or -1, so we
+      --  multiply that by R2256 and add to limb 0. R is then a
+      --  "Nearlynormal_GF", so only a _single_ call to
+      --  Car.Nearlynormal_To_Normal is required
+      R (0) := R (0) + (R2256 * Carry);
 
-      pragma Assert (R in Difference_GF);
+      pragma Assert (R'Initialized and then R in Nearlynormal_GF);
 
-      --  In SPARKNaCl, we _always_ normalize after "-" to simplify proof.
-      --  This sacrifices some performance for proof automation.
-      --
-      --  In future, it might be possible to remove normalization here
-      --  if the functions in SPARKNaCl.Car can be proven to handle the
-      --  larger range of limbs that result.  TBD.
-      return Car.Nearlynormal_To_Normal
-        (Car.Difference_To_Nearlynormal (R));
+      return Car.Nearlynormal_To_Normal (R);
    end "-";
 
    function "*" (Left, Right : in Normal_GF) return Normal_GF
