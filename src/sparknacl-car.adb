@@ -150,52 +150,6 @@ is
       return Nearlynormal_GF (R);
    end Seminormal_To_Nearlynormal;
 
-   function Difference_To_Nearlynormal
-     (X : in Difference_GF)
-       return Nearlynormal_GF
-   is
-      --  Note that Carry can be negative in this case
-      subtype Carry_T is I32 range -1 .. 1;
-      Carry : Carry_T;
-      R     : GF32 with Relaxed_Initialization;
-   begin
-      Carry := ASR32_16 (X (0));
-      R (0) := X (0) mod LM;
-      R (1) := X (1) + Carry;
-
-      pragma Assert (R (0)'Initialized);
-      pragma Assert (R (1)'Initialized);
-
-      for I in Index_16 range 1 .. 14 loop
-         pragma Loop_Optimize (No_Unroll);
-         Carry := ASR32_16 (R (I));
-         R (I) := R (I) mod LM;
-         R (I + 1) := X (I + 1) + Carry;
-
-         pragma Loop_Invariant
-           (for all K in Index_16 range 0 .. I => R (K)'Initialized);
-         pragma Loop_Invariant
-           (for all K in Index_16 range 0 .. I => (R (K) in GF32_Normal_Limb));
-         pragma Loop_Invariant (R (I + 1)'Initialized);
-         pragma Loop_Invariant (R (I + 1) in -1 .. 131071);
-
-      end loop;
-
-      pragma Assert (R'Initialized);
-      pragma Assert
-        (for all K in Index_16 range 0 .. 14 => (R (K) in GF32_Normal_Limb));
-      pragma Assert (R (15) in -1 .. 131071);
-
-      Carry := ASR32_16 (R (15));
-
-      R (0) := R (0) + R2256 * Carry;
-      R (15) := R (15) mod LM;
-
-      pragma Assert (R in Nearlynormal_GF);
-
-      return Nearlynormal_GF (R);
-   end Difference_To_Nearlynormal;
-
    function Nearlynormal_To_Normal
      (X : in Nearlynormal_GF)
        return Normal_GF

@@ -27,13 +27,6 @@ is
      with Pure_Function,
           Global => null;
 
-   --  Supporting "-"
-   function Difference_To_Nearlynormal
-     (X : in Difference_GF)
-       return Nearlynormal_GF
-     with Pure_Function,
-          Global => null;
-
    --  Supporting "*", "+" and "-"
    function Nearlynormal_To_Normal
      (X : in Nearlynormal_GF)
