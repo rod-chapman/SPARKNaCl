@@ -129,7 +129,6 @@ Assuming you have cloned this repository and have the GNAT and SPARK tools insta
 ### Proofs
 
 ```
-cd src
 gnatprove -Psparknacl
 ```
 
