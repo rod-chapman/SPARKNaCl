@@ -33,6 +33,10 @@ This library is a compact reference implementation of the NaCl crypto library. I
 
 ## Latest news
 
+### 19th February 2021
+
+* More performance tuning reported [here] (https://blog.adacore.com/doubling-the-performance-of-sparknacl-again)
+
 ### 9th February 2021
 
 * Results of performance analysis and tuning now written up [here](https://blog.adacore.com/performance-analysis-and-tuning-of-sparknacl).
