@@ -132,7 +132,7 @@ Assuming you have cloned this repository and have the GNAT and SPARK tools insta
 gnatprove -Psparknacl
 ```
 
-To see a summary of the proof results, see the resulting `gnatprove/gnatprove.out` file.
+To see a summary of the proof results, see the resulting `obj/gnatprove/gnatprove.out` file.
 
 To see *only* failed proofs (of which there should be none), do
 
