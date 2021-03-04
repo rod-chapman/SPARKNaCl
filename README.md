@@ -33,9 +33,9 @@ This library is a compact reference implementation of the NaCl crypto library. I
 
 ## Latest news
 
-### 19th February 2021
+### 4th March 2021
 
-* More performance tuning reported [here](https://blog.adacore.com/doubling-the-performance-of-sparknacl-again)
+* More performance tuning reported [here](https://blog.adacore.com/doubling-the-performance-of-sparknacl-again). This blog also reports code size and worst-case stack usage for all popular optimization levels.
 
 ### 9th February 2021
 
@@ -109,12 +109,12 @@ This release of SPARKNaCl meets most of the goals above. In particular:
 * The proof requires use of two of the main proof engines supplied with SPARK (CVC4, Z3). No one of these is capable of discharging all the VCs on its own.
 * The code contains no undefined behaviour, and does not depend on any unspecified behaviour. Additionally, there is no "erroneous behaviour" and no "bounded erors", such as reading uninitialized data.
 * The NaCl test suite has been re-implemented and passes.
+* Performance analysis of Curve25519, SHA512, and the top-level "Sign" operation has been done.
 
 Still on the "to be done" list:
 
-* Performance has not yet been assessed or optimized. I have recently taken delivery of a small RISC-V development board that will serve for performance testing.
-* Code size has not yet been assessed against TweetNaCl.
 * While GNAT Community Edition 2019 is based on GCC 8.3.1, it would also be interesting to repeat all tests and performance analysis using the recently-released GNAT/LLVM integration.
+* Performance analysis and optimization of Salsa20, and the SecretBox and CryptoBox primitives.
 
 ## Tools
 
@@ -175,16 +175,15 @@ gprbuild -Pstressall
 
 At this time, there are several items to-be-done:
 
-* Performance test and optimization.  I expect the current code will be a bit slower than TweetNaCl, owing to two main issues:
-  1. In SPARK, it is natural programming style to return composite objects (e.g. array types) by copy from functions. This is elegant in terms of readability and proof, but has a performance penalty.  For example, our "*", "+" and "-" operators for the GF type all return an array of 16 64-bit integers by copy.
-  2. Currently, SPARKNaCl applies the GF "Carry" operation more aggressively than in TweetNaCl. For example, SPARKNaCl applies "Carry" after a "+" operation, and applies Carry *three* times after "*". These make proof easier, but come at some cost in performance. Relaxation of these rules remains TBD.
-
-* Code size comparison with TweetNaCl.
+* Performance test and optimization. (Done - See 4th March 2021 News above)
+* Code size comparison with TweetNaCl. (Done - See 4th March 2021 News above)
 * Structural coverage analysis of the tests against the sources has not yet been performed. I don't expect the results will be very interesting, though. Some support for this does exist in the main project file in the "cover" build target.
+* Repeat performance analysis using [GNAT-LLVM](https://github.com/AdaCore/gnat-llvm).
+* API/wrapper for calling SPARKNaCl from C.
 
 ## Acknowledgements
 
 Many thanks to:
-1. Yannick Moy of [AdaCore](http://www.adacore.com/) who helped with SPARK language and toolset issues.
+1. Yannick Moy and Claire Dross of [AdaCore](http://www.adacore.com/) who helped with SPARK language and toolset issues.
 2. [Benoit Viguier](https://benoit.viguier.nl), who kindly offered advice and help with explaining the GF "Carry" operation.
 3. [Jason Donenfeld](https://www.zx2c4.com) for providing pointers to his revised "Carry" algorithm that is used in WireGuard.
