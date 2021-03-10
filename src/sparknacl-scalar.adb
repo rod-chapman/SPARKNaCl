@@ -2,6 +2,7 @@ with SPARKNaCl.Utils;
 package body SPARKNaCl.Scalar
   with SPARK_Mode => On
 is
+   pragma Warnings (GNATProve, Off, "pragma * ignored (not yet supported)");
 
    Nine : constant Bytes_32 := (9, others => 0);
    GF_121665 : constant Normal_GF := (16#DB41#, 1, others => 0);

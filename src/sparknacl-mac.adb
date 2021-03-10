@@ -1,6 +1,8 @@
 package body SPARKNaCl.MAC
   with SPARK_Mode => On
 is
+   pragma Warnings (GNATProve, Off, "pragma * ignored (not yet supported)");
+
    subtype Index_17 is I32 range 0 .. 16;
    subtype Poly_1305_F is U32_Seq (Index_17);
 

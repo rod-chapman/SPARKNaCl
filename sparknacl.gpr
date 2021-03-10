@@ -103,19 +103,10 @@ library project Sparknacl is
    case Runtime_Mode is
       when "zfp" =>
          for Runtime ("Ada") use "zfp";
-         for Excluded_Source_Files use ("sparknacl-debug.ads", "sparknacl-debug.adb", "sparknacl-pdebug.ads", "sparknacl-pdebug.adb", "random.adb");
+         for Excluded_Source_Files use ("sparknacl-debug.ads", "sparknacl-debug.adb", "sparknacl-pdebug.ads", "sparknacl-pdebug.adb");
       when others =>
-         for Excluded_Source_Files use ("random_zfp.adb");
+         null;
    end case;
-
-   package Naming is
-      case Runtime_Mode is
-         when "zfp" =>
-            for Body ("random") use "random_zfp.adb";
-         when others =>
-            for Body ("random") use "random.adb";
-      end case;
-   end Naming;
 
    package Compiler is
       for Default_Switches ("Ada") use

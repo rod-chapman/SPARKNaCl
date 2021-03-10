@@ -2,6 +2,7 @@ with SPARKNaCl;       use SPARKNaCl;
 with SPARKNaCl.Debug; use SPARKNaCl.Debug;
 with SPARKNaCl.MAC;   use SPARKNaCl.MAC;
 
+with Random;
 with Interfaces;      use Interfaces;
 with Ada.Numerics.Discrete_Random;
 procedure Onetimeauth7
@@ -29,8 +30,8 @@ begin
          R3 : Index_16;
       begin
          RCI.Reset (RCIG);
-         Random_Bytes (C);
-         Random_Bytes (Raw_K);
+         Random.Random_Bytes (C);
+         Random.Random_Bytes (Raw_K);
          Construct (K, Raw_K);
          Onetimeauth (A, C, K);
          if not Onetimeauth_Verify (A, C, K) then

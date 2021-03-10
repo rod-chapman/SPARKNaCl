@@ -10,13 +10,9 @@ is
    --  Public key signatures
    --------------------------------------------------------
 
-   procedure Keypair (PK : out Signing_PK;
-                      SK : out Signing_SK)
-     with Global => Random.Entropy;
-
-   procedure Keypair_From_Bytes (SK_Raw : in     Bytes_32; -- random please!
-                                 PK     :    out Signing_PK;
-                                 SK     :    out Signing_SK)
+   procedure Keypair (SK_Raw : in     Bytes_32; -- random please!
+                      PK     :    out Signing_PK;
+                      SK     :    out Signing_SK)
      with Global => null;
 
    procedure PK_From_Bytes (PK_Raw : in     Bytes_32;

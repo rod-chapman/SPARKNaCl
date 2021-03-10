@@ -1,6 +1,7 @@
 package body SPARKNaCl.Hashing
   with SPARK_Mode => On
 is
+   pragma Warnings (GNATProve, Off, "pragma * ignored (not yet supported)");
 
    subtype Index_80 is I32 range 0 .. 79;
    type K_Table is array (Index_80) of U64;

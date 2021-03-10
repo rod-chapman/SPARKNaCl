@@ -38,8 +38,4 @@ is
      with Global => null,
           Pure_Function;
 
-   function Random_Bytes_32 return Bytes_32
-     with Global => Random.Entropy,
-          Volatile_Function;
-
 end SPARKNaCl.Utils;

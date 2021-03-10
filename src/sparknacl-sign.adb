@@ -3,6 +3,8 @@ with SPARKNaCl.Hashing;
 package body SPARKNaCl.Sign
   with SPARK_Mode => On
 is
+   pragma Warnings (GNATProve, Off, "pragma * ignored (not yet supported)");
+
    --============================================
    --  Local constants and types
    --============================================
@@ -825,10 +827,9 @@ is
       SPARKNaCl.Sanitize (K.F);
    end Sanitize;
 
-   procedure Keypair_From_Bytes (SK_Raw : in     Bytes_32; -- random please!
-                                 PK     :    out Signing_PK;
-                                 SK     :    out Signing_SK)
-
+   procedure Keypair (SK_Raw : in     Bytes_32; -- random please!
+                      PK     :    out Signing_PK;
+                      SK     :    out Signing_SK)
    is
       D   : Bytes_64;
       LPK : Bytes_32;
@@ -848,20 +849,6 @@ is
       Sanitize (LPK);
       pragma Unreferenced (D);
       pragma Unreferenced (LPK);
-   end Keypair_From_Bytes;
-
-   procedure Keypair (PK : out Signing_PK;
-                      SK : out Signing_SK)
-   is
-      RB  : Bytes_32;
-   begin
-      RB  := Utils.Random_Bytes_32;
-      Keypair_From_Bytes (RB, PK, SK);
-
-      --  Sanitize intermediate values used in key generation
-      pragma Warnings (GNATProve, Off, "statement has no effect");
-      Sanitize (RB);
-      pragma Unreferenced (RB);
    end Keypair;
 
    procedure PK_From_Bytes (PK_Raw : in     Bytes_32;

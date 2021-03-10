@@ -1,8 +1,9 @@
---  with SPARKNaCl.PDebug;
 with SPARKNaCl.Car;
 package body SPARKNaCl
   with SPARK_Mode => On
 is
+   pragma Warnings (GNATProve, Off, "pragma * ignored (not yet supported)");
+
    --===============================
    --  Exported subprogram bodies
    --===============================
@@ -242,19 +243,6 @@ is
 
       return D;
    end Equal;
-
-   --------------------------------------------------------
-   --  RNG
-   --------------------------------------------------------
-
-   procedure Random_Bytes (R : out Byte_Seq)
-   is
-   begin
-      for I in R'Range loop
-         pragma Loop_Optimize (No_Unroll);
-         R (I) := Random.Random_Byte;
-      end loop;
-   end Random_Bytes;
 
    --------------------------------------------------------
    --  Data sanitization

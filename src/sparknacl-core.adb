@@ -1,6 +1,7 @@
 package body SPARKNaCl.Core
   with SPARK_Mode => On
 is
+   pragma Warnings (GNATProve, Off, "pragma * ignored (not yet supported)");
 
    --===============================
    --  Local subprogram declarations

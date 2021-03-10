@@ -3,10 +3,12 @@ with SPARKNaCl.Debug; use SPARKNaCl.Debug;
 with SPARKNaCl.Sign;  use SPARKNaCl.Sign;
 with Ada.Text_IO;     use Ada.Text_IO;
 with Interfaces;      use Interfaces;
+with Random;
 procedure Sign
 is
-   PK : Signing_PK;
-   SK : Signing_SK;
+   Raw_SK : Bytes_32;
+   PK     : Signing_PK;
+   SK     : Signing_SK;
 
    M : constant Byte_Seq (0 .. 255) := (0 => 16#55#, others => 16#aa#);
 
@@ -20,7 +22,8 @@ is
 begin
 --   loop
 --      Put_Line ("Iteration " & I'Img);
-      Keypair (PK, SK);
+      Random.Random_Bytes (Raw_SK);
+      Keypair (Raw_SK, PK, SK);
 
       begin
          Sign (SM, M, SK);

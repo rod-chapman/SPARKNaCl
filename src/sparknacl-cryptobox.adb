@@ -1,21 +1,16 @@
-with SPARKNaCl.Utils;
 with SPARKNaCl.Scalar;
 with SPARKNaCl.Secretbox;
 
 package body SPARKNaCl.Cryptobox
   with SPARK_Mode => On
 is
-   procedure Keypair (PK : out Public_Key;
-                      SK : out Secret_Key)
+   procedure Keypair (Raw_SK : in     Bytes_32;
+                      PK     :    out Public_Key;
+                      SK     :    out Secret_Key)
    is
-      Raw_SK : Bytes_32 := Utils.Random_Bytes_32;
    begin
       SK.F := Raw_SK;
       PK.F := Scalar.Mult_Base (Raw_SK);
-
-      pragma Warnings (GNATProve, Off, "statement has no effect");
-      Sanitize (Raw_SK);
-      pragma Unreferenced (Raw_SK);
    end Keypair;
 
    function Construct (K : in Bytes_32) return Secret_Key
@@ -68,6 +63,7 @@ is
                      C      => Sigma);
       Core.Construct (K, LK);
 
+      pragma Warnings (GNATProve, Off, "statement has no effect");
       Sanitize (S);
       Sanitize (LK);
       pragma Unreferenced (S, LK);
@@ -105,6 +101,7 @@ is
    begin
       BeforeNM (K, Recipient_PK, Sender_SK);
       AfterNM (C, Status, M, N, K);
+      pragma Warnings (GNATProve, Off, "statement has no effect");
       Core.Sanitize (K);
       pragma Unreferenced (K);
    end Create;
@@ -120,6 +117,7 @@ is
    begin
       BeforeNM (K, Sender_PK, Recipient_SK);
       Open_AfterNM (M, Status, C, N, K);
+      pragma Warnings (GNATProve, Off, "statement has no effect");
       Core.Sanitize (K);
       pragma Unreferenced (K);
    end Open;

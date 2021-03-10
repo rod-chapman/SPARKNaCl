@@ -30,10 +30,11 @@
 with Ada.Unchecked_Conversion;
 
 with Interfaces; use Interfaces;
-with Random;
+--  RCC with Random;
 
 package SPARKNaCl
-  with SPARK_Mode => On
+  with Pure,
+       SPARK_Mode => On
 is
    --==============================================
    --  Exported types and constants
@@ -98,8 +99,8 @@ is
    --------------------------------------------------------
 
    --  Primitive operation of Byte_Seq, so inheritable
-   procedure Random_Bytes (R : out Byte_Seq)
-     with Global => Random.Entropy;
+--  RCC   procedure Random_Bytes (R : out Byte_Seq)
+--  RCC     with Global => Random.Entropy;
 
    --------------------------------------------------------
    --  Data sanitization

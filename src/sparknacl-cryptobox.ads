@@ -16,9 +16,10 @@ is
    Ciphertext_Zero_Bytes : constant := 16;
 
    --  Key generation
-   procedure Keypair (PK : out Public_Key;
-                      SK : out Secret_Key)
-     with Global => Random.Entropy;
+   procedure Keypair (Raw_SK : in     Bytes_32;
+                      PK     :    out Public_Key;
+                      SK     :    out Secret_Key)
+     with Global => null;
 
    function Construct (K : in Bytes_32) return Secret_Key
      with Global => null;

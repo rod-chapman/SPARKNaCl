@@ -1,6 +1,7 @@
 package body SPARKNaCl.Utils
   with SPARK_Mode => On
 is
+   pragma Warnings (GNATProve, Off, "pragma * ignored (not yet supported)");
 
    type Bit_To_Swapmask_Table16 is array (Boolean) of U16;
    Bit_To_Swapmask16 : constant Bit_To_Swapmask_Table16 :=
@@ -341,16 +342,5 @@ is
 
       return C;
    end Inv_25519;
-
-   function Random_Bytes_32 return Bytes_32
-   is
-      Result : Bytes_32;
-   begin
-      for I in Result'Range loop
-         pragma Loop_Optimize (No_Unroll);
-         Result (I) := Random.Random_Byte;
-      end loop;
-      return Result;
-   end Random_Bytes_32;
 
 end SPARKNaCl.Utils;

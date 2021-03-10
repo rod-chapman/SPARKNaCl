@@ -1,5 +1,6 @@
 private package SPARKNaCl.Car
-  with SPARK_Mode => On
+  with Pure,
+       SPARK_Mode => On
 is
    --==========================================
    --  Functions supporting normalization

@@ -1,6 +1,7 @@
 with SPARKNaCl;       use SPARKNaCl;
 with SPARKNaCl.Core;  use SPARKNaCl.Core;
 with SPARKNaCl.Debug; use SPARKNaCl.Debug;
+with Random;
 
 with Ada.Text_IO; use Ada.Text_IO;
 procedure Core1
@@ -29,8 +30,8 @@ begin
    HSalsa20 (FirstKey, Zero, Shared, C);
    DH ("FirstKey is", FirstKey);
 
-   Random_Bytes (RawKey1);
-   Random_Bytes (RawKey2);
+   Random.Random_Bytes (RawKey1);
+   Random.Random_Bytes (RawKey2);
    declare
       K1 : Salsa20_Key := Construct (RawKey1);
       K2 : Salsa20_Key := Construct (RawKey2);

@@ -9,6 +9,7 @@ with Interfaces;       use Interfaces;
 
 procedure Box8
 is
+   Raw_SK : Bytes_32;
    AliceSK, BobSK : Secret_Key;
    AlicePK, BobPK : Public_Key;
    N : Stream.HSalsa20_Nonce;
@@ -16,9 +17,11 @@ is
 begin
 --   for MLen in N32 range 0 .. 999 loop
    for MLen in N32 range 0 .. 99 loop
-      Keypair (AlicePK, AliceSK);
-      Keypair (BobPK, BobSK);
-      Random_Bytes (Bytes_24 (N));
+      Random.Random_Bytes (Raw_SK);
+      Keypair (Raw_SK, AlicePK, AliceSK);
+      Random.Random_Bytes (Raw_SK);
+      Keypair (Raw_SK, BobPK, BobSK);
+      Random.Random_Bytes (Bytes_24 (N));
       Put ("Box8 - iteration" & MLen'Img);
       declare
          subtype Index is
@@ -32,7 +35,7 @@ begin
          M, C, M2 : Text := (others => 0);
       begin
          RI.Reset (G);
-         Random_Bytes (M (Plaintext_Zero_Bytes .. M'Last));
+         Random.Random_Bytes (M (Plaintext_Zero_Bytes .. M'Last));
          Create (C, S, M, N, BobPK, AliceSK);
          if S then
             C (RI.Random (G)) := Random_Byte;
