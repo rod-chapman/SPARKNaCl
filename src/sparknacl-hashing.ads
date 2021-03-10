@@ -1,5 +1,6 @@
 package SPARKNaCl.Hashing
-  with SPARK_Mode => On
+  with Pure,
+       SPARK_Mode => On
 is
    subtype Digest is Bytes_64; -- 512 bits
 

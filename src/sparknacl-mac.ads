@@ -1,5 +1,6 @@
 package SPARKNaCl.MAC
-  with SPARK_Mode => On
+  with Pure,
+       SPARK_Mode => On
 is
    --  Limited, so no assignment or comparison, and always
    --  pass-by-reference.

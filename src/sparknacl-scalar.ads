@@ -1,5 +1,6 @@
 package SPARKNaCl.Scalar
-  with SPARK_Mode => On
+  with Pure,
+       SPARK_Mode => On
 is
    --------------------------------------------------------
    --  Scalar multiplication

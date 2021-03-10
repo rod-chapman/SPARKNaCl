@@ -1,7 +1,8 @@
 with SPARKNaCl.Core;
 with SPARKNaCl.Stream;
 package SPARKNaCl.Cryptobox
-  with SPARK_Mode => On
+  with Pure,
+       SPARK_Mode => On
 is
    --------------------------------------------------------
    --  Public Key Authenticated Encryption - "Crypto Box" --

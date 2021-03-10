@@ -1,7 +1,8 @@
 with SPARKNaCl.Stream;
 with SPARKNaCl.Core;
 package SPARKNaCl.Secretbox
-  with SPARK_Mode => On
+  with Pure,
+       SPARK_Mode => On
 is
    --------------------------------------------------------
    --  Secret Key Authenticated Encryption - "SecretBox" --

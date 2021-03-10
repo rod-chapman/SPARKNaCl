@@ -1,5 +1,6 @@
 private package SPARKNaCl.Utils
-  with SPARK_Mode => On
+  with Pure,
+       SPARK_Mode => On
 is
    --===================================================
    --  Exported subprogram declarations

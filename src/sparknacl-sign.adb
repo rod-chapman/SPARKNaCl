@@ -43,13 +43,6 @@ is
 
    type GF_Vector_4 is array (Index_4) of Normal_GF;
 
-   --  We make this constant library-level to ensure that its declaration
-   --  is only elaborated exactly once.
-   Scalarbase_Q : constant GF_Vector_4 := (0 => GF_X,
-                                           1 => GF_Y,
-                                           2 => GF_1,
-                                           3 => GF_XY);
-
    --  MBP = "Max Byte Product"
    MBP        : constant := (255 * 255);
    Max_X_Limb : constant := (32 * MBP) + 255;
@@ -189,7 +182,7 @@ is
    function Scalarbase (S : in Bytes_32) return GF_Vector_4
    is
    begin
-      return Scalarmult (Scalarbase_Q, S);
+      return Scalarmult (GF_Vector_4'(GF_X, GF_Y, GF_1, GF_XY), S);
    end Scalarbase;
 
    function Par_25519 (A : in Normal_GF) return Bit

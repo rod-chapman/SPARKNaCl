@@ -30,7 +30,6 @@
 with Ada.Unchecked_Conversion;
 
 with Interfaces; use Interfaces;
---  RCC with Random;
 
 package SPARKNaCl
   with Pure,
@@ -93,14 +92,6 @@ is
                     X'Last  = Y'Last,
           Post   => Equal'Result =
                       (for all I in X'Range => X (I) = Y (I));
-
-   --------------------------------------------------------
-   --  RNG
-   --------------------------------------------------------
-
-   --  Primitive operation of Byte_Seq, so inheritable
---  RCC   procedure Random_Bytes (R : out Byte_Seq)
---  RCC     with Global => Random.Entropy;
 
    --------------------------------------------------------
    --  Data sanitization
