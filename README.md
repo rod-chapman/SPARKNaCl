@@ -33,6 +33,11 @@ This library is a compact reference implementation of the NaCl crypto library. I
 
 ## Latest news
 
+### 11th March 2021
+
+* The PRNG package ("random") has been removed from the core library. Provision of a cryptographically secure RNG is inherently target-dependent, so was hindering portability of the library. It is now up to clients to supply their own PRNG or TRNG as appropriate. This also entails a small change to the API for the "Keypair" procedures.
+* As a result of removing the RNG package, the entire SPARKNaCl library is now "Pure", as defined by Ada RM 10.2.1. This simplifies packaging and integration, especially for mixed-language projects, where calling (for example) from C might be required.
+
 ### 4th March 2021
 
 * More performance tuning reported [here](https://blog.adacore.com/doubling-the-performance-of-sparknacl-again). This blog also reports code size and worst-case stack usage for all popular optimization levels.
