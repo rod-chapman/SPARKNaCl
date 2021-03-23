@@ -80,16 +80,11 @@ is
 
    function "*" (Left, Right : in Normal_GF) return Normal_GF
    is
-      --  A lemma to establish bounds on multiplication
-      procedure Prove_Mult (X : I64; Y : U16) with
-        Ghost,
-        Pre  => X in GF64_Normal_Limb,
-        Post => X * I64 (Y) in 0 .. MGFLP;
-      procedure Prove_Mult (X : I64; Y : U16) is null;
+      subtype U32_Normal_Limb is U32 range 0 .. LMM1;
 
       T  : GF64_PA;
       TF : GF64 with Relaxed_Initialization;
-      LT : GF64_Normal_Limb;
+      LT : U32_Normal_Limb;
    begin
       T := (others => 0);
 
@@ -105,39 +100,28 @@ is
          --     T (I + J) := T (I + J) + (Left (I) * Right (J));
          --  end loop;
 
-         LT := I64 (Left (I));
-         Prove_Mult (LT, Right (0));
-         T (I)      := T (I)      + (LT * I64 (Right (0)));
-         Prove_Mult (LT, Right (1));
-         T (I + 1)  := T (I + 1)  + (LT * I64 (Right (1)));
-         Prove_Mult (LT, Right (2));
-         T (I + 2)  := T (I + 2)  + (LT * I64 (Right (2)));
-         Prove_Mult (LT, Right (3));
-         T (I + 3)  := T (I + 3)  + (LT * I64 (Right (3)));
-         Prove_Mult (LT, Right (4));
-         T (I + 4)  := T (I + 4)  + (LT * I64 (Right (4)));
-         Prove_Mult (LT, Right (5));
-         T (I + 5)  := T (I + 5)  + (LT * I64 (Right (5)));
-         Prove_Mult (LT, Right (6));
-         T (I + 6)  := T (I + 6)  + (LT * I64 (Right (6)));
-         Prove_Mult (LT, Right (7));
-         T (I + 7)  := T (I + 7)  + (LT * I64 (Right (7)));
-         Prove_Mult (LT, Right (8));
-         T (I + 8)  := T (I + 8)  + (LT * I64 (Right (8)));
-         Prove_Mult (LT, Right (9));
-         T (I + 9)  := T (I + 9)  + (LT * I64 (Right (9)));
-         Prove_Mult (LT, Right (10));
-         T (I + 10) := T (I + 10) + (LT * I64 (Right (10)));
-         Prove_Mult (LT, Right (11));
-         T (I + 11) := T (I + 11) + (LT * I64 (Right (11)));
-         Prove_Mult (LT, Right (12));
-         T (I + 12) := T (I + 12) + (LT * I64 (Right (12)));
-         Prove_Mult (LT, Right (13));
-         T (I + 13) := T (I + 13) + (LT * I64 (Right (13)));
-         Prove_Mult (LT, Right (14));
-         T (I + 14) := T (I + 14) + (LT * I64 (Right (14)));
-         Prove_Mult (LT, Right (15));
-         T (I + 15) := T (I + 15) + (LT * I64 (Right (15)));
+         LT := U32_Normal_Limb (Left (I));
+
+         --  Note that the "*" here is done in 32-bit Unsigned arithmetic
+         --  before the result is converted to 64-bit and accumulated into T.
+         --  This is much faster on 32-bit platforms that don't do 64-bit
+         --  multiplication in a single instruction.
+         T (I)      := T (I)      + I64 (LT * U32_Normal_Limb (Right (0)));
+         T (I + 1)  := T (I + 1)  + I64 (LT * U32_Normal_Limb (Right (1)));
+         T (I + 2)  := T (I + 2)  + I64 (LT * U32_Normal_Limb (Right (2)));
+         T (I + 3)  := T (I + 3)  + I64 (LT * U32_Normal_Limb (Right (3)));
+         T (I + 4)  := T (I + 4)  + I64 (LT * U32_Normal_Limb (Right (4)));
+         T (I + 5)  := T (I + 5)  + I64 (LT * U32_Normal_Limb (Right (5)));
+         T (I + 6)  := T (I + 6)  + I64 (LT * U32_Normal_Limb (Right (6)));
+         T (I + 7)  := T (I + 7)  + I64 (LT * U32_Normal_Limb (Right (7)));
+         T (I + 8)  := T (I + 8)  + I64 (LT * U32_Normal_Limb (Right (8)));
+         T (I + 9)  := T (I + 9)  + I64 (LT * U32_Normal_Limb (Right (9)));
+         T (I + 10) := T (I + 10) + I64 (LT * U32_Normal_Limb (Right (10)));
+         T (I + 11) := T (I + 11) + I64 (LT * U32_Normal_Limb (Right (11)));
+         T (I + 12) := T (I + 12) + I64 (LT * U32_Normal_Limb (Right (12)));
+         T (I + 13) := T (I + 13) + I64 (LT * U32_Normal_Limb (Right (13)));
+         T (I + 14) := T (I + 14) + I64 (LT * U32_Normal_Limb (Right (14)));
+         T (I + 15) := T (I + 15) + I64 (LT * U32_Normal_Limb (Right (15)));
 
          pragma Loop_Invariant
            (
