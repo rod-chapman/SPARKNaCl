@@ -61,7 +61,8 @@ library project Sparknacl is
       when "enabled" =>
          Contracts_Switches :=
            ("-gnata"); --  Enable assertions and contracts
-      when others => null;
+      when "disabled" =>
+         null;
    end case;
 
    Build_Switches := ();
@@ -121,7 +122,12 @@ library project Sparknacl is
         ("-gnatw.X") & -- Disable warnings for No_Exception_Propagation
         ("-gnatQ");    -- Don't quit. Generate ALI and tree files even if illegalities
 
-      for Local_Configuration_Pragmas use "src/sparknacl.adc";
+      case Contracts_Checks is
+         when "enabled" =>
+            for Local_Configuration_Pragmas use "src/sparknacl.adc";
+         when "disabled" =>
+            for Local_Configuration_Pragmas use "src/sparknacl_no_elab.adc";
+      end case;
    end Compiler;
 
    package Binder is
