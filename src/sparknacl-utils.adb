@@ -3,16 +3,6 @@ package body SPARKNaCl.Utils
 is
    pragma Warnings (GNATProve, Off, "pragma * ignored (not yet supported)");
 
-   type Bit_To_Swapmask_Table16 is array (Boolean) of U16;
-   Bit_To_Swapmask16 : constant Bit_To_Swapmask_Table16 :=
-     (False => 16#0000#,
-      True  => 16#FFFF#);
-
-   type Bit_To_Swapmask_Table32 is array (Boolean) of U32;
-   Bit_To_Swapmask32 : constant Bit_To_Swapmask_Table32 :=
-     (False => 16#0000_0000#,
-      True  => 16#FFFF_FFFF#);
-
    --  Constant-time conditional swap for a GF32 (32-bit limbs)
    procedure CSwap32 (P    : in out GF32;
                       Q    : in out GF32;
@@ -33,7 +23,7 @@ is
                       Swap : in     Boolean)
    is
       T : U16;
-      C : U16 := Bit_To_Swapmask16 (Swap);
+      C : U16 := 16#FFFF# * Boolean'Pos (Swap);
    begin
       for I in Index_16 loop
          pragma Loop_Optimize (No_Unroll);
@@ -91,7 +81,7 @@ is
                       Swap : in     Boolean)
    is
       T : U32;
-      C : U32 := Bit_To_Swapmask32 (Swap);
+      C : U32 := 16#FFFF_FFFF# * Boolean'Pos (Swap);
 
       --  Do NOT try to evaluate the assumption below at run-time
       pragma Assertion_Policy (Assume => Ignore);
