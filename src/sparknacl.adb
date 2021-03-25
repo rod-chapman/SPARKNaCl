@@ -86,10 +86,38 @@ is
       TF : GF64 with Relaxed_Initialization;
       LT : U32_Normal_Limb;
    begin
-      T := (others => 0);
+      LT := U32_Normal_Limb (Left (0));
+
+      --  Initialization of T and unrolling of the first loop
+      --  iteration can both be done in a single assignment here.
+      T := GF64_PA'(0  => I64 (LT * U32_Normal_Limb (Right (0))),
+                    1  => I64 (LT * U32_Normal_Limb (Right (1))),
+                    2  => I64 (LT * U32_Normal_Limb (Right (2))),
+                    3  => I64 (LT * U32_Normal_Limb (Right (3))),
+                    4  => I64 (LT * U32_Normal_Limb (Right (4))),
+                    5  => I64 (LT * U32_Normal_Limb (Right (5))),
+                    6  => I64 (LT * U32_Normal_Limb (Right (6))),
+                    7  => I64 (LT * U32_Normal_Limb (Right (7))),
+                    8  => I64 (LT * U32_Normal_Limb (Right (8))),
+                    9  => I64 (LT * U32_Normal_Limb (Right (9))),
+                    10 => I64 (LT * U32_Normal_Limb (Right (10))),
+                    11 => I64 (LT * U32_Normal_Limb (Right (11))),
+                    12 => I64 (LT * U32_Normal_Limb (Right (12))),
+                    13 => I64 (LT * U32_Normal_Limb (Right (13))),
+                    14 => I64 (LT * U32_Normal_Limb (Right (14))),
+                    15 => I64 (LT * U32_Normal_Limb (Right (15))),
+                    others => 0);
+
+      --  Based on the loop invariant below, but substituting I for 0,
+      --  we can assert...
+      pragma Assert
+        ((for all K in Index_31 range 0 .. 15 =>
+            T (K) >= 0 and T (K) <= MGFLP) and
+         (for all K in Index_31 range 16 .. 30 =>
+            T (K) = 0));
 
       --  "Textbook" ladder multiplication
-      for I in Index_16 loop
+      for I in Index_16 range 1 .. 15 loop
 
          pragma Loop_Optimize (No_Unroll);
          --  Manual unroll and PRE of the inner loop here gives a significant
