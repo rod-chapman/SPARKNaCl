@@ -87,10 +87,10 @@ begin
    DH ("M is", M);
 
    Create (C, Status, M, Nonce, BobPK, AliceSK);
-   Put_Line ("Status is " & Status'Img);
+   Put_Line ("Status is " & Img (Status));
    DH ("C is", C);
 
    Open (M2, Status, C, Nonce, AlicePK, BobSK);
-   Put_Line ("Status is " & Status'Img);
+   Put_Line ("Status is " & Img (Status));
    DH ("M recovered is", M2);
 end Box;

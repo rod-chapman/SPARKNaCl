@@ -50,6 +50,6 @@ is
 begin
    Open (M, S, C, Nonce, Firstkey);
 
-   Put_Line ("Status is " & S'Img);
+   Put_Line ("Status is " & Img (S));
    DH ("M is", M);
 end Secretbox2;

@@ -46,7 +46,7 @@ begin
 
 --      I := I + 1;
       DH ("M3 is ", M3);
-      Put_Line ("Status is " & S'Img);
+      Put_Line ("Status is " & Img (S));
       Put_Line ("ML is " & ML'Img);
 --   end loop;
 end Sign;

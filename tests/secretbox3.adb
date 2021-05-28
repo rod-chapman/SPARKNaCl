@@ -35,7 +35,7 @@ begin
    Open (M, S, C, Nonce, Firstkey);
 
    if S then
-      Put_Line ("Status is " & S'Img);
+      Put_Line ("Status is " & Img (S));
       DH ("M is", M);
    else
       Put_Line ("Precondition failure expected OK");

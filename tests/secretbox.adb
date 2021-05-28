@@ -49,6 +49,6 @@ is
 begin
    Create (C, S, M, Nonce, Firstkey);
 
-   Put_Line ("Status is " & S'Img);
+   Put_Line ("Status is " & Img (S));
    DH ("C is", C);
 end Secretbox;

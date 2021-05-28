@@ -35,7 +35,7 @@ begin
    Create (C, S, M, Nonce, Firstkey);
 
    if S then
-      Put_Line ("Status is" & S'Img);
+      Put_Line ("Status is" & Img (S));
       DH ("C is", C);
    else
       Put_Line ("Precondition failure expected OK");
