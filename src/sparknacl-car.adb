@@ -42,7 +42,7 @@ is
       pragma Assert
         (R (0)'Initialized and then R (0) in GF64_Normal_Limb);
       pragma Assert
-        (R (1)'Initialized and then R (1) in 0 .. MGFLC * MGFLP);
+        (R (1)'Initialized and then R (1) >= 0);
 
       for I in Index_16 range 1 .. 14 loop
          pragma Loop_Optimize (No_Unroll);
