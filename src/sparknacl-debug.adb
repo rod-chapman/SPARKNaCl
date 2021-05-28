@@ -54,7 +54,7 @@ is
    begin
       if On then
          Put_Line (S);
-         Put (Boolean'Image (D));
+         Put (Img (D));
          New_Line;
       end if;
    end DH;
