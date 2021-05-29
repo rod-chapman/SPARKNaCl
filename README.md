@@ -33,6 +33,10 @@ This library is a compact reference implementation of the NaCl crypto library. I
 
 ## Latest news
 
+### 29th May 2021
+
+* I have started work to evaluate the library with the Community 2021 releases of GNAT and SPARK. Both proof robustness and performance will be considered. GNAT CE 2021 is based on GCC 10.3.1, so we'll see if the new compiler can squeeze a bit more performance out of the code. Results soon.
+
 ### 11th March 2021
 
 * The PRNG package ("random") has been removed from the core library. Provision of a cryptographically secure RNG is inherently target-dependent, so was hindering portability of the library. It is now up to clients to supply their own PRNG or TRNG as appropriate. This also entails a small change to the API for the "Keypair" procedures.
