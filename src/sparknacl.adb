@@ -152,19 +152,19 @@ is
          T (I + 15) := T (I + 15) + I64 (LT * U32_Normal_Limb (Right (15)));
 
          pragma Loop_Invariant
-           (
-            --  Lower bound
-            (for all K in Index_31 => T (K) >= 0) and
-            --  Upper bounds
+            (for all K in Index_31 => T (K) >= 0);
+         pragma Loop_Invariant
             (for all K in Index_31 range 0 .. (I - 1)   =>
-               T (K) <= (I64 (K + 1) * MGFLP)) and
+               T (K) <= (I64 (K + 1) * MGFLP));
+         pragma Loop_Invariant
             (for all K in Index_31 range I .. 15        =>
-               T (K) <= (I64 (I + 1) * MGFLP)) and
+               T (K) <= (I64 (I + 1) * MGFLP));
+         pragma Loop_Invariant
             (for all K in Index_31 range 16 .. (I + 15) =>
-               T (K) <= (I64 (16 + I) - I64 (K)) * MGFLP) and
+               T (K) <= (I64 (16 + I) - I64 (K)) * MGFLP);
+         pragma Loop_Invariant
             (for all K in Index_31 range I + 16 .. 30   =>
-               T (K) = 0)
-           );
+               T (K) = 0);
       end loop;
 
       --  Substituting I = 15 into the outer loop invariant above,
