@@ -682,7 +682,11 @@ is
       Eliminate_Limb_63;
       Eliminate_Limbs_62_To_32;
 
-      pragma Warnings (GNATProve, Off, "unused assignment");
+      --  Wording of warning changed between SPARK 2020 and 2021, so two
+      --  pragmas are needed here to get a clean analysis with both
+      --  toolsets.
+      pragma Warnings (GNATProve, Off, "unused assignment"); --  2020
+      pragma Warnings (GNATProve, Off, "XL*not used after the call"); --  2021
       --  Unused assignment to XL here expected
       Finalize;
       return R;
