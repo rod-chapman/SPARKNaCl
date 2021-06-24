@@ -135,7 +135,7 @@ library project Sparknacl is
    end Binder;
 
    package Prove is
-      for Proof_Switches ("Ada") use ("--proof=per_path",
+      for Proof_Switches ("Ada") use ("--proof=per_check",
                                       "-j16",
                                       "--no-global-generation",
                                       "--no-inlining",
