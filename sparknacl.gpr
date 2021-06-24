@@ -142,7 +142,7 @@ library project Sparknacl is
                                       "--no-loop-unrolling",
                                       "--level=1",
                                       "--prover=z3,cvc4,altergo",
-                                      "--timeout=0",
+                                      "--timeout=20",
                                       "--memlimit=0",
                                       "--steps=200000",
                                       "--report=statistics");
