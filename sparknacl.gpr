@@ -136,13 +136,13 @@ library project Sparknacl is
 
    package Prove is
       for Proof_Switches ("Ada") use ("--proof=per_check",
-                                      "-j16",
+                                      "-j6",
                                       "--no-global-generation",
                                       "--no-inlining",
                                       "--no-loop-unrolling",
                                       "--level=1",
                                       "--prover=z3,cvc4,altergo",
-                                      "--timeout=20",
+                                      "--timeout=60",
                                       "--memlimit=0",
                                       "--steps=200000",
                                       "--report=statistics");
