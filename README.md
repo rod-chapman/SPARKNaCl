@@ -33,6 +33,10 @@ This library is a compact reference implementation of the NaCl crypto library. I
 
 ## Latest news
 
+### 25th June 2021
+
+* Work on porting, proof and performance analysis with GNAT and SPARK Community 2021 is written up [here](https://blog.adacore.com/sparknacl-with-gnat-and-spark-community-2021-port-proof-and-performance). This post also covers some more performance improvement, where I managed to save another 60 Million CPU cycles for a "Sign" operation at -O0.
+
 ### 29th May 2021
 
 * I have started work to evaluate the library with the Community 2021 releases of GNAT and SPARK. Both proof robustness and performance will be considered. GNAT CE 2021 is based on GCC 10.3.1, so we'll see if the new compiler can squeeze a bit more performance out of the code. Results soon.
@@ -127,7 +131,7 @@ Still on the "to be done" list:
 
 ## Tools
 
-All development work has been done with the [Community 2020 Edition of GNAT and SPARK](https://www.adacore.com/community), which are freely available. Most development work has been done on MacOS, although test results have been successfully reproduced on 64-bit Linux and Windows 10. Performance testing additionally requires the GNAT 32-bit RISC-V cross compiler from the same source.
+All development work has been done with the [Community 2020 and 2021 Editions of GNAT and SPARK](https://www.adacore.com/community), which are freely available. Most development work has been done on MacOS, although test results have been successfully reproduced on 64-bit Linux and Windows 10. Performance testing additionally requires the GNAT 32-bit RISC-V cross compiler from the same source.
 
 The GNATStack tool runs on Linux and uses the output of the RISC-V cross compiler to drive its analysis.  GNATStack was built from source, but this is not available in the Community release of GNAT. To obtain the GNATStack sources, you will need a GNAT Pro subscription from AdaCore.
 
