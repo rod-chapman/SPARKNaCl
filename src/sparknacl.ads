@@ -27,8 +27,6 @@
 --  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ------------------------------------------------------------------------------
 
-with Ada.Unchecked_Conversion;
-
 with Interfaces; use Interfaces;
 
 package SPARKNaCl
@@ -79,6 +77,25 @@ is
    type I64_Seq  is array (N32 range <>) of I64;
    subtype I64_Seq_64 is I64_Seq (Index_64);
 
+
+   --------------------------------------------------------
+   --  Intrinsic functions
+   --
+   --  GNAT supports Intrinsic Shift and Rotate operations
+   --  on signed as well as unsigned integer types, and
+   --  SPARK Community Edition 2021 knows the semantics
+   --  of them.
+   --------------------------------------------------------
+
+   function Shift_Right_Arithmetic (Value  : I64;
+                                    Amount : Natural) return I64
+     with Import,
+          Convention => Intrinsic;
+
+   function Shift_Right_Arithmetic (Value  : I32;
+                                    Amount : Natural) return I32
+     with Import,
+          Convention => Intrinsic;
 
    --------------------------------------------------------
    --  Constant time equality test
@@ -220,7 +237,7 @@ private
    --  following ONE application of Product_To_Seminormal_GF to the
    --  intermidiate result of a "*" operation. This value is actually
    --  a bit less than 2**27 which justifies that subsequence normalization
-   --  steps can all be done in 32-bir arithmetic.
+   --  steps can all be done in 32-bit arithmetic.
    --
    --  See the declaration of Seminormal_GF_LSL below for detail of
    --  how this value is derived.
@@ -356,63 +373,41 @@ private
    GF32_0    : constant Normal_GF32 := (others => 0);
    GF_1      : constant Normal_GF   := (1, others => 0);
 
-
    --==================
    --  Local functions
    --==================
-
-   function To_U64 is new Ada.Unchecked_Conversion (I64, U64);
-   function To_I64 is new Ada.Unchecked_Conversion (U64, I64);
-   function To_U32 is new Ada.Unchecked_Conversion (I32, U32);
-   function To_I32 is new Ada.Unchecked_Conversion (U32, I32);
 
    --  returns equivalent of X >> 16 in C, doing an arithmetic
    --  shift right when X is negative, assuming 2's complement
    --  representation
    function ASR64_16 (X : in I64) return I64
-   is (To_I64 (Shift_Right_Arithmetic (To_U64 (X), 16)))
+   is (Shift_Right_Arithmetic (X, 16))
      with Post => (if X >= 0 then ASR64_16'Result = X / LM else
                                   ASR64_16'Result = ((X + 1) / LM) - 1);
-   pragma Annotate (GNATprove,
-                    False_Positive,
-                    "postcondition might fail",
-                    "From definition of arithmetic shift right");
 
    --  returns equivalent of X >> 16 in C, doing an arithmetic
    --  shift right when X is negative, assuming 2's complement
    --  representation
    function ASR32_16 (X : in I32) return I32
-   is (To_I32 (Shift_Right_Arithmetic (To_U32 (X), 16)))
+   is (Shift_Right_Arithmetic (X, 16))
      with Post => (if X >= 0 then ASR32_16'Result = X / LM else
                                   ASR32_16'Result = ((X + 1) / LM) - 1);
-   pragma Annotate (GNATprove,
-                    False_Positive,
-                    "postcondition might fail",
-                    "From definition of arithmetic shift right");
 
    --  returns equivalent of X >> 8 in C, doing an arithmetic
    --  shift right when X is negative, assuming 2's complement
    --  representation
    function ASR_8 (X : in I64) return I64
-   is (To_I64 (Shift_Right_Arithmetic (To_U64 (X), 8)))
+   is (Shift_Right_Arithmetic (X, 8))
      with Post => (if X >= 0 then ASR_8'Result = X / 256 else
                                   ASR_8'Result = ((X + 1) / 256) - 1);
-   pragma Annotate (GNATprove,
-                    False_Positive,
-                    "postcondition might fail",
-                    "From definition of arithmetic shift right");
 
    --  returns equivalent of X >> 4 in C, doing an arithmetic
    --  shift right when X is negative, assuming 2's complement
    --  representation
    function ASR_4 (X : in I64) return I64
-   is (To_I64 (Shift_Right_Arithmetic (To_U64 (X), 4)))
+   is (Shift_Right_Arithmetic (X, 4))
      with Post => (if X >= 0 then ASR_4'Result = X / 16 else
                                   ASR_4'Result = ((X + 1) / 16) - 1);
-   pragma Annotate (GNATprove,
-                    False_Positive,
-                    "postcondition might fail",
-                    "From definition of arithmetic shift right");
 
    --===============================
    --  Local subprogram declarations

@@ -1,7 +1,11 @@
+with Ada.Unchecked_Conversion;
 package body SPARKNaCl.Utils
   with SPARK_Mode => On
 is
    pragma Warnings (GNATProve, Off, "pragma * ignored (not yet supported)");
+
+   function To_U32 is new Ada.Unchecked_Conversion (I32, U32);
+   function To_I32 is new Ada.Unchecked_Conversion (U32, I32);
 
    --  Constant-time conditional swap for a GF32 (32-bit limbs)
    procedure CSwap32 (P    : in out GF32;
