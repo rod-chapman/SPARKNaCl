@@ -142,11 +142,12 @@ library project Sparknacl is
                                       "--no-loop-unrolling",
                                       "--level=1",
                                       "--prover=z3,cvc4,altergo",
-                                      "--timeout=60",
+                                      "--timeout=0",
                                       "--memlimit=0",
                                       "--steps=200000",
                                       "--report=statistics");
-      for Proof_Switches ("sparknacl-utils.adb") use ("--prover=cvc4,z3");
+      for Proof_Switches ("sparknacl-car.adb") use ("--prover=altergo,z3,cvc4");
+      for Proof_Switches ("sparknacl-utils.adb") use ("--prover=altergo,z3,cvc4"); -- ok with CE 2021
    end Prove;
 
 
