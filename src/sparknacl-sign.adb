@@ -447,8 +447,20 @@ is
             --  leaving the final four (zero) limbs unrolled below.
             for J in I32 range (I - 32) .. (I - 17) loop
                pragma Loop_Optimize (No_Unroll);
+
+               pragma Assert (16 * L (J - (I - 32)) >= 16 * L_Limb'First and
+                              16 * L (J - (I - 32)) <= 16 * L_Limb'Last);
+
                Adjustment := (16 * L (J - (I - 32))) * XL (I);
+
                XL (J) := XL (J) + Carry - Adjustment;
+
+               pragma Assert (XL (J) + 128 >= XL_Limb'First + 128);
+               pragma Assert (XL (J) + 128 <= XL_Limb'Last + 128);
+
+               pragma Assert (if (XL (J) + 128) >= 0 then
+                               (ASR_8 (XL (J) + 128) = (XL (J) + 128) / 256));
+
                Carry := ASR_8 (XL (J) + 128);
                XL (J) := XL (J) - (Carry * 256);
 
