@@ -35,6 +35,34 @@ is
       Carry  : Carry_Adjustment;
       R      : GF64 with Relaxed_Initialization;
       Result : GF32;
+
+
+      procedure Lemma_GF32_Normal_Limb (Z : GF32) with
+        Ghost,
+        Pre => (Z (1) in GF32_Normal_Limb)
+                and then (Z (2) in GF32_Normal_Limb)
+                and then (Z (3) in GF32_Normal_Limb)
+                and then (Z (4) in GF32_Normal_Limb)
+                and then (Z (5) in GF32_Normal_Limb)
+                and then (Z (6) in GF32_Normal_Limb)
+                and then (Z (7) in GF32_Normal_Limb)
+                and then (Z (8) in GF32_Normal_Limb)
+                and then (Z (9) in GF32_Normal_Limb)
+                and then (Z (10) in GF32_Normal_Limb)
+                and then (Z (11) in GF32_Normal_Limb)
+                and then (Z (12) in GF32_Normal_Limb)
+                and then (Z (13) in GF32_Normal_Limb)
+                and then (Z (14) in GF32_Normal_Limb)
+                and then (Z (15) in GF32_Normal_Limb),
+        Post => (for all I in Index_16 range 1 .. 15 =>
+                   Z (I) in GF32_Normal_Limb);
+
+      procedure Lemma_GF32_Normal_Limb (Z : GF32)
+      is
+      begin
+         null;
+      end Lemma_GF32_Normal_Limb;
+
    begin
       Carry := ASR64_16 (X (0));
       R (0) := X (0) mod LM;
@@ -103,6 +131,8 @@ is
                       13 => GF32_Normal_Limb (R (13)),
                       14 => GF32_Normal_Limb (R (14)),
                       15 => GF32_Normal_Limb (R (15)));
+
+      Lemma_GF32_Normal_Limb (Result);
       pragma Assert (Result in Seminormal_GF);
 
       return Seminormal_GF (Result);
