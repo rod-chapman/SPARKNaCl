@@ -122,12 +122,18 @@ library project Sparknacl is
         ("-gnatw.X") & -- Disable warnings for No_Exception_Propagation
         ("-gnatQ");    -- Don't quit. Generate ALI and tree files even if illegalities
 
-      case Contracts_Checks is
-         when "enabled" =>
-            for Local_Configuration_Pragmas use "src/sparknacl.adc";
-         when "disabled" =>
-            for Local_Configuration_Pragmas use "src/sparknacl_no_elab.adc";
+      case Runtime_Mode is
+         when "zfp" =>
+            case Contracts_Checks is
+               when "enabled" =>
+                  for Local_Configuration_Pragmas use "src/sparknacl.adc";
+               when "disabled" =>
+                  for Local_Configuration_Pragmas use "src/sparknacl_no_elab.adc";
+            end case;
+         when others =>
+            null; -- No Restrictions when compiling with full runtime
       end case;
+
    end Compiler;
 
    package Binder is
