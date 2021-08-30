@@ -1,16 +1,19 @@
-pragma Restrictions (No_Tasking);
-pragma Restrictions (No_Allocators);
-pragma Restrictions (No_Anonymous_Allocators);
-pragma Restrictions (No_Delay);
-pragma Restrictions (No_Dispatching_Calls);
-pragma Restrictions (No_Enumeration_Maps);
-pragma Restrictions (No_Finalization);
-pragma Restrictions (No_Fixed_Point);
-pragma Restrictions (No_Floating_Point);
-pragma Restrictions (No_Implicit_Dynamic_Code);
-pragma Restrictions (No_Implicit_Heap_Allocations);
-pragma Restrictions (No_Implicit_Protected_Object_Allocations);
-pragma Restrictions (No_Implicit_Task_Allocations);
-pragma Restrictions (No_Recursion);
-pragma Restrictions (No_Relative_Delay);
-pragma Restrictions (No_Elaboration_Code);
+-- Partition-wide restrictions
+pragma Restriction_Warnings (No_Tasking);
+pragma Restriction_Warnings (No_Allocators);
+pragma Restriction_Warnings (No_Anonymous_Allocators);
+pragma Restriction_Warnings (No_Delay);
+pragma Restriction_Warnings (No_Dispatching_Calls);
+pragma Restriction_Warnings (No_Enumeration_Maps);
+pragma Restriction_Warnings (No_Finalization);
+pragma Restriction_Warnings (No_Fixed_Point);
+pragma Restriction_Warnings (No_Floating_Point);
+pragma Restriction_Warnings (No_Implicit_Dynamic_Code);
+pragma Restriction_Warnings (No_Implicit_Heap_Allocations);
+pragma Restriction_Warnings (No_Implicit_Protected_Object_Allocations);
+pragma Restriction_Warnings (No_Implicit_Task_Allocations);
+pragma Restriction_Warnings (No_Recursion);
+pragma Restriction_Warnings (No_Relative_Delay);
+
+-- Compilation unit restrictions
+pragma Restriction_Warnings (No_Elaboration_Code);
