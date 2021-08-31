@@ -616,6 +616,10 @@ is
               (for all K in Index_64 range 32 .. 63 => XL (K) = 0);
          end loop;
 
+         --  RCC Potential to split above into 0 .. 15 as above, then
+         --  exploit that L (J) = 0 for J in 16 .. 30, then do L (31) as
+         --  a final special case.
+
          --  Check first 32 limbs in I64_Byte
          pragma Assert
            (for all K in Index_64 range 0 .. 31 => XL (K) in I64_Byte);
@@ -624,6 +628,8 @@ is
            (for all K in Index_64 range 32 .. 63 => XL (K) = 0);
 
          --  Step 2
+
+         --  RCC split this loop too, based on L properties?
          for J in Index_32 loop
             pragma Loop_Optimize (No_Unroll);
             XL (J) := XL (J) - Carry * L (J);
