@@ -1,17 +1,14 @@
 name = "sparknacl"
 description = "Verified SPARK 2014 re-implementation of TweetNaCl cryptographic library"
 long-description = "SPARK 2014 re-implementation of TweetNaCl cryptographic library, with fully automated proofs of type safety and some correctness properties"
-version = "2.0.0"
+version = "3.0.0"
 tags = ["spark", "cryptography", "security", "nacl", "curve25519", "ed25519", "tweetnacl"]
-licenses = ["BSD 2-Clauses"]
+licenses = "BSD-3-Clause"
 website = "https://github.com/rod-chapman/SPARKNaCl"
 
 authors = ["Rod Chapman"]
 maintainers = ["Rod Chapman <rod@proteancode.com>"]
 maintainers-logins = ["rod-chapman"]
-
-[[depends-on]]
-gnat = ">=2020"
 
 [gpr-externals]
 SPARKNACL_LIBRARY_TYPE = ["relocatable", "static", "static-pic"]
@@ -20,5 +17,5 @@ SPARKNACL_RUNTIME_CHECKS = ["enabled", "disabled"]
 SPARKNACL_STYLE_CHECKS = ["enabled", "disabled"]
 SPARKNACL_CONTRACTS = ["enabled", "disabled"]
 SPARKNACL_RUNTIME_MODE = ["full", "zfp"]
-SPARKNACL_BUILD_MODE = ["debug", "O1", "O2", "O3"]
-SPARKNACL_TARGET_ARCH = ["unspecified", "rv32im", "rv32imc", "rv32imc_f4l4"]
+SPARKNACL_BUILD_MODE = ["debug", "O1", "O2", "O3", "Os"]
+SPARKNACL_TARGET_ARCH = ["unspecified", "rv32im", "rv32imc", "rv32imc_a4"]
