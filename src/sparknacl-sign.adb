@@ -211,17 +211,31 @@ is
    --
    --  In little-endian radix 2**8 format, this is 256 bits, thus:
    Max_L : constant := 16#f9#;
-   L0    : constant := 16#ed#;
+   L31   : constant := 16#10#;
    subtype L_Limb is I64_Byte range 0 .. Max_L;
-   type L_Table  is array (Index_32) of L_Limb;
-   L : constant L_Table := (L0,     16#d3#, 16#f5#, 16#5c#,
+
+   type L_Table is array (Index_32) of L_Limb;
+   L : constant L_Table := (16#ed#, 16#d3#, 16#f5#, 16#5c#,
                             16#1a#, 16#63#, 16#12#, 16#58#,
                             16#d6#, 16#9c#, 16#f7#, 16#a2#,
                             16#de#, 16#f9#, 16#de#, 16#14#,
                             16#00#, 16#00#, 16#00#, 16#00#,
                             16#00#, 16#00#, 16#00#, 16#00#,
                             16#00#, 16#00#, 16#00#, 16#00#,
-                            16#00#, 16#00#, 16#00#, 16#10#);
+                            16#00#, 16#00#, 16#00#, L31);
+
+   --  The value of 16 * L (I) can be pre-computed in a second table,
+   --  giving a small time saving in two inner loops below.
+   subtype L16_Limb is I64 range 0 .. (16 * Max_L);
+   type L16_Table  is array (Index_32) of L16_Limb;
+   L16 : constant L16_Table := (16#ed0#, 16#d30#, 16#f50#, 16#5c0#,
+                                16#1a0#, 16#630#, 16#120#, 16#580#,
+                                16#d60#, 16#9c0#, 16#f70#, 16#a20#,
+                                16#de0#, 16#f90#, 16#de0#, 16#140#,
+                                16#000#, 16#000#, 16#000#, 16#000#,
+                                16#000#, 16#000#, 16#000#, 16#000#,
+                                16#000#, 16#000#, 16#000#, 16#000#,
+                                16#000#, 16#000#, 16#000#, 16 * L31);
 
    function ModL (X : in I64_Seq_64) return Bytes_32
    is
@@ -341,6 +355,7 @@ is
 
          Carry      : L63_Carry_T;
          Adjustment : L63_Adjustment_T;
+         XL63       : XL_Limb;
       begin
          Carry := 0;
 
@@ -350,12 +365,17 @@ is
          --  first 16 elements of L first, since these are all non-zero,
          --  and manually unroll the final 4 iterations where L (16)
          --  through L (19) are all zero.
+         XL63 := XL (63);
          for J in I32 range 31 .. 46 loop
             pragma Loop_Optimize (No_Unroll);
-            Adjustment := (16 * L (J - 31)) * XL (63);
-            XL (J) := XL (J) + Carry - Adjustment;
-            Carry := ASR_8 (XL (J) + 128);
-            XL (J) := XL (J) - (Carry * 256);
+            declare
+               XLJ : XL_Limb renames XL (J);
+            begin
+               Adjustment := (L16 (J - 31)) * XL63;
+               XLJ := XLJ + Carry - Adjustment;
+               Carry := ASR_8 (XLJ + 128);
+               XLJ := XLJ - (Carry * 256);
+            end;
 
             pragma Loop_Invariant
               ((for all K in Index_64 range 0 .. 30 =>
@@ -439,19 +459,28 @@ is
       is
          Carry      : Carry_T;
          Adjustment : Adjustment_T;
+         XLI        : XL_Limb;
       begin
          for I in reverse I32 range 32 .. 62 loop
             pragma Loop_Optimize (No_Unroll);
             Carry := 0;
             --  As above, this loop iterates over limbs 0 .. 15 of L
             --  leaving the final four (zero) limbs unrolled below.
+            XLI := XL (I);
             for J in I32 range (I - 32) .. (I - 17) loop
                pragma Loop_Optimize (No_Unroll);
 
-               Adjustment := (16 * L (J - (I - 32))) * XL (I);
-               XL (J) := XL (J) + Carry - Adjustment;
-               Carry := ASR_8 (XL (J) + 128);
-               XL (J) := XL (J) - (Carry * 256);
+               declare
+                  --  Rename XL (J) here so can be used as both a L- and an
+                  --  R-Value below. Note also that I /= J here, so XLI and XLJ
+                  --  cannot denote the same element of XL.
+                  XLJ : XL_Limb renames XL (J);
+               begin
+                  Adjustment := (L16 (J - (I - 32))) * XLI;
+                  XLJ := XLJ + Carry - Adjustment;
+                  Carry := ASR_8 (XLJ + 128);
+                  XLJ := XLJ - (Carry * 256);
+               end;
 
                pragma Loop_Invariant
                  (for all K in Index_64 range 0 .. I - 33 =>
