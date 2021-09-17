@@ -10,6 +10,9 @@ authors = ["Rod Chapman"]
 maintainers = ["Rod Chapman <rod@proteancode.com>"]
 maintainers-logins = ["rod-chapman"]
 
+[[depends-on]]
+gnat=">=11.2.1"
+
 [gpr-externals]
 SPARKNACL_LIBRARY_TYPE = ["relocatable", "static", "static-pic"]
 SPARKNACL_COMPILE_CHECKS = ["enabled", "disabled"]
