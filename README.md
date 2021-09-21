@@ -33,6 +33,10 @@ This library is a compact reference implementation of the NaCl crypto library. I
 
 ## Latest news
 
+### 21st September 2021
+
+Release 3.0.0 of SPARKNaCl is now available from the Alire package manager. This incorporates all recent changes, and is compatible with the 2020 and 2021 releases of GNAT Community or FSF GNAT 11.2.1 or better.
+
 ### 25th June 2021
 
 * Work on porting, proof and performance analysis with GNAT and SPARK Community 2021 is written up [here](https://blog.adacore.com/sparknacl-with-gnat-and-spark-community-2021-port-proof-and-performance). This post also covers some more performance improvement, where I managed to save another 60 Million CPU cycles for a "Sign" operation at -O0.
