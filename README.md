@@ -35,7 +35,7 @@ This library is a compact reference implementation of the NaCl crypto library. I
 
 ### 21st September 2021
 
-Release 3.0.0 of SPARKNaCl is now available from the Alire package manager. This incorporates all recent changes, and is compatible with the 2020 and 2021 releases of GNAT Community or FSF GNAT 11.2.1 or better.
+Release 3.0.0 of SPARKNaCl is now available from the Alire package manager. This incorporates all recent changes, and is compatible with the 2020 and 2021 releases of GNAT Community or FSF GNAT 11.2.1 or better.  This release is also tagged "alire3.0.0" in the GitHub repo here.
 
 ### 25th June 2021
 
