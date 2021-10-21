@@ -305,19 +305,19 @@ is
 
    function Unpack_25519 (N : in Bytes_32) return Normal_GF
    is
-      O : Normal_GF with Relaxed_Initialization;
+      O : GF16;
    begin
       begin
          for I in Index_16 loop
             pragma Loop_Optimize (No_Unroll);
             O (I) := U16 (N (2 * I)) + (U16 (N (2 * I + 1)) * 256);
-            pragma Loop_Invariant
-              (for all J in Index_16 range 0 .. I =>
-                 O (J)'Initialized);
+--            pragma Loop_Invariant
+--              (for all J in Index_16 range 0 .. I =>
+--                 O (J)'Initialized);
          end loop;
          O (15) := O (15) mod 32768;
       end;
-      return O;
+      return Normal_GF (O);
    end Unpack_25519;
 
    function Inv_25519 (I : in Normal_GF) return Normal_GF

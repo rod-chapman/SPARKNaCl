@@ -268,8 +268,12 @@ private
      with Dynamic_Predicate =>
        (for all I in Index_16 => Normal_GF32 (I) in GF32_Normal_Limb);
 
-   type Normal_GF is array (Index_16) of GF16_Normal_Limb
+   type GF16 is array (Index_16) of GF16_Normal_Limb
      with Alignment => 4;
+
+   subtype Normal_GF is GF16
+     with Dynamic_Predicate =>
+       (Normal_GF (15) <= 16#7FFF#);
 
    -------------------------------------------------------------------------
 
