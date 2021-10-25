@@ -110,12 +110,12 @@ is
          pragma Assert
            ((if Swap then
               (T = (To_U32 (P (I)) xor To_U32 (Q (I))) and then
-               To_I32 (To_U32 (P (I)) xor T) = Q (I) and then
-               To_I32 (To_U32 (Q (I)) xor T) = P (I))
+               (To_U32 (P (I)) xor T) = To_U32 (Q (I)) and then
+               (To_U32 (Q (I)) xor T) = To_U32 (P (I)))
              else
               (T = 0 and then
-               To_I32 (To_U32 (P (I)) xor T) = P (I) and then
-               To_I32 (To_U32 (Q (I)) xor T) = Q (I)))
+               (To_U32 (P (I)) xor T) = To_U32 (P (I)) and then
+               (To_U32 (Q (I)) xor T) = To_U32 (Q (I))))
            );
 
          P (I) := To_I32 (To_U32 (P (I)) xor T);
