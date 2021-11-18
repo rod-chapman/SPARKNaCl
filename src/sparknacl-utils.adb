@@ -230,6 +230,7 @@ is
          --  this as a type-safety error, since if R (15) is normalized
          --  but R (14) is not, then the prover is unable to show that
          --  R is a Temp_GF subtype in the assignment to Result below.
+         --  R (15) := R (15) mod LM;
          R (14) := R (14) mod LM;
 
          --  Note that R (15) is not normalized here, so that the
