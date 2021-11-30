@@ -28,6 +28,7 @@
 ------------------------------------------------------------------------------
 
 with Interfaces; use Interfaces;
+with Ada.Unchecked_Conversion;
 
 package SPARKNaCl
   with Pure,
@@ -77,25 +78,6 @@ is
    type I64_Seq  is array (N32 range <>) of I64;
    subtype I64_Seq_64 is I64_Seq (Index_64);
 
-
-   --------------------------------------------------------
-   --  Intrinsic functions
-   --
-   --  GNAT supports Intrinsic Shift and Rotate operations
-   --  on signed as well as unsigned integer types, and
-   --  SPARK Community Edition 2021 knows the semantics
-   --  of them.
-   --------------------------------------------------------
-
-   function Shift_Right_Arithmetic (Value  : I64;
-                                    Amount : Natural) return I64
-     with Import,
-          Convention => Intrinsic;
-
-   function Shift_Right_Arithmetic (Value  : I32;
-                                    Amount : Natural) return I32
-     with Import,
-          Convention => Intrinsic;
 
    --------------------------------------------------------
    --  Constant time equality test
@@ -377,11 +359,16 @@ private
    --  Local functions
    --==================
 
+   function To_U32 is new Ada.Unchecked_Conversion (I32, U32);
+   function To_I32 is new Ada.Unchecked_Conversion (U32, I32);
+   function To_U64 is new Ada.Unchecked_Conversion (I64, U64);
+   function To_I64 is new Ada.Unchecked_Conversion (U64, I64);
+
    --  returns equivalent of X >> 16 in C, doing an arithmetic
    --  shift right when X is negative, assuming 2's complement
    --  representation
    function ASR64_16 (X : in I64) return I64
-   is (Shift_Right_Arithmetic (X, 16))
+   is (To_I64 (Shift_Right_Arithmetic (To_U64 (X), 16)))
      with Post => (if X >= 0 then ASR64_16'Result = X / LM else
                                   ASR64_16'Result = ((X + 1) / LM) - 1);
 
@@ -389,7 +376,7 @@ private
    --  shift right when X is negative, assuming 2's complement
    --  representation
    function ASR32_16 (X : in I32) return I32
-   is (Shift_Right_Arithmetic (X, 16))
+   is (To_I32 (Shift_Right_Arithmetic (To_U32 (X), 16)))
      with Post => (if X >= 0 then ASR32_16'Result = X / LM else
                                   ASR32_16'Result = ((X + 1) / LM) - 1);
 
@@ -397,7 +384,7 @@ private
    --  shift right when X is negative, assuming 2's complement
    --  representation
    function ASR_8 (X : in I64) return I64
-   is (Shift_Right_Arithmetic (X, 8))
+   is (To_I64 (Shift_Right_Arithmetic (To_U64 (X), 8)))
      with Post => (if X >= 0 then ASR_8'Result = X / 256 else
                                   ASR_8'Result = ((X + 1) / 256) - 1);
 
@@ -405,7 +392,7 @@ private
    --  shift right when X is negative, assuming 2's complement
    --  representation
    function ASR_4 (X : in I64) return I64
-   is (Shift_Right_Arithmetic (X, 4))
+   is (To_I64 (Shift_Right_Arithmetic (To_U64 (X), 4)))
      with Post => (if X >= 0 then ASR_4'Result = X / 16 else
                                   ASR_4'Result = ((X + 1) / 16) - 1);
 

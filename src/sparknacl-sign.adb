@@ -661,10 +661,19 @@ is
          --  RCC split this loop too, based on L properties?
          for J in Index_32 loop
             pragma Loop_Optimize (No_Unroll);
+
             XL (J) := XL (J) - Carry * L (J);
+
             pragma Loop_Invariant
               (for all K in Index_32 range 0 .. J =>
-                 XL (K) in Step2_XL_Limb);
+                 Carry in Final_Carry_T and then
+                 L (K) in 0 .. Max_L);
+            pragma Loop_Invariant
+              (for all K in Index_32 range 0 .. J =>
+                 XL (K) >= Step2_XL_Limb'First);
+            pragma Loop_Invariant
+              (for all K in Index_32 range 0 .. J =>
+                 XL (K) <= Step2_XL_Limb'Last);
             pragma Loop_Invariant
               (for all K in Index_64 range 32 .. 63 => XL (K) = 0);
          end loop;
