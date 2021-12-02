@@ -26,7 +26,8 @@ size:	tsign
 	riscv32-elf-size -t $(SIZE_OBJS)
 
 run: tsign.hex
-	cp tsign.hex /media/rchapman/HiFive
+	-cp tsign.hex /media/psf/HiFive
+	-cp tsign.hex /media/rchapman/HiFive
 
 clean:
 	rm -f tsign.hex
