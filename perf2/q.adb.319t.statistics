@@ -1,0 +1,7 @@
+42 fre "SCC iterations == 2" "q.op" 3
+54 release_ssa "SSA names released" "q.op" 6
+54 release_ssa "SSA name holes removed" "q.op" 6
+139 pre "compute_antic iterations == 2" "q.op" 1
+139 pre "insert iterations == 1" "q.op" 1
+139 pre "compute_antic iterations == 2" "q.op2" 1
+139 pre "insert iterations == 1" "q.op2" 1

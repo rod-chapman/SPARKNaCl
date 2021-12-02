@@ -1,0 +1,52 @@
+q.op (interfaces__integer_64[16] & l, interfaces__integer_64[16] & r)
+{
+  interfaces__integer_64 R.0[16];
+
+    interfaces__integer_64 R.0[16];
+  return <retval> = p.n1 ({
+    interfaces__integer_64 R.1[16];
+
+        interfaces__integer_64 R.1[16];
+    R.0 = p.n2 ({
+      interfaces__integer_64 R.2[16];
+
+            interfaces__integer_64 R.2[16];
+      R.1 = p.n3 (R.2 = p."*" (l, r);, (interfaces__integer_64[16] &) &R.2;);
+    }, (interfaces__integer_64[16] &) &R.1;);
+  }, (interfaces__integer_64[16] &) &R.0;);
+}
+
+
+q.op2 (interfaces__integer_64[16] & x)
+{
+  interfaces__integer_64 r[16] [value-expr: <retval>];
+
+  <retval> = VIEW_CONVERT_EXPR<interfaces__integer_64[16]>(*x);
+  return <retval>;
+}
+
+
+_GLOBAL.SZ0_q (positive___XDLU_1__2147483647 p0, positive___XDLU_1__2147483647 p1)
+{
+  return p1 <= p0 ? (bitsizetype) (((sizetype) p0 - (sizetype) p1) + 1) * 8 : 0;
+}
+
+
+_GLOBAL.SZ1_q (positive___XDLU_1__2147483647 p0, positive___XDLU_1__2147483647 p1)
+{
+  return p1 <= p0 ? ((sizetype) p0 - (sizetype) p1) + 1 : 0;
+}
+
+
+_GLOBAL.SZ2_q (p__i___XDLU_0__15 p0, p__i___XDLU_0__15 p1)
+{
+  return p1 <= p0 ? (bitsizetype) (((sizetype) p0 - (sizetype) p1) + 1) * 64 : 0;
+}
+
+
+_GLOBAL.SZ3_q (p__i___XDLU_0__15 p0, p__i___XDLU_0__15 p1)
+{
+  return p1 <= p0 ? (((sizetype) p0 - (sizetype) p1) + 1) * 8 : 0;
+}
+
+

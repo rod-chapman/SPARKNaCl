@@ -1,0 +1,48 @@
+
+;; Function q.op (q__op, funcdef_no=2, decl_uid=4567, cgraph_uid=0, symbol_order=0)
+
+Before removal of unreachable regions:
+Eh tree:
+   1 cleanup land:{3,<L6>}
+     2 cleanup land:{2,<L5>}
+       3 cleanup land:{1,<L4>}
+Reachable regions: n_bits = 4, set = {1 2 3 }
+Reachable landing pads: n_bits = 4, set = {1 2 3 }
+
+
+After removal of unreachable regions:
+Eh tree:
+   1 cleanup land:{3,<L6>}
+     2 cleanup land:{2,<L5>}
+       3 cleanup land:{1,<L4>}
+
+
+Removing basic block 9
+Removing basic block 8
+Removing basic block 7
+Removing unreachable region 1
+Removing unreachable region 2
+Removing unreachable region 3
+Merging blocks 2 and 3
+Merging blocks 2 and 4
+Merging blocks 2 and 5
+Merging blocks 2 and 6
+q.op (interfaces__integer_64[16] & l, interfaces__integer_64[16] & r)
+{
+  interfaces__integer_64 R.2[16];
+  interfaces__integer_64 R.1[16];
+  interfaces__integer_64 R.0[16];
+
+  <bb 2> :
+  R.2 = p."*" (l_5(D), r_6(D)); [return slot optimization]
+  R.1 = p.n3 (&R.2); [return slot optimization]
+  R.2 ={v} {CLOBBER};
+  R.0 = p.n2 (&R.1); [return slot optimization]
+  R.1 ={v} {CLOBBER};
+  <retval> = p.n1 (&R.0); [return slot optimization]
+  R.0 ={v} {CLOBBER};
+  return <retval>;
+
+}
+
+

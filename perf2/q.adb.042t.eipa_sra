@@ -1,0 +1,59 @@
+
+;; Function q.op (q__op, funcdef_no=2, decl_uid=4567, cgraph_uid=0, symbol_order=0)
+
+Function not local to this compilation unit.
+q.op (interfaces__integer_64[16] & l, interfaces__integer_64[16] & r)
+{
+  interfaces__integer_64 R.2[16];
+  interfaces__integer_64 R.1[16];
+  interfaces__integer_64 R.0[16];
+
+  <bb 2> :
+  R.2 = p."*" (l_5(D), r_6(D)); [return slot optimization]
+
+  <bb 3> :
+  R.1 = p.n3 (&R.2); [return slot optimization]
+
+  <bb 4> :
+  R.2 ={v} {CLOBBER};
+  R.0 = p.n2 (&R.1); [return slot optimization]
+
+  <bb 5> :
+  R.1 ={v} {CLOBBER};
+  <retval> = p.n1 (&R.0); [return slot optimization]
+
+  <bb 6> :
+  R.0 ={v} {CLOBBER};
+  return <retval>;
+
+  <bb 7> :
+<L4>:
+  R.2 ={v} {CLOBBER};
+  resx 3
+
+  <bb 8> :
+<L5>:
+  R.1 ={v} {CLOBBER};
+  resx 2
+
+  <bb 9> :
+<L6>:
+  R.0 ={v} {CLOBBER};
+  resx 1
+
+}
+
+
+
+;; Function q.op2 (q__op2, funcdef_no=3, decl_uid=4570, cgraph_uid=1, symbol_order=1)
+
+Function not local to this compilation unit.
+q.op2 (interfaces__integer_64[16] & x)
+{
+  <bb 2> :
+  <retval> = *x_2(D);
+  return <retval>;
+
+}
+
+

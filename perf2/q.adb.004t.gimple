@@ -1,0 +1,135 @@
+_GLOBAL.SZ0_q (positive___XDLU_1__2147483647 p0, positive___XDLU_1__2147483647 p1)
+{
+  bitsizetype D.4590;
+  bitsizetype iftmp.3;
+
+  if (p1 <= p0) goto <D.4592>; else goto <D.4593>;
+  <D.4592>:
+  _1 = (sizetype) p0;
+  _2 = (sizetype) p1;
+  _3 = _1 - _2;
+  _4 = _3 + 1;
+  _5 = (bitsizetype) _4;
+  iftmp.3 = _5 * 8;
+  goto <D.4594>;
+  <D.4593>:
+  iftmp.3 = 0;
+  <D.4594>:
+  D.4590 = iftmp.3;
+  return D.4590;
+}
+
+
+_GLOBAL.SZ1_q (positive___XDLU_1__2147483647 p0, positive___XDLU_1__2147483647 p1)
+{
+  sizetype D.4595;
+  sizetype iftmp.4;
+
+  if (p1 <= p0) goto <D.4597>; else goto <D.4598>;
+  <D.4597>:
+  _1 = (sizetype) p0;
+  _2 = (sizetype) p1;
+  _3 = _1 - _2;
+  iftmp.4 = _3 + 1;
+  goto <D.4599>;
+  <D.4598>:
+  iftmp.4 = 0;
+  <D.4599>:
+  D.4595 = iftmp.4;
+  return D.4595;
+}
+
+
+_GLOBAL.SZ2_q (p__i___XDLU_0__15 p0, p__i___XDLU_0__15 p1)
+{
+  bitsizetype D.4600;
+  bitsizetype iftmp.5;
+
+  if (p1 <= p0) goto <D.4602>; else goto <D.4603>;
+  <D.4602>:
+  _1 = (sizetype) p0;
+  _2 = (sizetype) p1;
+  _3 = _1 - _2;
+  _4 = _3 + 1;
+  _5 = (bitsizetype) _4;
+  iftmp.5 = _5 * 64;
+  goto <D.4604>;
+  <D.4603>:
+  iftmp.5 = 0;
+  <D.4604>:
+  D.4600 = iftmp.5;
+  return D.4600;
+}
+
+
+_GLOBAL.SZ3_q (p__i___XDLU_0__15 p0, p__i___XDLU_0__15 p1)
+{
+  sizetype D.4605;
+  sizetype iftmp.6;
+
+  if (p1 <= p0) goto <D.4607>; else goto <D.4608>;
+  <D.4607>:
+  _1 = (sizetype) p0;
+  _2 = (sizetype) p1;
+  _3 = _1 - _2;
+  _4 = _3 + 1;
+  iftmp.6 = _4 * 8;
+  goto <D.4609>;
+  <D.4608>:
+  iftmp.6 = 0;
+  <D.4609>:
+  D.4605 = iftmp.6;
+  return D.4605;
+}
+
+
+q.op (interfaces__integer_64[16] & l, interfaces__integer_64[16] & r)
+{
+  interfaces__integer_64 R.0[16];
+
+  try
+    {
+      {
+        interfaces__integer_64 R.1[16];
+
+        try
+          {
+            {
+              interfaces__integer_64 R.2[16];
+
+              try
+                {
+                  R.2 = p."*" (l, r); [return slot optimization]
+                  R.1 = p.n3 (&R.2); [return slot optimization]
+                }
+              finally
+                {
+                  R.2 = {CLOBBER};
+                }
+            }
+            R.0 = p.n2 (&R.1); [return slot optimization]
+          }
+        finally
+          {
+            R.1 = {CLOBBER};
+          }
+      }
+      <retval> = p.n1 (&R.0); [return slot optimization]
+      return <retval>;
+    }
+  finally
+    {
+      R.0 = {CLOBBER};
+    }
+}
+
+
+q.op2 (interfaces__integer_64[16] & x)
+{
+  interfaces__integer_64 r[16] [value-expr: <retval>];
+
+  <retval> = *x;
+  return <retval>;
+}
+
+

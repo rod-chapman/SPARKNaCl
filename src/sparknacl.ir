@@ -1,0 +1,564 @@
+Source recreated from tree for Sparknacl (spec)
+-----------------------------------------------
+
+with ada;
+with ada.ada__unchecked_conversion;
+with interfaces;
+use interfaces;
+with random;
+sparknacl_E : short_integer := 0;
+
+package sparknacl with spark_mode => on is
+   pragma spark_mode (on);
+   subtype sparknacl__byte is interfaces__unsigned_8;
+   subtype sparknacl__i32 is interfaces__integer_32;
+   subtype sparknacl__n32 is sparknacl__i32 range 0 .. 16#7FFF_FFFF#;
+   subtype sparknacl__i32_bit is sparknacl__i32 range 0 .. 1;
+   subtype sparknacl__i64 is interfaces__integer_64;
+   subtype sparknacl__i64_byte is sparknacl__i64 range 0 .. 255;
+   subtype sparknacl__i64_bit is sparknacl__i64 range 0 .. 1;
+   type sparknacl__byte_seq is array (0 .. 16#7FFF_FFFF# range <>) of
+     sparknacl__byte;
+   subtype sparknacl__index_8 is sparknacl__i32 range 0 .. 7;
+   subtype sparknacl__index_16 is sparknacl__i32 range 0 .. 15;
+   subtype sparknacl__index_24 is sparknacl__i32 range 0 .. 23;
+   subtype sparknacl__index_32 is sparknacl__i32 range 0 .. 31;
+   subtype sparknacl__index_64 is sparknacl__i32 range 0 .. 63;
+   subtype sparknacl__bytes_8 is sparknacl__byte_seq (
+     sparknacl__index_8);
+   subtype sparknacl__bytes_16 is sparknacl__byte_seq (
+     sparknacl__index_16);
+   subtype sparknacl__bytes_24 is sparknacl__byte_seq (
+     sparknacl__index_24);
+   subtype sparknacl__bytes_32 is sparknacl__byte_seq (
+     sparknacl__index_32);
+   subtype sparknacl__bytes_64 is sparknacl__byte_seq (
+     sparknacl__index_64);
+   freeze sparknacl__byte_seq [
+      procedure sparknacl__byte_seqIP (_init : in out
+        sparknacl__byte_seq) is
+      begin
+         return;
+      end sparknacl__byte_seqIP;
+   ]
+   [subtype sparknacl__T6s is sparknacl__byte_seq (0 .. 15)]
+   reference sparknacl__T6s
+   reference sparknacl__T6s
+   sparknacl__zero_bytes_16 : constant sparknacl__bytes_16 := (0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+   [subtype sparknacl__T10s is sparknacl__byte_seq (0 .. 31)]
+   reference sparknacl__T10s
+   reference sparknacl__T10s
+   sparknacl__zero_bytes_32 : constant sparknacl__bytes_32 := (0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0);
+   type sparknacl__i64_byte_seq is array (0 .. 16#7FFF_FFFF# range <>) of
+     sparknacl__i64_byte;
+   type sparknacl__i64_seq is array (0 .. 16#7FFF_FFFF# range <>) of
+     sparknacl__i64;
+   subtype sparknacl__i64_seq_64 is sparknacl__i64_seq (
+     sparknacl__index_64);
+   function sparknacl__equal (x : in sparknacl__byte_seq; y : in
+     sparknacl__byte_seq) return boolean
+     with pure_function,
+          global => null,
+          pre => x'first = y'first and x'last = y'last,
+          post => sparknacl__equal'result = ( for all i in x'first .. x'
+            last => x (i) = y (i));
+   pragma postcondition (check => sparknacl__equal'result = ( for all i
+     in x'first .. x'last => x (i) = y (i)), message =>
+     "failed postcondition from sparknacl.ads:93");
+   pragma precondition (check => x'first = y'first and x'last = y'last,
+     message => "failed precondition from sparknacl.ads:91");
+   pragma global (null);
+   pragma pure_function (sparknacl__equal);
+   procedure sparknacl__random_bytes (r : out sparknacl__byte_seq)
+     with global => random.random__entropy;
+   pragma global ((random.random__entropy));
+   procedure sparknacl__sanitize (r : out sparknacl__byte_seq)
+     with global => null,
+          no_inline;
+   pragma no_inline (sparknacl__sanitize);
+   pragma global (null);
+private
+   subtype sparknacl__u32 is interfaces__unsigned_32;
+   subtype sparknacl__u64 is interfaces__unsigned_64;
+   subtype sparknacl__index_4 is sparknacl__i32 range 0 .. 3;
+   subtype sparknacl__index_15 is sparknacl__i32 range 0 .. 14;
+   subtype sparknacl__index_20 is sparknacl__i32 range 0 .. 19;
+   subtype sparknacl__index_31 is sparknacl__i32 range 0 .. 30;
+   subtype sparknacl__index_256 is sparknacl__i32 range 0 .. 255;
+   subtype sparknacl__bytes_4 is sparknacl__byte_seq (
+     sparknacl__index_4);
+   subtype sparknacl__bytes_256 is sparknacl__byte_seq (
+     sparknacl__index_256);
+   type sparknacl__u32_seq is array (0 .. 16#7FFF_FFFF# range <>) of
+     sparknacl__u32;
+   type sparknacl__u64_seq is array (0 .. 16#7FFF_FFFF# range <>) of
+     sparknacl__u64;
+   subtype sparknacl__u32_seq_4 is sparknacl__u32_seq (
+     sparknacl__index_4);
+   subtype sparknacl__u32_seq_16 is sparknacl__u32_seq (
+     sparknacl__index_16);
+   subtype sparknacl__i64_byte_seq_32 is sparknacl__i64_byte_seq (
+     sparknacl__index_32);
+   subtype sparknacl__u64_seq_16 is sparknacl__u64_seq (
+     sparknacl__index_16);
+   subtype sparknacl__u64_seq_8 is sparknacl__u64_seq (
+     sparknacl__index_8);
+   [subtype sparknacl__T26s is sparknacl__byte_seq (0 .. 15)]
+   reference sparknacl__T26s
+   reference sparknacl__T26s
+   sparknacl__sigma : constant sparknacl__bytes_16 := (101, 120, 112,
+     97, 110, 100, 32, 51, 50, 45, 98, 121, 116, 101, 32, 107);
+   sparknacl__lm : constant  := 16#1000_0#;
+   sparknacl__lmm1 : constant  := 65535;
+   sparknacl__r2256 : constant  := 38;
+   sparknacl__mgflc : constant  := 571;
+   sparknacl__mgflp : constant  := 4294836225;
+   subtype sparknacl__gf64_any_limb is sparknacl__i64 range -16#1000_0# ..
+     (2452351484475);
+   subtype sparknacl__gf32_any_limb is sparknacl__i32 range -16#1000_0# ..
+     16#1FFF_F#;
+   type sparknacl__gf64 is array (0 .. 15) of sparknacl__gf64_any_limb;
+   type sparknacl__gf32 is array (0 .. 15) of sparknacl__gf32_any_limb;
+   type sparknacl__gf64_pa is array (0 .. 30) of
+     sparknacl__gf64_any_limb;
+   subtype sparknacl__gf64_normal_limb is sparknacl__i64 range 0 ..
+     65535;
+   subtype sparknacl__gf32_normal_limb is sparknacl__i32 range 0 ..
+     65535;
+   subtype sparknacl__normal_gf64 is sparknacl__gf64
+     with dynamic_predicate => ( for all i in sparknacl__index_16 =>
+            I61s (i) in sparknacl__gf64_normal_limb);
+   function sparknacl__normal_gf64Predicate (I61s :
+     sparknacl__normal_gf64) return boolean;
+   subtype sparknacl__normal_gf is sparknacl__gf32
+     with dynamic_predicate => ( for all i in sparknacl__index_16 =>
+            I33s (i) in sparknacl__gf32_normal_limb);
+   function sparknacl__normal_gfPredicate (I33s : sparknacl__normal_gf)
+     return boolean;
+   subtype sparknacl__gf_sum_limb is sparknacl__i32 range 0 .. (
+     131070);
+   subtype sparknacl__sum_gf is sparknacl__gf32
+     with dynamic_predicate => ( for all i in sparknacl__index_16 =>
+            I69s (i) in sparknacl__gf_sum_limb);
+   function sparknacl__sum_gfPredicate (I69s : sparknacl__sum_gf)
+     return boolean;
+   subtype sparknacl__difference_gf is sparknacl__gf32
+     with dynamic_predicate => ((I76s (0) in 1 .. 16#1FFF_F#) and ( for all
+            k in sparknacl__index_16 range 1 .. 15 => I76s (k) in 0 ..
+            131070));
+   function sparknacl__difference_gfPredicate (I76s :
+     sparknacl__difference_gf) return boolean;
+   subtype sparknacl__product_gf is sparknacl__gf64
+     with dynamic_predicate => ( for all i in sparknacl__index_16 =>
+            I86s (i) >= 0 and I86s (i) <= (571 - 37 *
+            sparknacl__gf64_any_limb(i)) * 4294836225);
+   function sparknacl__product_gfPredicate (I86s :
+     sparknacl__product_gf) return boolean;
+   subtype sparknacl__seminormal_gf_lsl is sparknacl__i32 range 0 .. (
+     132051011);
+   subtype sparknacl__seminormal_gf is sparknacl__gf32
+     with dynamic_predicate => (I93s (0) in
+            sparknacl__seminormal_gf_lsl and ( for all i in
+            sparknacl__index_16 range 1 .. 15 => I93s (i) in
+            sparknacl__gf32_normal_limb));
+   function sparknacl__seminormal_gfPredicate (I93s :
+     sparknacl__seminormal_gf) return boolean;
+   subtype sparknacl__nearlynormal_gf is sparknacl__gf32
+     with dynamic_predicate => ((I103s (0) in -38 .. 65573) and ( for all
+            k in sparknacl__index_16 range 1 .. 15 => (I103s (k) in
+            sparknacl__gf32_normal_limb)));
+   function sparknacl__nearlynormal_gfPredicate (I103s :
+     sparknacl__nearlynormal_gf) return boolean;
+   [type sparknacl__Tgf32B is array (0 .. 15 range <>) of
+     sparknacl__gf32_any_limb]
+   freeze sparknacl__Tgf32B [
+      procedure sparknacl__Tgf32BIP (_init : in out sparknacl__Tgf32B) is
+      begin
+         return;
+      end sparknacl__Tgf32BIP;
+   ]
+   pragma predicate (sparknacl__normal_gf, ( for all i in index_16 =>
+     normal_gf (i) in gf32_normal_limb));
+
+   function sparknacl__normal_gfPredicate (I33s : sparknacl__normal_gf)
+     return boolean is
+   begin
+      return (
+         do
+            T36s : boolean := true;
+            L38s : for i in 0 .. 15 loop
+               if not (I33s (i) in 0 .. 65535) then
+                  T36s := false;
+                  exit;
+               end if;
+            end loop L38s;
+         in T36s end
+      );
+   end sparknacl__normal_gfPredicate;
+
+   [subtype sparknacl__T43s is sparknacl__Tgf32B (0 .. 15)]
+   reference sparknacl__T43s
+   reference sparknacl__T43s
+   sparknacl__gf_0 : constant sparknacl__normal_gf := (0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+   [subtype sparknacl__T47s is sparknacl__Tgf32B (0 .. 15)]
+   reference sparknacl__T47s
+   reference sparknacl__T47s
+   sparknacl__gf_1 : constant sparknacl__normal_gf := (1, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+
+   package sparknacl__to_u64GP13663 is
+      subtype sparknacl__to_u64GP13663__source is sparknacl__i64;
+      subtype sparknacl__to_u64GP13663__target is sparknacl__u64;
+      function sparknacl__to_u64 (s : sparknacl__to_u64GP13663__source)
+        return sparknacl__to_u64GP13663__target;
+      function sparknacl__to_u64GP13663__unchecked_conversion (s :
+        sparknacl__to_u64GP13663__source) return
+        sparknacl__to_u64GP13663__target renames sparknacl__to_u64;
+   end sparknacl__to_u64GP13663;
+   function to_u64 is new ada.ada__unchecked_conversion (sparknacl__i64,
+     sparknacl__u64);
+   validate unchecked_conversion (sparknacl__i64, sparknacl__u64);
+
+   package sparknacl__to_i64GP13726 is
+      subtype sparknacl__to_i64GP13726__source is sparknacl__u64;
+      subtype sparknacl__to_i64GP13726__target is sparknacl__i64;
+      function sparknacl__to_i64 (s : sparknacl__to_i64GP13726__source)
+        return sparknacl__to_i64GP13726__target;
+      function sparknacl__to_i64GP13726__unchecked_conversion (s :
+        sparknacl__to_i64GP13726__source) return
+        sparknacl__to_i64GP13726__target renames sparknacl__to_i64;
+   end sparknacl__to_i64GP13726;
+   function to_i64 is new ada.ada__unchecked_conversion (sparknacl__u64,
+     sparknacl__i64);
+   validate unchecked_conversion (sparknacl__u64, sparknacl__i64);
+
+   package sparknacl__to_u32GP13789 is
+      subtype sparknacl__to_u32GP13789__source is sparknacl__i32;
+      subtype sparknacl__to_u32GP13789__target is sparknacl__u32;
+      function sparknacl__to_u32 (s : sparknacl__to_u32GP13789__source)
+        return sparknacl__to_u32GP13789__target;
+      function sparknacl__to_u32GP13789__unchecked_conversion (s :
+        sparknacl__to_u32GP13789__source) return
+        sparknacl__to_u32GP13789__target renames sparknacl__to_u32;
+   end sparknacl__to_u32GP13789;
+   function to_u32 is new ada.ada__unchecked_conversion (sparknacl__i32,
+     sparknacl__u32);
+   validate unchecked_conversion (sparknacl__i32, sparknacl__u32);
+
+   package sparknacl__to_i32GP13852 is
+      subtype sparknacl__to_i32GP13852__source is sparknacl__u32;
+      subtype sparknacl__to_i32GP13852__target is sparknacl__i32;
+      function sparknacl__to_i32 (s : sparknacl__to_i32GP13852__source)
+        return sparknacl__to_i32GP13852__target;
+      function sparknacl__to_i32GP13852__unchecked_conversion (s :
+        sparknacl__to_i32GP13852__source) return
+        sparknacl__to_i32GP13852__target renames sparknacl__to_i32;
+   end sparknacl__to_i32GP13852;
+   function to_i32 is new ada.ada__unchecked_conversion (sparknacl__u32,
+     sparknacl__i32);
+   validate unchecked_conversion (sparknacl__u32, sparknacl__i32);
+   function sparknacl__asr64_16 (x : in sparknacl__i64) return
+     sparknacl__i64
+     with post => (if x >= 0 then sparknacl__asr64_16'result = x /
+            16#1000_0# else sparknacl__asr64_16'result = ((x + 1) /
+            16#1000_0#) - 1);
+   pragma postcondition (check => (if x >= 0 then sparknacl__asr64_16'
+     result = x / 16#1000_0# else sparknacl__asr64_16'result = ((x +
+     1) / 16#1000_0#) - 1), message =>
+     "failed postcondition from sparknacl.ads:364");
+   pragma annotate (gnatprove, false_positive, "postcondition might fail",
+     "From definition of arithmetic shift right");
+   function sparknacl__asr32_16 (x : in sparknacl__i32) return
+     sparknacl__i32
+     with post => (if x >= 0 then sparknacl__asr32_16'result = x /
+            16#1000_0# else sparknacl__asr32_16'result = ((x + 1) /
+            16#1000_0#) - 1);
+   pragma postcondition (check => (if x >= 0 then sparknacl__asr32_16'
+     result = x / 16#1000_0# else sparknacl__asr32_16'result = ((x +
+     1) / 16#1000_0#) - 1), message =>
+     "failed postcondition from sparknacl.ads:376");
+   pragma annotate (gnatprove, false_positive, "postcondition might fail",
+     "From definition of arithmetic shift right");
+   function sparknacl__asr_8 (x : in sparknacl__i64) return
+     sparknacl__i64
+     with post => (if x >= 0 then sparknacl__asr_8'result = x / 256
+            else sparknacl__asr_8'result = ((x + 1) / 256) - 1);
+   pragma postcondition (check => (if x >= 0 then sparknacl__asr_8'
+     result = x / 256 else sparknacl__asr_8'result = ((x + 1) / 256) -
+     1), message => "failed postcondition from sparknacl.ads:388");
+   pragma annotate (gnatprove, false_positive, "postcondition might fail",
+     "From definition of arithmetic shift right");
+   function sparknacl__asr_4 (x : in sparknacl__i64) return
+     sparknacl__i64
+     with post => (if x >= 0 then sparknacl__asr_4'result = x / 16
+            else sparknacl__asr_4'result = ((x + 1) / 16) - 1);
+   pragma postcondition (check => (if x >= 0 then sparknacl__asr_4'
+     result = x / 16 else sparknacl__asr_4'result = ((x + 1) / 16) -
+     1), message => "failed postcondition from sparknacl.ads:400");
+   pragma annotate (gnatprove, false_positive, "postcondition might fail",
+     "From definition of arithmetic shift right");
+   function sparknacl__Oadd (left : in sparknacl__normal_gf; right :
+     in sparknacl__normal_gf) return sparknacl__normal_gf
+     with pure_function,
+          global => null;
+   pragma global (null);
+   pragma pure_function (sparknacl__Oadd);
+   function sparknacl__Osubtract (left : in sparknacl__normal_gf; right :
+     in sparknacl__normal_gf) return sparknacl__normal_gf
+     with pure_function,
+          global => null;
+   pragma global (null);
+   pragma pure_function (sparknacl__Osubtract);
+   function sparknacl__Omultiply (left : in sparknacl__normal_gf; right :
+     in sparknacl__normal_gf) return sparknacl__normal_gf
+     with pure_function,
+          global => null;
+   pragma global (null);
+   pragma pure_function (sparknacl__Omultiply);
+   function sparknacl__square (a : in sparknacl__normal_gf) return
+     sparknacl__normal_gf
+     with pure_function,
+          global => null;
+   pragma global (null);
+   pragma pure_function (sparknacl__square);
+   procedure sparknacl__sanitize_u32 (r : out sparknacl__u32)
+     with global => null,
+          no_inline;
+   pragma no_inline (sparknacl__sanitize_u32);
+   pragma global (null);
+   procedure sparknacl__sanitize_u64 (r : out sparknacl__u64)
+     with global => null,
+          no_inline;
+   pragma no_inline (sparknacl__sanitize_u64);
+   pragma global (null);
+   procedure sparknacl__sanitize_gf32 (r : out sparknacl__gf32)
+     with global => null,
+          no_inline,
+          post => r in sparknacl__normal_gf;
+   pragma postcondition (check => r in sparknacl__normal_gf, message =>
+     "failed postcondition from sparknacl.ads:441");
+   pragma no_inline (sparknacl__sanitize_gf32);
+   pragma global (null);
+   procedure sparknacl__sanitize_gf64_pa (r : out sparknacl__gf64_pa)
+     with global => null,
+          no_inline;
+   pragma no_inline (sparknacl__sanitize_gf64_pa);
+   pragma global (null);
+   procedure sparknacl__sanitize_i64_seq (r : out sparknacl__i64_seq)
+     with global => null,
+          no_inline;
+   pragma no_inline (sparknacl__sanitize_i64_seq);
+   pragma global (null);
+   procedure sparknacl__sanitize_boolean (r : out boolean)
+     with global => null,
+          no_inline;
+   pragma no_inline (sparknacl__sanitize_boolean);
+   pragma global (null);
+   freeze sparknacl__i64_byte_seq [
+      procedure sparknacl__i64_byte_seqIP (_init : in out
+        sparknacl__i64_byte_seq) is
+      begin
+         return;
+      end sparknacl__i64_byte_seqIP;
+   ]
+   freeze sparknacl__i64_seq [
+      procedure sparknacl__i64_seqIP (_init : in out sparknacl__i64_seq) is
+      begin
+         return;
+      end sparknacl__i64_seqIP;
+   ]
+   freeze sparknacl__u32_seq [
+      procedure sparknacl__u32_seqIP (_init : in out sparknacl__u32_seq) is
+      begin
+         return;
+      end sparknacl__u32_seqIP;
+   ]
+   freeze sparknacl__u64_seq [
+      procedure sparknacl__u64_seqIP (_init : in out sparknacl__u64_seq) is
+      begin
+         return;
+      end sparknacl__u64_seqIP;
+   ]
+   [type sparknacl__Tgf64B is array (0 .. 15 range <>) of
+     sparknacl__gf64_any_limb]
+   freeze sparknacl__Tgf64B [
+      procedure sparknacl__Tgf64BIP (_init : in out sparknacl__Tgf64B) is
+      begin
+         return;
+      end sparknacl__Tgf64BIP;
+   ]
+   [type sparknacl__Tgf64_paB is array (0 .. 30 range <>) of
+     sparknacl__gf64_any_limb]
+   freeze sparknacl__Tgf64_paB [
+      procedure sparknacl__Tgf64_paBIP (_init : in out
+        sparknacl__Tgf64_paB) is
+      begin
+         return;
+      end sparknacl__Tgf64_paBIP;
+   ]
+   pragma predicate (sparknacl__normal_gf64, ( for all i in index_16 =>
+     normal_gf64 (i) in gf64_normal_limb));
+
+   function sparknacl__normal_gf64Predicate (I61s :
+     sparknacl__normal_gf64) return boolean is
+   begin
+      return (
+         do
+            T64s : boolean := true;
+            L66s : for i in 0 .. 15 loop
+               if not (I61s (i) in 0 .. 65535) then
+                  T64s := false;
+                  exit;
+               end if;
+            end loop L66s;
+         in T64s end
+      );
+   end sparknacl__normal_gf64Predicate;
+
+   pragma predicate (sparknacl__sum_gf, ( for all i in index_16 =>
+     sum_gf (i) in gf_sum_limb));
+
+   function sparknacl__sum_gfPredicate (I69s : sparknacl__sum_gf)
+     return boolean is
+   begin
+      return (
+         do
+            T72s : boolean := true;
+            L74s : for i in 0 .. 15 loop
+               if not (I69s (i) in 0 .. 131070) then
+                  T72s := false;
+                  exit;
+               end if;
+            end loop L74s;
+         in T72s end
+      );
+   end sparknacl__sum_gfPredicate;
+
+   pragma predicate (sparknacl__difference_gf, ((difference_gf (0) in
+     1 .. (2 * lmm1) + 1) and ( for all k in index_16 range 1 .. 15 =>
+     difference_gf (k) in 0 .. 2 * lmm1)));
+
+   function sparknacl__difference_gfPredicate (I76s :
+     sparknacl__difference_gf) return boolean is
+   begin
+      return ((I76s (0) in 1 .. 16#1FFF_F#) and (
+         do
+            T80s : boolean := true;
+            L82s : for k in sparknacl__index_16 range 1 .. 15 loop
+               if not (I76s (k) in 0 .. 131070) then
+                  T80s := false;
+                  exit;
+               end if;
+            end loop L82s;
+         in T80s end
+      ));
+   end sparknacl__difference_gfPredicate;
+
+   pragma predicate (sparknacl__product_gf, ( for all i in index_16 =>
+     product_gf (i) >= 0 and product_gf (i) <= (mgflc - 37 *
+     gf64_any_limb (i)) * mgflp));
+
+   function sparknacl__product_gfPredicate (I86s :
+     sparknacl__product_gf) return boolean is
+   begin
+      return (
+         do
+            T89s : boolean := true;
+            L91s : for i in 0 .. 15 loop
+               if not (I86s (i) >= 0 and I86s (i) <= (571 - 37 *
+                 sparknacl__gf64_any_limb(i)) * 4294836225) then
+                  T89s := false;
+                  exit;
+               end if;
+            end loop L91s;
+         in T89s end
+      );
+   end sparknacl__product_gfPredicate;
+
+   pragma predicate (sparknacl__seminormal_gf, (seminormal_gf (0) in
+     seminormal_gf_lsl and ( for all i in index_16 range 1 .. 15 =>
+     seminormal_gf (i) in gf32_normal_limb)));
+
+   function sparknacl__seminormal_gfPredicate (I93s :
+     sparknacl__seminormal_gf) return boolean is
+   begin
+      return (I93s (0) in 0 .. 132051011 and (
+         do
+            T97s : boolean := true;
+            L99s : for i in sparknacl__index_16 range 1 .. 15 loop
+               if not (I93s (i) in 0 .. 65535) then
+                  T97s := false;
+                  exit;
+               end if;
+            end loop L99s;
+         in T97s end
+      ));
+   end sparknacl__seminormal_gfPredicate;
+
+   pragma predicate (sparknacl__nearlynormal_gf, ((nearlynormal_gf (
+     0) in -r2256 .. lmm1 + r2256) and ( for all k in index_16 range
+     1 .. 15 => (nearlynormal_gf (k) in gf32_normal_limb))));
+
+   function sparknacl__nearlynormal_gfPredicate (I103s :
+     sparknacl__nearlynormal_gf) return boolean is
+   begin
+      return ((I103s (0) in -38 .. 65573) and (
+         do
+            T107s : boolean := true;
+            L109s : for k in sparknacl__index_16 range 1 .. 15 loop
+               if not (I103s (k) in 0 .. 65535) then
+                  T107s := false;
+                  exit;
+               end if;
+            end loop L109s;
+         in T107s end
+      ));
+   end sparknacl__nearlynormal_gfPredicate;
+
+
+   function sparknacl__asr64_16 (x : in sparknacl__i64) return
+     sparknacl__i64 is
+   begin
+      return (sparknacl__i64!(sparknacl__to_i64GP13726__source(
+        interfaces__shift_right_arithmetic__4!(sparknacl__u64!(
+        sparknacl__to_u64GP13663__source(x)), 16))));
+   end sparknacl__asr64_16;
+
+   function sparknacl__asr32_16 (x : in sparknacl__i32) return
+     sparknacl__i32 is
+   begin
+      return (sparknacl__i32!(sparknacl__to_i32GP13852__source(
+        interfaces__shift_right_arithmetic__3!(sparknacl__u32!(
+        sparknacl__to_u32GP13789__source(x)), 16))));
+   end sparknacl__asr32_16;
+
+   function sparknacl__asr_8 (x : in sparknacl__i64) return
+     sparknacl__i64 is
+   begin
+      return (sparknacl__i64!(sparknacl__to_i64GP13726__source(
+        interfaces__shift_right_arithmetic__4!(sparknacl__u64!(
+        sparknacl__to_u64GP13663__source(x)), 8))));
+   end sparknacl__asr_8;
+
+   function sparknacl__asr_4 (x : in sparknacl__i64) return
+     sparknacl__i64 is
+   begin
+      return (sparknacl__i64!(sparknacl__to_i64GP13726__source(
+        interfaces__shift_right_arithmetic__4!(sparknacl__u64!(
+        sparknacl__to_u64GP13663__source(x)), 4))));
+   end sparknacl__asr_4;
+
+   function sparknacl__square (a : in sparknacl__normal_gf) return
+     sparknacl__normal_gf is
+   begin
+      type sparknacl__square__A119s is access all sparknacl__normal_gf;
+      R118s : constant sparknacl__square__A119s := (
+        sparknacl__Omultiply (a, a))'reference;
+      return (R118s.all);
+   end sparknacl__square;
+end sparknacl;
+

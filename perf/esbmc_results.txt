@@ -1,0 +1,13 @@
+Unwinding loop 102 iteration 32 file tweetnacl.c line 4 function modL
+Symex completed in: 90276.004s (4465764 assignments)
+Slicing time: 60.590s (removed 3561850 assignments)
+Generated 7546762 VCC(s), 903908 remaining after simplification (903914 assignments)
+No solver specified; defaulting to Boolector
+Encoding remaining VCC(s) using bit-vector/floating-point arithmetic
+Encoding to solver time: 34.747s
+Solving with solver Boolector 3.2.0
+Encoding to solver time: 34.747s
+Runtime decision procedure: 0.000s
+BMC program time: 90371.343s
+
+VERIFICATION SUCCESSFUL

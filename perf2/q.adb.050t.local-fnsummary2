@@ -1,0 +1,73 @@
+
+;; Function q.op (q__op, funcdef_no=2, decl_uid=4567, cgraph_uid=0, symbol_order=0)
+
+
+Analyzing function body size: Q.Op
+
+IPA function summary for Q.Op/0 inlinable
+  global time:     111.000000
+  self size:       28
+  global size:     0
+  min size:       50
+  self stack:      384
+  global stack:    384
+    size:0.000000, time:0.000000
+    size:3.000000, time:2.000000,  executed if:(not inlined)
+  calls:
+    P.N1/11 function body not available
+      loop depth: 0 freq:1.00 size: 6 time: 27 callee size: 0 stack: 0
+       op0 is compile time invariant
+    P.N2/10 function body not available
+      loop depth: 0 freq:1.00 size: 6 time: 27 callee size: 0 stack: 0
+       op0 is compile time invariant
+    P.N3/9 function body not available
+      loop depth: 0 freq:1.00 size: 6 time: 27 callee size: 0 stack: 0
+       op0 is compile time invariant
+    P."*"/8 function body not available
+      loop depth: 0 freq:1.00 size: 7 time: 28 callee size: 0 stack: 0
+
+q.op (interfaces__integer_64[16] & l, interfaces__integer_64[16] & r)
+{
+  interfaces__integer_64 R.2[16];
+  interfaces__integer_64 R.1[16];
+  interfaces__integer_64 R.0[16];
+
+  <bb 2> [local count: 1073741825]:
+  R.2 = p."*" (l_2(D), r_3(D)); [return slot optimization]
+  R.1 = p.n3 (&R.2); [return slot optimization]
+  R.2 ={v} {CLOBBER};
+  R.0 = p.n2 (&R.1); [return slot optimization]
+  R.1 ={v} {CLOBBER};
+  <retval> = p.n1 (&R.0); [return slot optimization]
+  R.0 ={v} {CLOBBER};
+  return <retval>;
+
+}
+
+
+
+;; Function q.op2 (q__op2, funcdef_no=3, decl_uid=4570, cgraph_uid=1, symbol_order=1)
+
+
+Analyzing function body size: Q.Op2
+
+IPA function summary for Q.Op2/1 inlinable
+  global time:     34.000000
+  self size:       11
+  global size:     0
+  min size:       0
+  self stack:      0
+  global stack:    0
+    size:4.000000, time:16.000000
+    size:7.000000, time:18.000000,  executed if:(not inlined)
+  calls:
+
+q.op2 (interfaces__integer_64[16] & x)
+{
+  <bb 2> [local count: 1073741825]:
+  <retval> = *x_2(D);
+  return <retval>;
+
+}
+
+

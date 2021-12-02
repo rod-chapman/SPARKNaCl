@@ -1,0 +1,1294 @@
+Phase 1 of 2: generation of program properties ...
+Phase 2 of 2: flow analysis and proof ...
+sparknacl-mac.adb:41:07: info: initialization of "S" proved
+sparknacl-mac.adb:41:10: info: initialization of "U" proved
+sparknacl-mac.adb:42:07: info: initialization of "J" proved
+sparknacl-mac.adb:43:07: info: initialization of "N" proved
+sparknacl-mac.adb:44:07: info: initialization of "M_Offset" proved
+sparknacl-mac.adb:45:07: info: initialization of "X" proved
+sparknacl-mac.adb:45:10: info: initialization of "R" proved
+sparknacl-mac.adb:45:13: info: initialization of "H" proved
+sparknacl-mac.adb:45:16: info: initialization of "C" proved
+sparknacl-mac.adb:45:19: info: initialization of "G" proved
+sparknacl-mac.adb:49:14: info: data dependencies proved
+sparknacl-mac.adb:97:13: info: loop invariant initialization proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-mac.adb:97:13: info: loop invariant preservation proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-mac.adb:97:15: info: overflow check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-mac.adb:102:16: info: loop invariant initialization proved (Z3: 3 VC in max 0.0 seconds and 1 step)
+sparknacl-mac.adb:102:16: info: loop invariant preservation proved (Z3: 3 VC in max 0.0 seconds and 1 step)
+sparknacl-mac.adb:102:18: info: overflow check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-mac.adb:103:27: info: overflow check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-mac.adb:105:39: info: overflow check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-mac.adb:105:39: info: index check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-mac.adb:106:20: info: range check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-mac.adb:112:17: info: overflow check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-mac.adb:118:34: info: overflow check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-mac.adb:130:46: info: index check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-mac.adb:130:72: info: index check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-mac.adb:180:36: info: division check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-mac.adb:180:36: info: range check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-mac.adb:188:07: info: initialization of "X" proved
+sparknacl-mac.adb:190:07: info: precondition proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-mac.adb:191:14: info: precondition proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-mac.ads:10:11: info: data dependencies proved
+sparknacl-mac.ads:12:25: info: initialization of "K" proved
+sparknacl-mac.ads:14:11: info: data dependencies proved
+sparknacl-mac.ads:17:11: info: data dependencies proved
+sparknacl-mac.ads:19:24: info: initialization of "K" proved
+sparknacl-mac.ads:20:11: info: data dependencies proved
+sparknacl-mac.ads:26:27: info: initialization of "Output" proved
+sparknacl-mac.ads:29:11: info: data dependencies proved
+sparknacl-mac.ads:35:11: info: data dependencies proved
+sparknacl-core.adb:15:20: info: initialization of "X" proved
+sparknacl-core.adb:17:11: info: data dependencies proved
+sparknacl-core.adb:20:11: info: data dependencies proved
+sparknacl-core.adb:28:07: info: initialization of "X" proved
+sparknacl-core.adb:29:07: info: initialization of "Y" proved
+sparknacl-core.adb:30:11: info: data dependencies proved
+sparknacl-core.adb:43:27: info: division check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-core.adb:43:27: info: range check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-core.adb:50:07: info: initialization of "U" proved
+sparknacl-core.adb:65:07: info: initialization of "W" proved
+sparknacl-core.adb:66:07: info: initialization of "T" proved
+sparknacl-core.adb:71:14: info: data dependencies proved
+sparknacl-core.adb:85:25: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-core.adb:86:35: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-core.adb:87:25: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-core.adb:88:35: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-core.adb:90:25: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-core.adb:91:35: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-core.adb:92:25: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-core.adb:93:35: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-core.adb:95:25: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-core.adb:96:35: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-core.adb:97:25: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-core.adb:98:35: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-core.adb:100:25: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-core.adb:101:35: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-core.adb:102:25: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-core.adb:103:35: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-core.adb:226:07: info: initialization of "X" proved
+sparknacl-core.adb:226:10: info: initialization of "Y" proved
+sparknacl-core.adb:235:16: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-core.adb:235:16: info: length check proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 3 VC in max 0.1 seconds and 1 step)
+sparknacl-core.adb:244:07: info: initialization of "X" proved
+sparknacl-core.adb:244:10: info: initialization of "Y" proved
+sparknacl-core.adb:257:41: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-core.adb:257:41: info: length check proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 3 VC in max 0.0 seconds and 1 step)
+sparknacl-core.adb:258:41: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-core.adb:258:41: info: length check proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 3 VC in max 0.0 seconds and 1 step)
+sparknacl-core.adb:264:16: info: range check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-core.adb:264:16: info: length check proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 3 VC in max 0.0 seconds and 1 step)
+sparknacl-core.adb:265:16: info: range check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-core.adb:265:16: info: length check proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 3 VC in max 0.1 seconds and 1 step)
+sparknacl-core.ads:10:11: info: data dependencies proved
+sparknacl-core.ads:12:25: info: initialization of "K" proved
+sparknacl-core.ads:14:11: info: data dependencies proved
+sparknacl-core.ads:17:11: info: data dependencies proved
+sparknacl-core.ads:19:24: info: initialization of "K" proved
+sparknacl-core.ads:20:11: info: data dependencies proved
+sparknacl-core.ads:26:23: info: initialization of "Output" proved
+sparknacl-core.ads:30:11: info: data dependencies proved
+sparknacl-core.ads:32:24: info: initialization of "Output" proved
+sparknacl-core.ads:36:11: info: data dependencies proved
+sparknacl-stream.adb:11:07: info: initialization of "C" proved
+sparknacl-stream.adb:17:11: info: data dependencies proved
+sparknacl-stream.adb:35:49: info: division check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-stream.adb:35:49: info: range check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-stream.adb:36:15: info: range check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-stream.adb:36:64: info: overflow check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-stream.adb:39:07: info: initialization of "Offset" proved
+sparknacl-stream.adb:40:07: info: initialization of "Final_Offset" proved
+sparknacl-stream.adb:42:07: info: initialization of "Z" proved
+sparknacl-stream.adb:43:07: info: initialization of "X" proved
+sparknacl-stream.adb:44:07: info: initialization of "U" proved
+sparknacl-stream.adb:45:07: info: initialization of "B" proved
+sparknacl-stream.adb:48:09: info: length check proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 3 VC in max 0.1 seconds and 1 step)
+sparknacl-stream.adb:53:17: info: range check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-stream.adb:62:16: info: loop invariant initialization proved (Z3: 3 VC in max 0.0 seconds and 1 step)
+sparknacl-stream.adb:62:16: info: loop invariant preservation proved (Z3: 3 VC in max 0.0 seconds and 1 step)
+sparknacl-stream.adb:62:19: info: overflow check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-stream.adb:72:19: info: loop invariant preservation proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-stream.adb:72:19: info: loop invariant initialization proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-stream.adb:72:27: info: overflow check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-stream.adb:73:44: info: overflow check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-stream.adb:75:26: info: overflow check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-stream.adb:75:26: info: index check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-stream.adb:76:43: info: overflow check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-stream.adb:76:43: info: index check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-stream.adb:84:33: info: division check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-stream.adb:84:33: info: range check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-stream.adb:88:20: info: range check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-stream.adb:94:30: info: overflow check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-stream.adb:94:30: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-stream.adb:100:43: info: range check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-stream.adb:115:14: info: range check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-stream.adb:115:41: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-stream.adb:118:16: info: loop invariant initialization proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-stream.adb:118:16: info: loop invariant preservation proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-stream.adb:118:30: info: overflow check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-stream.adb:119:47: info: overflow check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-stream.adb:121:29: info: overflow check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-stream.adb:121:29: info: index check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-stream.adb:123:31: info: overflow check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-stream.adb:123:31: info: index check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-stream.adb:124:20: info: index check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-stream.adb:142:07: info: initialization of "Null_M" proved
+sparknacl-stream.adb:145:07: info: precondition proved (Trivial: 2 VC in max 0.0 seconds and 0 steps; Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-stream.adb:154:07: info: precondition proved (Trivial: 2 VC in max 0.0 seconds and 0 steps; Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-stream.adb:161:07: info: initialization of "S" proved
+sparknacl-stream.adb:163:35: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-stream.adb:164:07: info: precondition proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-stream.adb:164:34: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-stream.adb:175:07: info: initialization of "S" proved
+sparknacl-stream.adb:177:35: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-stream.adb:178:07: info: precondition proved (Trivial: 2 VC in max 0.0 seconds and 0 steps; Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-stream.adb:181:50: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-stream.ads:15:24: info: initialization of "C" proved
+sparknacl-stream.ads:18:11: info: data dependencies proved
+sparknacl-stream.ads:22:28: info: initialization of "C" proved
+sparknacl-stream.ads:26:11: info: data dependencies proved
+sparknacl-stream.ads:33:23: info: initialization of "C" proved
+sparknacl-stream.ads:36:11: info: data dependencies proved
+sparknacl-stream.ads:39:27: info: initialization of "C" proved
+sparknacl-stream.ads:43:11: info: data dependencies proved
+sparknacl-cryptobox.adb:56:07: info: initialization of "S" proved
+sparknacl-cryptobox.adb:57:07: info: initialization of "LK" proved
+sparknacl-cryptobox.adb:79:16: info: precondition proved (Z3: 5 VC in max 0.0 seconds and 1 step)
+sparknacl-cryptobox.adb:90:16: info: precondition proved (Z3: 5 VC in max 0.0 seconds and 1 step)
+sparknacl-cryptobox.adb:100:07: info: initialization of "K" proved
+sparknacl-cryptobox.adb:103:07: info: precondition proved (Z3: 5 VC in max 0.0 seconds and 1 step)
+sparknacl-cryptobox.adb:116:07: info: initialization of "K" proved
+sparknacl-cryptobox.adb:119:07: info: precondition proved (Z3: 5 VC in max 0.0 seconds and 1 step)
+sparknacl-cryptobox.ads:21:23: info: initialization of "PK" proved
+sparknacl-cryptobox.ads:22:23: info: initialization of "SK" proved
+sparknacl-cryptobox.ads:23:11: info: data dependencies proved
+sparknacl-cryptobox.ads:26:11: info: data dependencies proved
+sparknacl-cryptobox.ads:29:11: info: data dependencies proved
+sparknacl-cryptobox.ads:32:11: info: data dependencies proved
+sparknacl-cryptobox.ads:35:11: info: data dependencies proved
+sparknacl-cryptobox.ads:38:24: info: initialization of "K" proved
+sparknacl-cryptobox.ads:39:11: info: data dependencies proved
+sparknacl-cryptobox.ads:41:24: info: initialization of "K" proved
+sparknacl-cryptobox.ads:42:11: info: data dependencies proved
+sparknacl-cryptobox.ads:45:24: info: initialization of "K" proved
+sparknacl-cryptobox.ads:48:11: info: data dependencies proved
+sparknacl-cryptobox.ads:52:23: info: initialization of "C" proved
+sparknacl-cryptobox.ads:53:23: info: initialization of "Status" proved
+sparknacl-cryptobox.ads:57:11: info: data dependencies proved
+sparknacl-cryptobox.ads:62:21: info: precondition proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-cryptobox.ads:62:28: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-cryptobox.ads:63:21: info: precondition proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-cryptobox.ads:63:21: info: postcondition proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-cryptobox.ads:63:28: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-cryptobox.ads:67:07: info: initialization of "M" proved
+sparknacl-cryptobox.ads:68:07: info: initialization of "Status" proved
+sparknacl-cryptobox.ads:72:11: info: data dependencies proved
+sparknacl-cryptobox.ads:77:21: info: precondition proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-cryptobox.ads:77:28: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-cryptobox.ads:78:21: info: precondition proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-cryptobox.ads:78:21: info: postcondition proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-cryptobox.ads:78:28: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-cryptobox.ads:81:22: info: initialization of "C" proved
+sparknacl-cryptobox.ads:82:22: info: initialization of "Status" proved
+sparknacl-cryptobox.ads:87:11: info: data dependencies proved
+sparknacl-cryptobox.ads:92:21: info: precondition proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-cryptobox.ads:92:28: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-cryptobox.ads:93:21: info: precondition proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-cryptobox.ads:93:21: info: postcondition proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-cryptobox.ads:93:28: info: range check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-cryptobox.ads:97:20: info: initialization of "M" proved
+sparknacl-cryptobox.ads:98:20: info: initialization of "Status" proved
+sparknacl-cryptobox.ads:103:11: info: data dependencies proved
+sparknacl-cryptobox.ads:108:21: info: precondition proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-cryptobox.ads:108:28: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-cryptobox.ads:109:21: info: precondition proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-cryptobox.ads:109:21: info: postcondition proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-cryptobox.ads:109:28: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-hashing.adb:51:11: info: data dependencies proved
+sparknacl-hashing.adb:55:07: info: initialization of "X" proved
+sparknacl-hashing.adb:60:27: info: division check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-hashing.adb:60:27: info: range check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-hashing.adb:70:11: info: data dependencies proved
+sparknacl-hashing.adb:73:30: info: overflow check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-hashing.adb:78:07: info: initialization of "LSW" proved
+sparknacl-hashing.adb:78:12: info: initialization of "MSW" proved
+sparknacl-hashing.adb:82:34: info: index check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-hashing.adb:83:36: info: overflow check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-hashing.adb:83:36: info: index check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-hashing.adb:84:36: info: overflow check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-hashing.adb:84:36: info: index check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-hashing.adb:85:36: info: overflow check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-hashing.adb:85:36: info: index check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-hashing.adb:86:36: info: overflow check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-hashing.adb:86:36: info: index check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-hashing.adb:87:36: info: overflow check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-hashing.adb:87:36: info: index check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:88:36: info: overflow check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-hashing.adb:88:36: info: index check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-hashing.adb:89:36: info: overflow check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-hashing.adb:89:36: info: index check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-hashing.adb:97:07: info: initialization of "Z" proved
+sparknacl-hashing.adb:97:10: info: initialization of "B" proved
+sparknacl-hashing.adb:97:13: info: initialization of "A" proved
+sparknacl-hashing.adb:98:07: info: initialization of "W" proved
+sparknacl-hashing.adb:99:07: info: initialization of "T" proved
+sparknacl-hashing.adb:100:07: info: initialization of "LN" proved
+sparknacl-hashing.adb:101:07: info: initialization of "CB" proved
+sparknacl-hashing.adb:109:14: info: data dependencies proved
+sparknacl-hashing.adb:113:14: info: data dependencies proved
+sparknacl-hashing.adb:118:14: info: data dependencies proved
+sparknacl-hashing.adb:123:14: info: data dependencies proved
+sparknacl-hashing.adb:128:14: info: data dependencies proved
+sparknacl-hashing.adb:133:14: info: data dependencies proved
+sparknacl-hashing.adb:136:18: info: precondition proved (Z3: 3 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:137:18: info: precondition proved (Z3: 3 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:138:18: info: precondition proved (Z3: 3 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:139:18: info: precondition proved (Z3: 3 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:140:18: info: precondition proved (Z3: 3 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:141:18: info: precondition proved (Z3: 3 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:142:18: info: precondition proved (Z3: 3 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:143:18: info: precondition proved (Z3: 3 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:154:13: info: loop invariant preservation proved (Z3: 5 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:154:13: info: loop invariant initialization proved (Z3: 5 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:154:17: info: overflow check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:156:41: info: overflow check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:158:22: info: precondition proved (Z3: 3 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:158:31: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:159:22: info: precondition proved (Z3: 3 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:159:34: info: overflow check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:159:34: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:160:22: info: precondition proved (Z3: 3 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:160:34: info: overflow check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:160:34: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:161:22: info: precondition proved (Z3: 3 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:161:34: info: overflow check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:161:34: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:162:22: info: precondition proved (Z3: 3 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:162:34: info: overflow check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:162:34: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:163:22: info: precondition proved (Z3: 3 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:163:34: info: overflow check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:163:34: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:164:22: info: precondition proved (Z3: 3 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:164:34: info: overflow check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:164:34: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:165:22: info: precondition proved (Z3: 3 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:165:34: info: overflow check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:165:34: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:166:22: info: precondition proved (Z3: 3 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:166:34: info: overflow check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:166:34: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:167:22: info: precondition proved (Z3: 3 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:167:34: info: overflow check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:167:34: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:168:22: info: precondition proved (Z3: 3 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:168:34: info: overflow check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:168:34: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:169:22: info: precondition proved (Z3: 3 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:169:34: info: overflow check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:169:34: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:170:22: info: precondition proved (Z3: 3 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:170:34: info: overflow check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:170:34: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:171:22: info: precondition proved (Z3: 3 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:171:34: info: overflow check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:171:34: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:172:22: info: precondition proved (Z3: 3 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:172:34: info: overflow check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:172:34: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:173:22: info: precondition proved (Z3: 3 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:173:34: info: overflow check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:173:34: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:178:36: info: loop invariant initialization proved (Z3: 5 VC in max 0.0 seconds and 1 step)
+sparknacl-hashing.adb:178:36: info: loop invariant preservation proved (Z3: 5 VC in max 0.0 seconds and 1 step)
+sparknacl-hashing.adb:178:40: info: overflow check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:180:64: info: overflow check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-hashing.adb:184:31: info: division check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-hashing.adb:198:19: info: division check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-hashing.adb:201:47: info: division check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-hashing.adb:202:43: info: division check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-hashing.adb:203:44: info: division check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-hashing.adb:216:25: info: assertion proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-hashing.adb:217:19: info: overflow check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:218:19: info: overflow check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:224:10: info: range check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:224:35: info: length check proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 3 VC in max 0.0 seconds and 1 step)
+sparknacl-hashing.adb:224:38: info: length check proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 3 VC in max 0.0 seconds and 1 step)
+sparknacl-hashing.adb:233:07: info: initialization of "H" proved
+sparknacl-hashing.adb:234:07: info: initialization of "X" proved
+sparknacl-hashing.adb:235:07: info: initialization of "B" proved
+sparknacl-hashing.adb:236:07: info: initialization of "Final_Block_First" proved
+sparknacl-hashing.adb:237:07: info: initialization of "ML_MSB" proved
+sparknacl-hashing.adb:238:07: info: initialization of "ML_LSBs" proved
+sparknacl-hashing.adb:245:47: info: division check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-hashing.adb:245:47: info: range check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-hashing.adb:248:39: info: overflow check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-hashing.adb:248:44: info: overflow check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-hashing.adb:249:10: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-hashing.adb:249:25: info: length check proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 3 VC in max 0.0 seconds and 1 step)
+sparknacl-hashing.adb:249:28: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-hashing.adb:249:28: info: length check proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 3 VC in max 0.0 seconds and 1 step)
+sparknacl-hashing.adb:254:24: info: range check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-hashing.adb:254:43: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-hashing.adb:255:24: info: range check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-hashing.adb:259:25: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-hashing.adb:271:07: info: initialization of "R" proved
+sparknacl-hashing.ads:14:11: info: data dependencies proved
+sparknacl-hashing.ads:17:20: info: initialization of "Output" proved
+sparknacl-hashing.ads:19:11: info: data dependencies proved
+sparknacl-hashing.ads:23:11: info: data dependencies proved
+sparknacl-sign.adb:56:11: info: data dependencies proved
+sparknacl-sign.adb:59:36: info: initialization of "R" proved
+sparknacl-sign.adb:60:11: info: data dependencies proved
+sparknacl-sign.adb:65:11: info: data dependencies proved
+sparknacl-sign.adb:70:11: info: data dependencies proved
+sparknacl-sign.adb:74:11: info: data dependencies proved
+sparknacl-sign.adb:78:11: info: data dependencies proved
+sparknacl-sign.adb:84:11: info: data dependencies proved
+sparknacl-sign.adb:90:11: info: data dependencies proved
+sparknacl-sign.adb:92:25: info: initialization of "R" proved
+sparknacl-sign.adb:93:25: info: initialization of "OK" proved
+sparknacl-sign.adb:95:11: info: data dependencies proved
+sparknacl-sign.adb:113:07: info: initialization of "A" proved
+sparknacl-sign.adb:113:10: info: initialization of "B" proved
+sparknacl-sign.adb:113:13: info: initialization of "C" proved
+sparknacl-sign.adb:113:16: info: initialization of "D" proved
+sparknacl-sign.adb:113:19: info: initialization of "E" proved
+sparknacl-sign.adb:113:22: info: initialization of "F" proved
+sparknacl-sign.adb:113:25: info: initialization of "G" proved
+sparknacl-sign.adb:113:28: info: initialization of "H" proved
+sparknacl-sign.adb:118:14: info: data dependencies proved
+sparknacl-sign.adb:139:07: info: initialization of "CB" proved
+sparknacl-sign.adb:140:07: info: initialization of "Swap" proved
+sparknacl-sign.adb:141:07: info: initialization of "LP" proved
+sparknacl-sign.adb:141:11: info: initialization of "LQ" proved
+sparknacl-sign.adb:145:14: info: data dependencies proved
+sparknacl-sign.adb:170:54: info: division check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:190:07: info: initialization of "D" proved
+sparknacl-sign.adb:193:21: info: division check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:198:07: info: initialization of "TX" proved
+sparknacl-sign.adb:198:11: info: initialization of "TY" proved
+sparknacl-sign.adb:198:15: info: initialization of "ZI" proved
+sparknacl-sign.adb:199:07: info: initialization of "R" proved
+sparknacl-sign.adb:243:07: info: initialization of "XL" proved
+sparknacl-sign.adb:251:07: info: initialization of "R" proved
+sparknacl-sign.adb:265:14: info: data dependencies proved
+sparknacl-sign.adb:266:35: info: initialization of "XL" proved
+sparknacl-sign.adb:268:22: info: postcondition proved (Z3: 3 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:270:66: info: range check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:273:14: info: data dependencies proved
+sparknacl-sign.adb:279:66: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:280:22: info: postcondition proved (Z3: 5 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:290:14: info: data dependencies proved
+sparknacl-sign.adb:302:22: info: postcondition proved (Z3: 3 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:309:14: info: data dependencies proved
+sparknacl-sign.adb:310:35: info: initialization of "R" proved
+sparknacl-sign.adb:323:32: info: range check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:325:16: info: loop invariant initialization proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:325:16: info: loop invariant preservation proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:325:24: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:325:58: info: index check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:325:72: info: range check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:325:75: info: index check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:342:10: info: initialization of "Carry" proved
+sparknacl-sign.adb:343:10: info: initialization of "Adjustment" proved
+sparknacl-sign.adb:355:45: info: range check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:356:38: info: range check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:357:22: info: range check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:358:30: info: range check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:361:16: info: loop invariant initialization proved (Z3: 3 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:361:16: info: loop invariant preservation proved (Z3: 3 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:363:25: info: range check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:364:23: info: index check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:365:25: info: range check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:366:23: info: index check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:366:43: info: index check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:370:13: info: assertion proved (Z3: 3 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:388:28: info: assertion proved (Trivial)
+sparknacl-sign.adb:391:28: info: assertion proved (Trivial)
+sparknacl-sign.adb:394:28: info: assertion proved (Trivial)
+sparknacl-sign.adb:396:28: info: assertion proved (Trivial)
+sparknacl-sign.adb:398:32: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:399:22: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:400:32: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:402:28: info: assertion proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:404:32: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:405:22: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:406:32: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:408:28: info: assertion proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:410:32: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:411:22: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:412:32: info: range check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:414:28: info: assertion proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:416:32: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:417:22: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:418:32: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:421:28: info: assertion proved (Trivial)
+sparknacl-sign.adb:422:28: info: assertion proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:426:13: info: assertion proved (Z3: 3 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:433:29: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:434:25: info: assertion proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:440:10: info: initialization of "Carry" proved
+sparknacl-sign.adb:441:10: info: initialization of "Adjustment" proved
+sparknacl-sign.adb:448:17: info: range check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:450:41: info: overflow check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:450:41: info: index check proved (Z3: 8 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:450:54: info: range check proved (Z3: 4 VC in max 1.3 seconds and 4790 steps)
+sparknacl-sign.adb:451:41: info: range check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:452:25: info: range check proved (Z3: 4 VC in max 1.6 seconds and 5368 steps)
+sparknacl-sign.adb:453:33: info: range check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:456:19: info: loop invariant preservation proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:456:19: info: loop invariant initialization proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:456:27: info: range check proved (Z3: 8 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:457:25: info: index check proved (Z3: 8 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:457:45: info: index check proved (Z3: 8 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:459:19: info: loop invariant initialization proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:459:19: info: loop invariant preservation proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:459:27: info: range check proved (Z3: 8 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:460:25: info: index check proved (Z3: 8 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:462:19: info: loop invariant initialization proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:462:19: info: loop invariant preservation proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:462:27: info: range check proved (Z3: 8 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:462:49: info: overflow check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:463:25: info: index check proved (Z3: 8 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:463:45: info: index check proved (Z3: 8 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:465:19: info: loop invariant preservation proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:465:19: info: loop invariant initialization proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:465:27: info: range check proved (Z3: 8 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:465:49: info: overflow check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:466:25: info: index check proved (Z3: 8 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:468:19: info: loop invariant preservation proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:468:19: info: loop invariant initialization proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:468:27: info: range check proved (Z3: 8 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:469:25: info: index check proved (Z3: 8 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:469:45: info: index check proved (Z3: 8 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:471:19: info: loop invariant preservation proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:471:19: info: loop invariant initialization proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:471:27: info: range check proved (Z3: 8 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:471:66: info: index check proved (Z3: 8 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:473:19: info: loop invariant preservation proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:473:19: info: loop invariant initialization proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:479:16: info: assertion proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:479:24: info: range check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:480:22: info: index check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:482:28: info: assertion proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:484:40: info: range check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:485:22: info: range check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:486:40: info: range check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:490:16: info: assertion proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:490:24: info: range check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:491:22: info: index check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:493:28: info: assertion proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:498:28: info: assertion proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:499:40: info: range check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:500:22: info: range check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:501:40: info: range check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:505:16: info: assertion proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:505:24: info: range check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:506:22: info: index check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:508:28: info: assertion proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:509:28: info: assertion proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:510:40: info: range check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:511:22: info: range check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:512:40: info: range check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:516:16: info: assertion proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:516:24: info: range check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:517:22: info: index check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:519:28: info: assertion proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:520:28: info: assertion proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:521:40: info: range check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:522:22: info: range check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:523:40: info: range check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:527:16: info: assertion proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:527:24: info: range check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:528:22: info: index check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:530:28: info: assertion proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:531:28: info: assertion proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:536:40: info: range check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:537:28: info: assertion proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:543:16: info: loop invariant preservation proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:543:16: info: loop invariant initialization proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:543:24: info: range check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:544:22: info: index check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:544:42: info: index check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:547:16: info: loop invariant preservation proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:547:16: info: loop invariant initialization proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:547:24: info: range check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:548:22: info: index check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:550:16: info: loop invariant preservation proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:550:16: info: loop invariant initialization proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:552:16: info: loop invariant preservation proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:552:16: info: loop invariant initialization proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:552:24: info: range check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:553:22: info: index check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:557:16: info: loop invariant preservation proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:557:16: info: loop invariant initialization proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:560:16: info: loop invariant preservation proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:560:16: info: loop invariant initialization proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:564:16: info: loop invariant initialization proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:564:16: info: loop invariant preservation proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:564:24: info: range check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:565:22: info: index check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:565:42: info: index check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:567:16: info: loop invariant preservation proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:567:16: info: loop invariant initialization proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:567:24: info: range check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:567:59: info: index check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:569:16: info: loop invariant initialization proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:569:16: info: loop invariant preservation proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:588:10: info: initialization of "Carry" proved
+sparknacl-sign.adb:594:28: info: assertion proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:595:30: info: overflow check proved (Z3: 2 VC in max 0.3 seconds and 438 steps)
+sparknacl-sign.adb:595:30: info: range check proved (Z3: 2 VC in max 0.7 seconds and 1689 steps)
+sparknacl-sign.adb:595:39: info: overflow check proved (Z3: 2 VC in max 0.3 seconds and 564 steps)
+sparknacl-sign.adb:595:57: info: overflow check proved (Z3: 2 VC in max 0.2 seconds and 151 steps)
+sparknacl-sign.adb:597:28: info: assertion proved (Z3: 2 VC in max 0.2 seconds and 1 step)
+sparknacl-sign.adb:598:28: info: assertion proved (Z3: 2 VC in max 0.3 seconds and 238 steps)
+sparknacl-sign.adb:600:22: info: range check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:601:30: info: division check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:605:16: info: loop invariant initialization proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:605:16: info: loop invariant preservation proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:605:24: info: range check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:605:58: info: index check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:608:16: info: loop invariant initialization proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:608:16: info: loop invariant preservation proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:608:24: info: range check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:609:22: info: index check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:609:42: info: index check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:611:16: info: loop invariant initialization proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:611:16: info: loop invariant preservation proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:611:24: info: range check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:612:22: info: index check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:615:16: info: loop invariant preservation proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:615:16: info: loop invariant initialization proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:620:13: info: assertion proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:623:13: info: assertion proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:628:30: info: range check proved (Z3: 2 VC in max 0.5 seconds and 696 steps)
+sparknacl-sign.adb:630:16: info: loop invariant initialization proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:630:16: info: loop invariant preservation proved (Z3: 1 VC in max 0.3 seconds and 1 step)
+sparknacl-sign.adb:630:24: info: range check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:631:22: info: index check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:633:16: info: loop invariant preservation proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:633:16: info: loop invariant initialization proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:637:13: info: assertion proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:639:13: info: assertion proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:653:13: info: initialization of "S3C" proved
+sparknacl-sign.adb:658:31: info: assertion proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:660:23: info: range check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:661:41: info: range check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:662:38: info: division check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:662:38: info: range check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:664:39: info: loop invariant initialization proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:664:39: info: loop invariant preservation proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:665:39: info: loop invariant preservation proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:665:39: info: loop invariant initialization proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:666:39: info: loop invariant initialization proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:666:39: info: loop invariant preservation proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:668:19: info: loop invariant preservation proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:668:19: info: loop invariant initialization proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:671:19: info: loop invariant initialization proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:671:19: info: loop invariant preservation proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:674:19: info: loop invariant preservation proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:674:19: info: loop invariant initialization proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:674:27: info: range check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:675:25: info: index check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:681:07: info: precondition proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:682:07: info: precondition proved (Z3: 5 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:683:07: info: precondition proved (Z3: 9 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:691:07: info: precondition proved (Z3: 3 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:697:07: info: initialization of "R" proved
+sparknacl-sign.adb:698:07: info: initialization of "X" proved
+sparknacl-sign.adb:706:13: info: loop invariant preservation proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:706:13: info: loop invariant initialization proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:706:21: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:706:54: info: index check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:710:10: info: assertion proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:712:14: info: precondition proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:723:14: info: data dependencies proved
+sparknacl-sign.adb:727:14: info: data dependencies proved
+sparknacl-sign.adb:732:17: info: precondition proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:738:10: info: initialization of "C" proved
+sparknacl-sign.adb:738:13: info: initialization of "C2" proved
+sparknacl-sign.adb:770:07: info: initialization of "Check" proved
+sparknacl-sign.adb:786:35: info: division check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:831:07: info: initialization of "D" proved
+sparknacl-sign.adb:832:07: info: initialization of "LPK" proved
+sparknacl-sign.adb:838:32: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:841:22: info: range check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:841:22: info: length check proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 3 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:864:07: info: initialization of "D" proved
+sparknacl-sign.adb:865:07: info: initialization of "H" proved
+sparknacl-sign.adb:865:10: info: initialization of "R" proved
+sparknacl-sign.adb:866:07: info: initialization of "X" proved
+sparknacl-sign.adb:867:07: info: initialization of "T" proved
+sparknacl-sign.adb:868:07: info: initialization of "P" proved
+sparknacl-sign.adb:871:14: info: data dependencies proved
+sparknacl-sign.adb:872:14: info: flow dependencies proved
+sparknacl-sign.adb:877:40: info: overflow check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:878:22: info: postcondition proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:878:23: info: initialization check proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:878:41: info: range check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:878:43: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:878:56: info: range check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:890:30: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:891:10: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:891:27: info: length check proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 3 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:891:30: info: length check proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 3 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:896:24: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:900:07: info: precondition proved (Z3: 5 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:901:25: info: range check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:901:25: info: initialization check proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:901:25: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:906:24: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:908:25: info: initialization check proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:908:25: info: range check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:915:13: info: loop invariant initialization proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:915:13: info: loop invariant preservation proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:915:22: info: range check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:915:55: info: index check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:916:22: info: range check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:916:55: info: index check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:920:10: info: assertion proved (Z3: 3 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:932:36: info: overflow check proved (Z3: 2 VC in max 29.5 seconds and 26514 steps; altergo: 2 VC in max 3.2 seconds and 30422 steps)
+sparknacl-sign.adb:938:16: info: loop invariant preservation proved (Z3: 15 VC in max 86.2 seconds and 72273 steps; altergo: 1 VC in max 3.8 seconds and 38282 steps)
+sparknacl-sign.adb:938:16: info: loop invariant initialization proved (Z3: 16 VC in max 16.9 seconds and 15974 steps)
+sparknacl-sign.adb:944:25: info: range check proved (Z3: 8 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:945:22: info: index check proved (Z3: 8 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:945:36: info: overflow check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:948:25: info: range check proved (Z3: 8 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:949:22: info: index check proved (Z3: 8 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:952:25: info: range check proved (Z3: 8 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:953:22: info: index check proved (Z3: 8 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:956:25: info: range check proved (Z3: 8 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:957:22: info: index check proved (Z3: 8 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:960:25: info: range check proved (Z3: 8 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:962:22: info: index check proved (Z3: 8 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:965:25: info: range check proved (Z3: 8 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:966:22: info: index check proved (Z3: 8 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:973:13: info: loop invariant initialization proved (Z3: 6 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:973:13: info: loop invariant preservation proved (Z3: 6 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:979:22: info: range check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:980:19: info: index check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:980:33: info: overflow check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:983:22: info: range check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:984:19: info: index check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:987:22: info: range check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:988:19: info: index check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:991:22: info: range check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:992:19: info: index check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:1000:10: info: assertion proved (Z3: 5 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:1013:10: info: assertion proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:1015:24: info: precondition proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:1031:07: info: initialization of "T" proved
+sparknacl-sign.adb:1032:07: info: initialization of "P" proved
+sparknacl-sign.adb:1032:10: info: initialization of "Q" proved
+sparknacl-sign.adb:1033:07: info: initialization of "LN" proved
+sparknacl-sign.adb:1037:12: info: length check proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 3 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:1045:12: info: length check proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 3 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:1050:09: info: length check proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 3 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:1053:24: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:1059:14: info: precondition proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:1059:21: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:1060:12: info: length check proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 3 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:1068:34: info: range check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:1070:07: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:1070:18: info: overflow check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:1070:23: info: length check proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 3 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:1070:26: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.adb:1070:26: info: length check proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 3 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.adb:1070:39: info: overflow check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.ads:15:23: info: initialization of "PK" proved
+sparknacl-sign.ads:16:23: info: initialization of "SK" proved
+sparknacl-sign.ads:17:11: info: data dependencies proved
+sparknacl-sign.ads:20:29: info: initialization of "PK" proved
+sparknacl-sign.ads:21:11: info: data dependencies proved
+sparknacl-sign.ads:24:11: info: data dependencies proved
+sparknacl-sign.ads:27:11: info: data dependencies proved
+sparknacl-sign.ads:29:24: info: initialization of "K" proved
+sparknacl-sign.ads:30:11: info: data dependencies proved
+sparknacl-sign.ads:32:24: info: initialization of "K" proved
+sparknacl-sign.ads:33:11: info: data dependencies proved
+sparknacl-sign.ads:43:11: info: data dependencies proved
+sparknacl-sign.ads:49:38: info: overflow check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-sign.ads:50:19: info: postcondition proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-sign.ads:52:20: info: initialization of "M" proved
+sparknacl-sign.ads:53:20: info: initialization of "Status" proved
+sparknacl-sign.ads:54:20: info: initialization of "MLen" proved
+sparknacl-sign.ads:57:11: info: data dependencies proved
+sparknacl-utils.adb:10:11: info: data dependencies proved
+sparknacl-utils.adb:11:11: info: disjoint contract cases proved (CVC4: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-utils.adb:11:11: info: complete contract cases proved (CVC4: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-utils.adb:12:19: info: contract case proved (CVC4: 6 VC in max 0.1 seconds and 1 step; Trivial: 1 VC in max 0.0 seconds and 0 steps)
+sparknacl-utils.adb:15:23: info: contract case proved (CVC4: 6 VC in max 0.1 seconds and 1 step; Trivial: 1 VC in max 0.0 seconds and 0 steps)
+sparknacl-utils.adb:25:07: info: initialization of "T" proved
+sparknacl-utils.adb:26:27: info: range check proved (CVC4: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-utils.adb:42:13: info: assertion proved (CVC4: 12 VC in max 0.1 seconds and 1 step)
+sparknacl-utils.adb:56:13: info: loop invariant initialization proved (CVC4: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-utils.adb:56:13: info: loop invariant preservation proved (CVC4: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-utils.adb:57:24: info: range check proved (CVC4: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-utils.adb:58:24: info: index check proved (CVC4: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-utils.adb:58:43: info: index check proved (CVC4: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-utils.adb:59:24: info: index check proved (CVC4: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-utils.adb:59:43: info: index check proved (CVC4: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-utils.adb:61:24: info: range check proved (CVC4: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-utils.adb:62:24: info: index check proved (CVC4: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-utils.adb:62:43: info: index check proved (CVC4: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-utils.adb:63:24: info: index check proved (CVC4: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-utils.adb:63:43: info: index check proved (CVC4: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-utils.adb:83:07: info: initialization of "T" proved
+sparknacl-utils.adb:84:32: info: range check proved (CVC4: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-utils.adb:107:13: info: assertion proved (CVC4: 12 VC in max 0.1 seconds and 1 step)
+sparknacl-utils.adb:117:19: info: range check proved (CVC4: 2 VC in max 0.2 seconds and 1 step)
+sparknacl-utils.adb:118:19: info: range check proved (CVC4: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-utils.adb:121:13: info: loop invariant initialization proved (CVC4: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-utils.adb:121:13: info: loop invariant preservation proved (CVC4: 4 VC in max 0.2 seconds and 1 step)
+sparknacl-utils.adb:122:24: info: range check proved (CVC4: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-utils.adb:123:24: info: index check proved (CVC4: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-utils.adb:123:43: info: index check proved (CVC4: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-utils.adb:124:24: info: index check proved (CVC4: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-utils.adb:124:43: info: index check proved (CVC4: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-utils.adb:126:24: info: range check proved (CVC4: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-utils.adb:127:24: info: index check proved (CVC4: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-utils.adb:127:43: info: index check proved (CVC4: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-utils.adb:128:24: info: index check proved (CVC4: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-utils.adb:128:43: info: index check proved (CVC4: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-utils.adb:174:14: info: data dependencies proved
+sparknacl-utils.adb:182:29: info: initialization of "Result" proved
+sparknacl-utils.adb:183:29: info: initialization of "Underflow" proved
+sparknacl-utils.adb:184:14: info: data dependencies proved
+sparknacl-utils.adb:186:24: info: postcondition proved (CVC4: 1 VC in max 0.1 seconds and 1 step; Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-utils.adb:190:14: info: data dependencies proved
+sparknacl-utils.adb:196:10: info: initialization of "Carry" proved
+sparknacl-utils.adb:197:10: info: initialization of "R" proved
+sparknacl-utils.adb:202:25: info: range check proved (CVC4: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-utils.adb:207:47: info: division check proved (CVC4: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-utils.adb:208:43: info: range check proved (CVC4: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-utils.adb:209:36: info: division check proved (CVC4: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-utils.adb:212:16: info: loop invariant initialization proved (CVC4: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-utils.adb:212:16: info: loop invariant preservation proved (CVC4: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-utils.adb:212:24: info: range check proved (CVC4: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-utils.adb:213:21: info: index check proved (CVC4: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-utils.adb:219:38: info: division check proved (CVC4: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-utils.adb:220:40: info: range check proved (CVC4: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-utils.adb:229:27: info: division check proved (CVC4: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-utils.adb:235:23: info: predicate check proved (CVC4: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-utils.adb:246:47: info: division check proved (CVC4: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-utils.adb:246:47: info: range check proved (CVC4: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-utils.adb:247:47: info: division check proved (CVC4: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-utils.adb:247:47: info: range check proved (CVC4: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-utils.adb:252:07: info: initialization of "L" proved
+sparknacl-utils.adb:253:07: info: initialization of "R1" proved
+sparknacl-utils.adb:253:11: info: initialization of "R2" proved
+sparknacl-utils.adb:255:07: info: initialization of "First_Underflow" proved
+sparknacl-utils.adb:256:07: info: initialization of "Second_Underflow" proved
+sparknacl-utils.adb:281:07: info: precondition proved (CVC4: 1 VC in max 1.5 seconds and 2036 steps)
+sparknacl-utils.adb:281:19: info: predicate check proved (CVC4: 1 VC in max 3.2 seconds and 4606 steps)
+sparknacl-utils.adb:282:07: info: precondition proved (CVC4: 1 VC in max 1.4 seconds and 2037 steps)
+sparknacl-utils.adb:283:16: info: predicate check proved (CVC4: 1 VC in max 1.9 seconds and 2645 steps)
+sparknacl-utils.adb:283:20: info: predicate check proved (CVC4: 1 VC in max 1.9 seconds and 2565 steps)
+sparknacl-utils.adb:284:20: info: predicate check proved (CVC4: 1 VC in max 2.1 seconds and 2707 steps)
+sparknacl-utils.adb:288:22: info: predicate check proved (CVC4: 1 VC in max 0.2 seconds and 1 step)
+sparknacl-utils.adb:294:27: info: predicate check proved (CVC4: 1 VC in max 2.2 seconds and 2740 steps)
+sparknacl-utils.adb:311:16: info: loop invariant initialization proved (CVC4: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-utils.adb:311:16: info: loop invariant preservation proved (CVC4: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-utils.adb:311:24: info: range check proved (CVC4: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-utils.adb:312:21: info: index check proved (CVC4: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-utils.adb:314:20: info: initialization check proved (CVC4: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-utils.adb:314:27: info: division check proved (CVC4: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-utils.adb:316:14: info: initialization check proved (CVC4: 1 VC in max 0.1 seconds and 1 step; Trivial: 1 VC in max 0.0 seconds and 0 steps)
+sparknacl-utils.adb:321:07: info: initialization of "C" proved
+sparknacl-utils.ads:23:11: info: data dependencies proved
+sparknacl-utils.ads:24:11: info: disjoint contract cases proved (CVC4: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-utils.ads:24:11: info: complete contract cases proved (CVC4: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-utils.ads:25:19: info: contract case proved (CVC4: 2 VC in max 0.1 seconds and 1 step; Trivial: 1 VC in max 0.0 seconds and 0 steps)
+sparknacl-utils.ads:26:23: info: contract case proved (CVC4: 2 VC in max 0.1 seconds and 1 step; Trivial: 1 VC in max 0.0 seconds and 0 steps)
+sparknacl-utils.ads:31:11: info: data dependencies proved
+sparknacl-utils.ads:35:11: info: data dependencies proved
+sparknacl-utils.ads:39:11: info: data dependencies proved
+sparknacl.adb:14:07: info: initialization of "T" proved
+sparknacl.adb:15:07: info: initialization of "Carry" proved
+sparknacl.adb:25:21: info: division check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl.adb:26:21: info: division check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl.adb:28:13: info: loop invariant preservation proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl.adb:28:13: info: loop invariant initialization proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl.adb:28:21: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl.adb:28:54: info: index check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl.adb:30:13: info: loop invariant preservation proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl.adb:30:13: info: loop invariant initialization proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl.adb:30:21: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl.adb:30:51: info: initialization check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl.adb:30:54: info: index check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl.adb:33:22: info: assertion proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl.adb:33:45: info: initialization check proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl.adb:33:45: info: predicate check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl.adb:39:16: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl.adb:39:22: info: range check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl.adb:41:22: info: assertion proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl.adb:41:45: info: initialization check proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl.adb:41:45: info: predicate check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl.adb:43:42: info: initialization check proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl.adb:43:42: info: predicate check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl.adb:49:07: info: initialization of "T" proved
+sparknacl.adb:50:07: info: initialization of "Carry" proved
+sparknacl.adb:60:21: info: division check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl.adb:61:19: info: range check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl.adb:63:13: info: loop invariant initialization proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl.adb:63:13: info: loop invariant preservation proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl.adb:63:21: info: range check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl.adb:63:54: info: index check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl.adb:65:13: info: loop invariant initialization proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl.adb:65:13: info: loop invariant preservation proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl.adb:65:21: info: range check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl.adb:65:51: info: initialization check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl.adb:65:54: info: index check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl.adb:68:22: info: assertion proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl.adb:68:45: info: initialization check proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl.adb:68:45: info: predicate check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl.adb:74:16: info: initialization check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl.adb:74:22: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl.adb:76:22: info: assertion proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl.adb:76:45: info: initialization check proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl.adb:76:45: info: predicate check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl.adb:78:42: info: initialization check proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl.adb:78:42: info: predicate check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl.adb:85:07: info: initialization of "T" proved
+sparknacl.adb:87:07: info: initialization of "LT" proved
+sparknacl.adb:114:10: info: assertion proved (Z3: 3 VC in max 26.4 seconds and 42177 steps)
+sparknacl.adb:137:35: info: range check proved (Z3: 2 VC in max 5.5 seconds and 5638 steps)
+sparknacl.adb:138:35: info: range check proved (Z3: 2 VC in max 0.6 seconds and 548 steps)
+sparknacl.adb:139:35: info: range check proved (Z3: 2 VC in max 0.6 seconds and 623 steps)
+sparknacl.adb:140:35: info: range check proved (Z3: 2 VC in max 0.8 seconds and 410 steps)
+sparknacl.adb:141:35: info: range check proved (Z3: 2 VC in max 0.8 seconds and 737 steps)
+sparknacl.adb:142:35: info: range check proved (Z3: 2 VC in max 0.9 seconds and 777 steps)
+sparknacl.adb:143:35: info: range check proved (Z3: 2 VC in max 0.9 seconds and 722 steps)
+sparknacl.adb:144:35: info: range check proved (Z3: 2 VC in max 0.7 seconds and 530 steps)
+sparknacl.adb:145:35: info: range check proved (Z3: 2 VC in max 0.9 seconds and 888 steps)
+sparknacl.adb:146:35: info: range check proved (Z3: 2 VC in max 1.4 seconds and 1828 steps)
+sparknacl.adb:147:35: info: range check proved (Z3: 2 VC in max 1.2 seconds and 1340 steps)
+sparknacl.adb:148:35: info: range check proved (Z3: 2 VC in max 1.0 seconds and 1158 steps)
+sparknacl.adb:149:35: info: range check proved (Z3: 2 VC in max 1.4 seconds and 1405 steps)
+sparknacl.adb:150:35: info: range check proved (Z3: 2 VC in max 2.4 seconds and 3038 steps)
+sparknacl.adb:151:35: info: range check proved (Z3: 2 VC in max 1.8 seconds and 2405 steps)
+sparknacl.adb:152:35: info: range check proved (Z3: 2 VC in max 1.4 seconds and 1675 steps)
+sparknacl.adb:155:14: info: loop invariant initialization proved (Z3: 1 VC in max 9.8 seconds and 13394 steps)
+sparknacl.adb:155:14: info: loop invariant preservation proved (Z3: 1 VC in max 13.2 seconds and 17655 steps)
+sparknacl.adb:157:14: info: loop invariant preservation proved (Z3: 1 VC in max 0.6 seconds and 1 step)
+sparknacl.adb:157:14: info: loop invariant initialization proved (Z3: 1 VC in max 0.5 seconds and 1 step)
+sparknacl.adb:157:22: info: range check proved (Z3: 4 VC in max 0.4 seconds and 1 step)
+sparknacl.adb:158:19: info: index check proved (Z3: 4 VC in max 0.4 seconds and 1 step)
+sparknacl.adb:158:33: info: overflow check proved (Z3: 2 VC in max 0.6 seconds and 1 step)
+sparknacl.adb:160:14: info: loop invariant initialization proved (Z3: 1 VC in max 24.9 seconds and 39344 steps)
+sparknacl.adb:160:14: info: loop invariant preservation proved (Z3: 1 VC in max 28.8 seconds and 45739 steps)
+sparknacl.adb:160:22: info: range check proved (Z3: 4 VC in max 0.4 seconds and 1 step)
+sparknacl.adb:161:19: info: index check proved (Z3: 4 VC in max 0.4 seconds and 1 step)
+sparknacl.adb:163:14: info: loop invariant initialization proved (Z3: 1 VC in max 4.8 seconds and 10414 steps)
+sparknacl.adb:163:14: info: loop invariant preservation proved (Z3: 1 VC in max 32.9 seconds and 49421 steps)
+sparknacl.adb:163:22: info: range check proved (Z3: 4 VC in max 0.4 seconds and 1 step)
+sparknacl.adb:164:19: info: index check proved (Z3: 4 VC in max 0.5 seconds and 1 step)
+sparknacl.adb:166:14: info: loop invariant initialization proved (Z3: 1 VC in max 0.5 seconds and 1 step)
+sparknacl.adb:166:14: info: loop invariant preservation proved (Z3: 1 VC in max 0.6 seconds and 11 steps)
+sparknacl.adb:166:22: info: range check proved (Z3: 4 VC in max 0.4 seconds and 1 step)
+sparknacl.adb:167:19: info: index check proved (Z3: 4 VC in max 0.4 seconds and 1 step)
+sparknacl.adb:181:10: info: assertion proved (Z3: 4 VC in max 0.5 seconds and 1 step)
+sparknacl.adb:201:26: info: range check proved (Z3: 2 VC in max 0.6 seconds and 1 step)
+sparknacl.adb:204:13: info: loop invariant initialization proved (Z3: 1 VC in max 0.3 seconds and 1 step)
+sparknacl.adb:204:13: info: loop invariant preservation proved (Z3: 1 VC in max 0.5 seconds and 1 step)
+sparknacl.adb:204:21: info: range check proved (Z3: 4 VC in max 0.3 seconds and 1 step)
+sparknacl.adb:204:55: info: index check proved (Z3: 4 VC in max 0.3 seconds and 1 step)
+sparknacl.adb:208:13: info: loop invariant initialization proved (Z3: 1 VC in max 0.5 seconds and 1 step)
+sparknacl.adb:208:13: info: loop invariant preservation proved (Z3: 1 VC in max 0.5 seconds and 1 step)
+sparknacl.adb:208:22: info: range check proved (Z3: 4 VC in max 0.4 seconds and 1 step)
+sparknacl.adb:209:16: info: initialization check proved (Z3: 2 VC in max 0.5 seconds and 1 step)
+sparknacl.adb:209:20: info: index check proved (Z3: 4 VC in max 0.3 seconds and 1 step)
+sparknacl.adb:209:28: info: index check proved (Z3: 4 VC in max 0.3 seconds and 1 step)
+sparknacl.adb:209:46: info: overflow check proved (Z3: 2 VC in max 0.5 seconds and 1 step)
+sparknacl.adb:209:46: info: index check proved (Z3: 4 VC in max 0.5 seconds and 1 step)
+sparknacl.adb:214:10: info: assertion proved (Z3: 1 VC in max 0.5 seconds and 1 step)
+sparknacl.adb:218:22: info: assertion proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 1 VC in max 0.5 seconds and 1 step)
+sparknacl.adb:219:22: info: initialization check proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 1 VC in max 0.5 seconds and 1 step)
+sparknacl.adb:219:22: info: predicate check proved (Z3: 1 VC in max 2.8 seconds and 4120 steps)
+sparknacl.adb:219:22: info: assertion proved (Z3: 1 VC in max 3.0 seconds and 4120 steps)
+sparknacl.adb:238:46: info: initialization check proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 1 VC in max 0.5 seconds and 1 step)
+sparknacl.adb:238:46: info: predicate check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl.adb:249:11: info: range check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl.adb:251:33: info: index check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl.adb:253:13: info: loop invariant initialization proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl.adb:253:13: info: loop invariant preservation proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl.adb:253:26: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl.adb:253:60: info: index check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl.adb:253:68: info: index check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl.ads:90:11: info: data dependencies proved
+sparknacl.ads:93:21: info: postcondition proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl.ads:94:51: info: index check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl.ads:94:59: info: index check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl.ads:107:24: info: initialization of "R" proved
+sparknacl.ads:108:11: info: data dependencies proved
+sparknacl.ads:356:40: info: predicate check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl.ads:364:13: info: types in unchecked conversion have the same size (Trivial)
+sparknacl.ads:364:53: info: type is suitable for unchecked conversion (Trivial)
+sparknacl.ads:364:58: info: type is suitable for unchecked conversion (Trivial)
+sparknacl.ads:365:13: info: types in unchecked conversion have the same size (Trivial)
+sparknacl.ads:365:53: info: type is suitable for unchecked conversion (Trivial)
+sparknacl.ads:365:58: info: type is suitable for unchecked conversion (Trivial)
+sparknacl.ads:366:13: info: types in unchecked conversion have the same size (Trivial)
+sparknacl.ads:366:53: info: type is suitable for unchecked conversion (Trivial)
+sparknacl.ads:366:58: info: type is suitable for unchecked conversion (Trivial)
+sparknacl.ads:367:13: info: types in unchecked conversion have the same size (Trivial)
+sparknacl.ads:367:53: info: type is suitable for unchecked conversion (Trivial)
+sparknacl.ads:367:58: info: type is suitable for unchecked conversion (Trivial)
+sparknacl.ads:374:55: info: division check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl.ads:375:57: info: overflow check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl.ads:375:62: info: division check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl.ads:386:55: info: division check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl.ads:387:57: info: overflow check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl.ads:387:62: info: division check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl.ads:398:52: info: division check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl.ads:399:54: info: overflow check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl.ads:399:59: info: division check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl.ads:410:52: info: division check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl.ads:411:54: info: overflow check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl.ads:411:59: info: division check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl.ads:423:11: info: data dependencies proved
+sparknacl.ads:427:11: info: data dependencies proved
+sparknacl.ads:431:11: info: data dependencies proved
+sparknacl.ads:436:11: info: data dependencies proved
+sparknacl.ads:440:28: info: initialization of "R" proved
+sparknacl.ads:441:11: info: data dependencies proved
+sparknacl.ads:444:28: info: initialization of "R" proved
+sparknacl.ads:445:11: info: data dependencies proved
+sparknacl.ads:448:28: info: initialization of "R" proved
+sparknacl.ads:449:11: info: data dependencies proved
+sparknacl.ads:452:29: info: initialization of "R" proved
+sparknacl.ads:453:11: info: data dependencies proved
+sparknacl.ads:455:19: info: postcondition proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl.ads:457:29: info: initialization of "R" proved
+sparknacl.ads:458:11: info: data dependencies proved
+sparknacl.ads:460:19: info: postcondition proved (Trivial: 1 VC in max 0.0 seconds and 0 steps)
+sparknacl.ads:462:32: info: initialization of "R" proved
+sparknacl.ads:463:11: info: data dependencies proved
+sparknacl.ads:466:32: info: initialization of "R" proved
+sparknacl.ads:467:11: info: data dependencies proved
+sparknacl.ads:470:32: info: initialization of "R" proved
+sparknacl.ads:471:11: info: data dependencies proved
+sparknacl-sanitize.adb:4:06: info: length check proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 3 VC in max 0.0 seconds and 1 step)
+sparknacl-sanitize_i64_seq.adb:4:06: info: length check proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 3 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:35:07: info: initialization of "Carry" proved
+sparknacl-car.adb:38:16: info: range check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:39:22: info: division check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:40:22: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:43:10: info: assertion proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:43:37: info: initialization check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:45:10: info: assertion proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:45:37: info: initialization check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:49:19: info: range check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:49:29: info: initialization check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:52:13: info: assertion proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:54:13: info: assertion proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:56:19: info: initialization check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:56:25: info: division check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:57:33: info: range check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:60:13: info: loop invariant initialization proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:60:13: info: loop invariant preservation proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:60:21: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:60:54: info: index check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:62:13: info: loop invariant preservation proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:62:13: info: loop invariant initialization proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:62:21: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:62:52: info: initialization check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:62:55: info: index check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:63:33: info: loop invariant initialization proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:63:33: info: loop invariant preservation proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:64:33: info: initialization check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:64:33: info: loop invariant initialization proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:64:33: info: loop invariant preservation proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:66:13: info: initialization check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:66:13: info: loop invariant initialization proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:66:13: info: loop invariant preservation proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:72:22: info: assertion proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:74:10: info: assertion proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:74:50: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:75:22: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:75:22: info: assertion proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:77:16: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:77:26: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:79:22: info: assertion proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:81:17: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:81:23: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:82:17: info: initialization check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:82:24: info: division check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:84:22: info: initialization check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:84:22: info: assertion proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:85:22: info: initialization check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:87:10: info: assertion proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:87:50: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:89:27: info: predicate check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:89:28: info: predicate check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:89:54: info: initialization check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:89:54: info: range check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:90:53: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:90:53: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:91:53: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:91:53: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:92:53: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:92:53: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:93:53: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:93:53: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:94:53: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:94:53: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:95:53: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:95:53: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:96:53: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:96:53: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:97:53: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:97:53: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:98:53: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:98:53: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:99:53: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:99:53: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:100:53: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:100:53: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:101:53: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:101:53: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:102:53: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:102:53: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:103:53: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:103:53: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:104:53: info: initialization check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:104:53: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:113:07: info: initialization of "First_Carry" proved
+sparknacl-car.adb:115:07: info: initialization of "Carry" proved
+sparknacl-car.adb:118:22: info: range check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:119:22: info: division check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:120:22: info: range check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:122:22: info: assertion proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:123:22: info: initialization check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:123:22: info: assertion proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:124:22: info: assertion proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:125:22: info: initialization check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:125:22: info: assertion proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:129:19: info: range check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:129:29: info: initialization check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:130:19: info: initialization check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:130:25: info: division check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:131:33: info: range check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:134:13: info: loop invariant initialization proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:134:13: info: loop invariant preservation proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:134:21: info: range check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:134:54: info: index check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:136:13: info: loop invariant initialization proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:136:13: info: loop invariant preservation proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:136:21: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:136:52: info: initialization check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:136:55: info: index check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:137:33: info: loop invariant initialization proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:137:33: info: loop invariant preservation proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:138:33: info: initialization check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:138:33: info: loop invariant initialization proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:138:33: info: loop invariant preservation proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:142:22: info: assertion proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:144:10: info: assertion proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:144:50: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:145:22: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:145:22: info: assertion proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:147:16: info: range check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:147:26: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:149:16: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:149:22: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:150:17: info: initialization check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:150:24: info: division check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:152:14: info: initialization check proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:152:14: info: predicate check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:152:31: info: initialization check proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:152:31: info: predicate check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:167:12: info: initialization check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:167:26: info: division check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:168:12: info: initialization check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:171:20: info: range check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:172:15: info: initialization check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:172:18: info: index check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:172:32: info: index check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:175:30: info: range check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:175:63: info: index check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:186:12: info: initialization check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:186:26: info: division check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:187:12: info: initialization check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:190:20: info: range check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:191:15: info: initialization check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:191:18: info: index check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:191:35: info: index check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:194:30: info: range check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:194:63: info: index check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:197:07: info: initialization of "Carry" proved
+sparknacl-car.adb:202:10: info: assertion proved (Z3: 3 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:207:16: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:208:22: info: division check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:209:22: info: range check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:211:22: info: assertion proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:212:22: info: initialization check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:212:22: info: assertion proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:213:22: info: initialization check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:213:22: info: assertion proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:213:36: info: division check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:214:22: info: assertion proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:215:22: info: initialization check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:215:22: info: assertion proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:219:10: info: assertion proved (altergo: 2 VC in max 0.6 seconds and 2781 steps)
+sparknacl-car.adb:219:24: info: precondition proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:221:10: info: assertion proved (Z3: 1 VC in max 0.4 seconds and 2064 steps; altergo: 1 VC in max 0.6 seconds and 2252 steps)
+sparknacl-car.adb:221:25: info: precondition proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:225:19: info: range check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:225:29: info: initialization check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:226:19: info: initialization check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:226:25: info: division check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:227:33: info: range check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:231:13: info: loop invariant preservation proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:231:13: info: loop invariant initialization proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:231:21: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:231:54: info: index check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:233:13: info: loop invariant initialization proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:233:13: info: loop invariant preservation proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:233:21: info: range check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:233:52: info: initialization check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:233:55: info: index check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:234:33: info: loop invariant preservation proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:234:33: info: loop invariant initialization proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:235:33: info: initialization check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:235:33: info: loop invariant initialization proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:235:33: info: loop invariant preservation proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:236:33: info: initialization check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:236:33: info: loop invariant preservation proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:236:33: info: loop invariant initialization proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:242:13: info: loop invariant preservation proved (altergo: 2 VC in max 11.1 seconds and 38861 steps)
+sparknacl-car.adb:242:13: info: loop invariant initialization proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:242:27: info: precondition proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:244:13: info: loop invariant preservation proved (altergo: 2 VC in max 16.6 seconds and 53865 steps)
+sparknacl-car.adb:244:13: info: loop invariant initialization proved (Z3: 1 VC in max 0.1 seconds and 1 step; altergo: 1 VC in max 2.2 seconds and 9351 steps)
+sparknacl-car.adb:244:28: info: precondition proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:248:22: info: assertion proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:250:10: info: assertion proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:250:50: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:251:22: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:251:22: info: assertion proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:252:22: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:252:22: info: assertion proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:254:10: info: assertion proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:254:24: info: precondition proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:256:10: info: assertion proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:256:25: info: precondition proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:259:16: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:259:26: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:260:17: info: initialization check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:260:24: info: division check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:263:10: info: assertion proved (altergo: 2 VC in max 9.9 seconds and 36293 steps)
+sparknacl-car.adb:263:24: info: precondition proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:265:10: info: assertion proved (altergo: 2 VC in max 18.0 seconds and 52057 steps)
+sparknacl-car.adb:265:25: info: precondition proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:267:10: info: assertion proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:267:50: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:275:16: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:275:22: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:277:22: info: initialization check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:277:22: info: assertion proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:278:36: info: initialization check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:278:36: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:279:36: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:279:36: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:280:36: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:280:36: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:281:36: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:281:36: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:282:36: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:282:36: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:283:36: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:283:36: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:284:36: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:284:36: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:285:36: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:285:36: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:286:36: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:286:36: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:287:36: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:287:36: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:288:36: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:288:36: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:289:36: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:289:36: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:290:36: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:290:36: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:291:36: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:291:36: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:292:36: info: initialization check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:292:36: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.adb:293:36: info: initialization check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-car.adb:293:36: info: range check proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-car.ads:22:11: info: data dependencies proved
+sparknacl-car.ads:29:11: info: data dependencies proved
+sparknacl-car.ads:36:11: info: data dependencies proved
+sparknacl-secretbox.adb:15:07: info: initialization of "K2" proved
+sparknacl-secretbox.adb:16:07: info: initialization of "R" proved
+sparknacl-secretbox.adb:23:13: info: precondition proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-secretbox.adb:23:20: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-secretbox.adb:27:16: info: precondition proved (Z3: 3 VC in max 0.0 seconds and 1 step)
+sparknacl-secretbox.adb:29:29: info: range check proved (Z3: 4 VC in max 0.1 seconds and 1 step)
+sparknacl-secretbox.adb:32:13: info: range check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-secretbox.adb:32:55: info: overflow check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-secretbox.adb:34:16: info: precondition proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-secretbox.adb:37:39: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-secretbox.adb:37:39: info: length check proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 3 VC in max 0.0 seconds and 1 step)
+sparknacl-secretbox.adb:46:12: info: length check proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 3 VC in max 0.0 seconds and 1 step)
+sparknacl-secretbox.adb:58:07: info: initialization of "X" proved
+sparknacl-secretbox.adb:65:13: info: precondition proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-secretbox.adb:65:20: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-secretbox.adb:68:16: info: precondition proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-secretbox.adb:71:13: info: range check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-secretbox.adb:71:55: info: overflow check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-secretbox.adb:74:19: info: precondition proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-secretbox.adb:75:21: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-secretbox.adb:77:30: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-secretbox.adb:77:30: info: length check proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 3 VC in max 0.0 seconds and 1 step)
+sparknacl-secretbox.adb:81:22: info: precondition proved (Z3: 3 VC in max 0.0 seconds and 1 step)
+sparknacl-secretbox.adb:86:18: info: length check proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 3 VC in max 0.0 seconds and 1 step)
+sparknacl-secretbox.adb:93:12: info: length check proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 3 VC in max 0.0 seconds and 1 step)
+sparknacl-secretbox.ads:13:22: info: initialization of "C" proved
+sparknacl-secretbox.ads:14:22: info: initialization of "Status" proved
+sparknacl-secretbox.ads:18:11: info: data dependencies proved
+sparknacl-secretbox.ads:23:21: info: precondition proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-secretbox.ads:23:28: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-secretbox.ads:24:21: info: precondition proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-secretbox.ads:24:21: info: postcondition proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-secretbox.ads:24:28: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-secretbox.ads:28:07: info: initialization of "M" proved
+sparknacl-secretbox.ads:29:07: info: initialization of "Status" proved
+sparknacl-secretbox.ads:33:11: info: data dependencies proved
+sparknacl-secretbox.ads:38:21: info: precondition proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-secretbox.ads:38:28: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-secretbox.ads:39:21: info: precondition proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-secretbox.ads:39:21: info: postcondition proved (Z3: 1 VC in max 0.1 seconds and 1 step)
+sparknacl-secretbox.ads:39:28: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-scalar.adb:20:26: info: range check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-scalar.adb:20:28: info: range check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-scalar.adb:20:40: info: range check proved (Z3: 1 VC in max 0.0 seconds and 1 step)
+sparknacl-scalar.adb:20:40: info: length check proved (Trivial: 1 VC in max 0.0 seconds and 0 steps; Z3: 3 VC in max 0.0 seconds and 1 step)
+sparknacl-scalar.adb:22:07: info: initialization of "Swap" proved
+sparknacl-scalar.adb:23:07: info: initialization of "CB" proved
+sparknacl-scalar.adb:24:07: info: initialization of "Shift" proved
+sparknacl-scalar.adb:26:07: info: initialization of "A" proved
+sparknacl-scalar.adb:26:10: info: initialization of "B" proved
+sparknacl-scalar.adb:26:13: info: initialization of "C" proved
+sparknacl-scalar.adb:26:16: info: initialization of "D" proved
+sparknacl-scalar.adb:26:19: info: initialization of "E" proved
+sparknacl-scalar.adb:26:22: info: initialization of "F" proved
+sparknacl-scalar.adb:31:07: info: initialization of "T1" proved
+sparknacl-scalar.adb:31:11: info: initialization of "T2" proved
+sparknacl-scalar.adb:33:07: info: initialization of "Result" proved
+sparknacl-scalar.adb:43:19: info: index check proved (Z3: 4 VC in max 0.0 seconds and 1 step)
+sparknacl-scalar.adb:43:24: info: range check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-scalar.adb:44:30: info: range check proved (Z3: 2 VC in max 0.1 seconds and 1 step)
+sparknacl-scalar.adb:45:56: info: division check proved (Z3: 2 VC in max 0.0 seconds and 1 step)
+sparknacl-scalar.adb:47:33: info: loop invariant preservation proved (Trivial: 4 VC in max 0.0 seconds and 0 steps)
+sparknacl-scalar.adb:47:33: info: loop invariant initialization proved (Trivial: 4 VC in max 0.0 seconds and 0 steps)
+sparknacl-scalar.ads:11:11: info: data dependencies proved
+sparknacl-scalar.ads:15:11: info: data dependencies proved
+sparknacl-sign-utils.ads:6:25: info: initialization of "Y" proved
+Summary logged in /media/psf/Home/Desktop/prog/SPARKNaCl/obj/gnatprove/gnatprove.out

@@ -1,0 +1,434 @@
+graph: { title: "Callgraph information:"
+node: { title: "car32__TgfBIP" label: "Tgfbip\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/car32.ads:8:4\nLocal: \nAccumulated: " }
+node: { title: "car32__c" label: "C\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/car32.adb:21:4\nLocal: \nAccumulated: " }
+node: { title: "memcpy" label: "Local: 128 bytes (with -u 128)\nAccumulated: 128 bytes (with -u 128)" shape : ellipse }
+node: { title: "memmove" label: "Local: 128 bytes (with -u 128)\nAccumulated: 128 bytes (with -u 128)" shape : ellipse }
+node: { title: "memset" label: "Local: 128 bytes (with -u 128)\nAccumulated: 128 bytes (with -u 128)" shape : ellipse }
+node: { title: "random__random_byte" label: "Random_Byte\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/random_zfp.adb:15:4\nLocal: \nAccumulated: " }
+node: { title: "sparknacl__Oadd" label: "+\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl.adb:9:4,+\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl.ads:387:13\nLocal: 272 bytes\nAccumulated: 272 bytes" }
+edge: { sourcename: "sparknacl__Oadd" targetname: "sparknacl__car__sum_to_nearlynormal" }
+edge: { sourcename: "sparknacl__Oadd" targetname: "sparknacl__car__nearlynormal_to_normal" }
+node: { title: "sparknacl__Omultiply" label: "*\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl.adb:83:4,*\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl.ads:395:13\nLocal: 848 bytes\nAccumulated: 992 bytes (with -u 128)" }
+edge: { sourcename: "sparknacl__Omultiply" targetname: "sparknacl__sanitize_gf_pa" }
+edge: { sourcename: "sparknacl__Omultiply" targetname: "memset" }
+edge: { sourcename: "sparknacl__Omultiply" targetname: "sparknacl__car__product_to_seminormal" }
+edge: { sourcename: "sparknacl__Omultiply" targetname: "sparknacl__car__ntn2" }
+edge: { sourcename: "sparknacl__Omultiply" targetname: "sparknacl__car__seminormal_to_nearlynormal" }
+node: { title: "sparknacl__Osubtract" label: "-\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl.adb:37:4,-\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl.ads:391:13\nLocal: 272 bytes\nAccumulated: 272 bytes" }
+edge: { sourcename: "sparknacl__Osubtract" targetname: "sparknacl__car__difference_to_nearlynormal" }
+edge: { sourcename: "sparknacl__Osubtract" targetname: "sparknacl__car__nearlynormal_to_normal" }
+node: { title: "sparknacl__TgfBIP" label: "Tgfbip\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl.ads:227:4\nLocal: \nAccumulated: " }
+node: { title: "sparknacl__Tgf_paBIP" label: "Tgf_Pabip\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl.ads:231:4\nLocal: \nAccumulated: " }
+node: { title: "sparknacl__asr_16" label: "Asr_16\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl.ads:350:4\nLocal: \nAccumulated: " }
+node: { title: "sparknacl__asr_4" label: "Asr_4\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl.ads:374:4\nLocal: \nAccumulated: " }
+node: { title: "sparknacl__asr_8" label: "Asr_8\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl.ads:362:4\nLocal: \nAccumulated: " }
+node: { title: "sparknacl__byte_seqIP" label: "Byte_Seqip\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl.ads:55:9\nLocal: \nAccumulated: " }
+node: { title: "sparknacl__car__difference_to_nearlynormal" label: "Difference_To_Nearlynormal\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-car.adb:176:4\nLocal: \nAccumulated: " }
+node: { title: "sparknacl__car__nearlynormal_to_normal" label: "Nearlynormal_To_Normal\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-car.adb:221:4\nLocal: \nAccumulated: " }
+node: { title: "sparknacl__car__ntn2" label: "Ntn2\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-car.adb:346:4\nLocal: \nAccumulated: " }
+node: { title: "sparknacl__car__product_to_seminormal" label: "Product_To_Seminormal\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-car.adb:28:4\nLocal: \nAccumulated: " }
+node: { title: "sparknacl__car__seminormal_to_nearlynormal" label: "Seminormal_To_Nearlynormal\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-car.adb:87:4\nLocal: \nAccumulated: " }
+node: { title: "sparknacl__car__sum_to_nearlynormal" label: "Sum_To_Nearlynormal\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-car.adb:134:4\nLocal: \nAccumulated: " }
+node: { title: "sparknacl__core__construct" label: "CONSTRUCT\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-core.adb:189:4\nLocal: 16 bytes\nAccumulated: 144 bytes (with -u 128)" }
+edge: { sourcename: "sparknacl__core__construct" targetname: "memcpy" }
+node: { title: "sparknacl__core__construct__2" label: "CONSTRUCT\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-core.adb:195:4\nLocal: 16 bytes\nAccumulated: 144 bytes (with -u 128)" }
+edge: { sourcename: "sparknacl__core__construct__2" targetname: "memcpy" }
+node: { title: "sparknacl__core__core_common" label: "CORE_COMMON\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-core.adb:56:4\nLocal: 256 bytes\nAccumulated: 384 bytes (with -u 128)" }
+edge: { sourcename: "sparknacl__core__core_common" targetname: "memmove" }
+edge: { sourcename: "sparknacl__core__core_common" targetname: "sparknacl__core__core_common__adjust_t.1592" }
+edge: { sourcename: "sparknacl__core__core_common" targetname: "sparknacl__core__core_common__adjust_t.1592" }
+edge: { sourcename: "sparknacl__core__core_common" targetname: "sparknacl__core__core_common__adjust_t.1592" }
+edge: { sourcename: "sparknacl__core__core_common" targetname: "sparknacl__core__core_common__adjust_t.1592" }
+node: { title: "sparknacl__core__core_common__adjust_t.1592" label: "ADJUST_T\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-core.adb:71:7\nLocal: \nAccumulated: " }
+node: { title: "sparknacl__core__hsalsa20" label: "HSALSA20\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-core.adb:235:4\nLocal: 176 bytes\nAccumulated: 560 bytes (with -u 128)" }
+edge: { sourcename: "sparknacl__core__hsalsa20" targetname: "sparknacl__core__core_common" }
+edge: { sourcename: "sparknacl__core__hsalsa20" targetname: "memcpy" }
+node: { title: "sparknacl__core__salsa20" label: "SALSA20\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-core.adb:218:4\nLocal: 160 bytes\nAccumulated: 544 bytes (with -u 128)" }
+edge: { sourcename: "sparknacl__core__salsa20" targetname: "sparknacl__core__core_common" }
+edge: { sourcename: "sparknacl__core__salsa20" targetname: "memcpy" }
+node: { title: "sparknacl__core__salsa20_keyIP" label: "Salsa20_Keyip\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-core.ads:40:9\nLocal: \nAccumulated: " }
+node: { title: "sparknacl__core__sanitize" label: "SANITIZE\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-core.adb:208:4\nLocal: \nAccumulated: 144 bytes (with -u 128)" }
+edge: { sourcename: "sparknacl__core__sanitize" targetname: "sparknacl__sanitize" }
+node: { title: "sparknacl__core__serialize" label: "SERIALIZE\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-core.adb:202:4\nLocal: 16 bytes\nAccumulated: " }
+edge: { sourcename: "sparknacl__core__serialize" targetname: "memcpy" }
+node: { title: "sparknacl__count__reset" label: "Reset\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-count.adb:3:4\nLocal: \nAccumulated: " }
+node: { title: "sparknacl__cryptobox__afternm" label: "Afternm\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-cryptobox.adb:76:4\nLocal: \nAccumulated: " }
+edge: { sourcename: "sparknacl__cryptobox__afternm" targetname: "sparknacl__secretbox__create" }
+node: { title: "sparknacl__cryptobox__beforenm" label: "Beforenm\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-cryptobox.adb:57:4\nLocal: 144 bytes\nAccumulated: 2784 bytes (with -u 128)" }
+edge: { sourcename: "sparknacl__cryptobox__beforenm" targetname: "sparknacl__scalar__mult" }
+edge: { sourcename: "sparknacl__cryptobox__beforenm" targetname: "sparknacl__core__hsalsa20" }
+edge: { sourcename: "sparknacl__cryptobox__beforenm" targetname: "sparknacl__sanitize" }
+edge: { sourcename: "sparknacl__cryptobox__beforenm" targetname: "sparknacl__core__construct" }
+edge: { sourcename: "sparknacl__cryptobox__beforenm" targetname: "sparknacl__sanitize" }
+edge: { sourcename: "sparknacl__cryptobox__beforenm" targetname: "sparknacl__core__construct__2" }
+edge: { sourcename: "sparknacl__cryptobox__beforenm" targetname: "memcpy" }
+node: { title: "sparknacl__cryptobox__construct" label: "Construct\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-cryptobox.adb:21:4\nLocal: 16 bytes\nAccumulated: " }
+edge: { sourcename: "sparknacl__cryptobox__construct" targetname: "memcpy" }
+node: { title: "sparknacl__cryptobox__construct__2" label: "Construct\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-cryptobox.adb:27:4\nLocal: 16 bytes\nAccumulated: " }
+edge: { sourcename: "sparknacl__cryptobox__construct__2" targetname: "memcpy" }
+node: { title: "sparknacl__cryptobox__create" label: "Create\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-cryptobox.adb:97:4\nLocal: 64 bytes\nAccumulated: 2848 bytes (with -u 128)" }
+edge: { sourcename: "sparknacl__cryptobox__create" targetname: "sparknacl__cryptobox__beforenm" }
+edge: { sourcename: "sparknacl__cryptobox__create" targetname: "sparknacl__secretbox__create" }
+edge: { sourcename: "sparknacl__cryptobox__create" targetname: "sparknacl__core__sanitize" }
+node: { title: "sparknacl__cryptobox__keypair" label: "Keypair\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-cryptobox.adb:8:4\nLocal: 80 bytes\nAccumulated: 2736 bytes (with -u 128)" }
+edge: { sourcename: "sparknacl__cryptobox__keypair" targetname: "sparknacl__scalar__mult_base" }
+edge: { sourcename: "sparknacl__cryptobox__keypair" targetname: "sparknacl__sanitize" }
+edge: { sourcename: "sparknacl__cryptobox__keypair" targetname: "memcpy" }
+edge: { sourcename: "sparknacl__cryptobox__keypair" targetname: "memcpy" }
+edge: { sourcename: "sparknacl__cryptobox__keypair" targetname: "sparknacl__utils__random_bytes_32" }
+node: { title: "sparknacl__cryptobox__open" label: "Open\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-cryptobox.adb:112:4\nLocal: 64 bytes\nAccumulated: 2848 bytes (with -u 128)" }
+edge: { sourcename: "sparknacl__cryptobox__open" targetname: "sparknacl__cryptobox__beforenm" }
+edge: { sourcename: "sparknacl__cryptobox__open" targetname: "sparknacl__secretbox__open" }
+edge: { sourcename: "sparknacl__cryptobox__open" targetname: "sparknacl__core__sanitize" }
+node: { title: "sparknacl__cryptobox__open_afternm" label: "Open_Afternm\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-cryptobox.adb:86:4\nLocal: \nAccumulated: " }
+edge: { sourcename: "sparknacl__cryptobox__open_afternm" targetname: "sparknacl__secretbox__open" }
+node: { title: "sparknacl__cryptobox__public_keyIP" label: "Public_Keyip\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-cryptobox.ads:116:9\nLocal: \nAccumulated: " }
+node: { title: "sparknacl__cryptobox__sanitize" label: "Sanitize\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-cryptobox.adb:45:4\nLocal: \nAccumulated: " }
+edge: { sourcename: "sparknacl__cryptobox__sanitize" targetname: "sparknacl__sanitize" }
+node: { title: "sparknacl__cryptobox__sanitize__2" label: "Sanitize\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-cryptobox.adb:51:4\nLocal: \nAccumulated: " }
+edge: { sourcename: "sparknacl__cryptobox__sanitize__2" targetname: "sparknacl__sanitize" }
+node: { title: "sparknacl__cryptobox__secret_keyIP" label: "Secret_Keyip\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-cryptobox.ads:112:9\nLocal: \nAccumulated: " }
+node: { title: "sparknacl__cryptobox__serialize" label: "Serialize\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-cryptobox.adb:33:4\nLocal: 16 bytes\nAccumulated: " }
+edge: { sourcename: "sparknacl__cryptobox__serialize" targetname: "memcpy" }
+node: { title: "sparknacl__cryptobox__serialize__2" label: "Serialize\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-cryptobox.adb:39:4\nLocal: 16 bytes\nAccumulated: " }
+edge: { sourcename: "sparknacl__cryptobox__serialize__2" targetname: "memcpy" }
+node: { title: "sparknacl__difference_gfPredicate" label: "Difference_Gfpredicate\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl.ads:267:12\nLocal: \nAccumulated: " }
+node: { title: "sparknacl__equal" label: "Equal\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl.adb:214:4,Equal\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl.ads:87:13\nLocal: \nAccumulated: " }
+node: { title: "sparknacl__hashing__Tk_tableBIP" label: "TK_TABLEBIP\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-hashing.adb:6:4\nLocal: \nAccumulated: " }
+node: { title: "sparknacl__hashing__dl64" label: "DL64\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-hashing.adb:73:4\nLocal: \nAccumulated: " }
+node: { title: "sparknacl__hashing__hash" label: "HASH\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-hashing.adb:221:4\nLocal: 400 bytes\nAccumulated: 912 bytes" }
+edge: { sourcename: "sparknacl__hashing__hash" targetname: "sparknacl__hashing__hashblocks" }
+edge: { sourcename: "sparknacl__hashing__hash" targetname: "sparknacl__hashing__hashblocks" }
+edge: { sourcename: "sparknacl__hashing__hash" targetname: "sparknacl__hashing__hashblocks" }
+edge: { sourcename: "sparknacl__hashing__hash" targetname: "memset" }
+edge: { sourcename: "sparknacl__hashing__hash" targetname: "memcpy" }
+edge: { sourcename: "sparknacl__hashing__hash" targetname: "memcpy" }
+node: { title: "sparknacl__hashing__hash__2" label: "HASH\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-hashing.adb:261:4\nLocal: 80 bytes\nAccumulated: " }
+edge: { sourcename: "sparknacl__hashing__hash__2" targetname: "sparknacl__hashing__hash" }
+edge: { sourcename: "sparknacl__hashing__hash__2" targetname: "memcpy" }
+node: { title: "sparknacl__hashing__hashblocks" label: "HASHBLOCKS\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-hashing.adb:91:4\nLocal: 512 bytes\nAccumulated: 512 bytes" }
+edge: { sourcename: "sparknacl__hashing__hashblocks" targetname: "sparknacl__hashing__dl64" }
+edge: { sourcename: "sparknacl__hashing__hashblocks" targetname: "sparknacl__hashing__dl64" }
+edge: { sourcename: "sparknacl__hashing__hashblocks" targetname: "sparknacl__hashing__dl64" }
+edge: { sourcename: "sparknacl__hashing__hashblocks" targetname: "sparknacl__hashing__dl64" }
+edge: { sourcename: "sparknacl__hashing__hashblocks" targetname: "sparknacl__hashing__dl64" }
+edge: { sourcename: "sparknacl__hashing__hashblocks" targetname: "sparknacl__hashing__dl64" }
+edge: { sourcename: "sparknacl__hashing__hashblocks" targetname: "sparknacl__hashing__dl64" }
+edge: { sourcename: "sparknacl__hashing__hashblocks" targetname: "sparknacl__hashing__dl64" }
+edge: { sourcename: "sparknacl__hashing__hashblocks" targetname: "sparknacl__hashing__dl64" }
+edge: { sourcename: "sparknacl__hashing__hashblocks" targetname: "sparknacl__hashing__dl64" }
+edge: { sourcename: "sparknacl__hashing__hashblocks" targetname: "sparknacl__hashing__dl64" }
+edge: { sourcename: "sparknacl__hashing__hashblocks" targetname: "sparknacl__hashing__dl64" }
+edge: { sourcename: "sparknacl__hashing__hashblocks" targetname: "sparknacl__hashing__dl64" }
+edge: { sourcename: "sparknacl__hashing__hashblocks" targetname: "sparknacl__hashing__dl64" }
+edge: { sourcename: "sparknacl__hashing__hashblocks" targetname: "sparknacl__hashing__dl64" }
+edge: { sourcename: "sparknacl__hashing__hashblocks" targetname: "sparknacl__hashing__dl64" }
+edge: { sourcename: "sparknacl__hashing__hashblocks" targetname: "sparknacl__hashing__dl64" }
+edge: { sourcename: "sparknacl__hashing__hashblocks" targetname: "sparknacl__hashing__dl64" }
+edge: { sourcename: "sparknacl__hashing__hashblocks" targetname: "sparknacl__hashing__dl64" }
+edge: { sourcename: "sparknacl__hashing__hashblocks" targetname: "sparknacl__hashing__dl64" }
+edge: { sourcename: "sparknacl__hashing__hashblocks" targetname: "sparknacl__hashing__dl64" }
+edge: { sourcename: "sparknacl__hashing__hashblocks" targetname: "sparknacl__hashing__dl64" }
+edge: { sourcename: "sparknacl__hashing__hashblocks" targetname: "sparknacl__hashing__dl64" }
+edge: { sourcename: "sparknacl__hashing__hashblocks" targetname: "sparknacl__hashing__dl64" }
+node: { title: "sparknacl__i64_byte_seqIP" label: "I64_Byte_Seqip\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl.ads:75:9\nLocal: \nAccumulated: " }
+node: { title: "sparknacl__i64_seqIP" label: "I64_Seqip\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl.ads:78:9\nLocal: \nAccumulated: " }
+node: { title: "sparknacl__mac__construct" label: "Construct\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-mac.adb:10:4\nLocal: 16 bytes\nAccumulated: 144 bytes (with -u 128)" }
+edge: { sourcename: "sparknacl__mac__construct" targetname: "memcpy" }
+node: { title: "sparknacl__mac__construct__2" label: "Construct\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-mac.adb:16:4\nLocal: 16 bytes\nAccumulated: 144 bytes (with -u 128)" }
+edge: { sourcename: "sparknacl__mac__construct__2" targetname: "memcpy" }
+node: { title: "sparknacl__mac__onetimeauth" label: "Onetimeauth\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-mac.adb:35:4\nLocal: 432 bytes\nAccumulated: 560 bytes (with -u 128)" }
+edge: { sourcename: "sparknacl__mac__onetimeauth" targetname: "memset" }
+edge: { sourcename: "sparknacl__mac__onetimeauth" targetname: "memset" }
+edge: { sourcename: "sparknacl__mac__onetimeauth" targetname: "memset" }
+node: { title: "sparknacl__mac__onetimeauth_verify" label: "Onetimeauth_Verify\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-mac.adb:172:4\nLocal: 32 bytes\nAccumulated: 592 bytes (with -u 128)" }
+edge: { sourcename: "sparknacl__mac__onetimeauth_verify" targetname: "sparknacl__mac__onetimeauth" }
+edge: { sourcename: "sparknacl__mac__onetimeauth_verify" targetname: "sparknacl__equal" }
+node: { title: "sparknacl__mac__poly_1305_keyIP" label: "Poly_1305_Keyip\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-mac.ads:41:9\nLocal: \nAccumulated: " }
+node: { title: "sparknacl__mac__sanitize" label: "Sanitize\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-mac.adb:29:4\nLocal: \nAccumulated: " }
+edge: { sourcename: "sparknacl__mac__sanitize" targetname: "sparknacl__sanitize" }
+node: { title: "sparknacl__mac__serialize" label: "Serialize\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-mac.adb:23:4\nLocal: 16 bytes\nAccumulated: " }
+edge: { sourcename: "sparknacl__mac__serialize" targetname: "memcpy" }
+node: { title: "sparknacl__nearlynormal_gfPredicate" label: "Nearlynormal_Gfpredicate\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl.ads:324:12\nLocal: \nAccumulated: " }
+node: { title: "sparknacl__normal_gfPredicate" label: "Normal_Gfpredicate\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl.ads:236:12\nLocal: \nAccumulated: " }
+node: { title: "sparknacl__product_gfPredicate" label: "Product_Gfpredicate\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl.ads:284:12\nLocal: \nAccumulated: " }
+node: { title: "sparknacl__random_bytes" label: "Random_Bytes\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl.adb:231:4\nLocal: 16 bytes\nAccumulated: 16 bytes" }
+edge: { sourcename: "sparknacl__random_bytes" targetname: "random__random_byte" }
+node: { title: "sparknacl__sanitize" label: "Sanitize\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-sanitize.adb:2:1,Sanitize\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl.ads:114:14\nLocal: 16 bytes\nAccumulated: 144 bytes (with -u 128)" }
+edge: { sourcename: "sparknacl__sanitize" targetname: "memset" }
+node: { title: "sparknacl__sanitize_boolean" label: "Sanitize_Boolean\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-sanitize_boolean.adb:2:1,Sanitize_Boolean\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl.ads:423:14\nLocal: \nAccumulated: " }
+node: { title: "sparknacl__sanitize_gf" label: "Sanitize_Gf\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-sanitize_gf.adb:2:1,Sanitize_Gf\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl.ads:410:14\nLocal: \nAccumulated: " }
+node: { title: "sparknacl__sanitize_gf_pa" label: "Sanitize_Gf_Pa\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-sanitize_gf_pa.adb:2:1\nLocal: 16 bytes\nAccumulated: 144 bytes (with -u 128)" }
+edge: { sourcename: "sparknacl__sanitize_gf_pa" targetname: "memset" }
+node: { title: "sparknacl__sanitize_i64_seq" label: "Sanitize_I64_Seq\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-sanitize_i64_seq.adb:2:1,Sanitize_I64_Seq\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl.ads:419:14\nLocal: 16 bytes\nAccumulated: 144 bytes (with -u 128)" }
+edge: { sourcename: "sparknacl__sanitize_i64_seq" targetname: "memset" }
+node: { title: "sparknacl__sanitize_u64" label: "Sanitize_U64\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-sanitize_u64.adb:2:1,Sanitize_U64\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl.ads:406:14\nLocal: 16 bytes\nAccumulated: 16 bytes" }
+node: { title: "sparknacl__scalar__mult" label: "Mult\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-scalar.adb:13:4,Mult\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-scalar.ads:8:13\nLocal: 1232 bytes\nAccumulated: 2640 bytes (with -u 128)" }
+edge: { sourcename: "sparknacl__scalar__mult" targetname: "sparknacl__utils__inv_25519" }
+edge: { sourcename: "sparknacl__scalar__mult" targetname: "sparknacl__Omultiply" }
+edge: { sourcename: "sparknacl__scalar__mult" targetname: "sparknacl__Omultiply" }
+edge: { sourcename: "sparknacl__scalar__mult" targetname: "sparknacl__Omultiply" }
+edge: { sourcename: "sparknacl__scalar__mult" targetname: "sparknacl__Omultiply" }
+edge: { sourcename: "sparknacl__scalar__mult" targetname: "sparknacl__Omultiply" }
+edge: { sourcename: "sparknacl__scalar__mult" targetname: "sparknacl__Omultiply" }
+edge: { sourcename: "sparknacl__scalar__mult" targetname: "sparknacl__Omultiply" }
+edge: { sourcename: "sparknacl__scalar__mult" targetname: "sparknacl__Omultiply" }
+edge: { sourcename: "sparknacl__scalar__mult" targetname: "sparknacl__Omultiply" }
+edge: { sourcename: "sparknacl__scalar__mult" targetname: "sparknacl__Omultiply" }
+edge: { sourcename: "sparknacl__scalar__mult" targetname: "sparknacl__Omultiply" }
+edge: { sourcename: "sparknacl__scalar__mult" targetname: "sparknacl__utils__pack_25519" }
+edge: { sourcename: "sparknacl__scalar__mult" targetname: "sparknacl__Oadd" }
+edge: { sourcename: "sparknacl__scalar__mult" targetname: "sparknacl__Oadd" }
+edge: { sourcename: "sparknacl__scalar__mult" targetname: "sparknacl__Osubtract" }
+edge: { sourcename: "sparknacl__scalar__mult" targetname: "sparknacl__Osubtract" }
+edge: { sourcename: "sparknacl__scalar__mult" targetname: "sparknacl__Oadd" }
+edge: { sourcename: "sparknacl__scalar__mult" targetname: "sparknacl__Osubtract" }
+edge: { sourcename: "sparknacl__scalar__mult" targetname: "sparknacl__Oadd" }
+edge: { sourcename: "sparknacl__scalar__mult" targetname: "sparknacl__Osubtract" }
+edge: { sourcename: "sparknacl__scalar__mult" targetname: "sparknacl__sanitize" }
+edge: { sourcename: "sparknacl__scalar__mult" targetname: "memcpy" }
+edge: { sourcename: "sparknacl__scalar__mult" targetname: "sparknacl__utils__cswap" }
+edge: { sourcename: "sparknacl__scalar__mult" targetname: "sparknacl__utils__cswap" }
+edge: { sourcename: "sparknacl__scalar__mult" targetname: "sparknacl__utils__cswap" }
+edge: { sourcename: "sparknacl__scalar__mult" targetname: "sparknacl__utils__cswap" }
+edge: { sourcename: "sparknacl__scalar__mult" targetname: "sparknacl__sanitize_gf" }
+edge: { sourcename: "sparknacl__scalar__mult" targetname: "sparknacl__sanitize_gf" }
+edge: { sourcename: "sparknacl__scalar__mult" targetname: "sparknacl__sanitize_boolean" }
+edge: { sourcename: "sparknacl__scalar__mult" targetname: "sparknacl__sanitize_gf" }
+edge: { sourcename: "sparknacl__scalar__mult" targetname: "sparknacl__sanitize_gf" }
+edge: { sourcename: "sparknacl__scalar__mult" targetname: "sparknacl__utils__unpack_25519" }
+edge: { sourcename: "sparknacl__scalar__mult" targetname: "sparknacl__sanitize_gf" }
+edge: { sourcename: "sparknacl__scalar__mult" targetname: "sparknacl__sanitize_gf" }
+edge: { sourcename: "sparknacl__scalar__mult" targetname: "sparknacl__sanitize_gf" }
+edge: { sourcename: "sparknacl__scalar__mult" targetname: "sparknacl__sanitize_gf" }
+node: { title: "sparknacl__scalar__mult_base" label: "Mult_Base\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-scalar.adb:101:4,Mult_Base\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-scalar.ads:12:13\nLocal: 16 bytes\nAccumulated: 2656 bytes (with -u 128)" }
+edge: { sourcename: "sparknacl__scalar__mult_base" targetname: "sparknacl__scalar__mult" }
+node: { title: "sparknacl__secretbox__create" label: "Create\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-secretbox.adb:9:4,Create\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-secretbox.ads:12:14\nLocal: 112 bytes\nAccumulated: 944 bytes (with -u 128)" }
+edge: { sourcename: "sparknacl__secretbox__create" targetname: "sparknacl__stream__hsalsa20_xor" }
+edge: { sourcename: "sparknacl__secretbox__create" targetname: "sparknacl__mac__onetimeauth" }
+edge: { sourcename: "sparknacl__secretbox__create" targetname: "sparknacl__mac__construct__2" }
+edge: { sourcename: "sparknacl__secretbox__create" targetname: "memcpy" }
+edge: { sourcename: "sparknacl__secretbox__create" targetname: "memset" }
+edge: { sourcename: "sparknacl__secretbox__create" targetname: "memcpy" }
+edge: { sourcename: "sparknacl__secretbox__create" targetname: "sparknacl__equal" }
+node: { title: "sparknacl__secretbox__open" label: "Open\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-secretbox.adb:51:4,Open\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-secretbox.ads:26:14\nLocal: 128 bytes\nAccumulated: 960 bytes (with -u 128)" }
+edge: { sourcename: "sparknacl__secretbox__open" targetname: "sparknacl__stream__hsalsa20_xor" }
+edge: { sourcename: "sparknacl__secretbox__open" targetname: "sparknacl__stream__hsalsa20" }
+edge: { sourcename: "sparknacl__secretbox__open" targetname: "sparknacl__mac__onetimeauth_verify" }
+edge: { sourcename: "sparknacl__secretbox__open" targetname: "sparknacl__mac__construct" }
+edge: { sourcename: "sparknacl__secretbox__open" targetname: "memset" }
+edge: { sourcename: "sparknacl__secretbox__open" targetname: "memcpy" }
+edge: { sourcename: "sparknacl__secretbox__open" targetname: "memset" }
+edge: { sourcename: "sparknacl__secretbox__open" targetname: "sparknacl__equal" }
+node: { title: "sparknacl__seminormal_gfPredicate" label: "Seminormal_Gfpredicate\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl.ads:308:12\nLocal: \nAccumulated: " }
+node: { title: "sparknacl__sign__Oadd" label: "+\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-sign.adb:115:4\nLocal: 1712 bytes\nAccumulated: 2704 bytes (with -u 128)" }
+edge: { sourcename: "sparknacl__sign__Oadd" targetname: "sparknacl__Omultiply" }
+edge: { sourcename: "sparknacl__sign__Oadd" targetname: "sparknacl__Omultiply" }
+edge: { sourcename: "sparknacl__sign__Oadd" targetname: "sparknacl__Omultiply" }
+edge: { sourcename: "sparknacl__sign__Oadd" targetname: "sparknacl__Omultiply" }
+edge: { sourcename: "sparknacl__sign__Oadd" targetname: "sparknacl__Omultiply" }
+edge: { sourcename: "sparknacl__sign__Oadd" targetname: "sparknacl__Omultiply" }
+edge: { sourcename: "sparknacl__sign__Oadd" targetname: "sparknacl__Omultiply" }
+edge: { sourcename: "sparknacl__sign__Oadd" targetname: "sparknacl__Omultiply" }
+edge: { sourcename: "sparknacl__sign__Oadd" targetname: "sparknacl__Omultiply" }
+edge: { sourcename: "sparknacl__sign__Oadd" targetname: "sparknacl__Oadd" }
+edge: { sourcename: "sparknacl__sign__Oadd" targetname: "sparknacl__Osubtract" }
+edge: { sourcename: "sparknacl__sign__Oadd" targetname: "sparknacl__Oadd" }
+edge: { sourcename: "sparknacl__sign__Oadd" targetname: "sparknacl__Osubtract" }
+edge: { sourcename: "sparknacl__sign__Oadd" targetname: "sparknacl__Oadd" }
+edge: { sourcename: "sparknacl__sign__Oadd" targetname: "sparknacl__Oadd" }
+edge: { sourcename: "sparknacl__sign__Oadd" targetname: "sparknacl__Osubtract" }
+edge: { sourcename: "sparknacl__sign__Oadd" targetname: "sparknacl__Osubtract" }
+edge: { sourcename: "sparknacl__sign__Oadd" targetname: "sparknacl__Oadd" }
+node: { title: "sparknacl__sign__Tgf_vector_4BIP" label: "Tgf_Vector_4bip\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-sign.adb:42:4\nLocal: \nAccumulated: " }
+node: { title: "sparknacl__sign__Tl_tableBIP" label: "Tl_Tablebip\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-sign.adb:217:4\nLocal: \nAccumulated: " }
+node: { title: "sparknacl__sign__hash_reduce" label: "Hash_Reduce\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-sign.adb:685:4\nLocal: 592 bytes\nAccumulated: 1504 bytes" }
+edge: { sourcename: "sparknacl__sign__hash_reduce" targetname: "sparknacl__hashing__hash" }
+edge: { sourcename: "sparknacl__sign__hash_reduce" targetname: "sparknacl__sign__modl" }
+edge: { sourcename: "sparknacl__sign__hash_reduce" targetname: "memset" }
+node: { title: "sparknacl__sign__keypair" label: "Keypair\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-sign.adb:840:4\nLocal: 80 bytes\nAccumulated: 5040 bytes (with -u 128)" }
+edge: { sourcename: "sparknacl__sign__keypair" targetname: "sparknacl__sign__keypair_from_bytes" }
+edge: { sourcename: "sparknacl__sign__keypair" targetname: "sparknacl__sanitize" }
+edge: { sourcename: "sparknacl__sign__keypair" targetname: "memcpy" }
+edge: { sourcename: "sparknacl__sign__keypair" targetname: "sparknacl__utils__random_bytes_32" }
+node: { title: "sparknacl__sign__keypair_from_bytes" label: "Keypair_From_Bytes\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-sign.adb:815:4\nLocal: 672 bytes\nAccumulated: 4960 bytes (with -u 128)" }
+edge: { sourcename: "sparknacl__sign__keypair_from_bytes" targetname: "sparknacl__sign__scalarmult" }
+edge: { sourcename: "sparknacl__sign__keypair_from_bytes" targetname: "sparknacl__sign__pack" }
+edge: { sourcename: "sparknacl__sign__keypair_from_bytes" targetname: "sparknacl__hashing__hash" }
+edge: { sourcename: "sparknacl__sign__keypair_from_bytes" targetname: "sparknacl__sanitize" }
+edge: { sourcename: "sparknacl__sign__keypair_from_bytes" targetname: "sparknacl__sanitize" }
+edge: { sourcename: "sparknacl__sign__keypair_from_bytes" targetname: "memcpy" }
+edge: { sourcename: "sparknacl__sign__keypair_from_bytes" targetname: "memcpy" }
+edge: { sourcename: "sparknacl__sign__keypair_from_bytes" targetname: "memcpy" }
+edge: { sourcename: "sparknacl__sign__keypair_from_bytes" targetname: "memcpy" }
+node: { title: "sparknacl__sign__modl" label: "Modl\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-sign.adb:227:4\nLocal: 624 bytes\nAccumulated: 752 bytes (with -u 128)" }
+edge: { sourcename: "sparknacl__sign__modl" targetname: "memset" }
+edge: { sourcename: "sparknacl__sign__modl" targetname: "memcpy" }
+node: { title: "sparknacl__sign__open" label: "Open\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-sign.adb:1025:4\nLocal: 3728 bytes\nAccumulated: 8016 bytes (with -u 128)" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__sign__scalarmult" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__sign__scalarmult" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__sign__Oadd" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__sign__pack" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__sign__hash_reduce" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__Omultiply" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__Omultiply" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__Omultiply" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__Omultiply" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__Omultiply" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__Omultiply" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__Omultiply" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__Omultiply" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__Omultiply" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__Omultiply" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__Omultiply" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__Omultiply" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__Omultiply" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__Omultiply" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__Omultiply" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__Omultiply" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__sign__unpackneg__Oeq.1949" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__sign__unpackneg__Oeq.1949" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__utils__pack_25519" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__Osubtract" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__Osubtract" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__Oadd" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__sanitize" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__sanitize" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "memmove" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "memset" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "memmove" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "memset" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "memcpy" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "memset" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "memcpy" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "memcpy" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "memcpy" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__sanitize_gf" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__sanitize_gf" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__sanitize_gf" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__sanitize_gf" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__sanitize_gf" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__sanitize_gf" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__sanitize_gf" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__sanitize_gf" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__utils__unpack_25519" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__sanitize_gf" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__sanitize_gf" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__sanitize_gf" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__sanitize_gf" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__sanitize_gf" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__sanitize_gf" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__sanitize_gf" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__sanitize_gf" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__sanitize_gf" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__sanitize_gf" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__sanitize_gf" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__sanitize_gf" }
+edge: { sourcename: "sparknacl__sign__open" targetname: "sparknacl__equal" }
+node: { title: "sparknacl__sign__pack" label: "Pack\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-sign.adb:197:4\nLocal: 560 bytes\nAccumulated: 1968 bytes (with -u 128)" }
+edge: { sourcename: "sparknacl__sign__pack" targetname: "sparknacl__utils__inv_25519" }
+edge: { sourcename: "sparknacl__sign__pack" targetname: "sparknacl__Omultiply" }
+edge: { sourcename: "sparknacl__sign__pack" targetname: "sparknacl__Omultiply" }
+edge: { sourcename: "sparknacl__sign__pack" targetname: "sparknacl__utils__pack_25519" }
+edge: { sourcename: "sparknacl__sign__pack" targetname: "sparknacl__utils__pack_25519" }
+node: { title: "sparknacl__sign__pk_from_bytes" label: "Pk_From_Bytes\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-sign.adb:854:4\nLocal: 16 bytes\nAccumulated: " }
+edge: { sourcename: "sparknacl__sign__pk_from_bytes" targetname: "memcpy" }
+node: { title: "sparknacl__sign__sanitize" label: "Sanitize\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-sign.adb:803:4\nLocal: \nAccumulated: " }
+edge: { sourcename: "sparknacl__sign__sanitize" targetname: "sparknacl__sanitize" }
+node: { title: "sparknacl__sign__sanitize__2" label: "Sanitize\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-sign.adb:809:4\nLocal: \nAccumulated: " }
+edge: { sourcename: "sparknacl__sign__sanitize__2" targetname: "sparknacl__sanitize" }
+node: { title: "sparknacl__sign__scalarmult" label: "Scalarmult\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-sign.adb:140:4\nLocal: 1584 bytes\nAccumulated: 4288 bytes (with -u 128)" }
+edge: { sourcename: "sparknacl__sign__scalarmult" targetname: "sparknacl__sign__Oadd" }
+edge: { sourcename: "sparknacl__sign__scalarmult" targetname: "sparknacl__sign__Oadd" }
+edge: { sourcename: "sparknacl__sign__scalarmult" targetname: "memset" }
+edge: { sourcename: "sparknacl__sign__scalarmult" targetname: "sparknacl__utils__cswap" }
+edge: { sourcename: "sparknacl__sign__scalarmult" targetname: "sparknacl__utils__cswap" }
+edge: { sourcename: "sparknacl__sign__scalarmult" targetname: "sparknacl__utils__cswap" }
+edge: { sourcename: "sparknacl__sign__scalarmult" targetname: "sparknacl__utils__cswap" }
+edge: { sourcename: "sparknacl__sign__scalarmult" targetname: "sparknacl__utils__cswap" }
+edge: { sourcename: "sparknacl__sign__scalarmult" targetname: "sparknacl__utils__cswap" }
+edge: { sourcename: "sparknacl__sign__scalarmult" targetname: "sparknacl__utils__cswap" }
+edge: { sourcename: "sparknacl__sign__scalarmult" targetname: "sparknacl__utils__cswap" }
+node: { title: "sparknacl__sign__serialize" label: "Serialize\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-sign.adb:791:4\nLocal: 16 bytes\nAccumulated: " }
+edge: { sourcename: "sparknacl__sign__serialize" targetname: "memcpy" }
+node: { title: "sparknacl__sign__serialize__2" label: "Serialize\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-sign.adb:797:4\nLocal: 16 bytes\nAccumulated: " }
+edge: { sourcename: "sparknacl__sign__serialize__2" targetname: "memcpy" }
+node: { title: "sparknacl__sign__sign" label: "Sign\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-sign.adb:861:4\nLocal: 1344 bytes\nAccumulated: 5632 bytes (with -u 128)" }
+edge: { sourcename: "sparknacl__sign__sign" targetname: "sparknacl__sign__scalarmult" }
+edge: { sourcename: "sparknacl__sign__sign" targetname: "sparknacl__sign__pack" }
+edge: { sourcename: "sparknacl__sign__sign" targetname: "sparknacl__sign__hash_reduce" }
+edge: { sourcename: "sparknacl__sign__sign" targetname: "sparknacl__sign__hash_reduce" }
+edge: { sourcename: "sparknacl__sign__sign" targetname: "sparknacl__hashing__hash" }
+edge: { sourcename: "sparknacl__sign__sign" targetname: "sparknacl__sign__modl" }
+edge: { sourcename: "sparknacl__sign__sign" targetname: "sparknacl__sanitize" }
+edge: { sourcename: "sparknacl__sign__sign" targetname: "sparknacl__sanitize_i64_seq" }
+edge: { sourcename: "sparknacl__sign__sign" targetname: "sparknacl__sanitize" }
+edge: { sourcename: "sparknacl__sign__sign" targetname: "sparknacl__sanitize" }
+edge: { sourcename: "sparknacl__sign__sign" targetname: "memset" }
+edge: { sourcename: "sparknacl__sign__sign" targetname: "memcpy" }
+edge: { sourcename: "sparknacl__sign__sign" targetname: "memcpy" }
+edge: { sourcename: "sparknacl__sign__sign" targetname: "memcpy" }
+edge: { sourcename: "sparknacl__sign__sign" targetname: "memcpy" }
+edge: { sourcename: "sparknacl__sign__sign" targetname: "memcpy" }
+edge: { sourcename: "sparknacl__sign__sign" targetname: "memmove" }
+edge: { sourcename: "sparknacl__sign__sign" targetname: "memcpy" }
+edge: { sourcename: "sparknacl__sign__sign" targetname: "memcpy" }
+edge: { sourcename: "sparknacl__sign__sign" targetname: "memcpy" }
+edge: { sourcename: "sparknacl__sign__sign" targetname: "memcpy" }
+node: { title: "sparknacl__sign__signing_pkIP" label: "Signing_Pkip\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-sign.ads:70:9\nLocal: \nAccumulated: " }
+node: { title: "sparknacl__sign__signing_skIP" label: "Signing_Skip\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-sign.ads:74:9\nLocal: \nAccumulated: " }
+node: { title: "sparknacl__sign__unpackneg__Oeq.1949" label: "=\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-sign.adb:718:7\nLocal: 80 bytes\nAccumulated: 624 bytes" }
+edge: { sourcename: "sparknacl__sign__unpackneg__Oeq.1949" targetname: "sparknacl__utils__pack_25519" }
+edge: { sourcename: "sparknacl__sign__unpackneg__Oeq.1949" targetname: "sparknacl__utils__pack_25519" }
+edge: { sourcename: "sparknacl__sign__unpackneg__Oeq.1949" targetname: "sparknacl__equal" }
+node: { title: "sparknacl__sign__utils__construct" label: "Construct\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-sign-utils.adb:3:4\nLocal: 16 bytes\nAccumulated: " }
+edge: { sourcename: "sparknacl__sign__utils__construct" targetname: "memcpy" }
+node: { title: "sparknacl__square" label: "Square\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl.ads:399:4\nLocal: 16 bytes\nAccumulated: " }
+edge: { sourcename: "sparknacl__square" targetname: "sparknacl__Omultiply" }
+node: { title: "sparknacl__stream__hsalsa20" label: "Hsalsa20\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-stream.adb:149:4,Hsalsa20\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-stream.ads:14:14\nLocal: 96 bytes\nAccumulated: 832 bytes (with -u 128)" }
+edge: { sourcename: "sparknacl__stream__hsalsa20" targetname: "sparknacl__stream__salsa20_xor_local" }
+edge: { sourcename: "sparknacl__stream__hsalsa20" targetname: "sparknacl__core__hsalsa20" }
+edge: { sourcename: "sparknacl__stream__hsalsa20" targetname: "sparknacl__core__construct" }
+edge: { sourcename: "sparknacl__stream__hsalsa20" targetname: "sparknacl__sanitize" }
+node: { title: "sparknacl__stream__hsalsa20_xor" label: "Hsalsa20_Xor\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-stream.adb:162:4,Hsalsa20_Xor\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-stream.ads:21:14\nLocal: 96 bytes\nAccumulated: 832 bytes (with -u 128)" }
+edge: { sourcename: "sparknacl__stream__hsalsa20_xor" targetname: "sparknacl__stream__salsa20_xor_local" }
+edge: { sourcename: "sparknacl__stream__hsalsa20_xor" targetname: "sparknacl__core__hsalsa20" }
+edge: { sourcename: "sparknacl__stream__hsalsa20_xor" targetname: "sparknacl__core__construct" }
+edge: { sourcename: "sparknacl__stream__hsalsa20_xor" targetname: "sparknacl__sanitize" }
+node: { title: "sparknacl__stream__salsa20" label: "Salsa20\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-stream.adb:130:4\nLocal: 48 bytes\nAccumulated: 784 bytes (with -u 128)" }
+edge: { sourcename: "sparknacl__stream__salsa20" targetname: "sparknacl__stream__salsa20_xor_local" }
+node: { title: "sparknacl__stream__salsa20_xor" label: "Salsa20_Xor\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-stream.adb:140:4\nLocal: 16 bytes\nAccumulated: 752 bytes (with -u 128)" }
+edge: { sourcename: "sparknacl__stream__salsa20_xor" targetname: "sparknacl__stream__salsa20_xor_local" }
+node: { title: "sparknacl__stream__salsa20_xor_local" label: "Salsa20_Xor_Local\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-stream.adb:25:4\nLocal: 192 bytes\nAccumulated: 736 bytes (with -u 128)" }
+edge: { sourcename: "sparknacl__stream__salsa20_xor_local" targetname: "sparknacl__core__salsa20" }
+edge: { sourcename: "sparknacl__stream__salsa20_xor_local" targetname: "sparknacl__core__salsa20" }
+edge: { sourcename: "sparknacl__stream__salsa20_xor_local" targetname: "sparknacl__core__salsa20" }
+edge: { sourcename: "sparknacl__stream__salsa20_xor_local" targetname: "sparknacl__sanitize" }
+edge: { sourcename: "sparknacl__stream__salsa20_xor_local" targetname: "sparknacl__sanitize" }
+edge: { sourcename: "sparknacl__stream__salsa20_xor_local" targetname: "memset" }
+node: { title: "sparknacl__sum_gfPredicate" label: "Sum_Gfpredicate\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl.ads:247:12\nLocal: \nAccumulated: " }
+node: { title: "sparknacl__u32_seqIP" label: "U32_Seqip\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl.ads:136:9\nLocal: \nAccumulated: " }
+node: { title: "sparknacl__u64_seqIP" label: "U64_Seqip\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl.ads:137:9\nLocal: \nAccumulated: " }
+node: { title: "sparknacl__utils__Tbit_to_swapmask_tableBIP" label: "Tbit_To_Swapmask_Tablebip\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-utils.adb:5:4\nLocal: \nAccumulated: " }
+node: { title: "sparknacl__utils__cswap" label: "Cswap\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-utils.adb:10:4,Cswap\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-utils.ads:19:14\nLocal: 16 bytes\nAccumulated: 32 bytes" }
+edge: { sourcename: "sparknacl__utils__cswap" targetname: "sparknacl__sanitize_u64" }
+edge: { sourcename: "sparknacl__utils__cswap" targetname: "sparknacl__sanitize_u64" }
+node: { title: "sparknacl__utils__inv_25519" label: "Inv_25519\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-utils.adb:221:4,Inv_25519\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-utils.ads:36:13\nLocal: 416 bytes\nAccumulated: 1408 bytes (with -u 128)" }
+edge: { sourcename: "sparknacl__utils__inv_25519" targetname: "sparknacl__Omultiply" }
+edge: { sourcename: "sparknacl__utils__inv_25519" targetname: "sparknacl__Omultiply" }
+node: { title: "sparknacl__utils__pack_25519" label: "Pack_25519\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-utils.adb:72:4,Pack_25519\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-utils.ads:33:13\nLocal: 400 bytes\nAccumulated: 544 bytes" }
+edge: { sourcename: "sparknacl__utils__pack_25519" targetname: "sparknacl__utils__pack_25519__subtract_p.1605" }
+edge: { sourcename: "sparknacl__utils__pack_25519" targetname: "sparknacl__utils__pack_25519__subtract_p.1605" }
+edge: { sourcename: "sparknacl__utils__pack_25519" targetname: "memset" }
+edge: { sourcename: "sparknacl__utils__pack_25519" targetname: "sparknacl__utils__cswap" }
+edge: { sourcename: "sparknacl__utils__pack_25519" targetname: "sparknacl__utils__cswap" }
+edge: { sourcename: "sparknacl__utils__pack_25519" targetname: "sparknacl__sanitize_boolean" }
+edge: { sourcename: "sparknacl__utils__pack_25519" targetname: "sparknacl__sanitize_gf" }
+edge: { sourcename: "sparknacl__utils__pack_25519" targetname: "sparknacl__sanitize_gf" }
+edge: { sourcename: "sparknacl__utils__pack_25519" targetname: "sparknacl__sanitize_boolean" }
+node: { title: "sparknacl__utils__pack_25519__subtract_p.1605" label: "Subtract_P\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-utils.adb:97:7\nLocal: 144 bytes\nAccumulated: 144 bytes" }
+edge: { sourcename: "sparknacl__utils__pack_25519__subtract_p.1605" targetname: "sparknacl__sanitize_gf" }
+node: { title: "sparknacl__utils__random_bytes_32" label: "Random_Bytes_32\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-utils.adb:237:4,Random_Bytes_32\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-utils.ads:42:13\nLocal: 16 bytes\nAccumulated: 16 bytes" }
+edge: { sourcename: "sparknacl__utils__random_bytes_32" targetname: "random__random_byte" }
+node: { title: "sparknacl__utils__unpack_25519" label: "Unpack_25519\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-utils.adb:205:4,Unpack_25519\n/media/psf/Home/Desktop/prog/SPARKNaCl/src/sparknacl-utils.ads:39:13\nLocal: \nAccumulated: " }
+}

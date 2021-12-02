@@ -1,0 +1,24 @@
+   ipa-increase_alignment                              :  ON
+    # increases alignment of global arrays
+
+   *all_optimizations                                  :  ON
+      tree-loop                                        :  ON
+         tree-unswitch                                 :  ON
+         tree-lsplit                                   :  ON
+         tree-lversion                                 :  ON
+         tree-unrolljam                                :  ON
+         tree-ldist                                    :  ON
+         tree-linterchange                             :  ON
+
+
+         tree-ch_vect                                  :  ON
+         tree-ifcvt                                    :  ON
+         tree-vect                                     :  ON
+         tree-pcom                                     :  ON
+         tree-slp1                                     :  ON
+
+         tree-slp2                                     :  ON
+
+      tree-split-paths                                 :  ON
+
+         rtl-gcse2                                     :  ON

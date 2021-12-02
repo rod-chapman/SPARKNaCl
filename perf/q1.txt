@@ -1,0 +1,73 @@
+Dear AdaCore,
+ This question arising from my performance analysis of my SPARKNaCl code against the original C implementation.
+
+For reasons I will explain below, I expected that my SPARK Code would be significantly slower than the C (at least to start with...). But... to my surprise, the SPARK code at -O0 is noticeably faster than the C, so I need to be able to explain why this is.
+
+I think I know why, but I need to check with you to make sure I understand what the compiler is doing.
+
+Background
+
+NaCl manipulates large integers. These are represented as an array of 16, 64-bit signed integers, so each occupies 128 bytes. The type is called "gf" in C and "Normal_GF" in Ada.
+
+The C code declares various functions that do stuff to such integers. For example, there's a "multiply" function declared as:
+
+typedef long long i64;
+typedef i64 gf[16];
+static void M(gf o,const gf a,const gf b);
+
+so all three parameters are really pointers, so it's fast. The C code also plays (somewhat)
+loosely with aliasing, by doing things like
+
+ M (a, a, a);
+
+
+
+In SPARK, I decided to go for readability, so I declared a "*" operator for Normal_GF as you'd expect:
+
+   function "*" (Left, Right : in Normal_GF) return Normal_GF
+     with Global => null;
+
+so I can write
+
+   X := A * B;
+
+where the C code has
+
+   M (x, a, b);
+
+Similar operators are declared for subtraction, addition, (unary) square, and so on.
+
+Now.. in Ada, I know that function results are normally returned by copy, and a Normal_GF is 128 bytes, so I thought this would be much slower than C, owing to lots of memcpy() calls moving 128 byte blocks about on the stack.
+
+BUT... that ain't what I'm getting - at least not on RISCV.
+
+I compile with -gnatRms and in the .rep file I see
+
+function "*" declared at sparknacl.ads:392:13
+convention : Ada
+   Left  : passed by reference
+   Right : passed by reference
+returns by copy
+
+but in the generated code, it seems to be passing the function result by passing a pointer in a CPU register to a caller-allocated object.
+
+In the RISCV ABI, register a0 is assigned to "Function arguments/return values", so this seems consistent, but I am confused as to why this is legal and/or expected from Ada.
+
+The "*" operator also has a bunch of nested function calls at the end - a kind of tail call sequence:
+
+      return Car.Nearlynormal_To_Normal
+               (Car.Seminormal_To_Nearlynormal
+                 (Car.Product_To_Seminormal (TF)));
+
+and again, there are _no_ memcpy() calls in the generated code - it manages to do it all by reference.
+
+So... this is surprisingly fast, even at -O0.
+
+I guess this behaviour must be target- and ABI-dependent at some point, but at what point in the compiler is this done?  I don't see any sign of this in the -gnatG output, and it obviously doesn't depend on optimization setting.
+
+Sorry these questions aren't very specific... I'm just trying to understand what going on so I can write up why the SPARK code is so fast... not a bad problem to have I suppose!
+
+I'm using the Community 2020 release of the RISCV cross compiler.
+
+Cheers,
+ Rod

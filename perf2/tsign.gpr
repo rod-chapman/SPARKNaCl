@@ -1,0 +1,20 @@
+with "../../AdaCore/Ada_Drivers_Library/boards/HiFive1_rev_B/hifive1_rev_b_zfp.gpr";
+with "../sparknacl.gpr";
+with "perf.gpr";
+
+project TSign is
+
+  for Runtime ("ada") use HiFive1_rev_B_ZFP'Runtime ("Ada");
+  for Target use "riscv32-elf";
+  for Languages use ("Ada", "C", "Asm");
+  for Source_Dirs use (".");
+  for Object_Dir use ".";
+  for Create_Missing_Dirs use "True";
+
+  for Main use ("tsign.adb");
+
+  package Compiler renames Perf.Compiler;
+  package Linker renames Perf.Linker;
+  package Ide renames Perf.Ide;
+
+end TSign;
