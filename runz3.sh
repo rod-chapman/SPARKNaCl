@@ -1,1 +1,0 @@
-$HOME/bin/cvc418 --rlimit=400000 --stats --no-bv-div-zero-const --bitblast-step=5 --cnf-step=5 --lemma-step=5 --parse-step=0 --preprocess-step=0 --restart-step=10 --rewrite-step=0 sparknacl-car.adb_89_28_predicate_check_1.smt2

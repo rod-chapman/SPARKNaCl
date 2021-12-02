@@ -775,7 +775,7 @@ is
       begin
          C := I;
          --  Note that 2**252 - 3 = 16#1111_1111 .. 1101#
-         --  with (numbering from 0 at the left) only "bit 249" set to 0
+         --  with (numbering from 0 at the left )only "bit 249" set to 0
          for A in 0 .. 248 loop
             pragma Loop_Optimize (No_Unroll);
             C := (C * C) * I;
