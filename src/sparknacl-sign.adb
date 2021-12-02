@@ -775,17 +775,16 @@ is
       begin
          C := I;
          --  Note that 2**252 - 3 = 16#1111_1111 .. 1101#
-         --  with only "bit 1" set to 0
-         for A in reverse 0 .. 250 loop
+         --  with (numbering from 0 at the left )only "bit 249" set to 0
+         for A in 0 .. 248 loop
             pragma Loop_Optimize (No_Unroll);
-            C2 := Square (C);
-            if A = 1 then
-               C := C2;
-            else
-               C := C2 * I;
-            end if;
+            C := (C * C) * I;
          end loop;
-         return C;
+
+         --  A = 249
+         C2 := C * C;
+         --  A = 250
+         return Square (C2) * I;
       end Pow_2523;
 
 
