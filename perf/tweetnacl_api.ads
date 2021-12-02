@@ -5,6 +5,7 @@ with SPARKNaCl.Hashing;   use SPARKNaCl.Hashing;
 with SPARKNaCl.Stream;    use SPARKNaCl.Stream;
 with SPARKNaCl.Core;      use SPARKNaCl.Core;
 with Interfaces;          use Interfaces;
+with Interfaces.C;
 package TweetNaCl_API
 is
    GF_Add : Unsigned_64
@@ -43,6 +44,16 @@ is
      with Import,
           Convention => C,
           Link_Name  => "crypto_sign2_ed25519_tweet";
+
+   function Crypto_Sign_Open
+     (M    :    out Byte_Seq;
+      MLen :    out Unsigned_64;
+      SM   : in     Byte_Seq;
+      N    : in     Unsigned_64;
+      PK   : in     Signing_PK) return Interfaces.C.int
+     with Import,
+          Convention => C,
+          Link_Name  => "crypto_sign_ed25519_tweet_open";
 
    procedure Crypto_Hash
      (SM    :    out Digest;
