@@ -12,15 +12,34 @@ abstract project Perf is
 
   Callgraph_Switch := ("-fcallgraph-info=su,da");
 
-  Opt_Switch := ("-O2");
+  type Build_Kind is ("debug", "O1", "O2", "O3", "Os", "Og");
+  Build_Mode : Build_Kind := External ("SPARKNACL_BUILD_MODE", "O2");
+
+  Opt_Switch := ();
+  case Build_Mode is
+     when "debug" =>
+        Opt_Switch := ("-g",   -- Debug info
+                       "-O0"); -- No optimization
+     when "O1" =>
+        Opt_Switch := ("-O1");
+     when "O2" =>
+        Opt_Switch := ("-O2");
+     when "O3" =>
+        Opt_Switch := ("-O3");
+     when "Os" =>
+        Opt_Switch := ("-Os");
+     when "Og" =>
+        Opt_Switch := ("-g",
+                       "-Og");
+  end case;
+
 
   package Compiler is
 
     for Default_Switches ("C") use Compiler'Default_Switches ("C") &
         Callgraph_Switch &
         Opt_Switch &
-        ("-g",                  -- Debug info
-         "-march=rv32im",       -- No compressed instructions for C
+        ("-march=rv32im",       -- No compressed instructions for C
          "-ffunction-sections", -- Create a linker section for each function
          "-fdata-sections");    -- Create a linker section for each data
 
