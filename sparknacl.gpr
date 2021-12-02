@@ -19,7 +19,7 @@ library project Sparknacl is
    Style_Checks : Enabled_Kind := External ("SPARKNACL_STYLE_CHECKS", "enabled");
    Contracts_Checks : Enabled_Kind := External ("SPARKNACL_CONTRACTS", "disabled");
 
-   type Build_Kind is ("debug", "O1", "O2", "O3", "Os");
+   type Build_Kind is ("debug", "O1", "O2", "O3", "Os", "Og");
    Build_Mode : Build_Kind := External ("SPARKNACL_BUILD_MODE", "O2");
 
    type Runtime_Kind is ("full", "zfp");
@@ -81,6 +81,9 @@ library project Sparknacl is
                             "-gnatn"); -- Enable inlining
       when "Os" =>
          Build_Switches := ("-Os");     -- Optimize for small code size, no inlining
+      when "Og" =>
+         Build_Switches := ("-g",
+                            "-Og");
    end case;
 
    --  Extend this case choice for any other target/architecture specific switches
