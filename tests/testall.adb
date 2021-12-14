@@ -4,6 +4,7 @@ with Box7;
 with Box8;
 with Core1;
 with Core3;
+with ECDH;
 with Onetimeauth;
 with Onetimeauth2;
 with Onetimeauth7;
@@ -78,6 +79,8 @@ begin
    Stream3;
    Put_Line ("Stream4");
    Stream4;
+   Put_Line ("ECDH");
+   ECDH;
 exception
    when E : others =>
       Put_Line (Exception_Message (E));
