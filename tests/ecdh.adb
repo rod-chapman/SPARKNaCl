@@ -26,18 +26,11 @@ is
    S1, S2 : Bytes_32;
 
 begin
-   AliceSK (0)  := AliceSK (0) and 248;
-   AliceSK (31) := AliceSK (31) and 127;
-   AliceSK (31) := AliceSK (31) or 64;
    AlicePK := Mult_Base (AliceSK);
-
-   BobSK (0)  := BobSK (0) and 248;
-   BobSK (31) := BobSK (31) and 127;
-   BobSK (31) := BobSK (31) or 64;
-   BobPK := Mult_Base (BobSK);
+   BobPK   := Mult_Base (BobSK);
 
    DH ("AlicePK is", AlicePK);
-   DH ("BobPK   is", BoBPK);
+   DH ("BobPK   is", BobPK);
 
    S1 := Mult (AliceSK, BobPK);
    DH ("S1 is", S1);
