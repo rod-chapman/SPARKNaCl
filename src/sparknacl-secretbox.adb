@@ -73,7 +73,7 @@ is
          begin
             if MAC.Onetimeauth_Verify
               (H => C (16 .. 31),
-               --  Slide and slide so that M'First = 0
+               --  Slice and slide so that M'First = 0
                M => M_Array (C (32 .. C'Last)),
                K => MAC_Key)
             then
