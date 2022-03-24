@@ -7,40 +7,43 @@ is
 
    function "*" (Left, Right : in Normal_GF) return Normal_GF
    is
-      subtype U32_Normal_Limb is U32 range 0 .. LMM1;
+      L : Normal_GF renames Left;
+      R : Normal_GF renames Right;
 
-      L0  : constant U32 := U32_Normal_Limb (Left (0));
-      L1  : constant U32 := U32_Normal_Limb (Left (1));
-      L2  : constant U32 := U32_Normal_Limb (Left (2));
-      L3  : constant U32 := U32_Normal_Limb (Left (3));
-      L4  : constant U32 := U32_Normal_Limb (Left (4));
-      L5  : constant U32 := U32_Normal_Limb (Left (5));
-      L6  : constant U32 := U32_Normal_Limb (Left (6));
-      L7  : constant U32 := U32_Normal_Limb (Left (7));
-      L8  : constant U32 := U32_Normal_Limb (Left (8));
-      L9  : constant U32 := U32_Normal_Limb (Left (9));
-      L10 : constant U32 := U32_Normal_Limb (Left (10));
-      L11 : constant U32 := U32_Normal_Limb (Left (11));
-      L12 : constant U32 := U32_Normal_Limb (Left (12));
-      L13 : constant U32 := U32_Normal_Limb (Left (13));
-      L14 : constant U32 := U32_Normal_Limb (Left (14));
-      L15 : constant U32 := U32_Normal_Limb (Left (15));
-      R0  : constant U32 := U32_Normal_Limb (Right (0));
-      R1  : constant U32 := U32_Normal_Limb (Right (1));
-      R2  : constant U32 := U32_Normal_Limb (Right (2));
-      R3  : constant U32 := U32_Normal_Limb (Right (3));
-      R4  : constant U32 := U32_Normal_Limb (Right (4));
-      R5  : constant U32 := U32_Normal_Limb (Right (5));
-      R6  : constant U32 := U32_Normal_Limb (Right (6));
-      R7  : constant U32 := U32_Normal_Limb (Right (7));
-      R8  : constant U32 := U32_Normal_Limb (Right (8));
-      R9  : constant U32 := U32_Normal_Limb (Right (9));
-      R10 : constant U32 := U32_Normal_Limb (Right (10));
-      R11 : constant U32 := U32_Normal_Limb (Right (11));
-      R12 : constant U32 := U32_Normal_Limb (Right (12));
-      R13 : constant U32 := U32_Normal_Limb (Right (13));
-      R14 : constant U32 := U32_Normal_Limb (Right (14));
-      R15 : constant U32 := U32_Normal_Limb (Right (15));
+      subtype U32NL is U32 range 0 .. LMM1;
+
+      L0  : constant U32NL := U32NL (L (0));
+      L1  : constant U32NL := U32NL (L (1));
+      L2  : constant U32NL := U32NL (L (2));
+      L3  : constant U32NL := U32NL (L (3));
+      L4  : constant U32NL := U32NL (L (4));
+      L5  : constant U32NL := U32NL (L (5));
+      L6  : constant U32NL := U32NL (L (6));
+      L7  : constant U32NL := U32NL (L (7));
+      L8  : constant U32NL := U32NL (L (8));
+      L9  : constant U32NL := U32NL (L (9));
+      L10 : constant U32NL := U32NL (L (10));
+      L11 : constant U32NL := U32NL (L (11));
+      L12 : constant U32NL := U32NL (L (12));
+      L13 : constant U32NL := U32NL (L (13));
+      L14 : constant U32NL := U32NL (L (14));
+      L15 : constant U32NL := U32NL (L (15));
+      R0  : constant U32NL := U32NL (R (0));
+      R1  : constant U32NL := U32NL (R (1));
+      R2  : constant U32NL := U32NL (R (2));
+      R3  : constant U32NL := U32NL (R (3));
+      R4  : constant U32NL := U32NL (R (4));
+      R5  : constant U32NL := U32NL (R (5));
+      R6  : constant U32NL := U32NL (R (6));
+      R7  : constant U32NL := U32NL (R (7));
+      R8  : constant U32NL := U32NL (R (8));
+      R9  : constant U32NL := U32NL (R (9));
+      R10 : constant U32NL := U32NL (R (10));
+      R11 : constant U32NL := U32NL (R (11));
+      R12 : constant U32NL := U32NL (R (12));
+      R13 : constant U32NL := U32NL (R (13));
+      R14 : constant U32NL := U32NL (R (14));
+      R15 : constant U32NL := U32NL (R (15));
 
       T0, T2, T3, T4, T5,
       T6, T7, T8, T9, T10, T11,
@@ -48,14 +51,14 @@ is
       T18, T19, T20, T21, T22, T23,
       T24, T25, T26, T27, T28, T29, T30 : GF64_Any_Limb;
 
-      T1, T17 : U64;
+      T1, T17 : GF64_Any_Limb;
 
       TF0, TF2, TF3,
       TF4, TF5, TF6, TF7,
       TF8, TF9, TF10, TF11,
       TF12, TF13, TF14, TF15 : GF64_Any_Limb;
 
-      TF1 : U64;
+      TF1 : GF64_Any_Limb;
 
       C : GF64_Any_Limb;
    begin
@@ -74,25 +77,17 @@ is
       TF0 := TF0 mod LM;
       pragma Assert (TF0 in 0 .. LMM1);
 
---      T1 := I64 (L1 * R0) + I64 (L0 * R1);
-      T1 := U64 (L1 * R0) + U64 (L0 * R1);
+      T1 := I64 (L1 * R0) + I64 (L0 * R1);
       pragma Assert (T1 in 0 .. 2 * MGFLP);
---      T17 := I64 (L15 * R2)  + I64 (L14 * R3)  + I64 (L13 * R4) +
---             I64 (L12 * R5)  + I64 (L11 * R6)  + I64 (L10 * R7) +
---             I64 (L9  * R8)  + I64 (L8  * R9)  + I64 (L7  * R10) +
---             I64 (L6  * R11) + I64 (L5  * R12) + I64 (L4  * R13) +
---             I64 (L3  * R14) + I64 (L2  * R15);
-      T17 := U64 (L15 * R2)  + U64 (L14 * R3)  + U64 (L13 * R4) +
-             U64 (L12 * R5)  + U64 (L11 * R6)  + U64 (L10 * R7) +
-             U64 (L9  * R8)  + U64 (L8  * R9)  + U64 (L7  * R10) +
-             U64 (L6  * R11) + U64 (L5  * R12) + U64 (L4  * R13) +
-             U64 (L3  * R14) + U64 (L2  * R15);
+      T17 := I64 (L15 * R2)  + I64 (L14 * R3)  + I64 (L13 * R4) +
+             I64 (L12 * R5)  + I64 (L11 * R6)  + I64 (L10 * R7) +
+             I64 (L9  * R8)  + I64 (L8  * R9)  + I64 (L7  * R10) +
+             I64 (L6  * R11) + I64 (L5  * R12) + I64 (L4  * R13) +
+             I64 (L3  * R14) + I64 (L2  * R15);
       pragma Assert (T17 in 0 .. 14 * MGFLP);
---      TF1  := T1  + R2256 * T17 + C;
-      TF1  := T1  + R2256 * T17 + U64 (C);
+      TF1  := T1  + R2256 * T17 + C;
       pragma Assert (TF1 in 0 .. 534 * MGFLP + 37419914);
---      C := ASR64_16 (TF1);
-      C := GF64_Any_Limb (TF1 / LM);
+      C := ASR64_16 (TF1);
       pragma Assert (C in 0 .. 34995726);
       TF1 := TF1 mod LM;
 
@@ -113,32 +108,32 @@ is
 
 
       T3 := I64 (L3 * R0) + I64 (L2 * R1) + I64 (L1 * R2) +
-        I64 (L0 * R3);
+            I64 (L0 * R3);
+      pragma Assert (T3 in 0 .. 4 * MGFLP);
       T19 := I64 (L15 * R4)  + I64 (L14 * R5)  + I64 (L13 * R6) +
-        I64 (L12 * R7)  + I64 (L11 * R8)  + I64 (L10 * R9) +
-        I64 (L9  * R10) + I64 (L8  * R11) + I64 (L7  * R12) +
-        I64 (L6  * R13) + I64 (L5  * R14) + I64 (L4  * R15);
+             I64 (L12 * R7)  + I64 (L11 * R8)  + I64 (L10 * R9) +
+             I64 (L9  * R10) + I64 (L8  * R11) + I64 (L7  * R12) +
+             I64 (L6  * R13) + I64 (L5  * R14) + I64 (L4  * R15);
+      pragma Assert (T19 in 0 .. 12 * MGFLP);
       TF3  := T3  + R2256 * T19 + C;
-      pragma Assert (TF3 >= 0);
-      pragma Assert (TF3 <= 460 * MGFLP + 32570931);
+      pragma Assert (TF3 in 0 .. 460 * MGFLP + 32570931);
       C := ASR64_16 (TF3);
-      pragma Assert (C >= 0);
-      pragma Assert (C <= 30146136);
+      pragma Assert (C in 0 .. 30146136);
       TF3 := TF3 mod LM;
 
 
       T4 := I64 (L4 * R0) + I64 (L3 * R1) + I64 (L2 * R2) +
-        I64 (L1 * R3) + I64 (L0 * R4);
+            I64 (L1 * R3) + I64 (L0 * R4);
+      pragma Assert (T4 in 0 .. 5 * MGFLP);
       T20 := I64 (L15 * R5)  + I64 (L14 * R6)  + I64 (L13 * R7) +
-        I64 (L12 * R8)  + I64 (L11 * R9)  + I64 (L10 * R10) +
-        I64 (L9  * R11) + I64 (L8  * R12) + I64 (L7  * R13) +
-        I64 (L6  * R14) + I64 (L5  * R15);
+             I64 (L12 * R8)  + I64 (L11 * R9)  + I64 (L10 * R10) +
+             I64 (L9  * R11) + I64 (L8  * R12) + I64 (L7  * R13) +
+             I64 (L6  * R14) + I64 (L5  * R15);
+      pragma Assert (T20 in 0 .. 11 * MGFLP);
       TF4  := T4  + R2256 * T20 + C;
-      pragma Assert (TF4 >= 0);
-      pragma Assert (TF4 <= 423 * MGFLP + 30146136);
+      pragma Assert (TF4 in 0 .. 423 * MGFLP + 30146136);
       C := ASR64_16 (TF4);
-      pragma Assert (C >= 0);
-      pragma Assert (C <= 27721341);
+      pragma Assert (C in 0 .. 27721341);
       TF4 := TF4 mod LM;
 
 
