@@ -45,31 +45,34 @@ is
       R14 : constant U32NL := U32NL (R (14));
       R15 : constant U32NL := U32NL (R (15));
 
-      T0, T2, T3, T4, T5,
+      --  Limb Product - a subtype for representing the product
+      --  of two normalized GF64 Limbs
+      subtype LP is I64 range 0 .. MGFLP;
+
+      subtype GF64_Natural_Limb is I64 range 0 .. (MGFLC * MGFLP);
+
+      T0 : LP;
+      T16 : GF64_Natural_Limb range 0 .. 15 * MGFLP;
+
+      T1, T2, T3, T4, T5,
       T6, T7, T8, T9, T10, T11,
-      T12, T13, T14, T15, T16,
+      T12, T13, T14, T15, T17,
       T18, T19, T20, T21, T22, T23,
-      T24, T25, T26, T27, T28, T29, T30 : GF64_Any_Limb;
+      T24, T25, T26, T27, T28, T29, T30 : GF64_Natural_Limb;
 
-      T1, T17 : GF64_Any_Limb;
-
-      TF0, TF2, TF3,
+      TF0, TF1, TF2, TF3,
       TF4, TF5, TF6, TF7,
       TF8, TF9, TF10, TF11,
-      TF12, TF13, TF14, TF15 : GF64_Any_Limb;
+      TF12, TF13, TF14, TF15 : GF64_Natural_Limb;
 
-      TF1 : GF64_Any_Limb;
-
-      C : GF64_Any_Limb;
+      C : GF64_Natural_Limb;
    begin
-      T0 := I64 (L0 * R0);
-      pragma Assert (T0 in 0 .. MGFLP);
-      T16 := I64 (L15 * R1)  + I64 (L14 * R2)  + I64 (L13 * R3) +
-        I64 (L12 * R4)  + I64 (L11 * R5)  + I64 (L10 * R6) +
-        I64 (L9  * R7)  + I64 (L8  * R8)  + I64 (L7  * R9) +
-        I64 (L6  * R10) + I64 (L5  * R11) + I64 (L4  * R12) +
-        I64 (L3  * R13) + I64 (L2  * R14) + I64 (L1  * R15);
-      pragma Assert (T16 in 0 .. 15 * MGFLP);
+      T0 := LP (L0 * R0);
+      T16 := LP (L15 * R1)  + LP (L14 * R2)  + LP (L13 * R3) +
+             LP (L12 * R4)  + LP (L11 * R5)  + LP (L10 * R6) +
+             LP (L9  * R7)  + LP (L8  * R8)  + LP (L7  * R9) +
+             LP (L6  * R10) + LP (L5  * R11) + LP (L4  * R12) +
+             LP (L3  * R13) + LP (L2  * R14) + LP (L1  * R15);
       TF0  := T0  + R2256 * T16;
       pragma Assert (TF0 in 0 .. 571 * MGFLP);
       C := ASR64_16 (TF0);
@@ -77,13 +80,13 @@ is
       TF0 := TF0 mod LM;
       pragma Assert (TF0 in 0 .. LMM1);
 
-      T1 := I64 (L1 * R0) + I64 (L0 * R1);
+      T1 := LP (L1 * R0) + LP (L0 * R1);
       pragma Assert (T1 in 0 .. 2 * MGFLP);
-      T17 := I64 (L15 * R2)  + I64 (L14 * R3)  + I64 (L13 * R4) +
-             I64 (L12 * R5)  + I64 (L11 * R6)  + I64 (L10 * R7) +
-             I64 (L9  * R8)  + I64 (L8  * R9)  + I64 (L7  * R10) +
-             I64 (L6  * R11) + I64 (L5  * R12) + I64 (L4  * R13) +
-             I64 (L3  * R14) + I64 (L2  * R15);
+      T17 := LP (L15 * R2)  + LP (L14 * R3)  + LP (L13 * R4) +
+             LP (L12 * R5)  + LP (L11 * R6)  + LP (L10 * R7) +
+             LP (L9  * R8)  + LP (L8  * R9)  + LP (L7  * R10) +
+             LP (L6  * R11) + LP (L5  * R12) + LP (L4  * R13) +
+             LP (L3  * R14) + LP (L2  * R15);
       pragma Assert (T17 in 0 .. 14 * MGFLP);
       TF1  := T1  + R2256 * T17 + C;
       pragma Assert (TF1 in 0 .. 534 * MGFLP + 37419914);
@@ -138,41 +141,43 @@ is
 
 
       T5 := I64 (L5 * R0) + I64 (L4 * R1) + I64 (L3 * R2) +
-        I64 (L2 * R3) + I64 (L1 * R4) + I64 (L0 * R5);
+            I64 (L2 * R3) + I64 (L1 * R4) + I64 (L0 * R5);
+      pragma Assert (T5 in 0 .. 6 * MGFLP);
       T21 := I64 (L15 * R6)  + I64 (L14 * R7)  + I64 (L13 * R8) +
-        I64 (L12 * R9)  + I64 (L11 * R10) + I64 (L10 * R11) +
-        I64 (L9  * R12) + I64 (L8  * R13) + I64 (L7  * R14) +
-        I64 (L6  * R15);
+             I64 (L12 * R9)  + I64 (L11 * R10) + I64 (L10 * R11) +
+             I64 (L9  * R12) + I64 (L8  * R13) + I64 (L7  * R14) +
+             I64 (L6  * R15);
+      pragma Assert (T21 in 0 .. 10 * MGFLP);
       TF5  := T5  + R2256 * T21 + C;
-      pragma Assert (TF5 >= 0);
-      pragma Assert (TF5 <= 386 * MGFLP + 27721341);
+      pragma Assert (TF5 in 0 .. 386 * MGFLP + 27721341);
       C := ASR64_16 (TF5);
-      pragma Assert (C >= 0);
-      pragma Assert (C <= 25296546);
+      pragma Assert (C in 0 .. 25296546);
       TF5 := TF5 mod LM;
 
 
       T6 := I64 (L6 * R0) + I64 (L5 * R1) + I64 (L4 * R2) +
-        I64 (L3 * R3) + I64 (L2 * R4) + I64 (L1 * R5) +
-        I64 (L0 * R6);
+            I64 (L3 * R3) + I64 (L2 * R4) + I64 (L1 * R5) +
+            I64 (L0 * R6);
+      pragma Assert (T6 in 0 .. 7 * MGFLP);
       T22 := I64 (L15 * R7)  + I64 (L14 * R8)  + I64 (L13 * R9) +
-        I64 (L12 * R10) + I64 (L11 * R11) + I64 (L10 * R12) +
-        I64 (L9  * R13) + I64 (L8  * R14) + I64 (L7  * R15);
+             I64 (L12 * R10) + I64 (L11 * R11) + I64 (L10 * R12) +
+             I64 (L9  * R13) + I64 (L8  * R14) + I64 (L7  * R15);
+      pragma Assert (T22 in 0 .. 9 * MGFLP);
       TF6  := T6  + R2256 * T22 + C;
-      pragma Assert (TF6 >= 0);
-      pragma Assert (TF6 <= 349 * MGFLP + 25296546);
+      pragma Assert (TF6 in 0 .. 349 * MGFLP + 25296546);
       C := ASR64_16 (TF6);
-      pragma Assert (C >= 0);
-      pragma Assert (C <= 22871751);
+      pragma Assert (C in 0 .. 22871751);
       TF6 := TF6 mod LM;
 
 
       T7 := I64 (L7 * R0) + I64 (L6 * R1) + I64 (L5 * R2) +
-        I64 (L4 * R3) + I64 (L3 * R4) + I64 (L2 * R5) +
-        I64 (L1 * R6) + I64 (L0 * R7);
+            I64 (L4 * R3) + I64 (L3 * R4) + I64 (L2 * R5) +
+            I64 (L1 * R6) + I64 (L0 * R7);
+      pragma Assert (T7 in 0 .. 8 * MGFLP);
       T23 := I64 (L15 * R8)  + I64 (L14 * R9)  + I64 (L13 * R10) +
-        I64 (L12 * R11) + I64 (L11 * R12) + I64 (L10 * R13) +
-        I64 (L9  * R14) + I64 (L8  * R15);
+             I64 (L12 * R11) + I64 (L11 * R12) + I64 (L10 * R13) +
+             I64 (L9  * R14) + I64 (L8  * R15);
+      pragma Assert (T23 in 0 .. 8 * MGFLP);
       TF7  := T7  + R2256 * T23 + C;
       pragma Assert (TF7 in 0 .. 312 * MGFLP + 22871751);
       C := ASR64_16 (TF7);
@@ -181,11 +186,13 @@ is
 
 
       T8 := I64 (L8 * R0) + I64 (L7 * R1) + I64 (L6 * R2) +
-        I64 (L5 * R3) + I64 (L4 * R4) + I64 (L3 * R5) +
-        I64 (L2 * R6) + I64 (L1 * R7) + I64 (L0 * R8);
+            I64 (L5 * R3) + I64 (L4 * R4) + I64 (L3 * R5) +
+            I64 (L2 * R6) + I64 (L1 * R7) + I64 (L0 * R8);
+      pragma Assert (T8 in 0 .. 9 * MGFLP);
       T24 := I64 (L15 * R9)  + I64 (L14 * R10) + I64 (L13 * R11) +
-        I64 (L12 * R12) + I64 (L11 * R13) + I64 (L10 * R14) +
-        I64 (L9  * R15);
+             I64 (L12 * R12) + I64 (L11 * R13) + I64 (L10 * R14) +
+             I64 (L9  * R15);
+      pragma Assert (T24 in 0 .. 7 * MGFLP);
       TF8  := T8  + R2256 * T24 + C;
       pragma Assert (TF8 in 0 .. 275 * MGFLP + 20446956);
       C := ASR64_16 (TF8);
