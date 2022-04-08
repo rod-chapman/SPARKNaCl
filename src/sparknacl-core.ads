@@ -92,7 +92,8 @@ is
                     (if not Xor_M then M'Length = 64) and
                     U32 (C'Length) <= U32 (N32'Last) and
                     C'First >= N32'First and
-                    M'First >= N32'First;
+                    M'First >= N32'First,
+          Post   => C'Initialized;
 
 private
    --  Note - also limited here in the full view to ensure
