@@ -26,7 +26,12 @@ is
                              K       : in     ChaCha20_Key;
                              Xor_M   : in     Boolean;
                              Counter : in     U64)
-     with Global => null;
+     with Global => null,
+          Pre    => M'First = 0 and then
+                    C'First = 0 and then
+                    U32 (C'Length) <= U32 (N32'Last) and then
+                    (if Xor_M then (C'Last = M'Last)) and then
+                    (if not Xor_M then M'Last = 63);
 
    procedure ChaCha20_IETF_Local (C       :    out Byte_Seq;
                                   M       : in     Byte_Seq;
@@ -34,7 +39,12 @@ is
                                   K       : in     ChaCha20_Key;
                                   Xor_M   : in     Boolean;
                                   Counter : in     U32)
-     with Global => null;
+     with Global => null,
+          Pre    => M'First = 0 and then
+                    C'First = 0 and then
+                    U32 (C'Length) <= U32 (N32'Last) and then
+                    (if Xor_M then (C'Last = M'Last)) and then
+                    (if not Xor_M then M'Last = 63);
 
    --------------------------------------------------------
    --  Local subprogram bodies

@@ -102,7 +102,8 @@ is
      with Global => null,
           Pre    => C'First = 0 and
                     M'First = 0 and
-                    (M'Last = C'Last or M'Last = 63) and
+                    (if Xor_M then M'Length = C'Length) and
+                    (if not Xor_M then M'Length = 64) and
                     C'Length <= N32'Last and
                     C'First >= N32'First and
                     M'First >= N32'First;

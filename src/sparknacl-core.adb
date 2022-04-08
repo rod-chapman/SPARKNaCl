@@ -424,6 +424,13 @@ is
       j15 := Context.F (15);
 
       loop
+         pragma Loop_Optimize (No_Unroll);
+         pragma Loop_Invariant ((B + CI = C'Length) and then
+                                (CI <= C'Length - B) and then
+                                (if not Xor_M then MI = M'First) and then
+                                (if Xor_M then M'Length = C'Length) and then
+                                (if Xor_M then B + MI = M'Length));
+
          if B < 64 then
             Tmp (0 .. B - 1) := M (MI .. MI + B - 1);
          end if;
