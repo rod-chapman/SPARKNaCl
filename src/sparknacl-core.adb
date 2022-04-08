@@ -581,8 +581,7 @@ is
             C (CI .. CI + B - 1) := Tmp (0 .. B - 1);
 
             --  On exit, we should have initialized the whole of C
-            pragma Assert (CI + B - 1 = C'Last and then
-                           C (C'First .. C'Last)'Initialized);
+            pragma Assert (C (C'First .. C'Last)'Initialized);
 
             --  ref impl has these lines but other implementations treat the
             --  context/initial state as purely read-only, leaving it to the
@@ -609,6 +608,9 @@ is
             ST32 (C (CI + 52 .. CI + 55), x13);
             ST32 (C (CI + 56 .. CI + 59), x14);
             ST32 (C (CI + 60 .. CI + 63), x15);
+
+            pragma Assert (CI + B - 1 = C'Last and then
+                           C (CI + 0 .. CI + 63)'Initialized);
 
             B  := B - 64;
             CI := CI + 64;
