@@ -23,6 +23,9 @@ with Stream;
 with Stream2;
 with Stream3;
 with Stream4;
+with Stream5;
+with Stream6;
+with Stream7;
 
 with Ada.Text_IO; use Ada.Text_IO;
 with Ada.Exceptions; use Ada.Exceptions;
@@ -79,6 +82,12 @@ begin
    Stream3;
    Put_Line ("Stream4");
    Stream4;
+   Put_Line ("Stream5");
+   Stream5;
+   Put_Line ("Stream6");
+   Stream6;
+   Put_Line ("Stream7");
+   Stream7;
    Put_Line ("ECDH");
    ECDH;
 exception

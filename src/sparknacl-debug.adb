@@ -24,6 +24,29 @@ is
       end if;
    end PB;
 
+   procedure PU32 (X : in U32);
+
+   procedure PU32 (X : in U32)
+   is
+      B1 : constant Byte := Byte (16#FF# and Shift_Right (X, 24));
+      B2 : constant Byte := Byte (16#FF# and Shift_Right (X, 16));
+      B3 : constant Byte := Byte (16#FF# and Shift_Right (X, 8));
+      B4 : constant Byte := Byte (16#FF# and X);
+   begin
+      if On then
+         Put ("16#");
+         Put (BToC (B1 / 16));
+         Put (BToC (B1 mod 16));
+         Put (BToC (B2 / 16));
+         Put (BToC (B2 mod 16));
+         Put (BToC (B3 / 16));
+         Put (BToC (B3 mod 16));
+         Put (BToC (B4 / 16));
+         Put (BToC (B4 mod 16));
+         Put ("# ");
+      end if;
+   end PU32;
+
    procedure DH (S : in String; D : in Byte_Seq)
    is
    begin
@@ -45,6 +68,21 @@ is
       if On then
          Put (S & ' ');
          I64IO.Put (D, Width => 0);
+         New_Line;
+      end if;
+   end DH;
+
+   procedure DH (S : in String; D : in U32_Seq)
+   is
+   begin
+      if On then
+         Put_Line (S);
+         for I in D'Range loop
+            PU32 (D (I));
+            if I mod 8 = 7 then
+               New_Line;
+            end if;
+         end loop;
          New_Line;
       end if;
    end DH;

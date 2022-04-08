@@ -7,6 +7,7 @@ is
       (if B then "TRUE" else "FALSE");
 
    procedure DH  (S : in String; D : in Byte_Seq);
+   procedure DH  (S : in String; D : in U32_Seq);
    procedure DH  (S : in String; D : in Boolean);
 
    procedure DH  (S : in String; D : in I64);
