@@ -19,6 +19,23 @@ is
       Y      :    out U32_Seq_16)
      with Global => null;
 
+   --  Little-endian conversion, so least-significant 8 bits
+   --  of U go into X (0)
+   procedure ST32 (X :    out Bytes_4;
+                   U : in     U32)
+     with Global => null;
+
+   --  Little-endian conversion, so least-significant 8 bits
+   --  of U go into X (0)
+   procedure ST64 (X :    out Bytes_8;
+                   U : in     U64)
+     with Global => null;
+
+   --  Little-endian conversion, so X (0) becomes
+   --  the least-significant 8 bits of the returned value
+   function LD32 (X : in Bytes_4) return U32
+     with Global => null;
+
    function RL32 (X : in U32;
                   C : in Natural) return U32
      renames Rotate_Left;
@@ -425,11 +442,6 @@ is
 
       loop
          pragma Loop_Optimize (No_Unroll);
-         pragma Loop_Invariant ((B + CI = C'Length) and then
-                                (CI <= C'Length - B) and then
-                                (if not Xor_M then MI = M'First) and then
-                                (if Xor_M then M'Length = C'Length) and then
-                                (if Xor_M then B + MI = M'Length));
 
          if B < 64 then
             Tmp (0 .. B - 1) := M (MI .. MI + B - 1);
@@ -523,7 +535,8 @@ is
             j13 := j13 + 1;
          end if;
 
-         if B >= 64 then
+         if B = 64 then
+            --  Final block of exactly 64 bytes
             ST32 (C (CI + 0  .. CI + 3),  x0);
             ST32 (C (CI + 4  .. CI + 7),  x1);
             ST32 (C (CI + 8  .. CI + 11), x2);
@@ -540,7 +553,14 @@ is
             ST32 (C (CI + 52 .. CI + 55), x13);
             ST32 (C (CI + 56 .. CI + 59), x14);
             ST32 (C (CI + 60 .. CI + 63), x15);
-         else
+
+            --  On exit, we should have initialized the whole of C
+            pragma Assert (CI + 63 = C'Last and then
+                           C (C'First .. C'Last)'Initialized);
+
+            exit;
+         elsif B < 64 then
+            --  Final block, less than 64 bytes
             ST32 (Tmp (0  .. 3),  x0);
             ST32 (Tmp (4  .. 7),  x1);
             ST32 (Tmp (8  .. 11), x2);
@@ -557,12 +577,12 @@ is
             ST32 (Tmp (52 .. 55), x13);
             ST32 (Tmp (56 .. 59), x14);
             ST32 (Tmp (60 .. 63), x15);
-         end if;
 
-         if B <= 64 then
-            if B < 64 then
-               C (CI .. CI + B - 1) := Tmp (0 .. B - 1);
-            end if;
+            C (CI .. CI + B - 1) := Tmp (0 .. B - 1);
+
+            --  On exit, we should have initialized the whole of C
+            pragma Assert (CI + B - 1 = C'Last and then
+                           C (C'First .. C'Last)'Initialized);
 
             --  ref impl has these lines but other implementations treat the
             --  context/initial state as purely read-only, leaving it to the
@@ -570,9 +590,27 @@ is
             --  invocations of the chacha20 function.
             --  Context (12) := j12;
             --  Context (13) := j13;
-            return;
+            exit;
          else
-            B := B - 64;
+            pragma Assert (B > 64);
+            ST32 (C (CI + 0  .. CI + 3),  x0);
+            ST32 (C (CI + 4  .. CI + 7),  x1);
+            ST32 (C (CI + 8  .. CI + 11), x2);
+            ST32 (C (CI + 12 .. CI + 15), x3);
+            ST32 (C (CI + 16 .. CI + 19), x4);
+            ST32 (C (CI + 20 .. CI + 23), x5);
+            ST32 (C (CI + 24 .. CI + 27), x6);
+            ST32 (C (CI + 28 .. CI + 31), x7);
+            ST32 (C (CI + 32 .. CI + 35), x8);
+            ST32 (C (CI + 36 .. CI + 39), x9);
+            ST32 (C (CI + 40 .. CI + 43), x10);
+            ST32 (C (CI + 44 .. CI + 47), x11);
+            ST32 (C (CI + 48 .. CI + 51), x12);
+            ST32 (C (CI + 52 .. CI + 55), x13);
+            ST32 (C (CI + 56 .. CI + 59), x14);
+            ST32 (C (CI + 60 .. CI + 63), x15);
+
+            B  := B - 64;
             CI := CI + 64;
 
             --  If we are just generating the cipher stream, then expect M
@@ -582,7 +620,27 @@ is
                MI := MI + 64;
             end if;
          end if;
+
+         pragma Loop_Invariant
+           (B + CI = C'Length);
+         pragma Loop_Invariant
+           (CI <= C'Length - B);
+         pragma Loop_Invariant
+           (C'First + CI - 1 = C'Last - B);
+
+         --  C is partly initialized, with B bytes still to go
+         pragma Loop_Invariant
+           (C (C'First .. C'Last - B)'Initialized);
+         pragma Loop_Invariant
+           (if not Xor_M then MI = M'First);
+         pragma Loop_Invariant
+           (if Xor_M then M'Length = C'Length);
+         pragma Loop_Invariant
+           (if Xor_M then B + MI = M'Length);
+
       end loop;
+      pragma Assert (C (C'First .. C'Last)'Initialized);
+      pragma Assert (C'Initialized);
    end ChaCha20_Encrypt_Bytes;
 
 end SPARKNaCl.Core;

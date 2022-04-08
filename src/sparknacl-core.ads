@@ -49,21 +49,6 @@ is
      with Global => null;
 
    --------------------------------------------------------
-   --  Crypto array <-> scalar primitives
-   --------------------------------------------------------
-
-   procedure ST32 (X :    out Bytes_4;
-                   U : in     U32)
-     with Global => null;
-
-   function LD32 (X : in Bytes_4) return U32
-     with Global => null;
-
-   procedure ST64 (X :    out Bytes_8;
-                   U : in     U64)
-     with Global => null;
-
-   --------------------------------------------------------
    --  Salsa20 Core functions
    --------------------------------------------------------
 
@@ -100,6 +85,7 @@ is
                                      M       : in     Byte_Seq;
                                      Xor_M   : in     Boolean)
      with Global => null,
+          Relaxed_Initialization => C,
           Pre    => C'First = 0 and
                     M'First = 0 and
                     (if Xor_M then M'Length = C'Length) and
