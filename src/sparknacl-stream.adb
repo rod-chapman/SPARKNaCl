@@ -20,6 +20,32 @@ is
                     (if Xor_M then (C'Last  = M'Last)) and then
                     (if not Xor_M then M'Last = 0);
 
+   procedure ChaCha20_Local (C       :    out Byte_Seq;
+                             M       : in     Byte_Seq;
+                             N       : in     ChaCha20_Nonce;
+                             K       : in     ChaCha20_Key;
+                             Xor_M   : in     Boolean;
+                             Counter : in     U64)
+     with Global => null,
+          Pre    => M'First = 0 and then
+                    C'First = 0 and then
+                    U32 (C'Length) <= U32 (N32'Last) and then
+                    (if Xor_M then (C'Last = M'Last)) and then
+                    (if not Xor_M then M'Last = 63);
+
+   procedure ChaCha20_IETF_Local (C       :    out Byte_Seq;
+                                  M       : in     Byte_Seq;
+                                  N       : in     ChaCha20_IETF_Nonce;
+                                  K       : in     ChaCha20_Key;
+                                  Xor_M   : in     Boolean;
+                                  Counter : in     U32)
+     with Global => null,
+          Pre    => M'First = 0 and then
+                    C'First = 0 and then
+                    U32 (C'Length) <= U32 (N32'Last) and then
+                    (if Xor_M then (C'Last = M'Last)) and then
+                    (if not Xor_M then M'Last = 63);
+
    --------------------------------------------------------
    --  Local subprogram bodies
    --------------------------------------------------------
@@ -184,5 +210,83 @@ is
       Sanitize (S);
       pragma Unreferenced (S);
    end HSalsa20_Xor;
+
+   --------------------------------------------------------
+   --  ChaCha20 Internal Functions
+   --------------------------------------------------------
+
+   procedure ChaCha20_Local (C       :    out Byte_Seq;
+                             M       : in     Byte_Seq;
+                             N       : in     ChaCha20_Nonce;
+                             K       : in     ChaCha20_Key;
+                             Xor_M   : in     Boolean;
+                             Counter : in     U64)
+   is
+      S : ChaCha20_Context;
+   begin
+      Core.ChaCha20_Key_IV_Setup (S, K, N, Counter);
+      Core.ChaCha20_Encrypt_Bytes (S, C, M, Xor_M);
+      Sanitize (S);
+      pragma Unreferenced (S);
+   end ChaCha20_Local;
+
+   procedure ChaCha20_IETF_Local (C       :    out Byte_Seq;
+                                  M       : in     Byte_Seq;
+                                  N       : in     ChaCha20_IETF_Nonce;
+                                  K       : in     ChaCha20_Key;
+                                  Xor_M   : in     Boolean;
+                                  Counter : in     U32)
+   is
+      S : ChaCha20_Context;
+   begin
+      Core.ChaCha20_Key_IV_IETF_Setup (S, K, N, Counter);
+      Core.ChaCha20_Encrypt_Bytes (S, C, M, Xor_M);
+      Sanitize (S);
+      pragma Unreferenced (S);
+   end ChaCha20_IETF_Local;
+
+   --------------------------------------------------------
+   --  Exported subprogram bodies
+   --------------------------------------------------------
+
+   procedure ChaCha20 (C       :    out Byte_Seq;
+                       N       : in     ChaCha20_Nonce;
+                       K       : in     ChaCha20_Key;
+                       Counter : in     U64)
+   is
+      M : constant Bytes_64 := (others => 0);
+   begin
+      ChaCha20_Local (C, M, N, K, False, Counter);
+   end ChaCha20;
+
+   procedure ChaCha20_Xor (C       :    out Byte_Seq;
+                           M       : in     Byte_Seq;
+                           N       : in     ChaCha20_Nonce;
+                           K       : in     ChaCha20_Key;
+                           Counter : in     U64)
+   is
+   begin
+      ChaCha20_Local (C, M, N, K, True, Counter);
+   end ChaCha20_Xor;
+
+   procedure ChaCha20_IETF (C       :    out Byte_Seq;
+                            N       : in     ChaCha20_IETF_Nonce;
+                            K       : in     ChaCha20_Key;
+                            Counter : in     U32)
+   is
+      M : constant Bytes_64 := (others => 0);
+   begin
+      ChaCha20_IETF_Local (C, M, N, K, False, Counter);
+   end ChaCha20_IETF;
+
+   procedure ChaCha20_IETF_Xor (C       :    out Byte_Seq;
+                                M       : in     Byte_Seq;
+                                N       : in     ChaCha20_IETF_Nonce;
+                                K       : in     ChaCha20_Key;
+                                Counter : in     U32)
+   is
+   begin
+      ChaCha20_IETF_Local (C, M, N, K, True, Counter);
+   end ChaCha20_IETF_Xor;
 
 end SPARKNaCl.Stream;

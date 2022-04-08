@@ -276,6 +276,8 @@ is
 
    procedure Sanitize_I64_Seq (R : out I64_Seq) is separate;
 
+   procedure Sanitize_U32_Seq (R : out U32_Seq) is separate;
+
    procedure Sanitize_Boolean (R : out Boolean) is separate;
 
 end SPARKNaCl;
