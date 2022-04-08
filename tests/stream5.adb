@@ -43,9 +43,9 @@ is
 begin
    -- Keystream only
    ChaCha20_IETF (C, Nonce_IETF, Firstkey, Initial_Counter_IETF);
-   DH ("C is", C);
+   DH ("Keystream only. See RFC 8539 section 2.4.2", C);
 
    -- Message ciphertext
    ChaCha20_IETF_Xor (C, M, Nonce_IETF, Firstkey, Initial_Counter_IETF);
-   DH ("C2 is", C);
+   DH ("Ciphertext. See RFC 8539 section 2.4.2", C);
 end Stream5;
