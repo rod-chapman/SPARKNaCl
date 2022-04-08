@@ -1,5 +1,6 @@
 package body SPARKNaCl.Core
-  with SPARK_Mode => On
+  with Pure,
+       SPARK_Mode => On
 is
    pragma Warnings (GNATProve, Off, "pragma * ignored (not yet supported)");
 
@@ -7,17 +8,6 @@ is
    --  Local subprogram declarations
    --  and renamings
    --===============================
-
-   function RL32 (X : in U32;
-                  C : in Natural) return U32
-     renames Rotate_Left;
-
-   procedure ST32 (X :    out Bytes_4;
-                   U : in     U32)
-     with Global => null;
-
-   function LD32 (X : in Bytes_4) return U32
-     with Global => null;
 
    --  Derives intermediate values X and Y from Input, K and C.
    --  Common to both Salsa20 and HSalsa20
@@ -28,6 +18,10 @@ is
       X      :    out U32_Seq_16;
       Y      :    out U32_Seq_16)
      with Global => null;
+
+   function RL32 (X : in U32;
+                  C : in Natural) return U32
+     renames Rotate_Left;
 
    --===============================
    --  Local subprogram bodies
@@ -44,6 +38,18 @@ is
          T := Shift_Right (T, 8);
       end loop;
    end ST32;
+
+   procedure ST64 (X :    out Bytes_8;
+                   U : in     U64)
+   is
+      T : U64 := U;
+   begin
+      for I in X'Range loop
+         pragma Loop_Optimize (No_Unroll);
+         X (I) := Byte (T mod 256);
+         T := Shift_Right (T, 8);
+      end loop;
+   end ST64;
 
    function LD32 (X : in Bytes_4) return U32
    is
@@ -186,7 +192,7 @@ is
    end Core_Common;
 
    --------------------------------------------------------
-   --  Exported suprogram bodies
+   --  Exported subprogram bodies
    --------------------------------------------------------
 
    function Construct (K : in Bytes_32) return Salsa20_Key
@@ -212,6 +218,37 @@ is
    is
    begin
       Sanitize (K.F);
+   end Sanitize;
+
+   function Construct (K : in Bytes_32) return ChaCha20_Key
+   is
+   begin
+      return ChaCha20_Key'(F => K);
+   end Construct;
+
+   procedure Construct (K :    out ChaCha20_Key;
+                        X : in     Bytes_32)
+   is
+   begin
+      K.F := X;
+   end Construct;
+
+   function Serialize (K : in ChaCha20_Key) return Bytes_32
+   is
+   begin
+      return K.F;
+   end Serialize;
+
+   procedure Sanitize (K : out ChaCha20_Key)
+   is
+   begin
+      Sanitize (K.F);
+   end Sanitize;
+
+   procedure Sanitize (S : out ChaCha20_Context)
+   is
+   begin
+      Sanitize_U32_Seq (S.F);
    end Sanitize;
 
    --------------------------------------------------------
@@ -266,5 +303,279 @@ is
       end loop;
    end HSalsa20;
 
+   --------------------------------------------------------
+   --  ChaCha20 Core functions
+   --------------------------------------------------------
+   procedure ChaCha20_Key_IV_Setup (Context :    out ChaCha20_Context;
+                                    K       : in     ChaCha20_Key;
+                                    N       : in     ChaCha20_Nonce;
+                                    Counter : in     U64)
+   is
+      Counter_Bytes : Bytes_8;
+   begin
+      ST64 (Counter_Bytes, Counter);
+
+      Context.F :=
+         (0  => LD32 (Sigma (0 .. 3)),
+          1  => LD32 (Sigma (4 .. 7)),
+          2  => LD32 (Sigma (8 .. 11)),
+          3  => LD32 (Sigma (12 .. 15)),
+          4  => LD32 (K.F (0 .. 3)),
+          5  => LD32 (K.F (4 .. 7)),
+          6  => LD32 (K.F (8 .. 11)),
+          7  => LD32 (K.F (12 .. 15)),
+          8  => LD32 (K.F (16 .. 19)),
+          9  => LD32 (K.F (20 .. 23)),
+          10 => LD32 (K.F (24 .. 27)),
+          11 => LD32 (K.F (28 .. 31)),
+
+          --  chacha_ivsetup in reference. reference imp has counter baked
+          --  into the IV, broken out separately here
+          12 => LD32 (Counter_Bytes (0 .. 3)),
+          13 => LD32 (Counter_Bytes (4 .. 7)),
+          14 => LD32 (N (0 .. 3)),
+          15 => LD32 (N (4 .. 7)));
+
+      pragma Unreferenced (Counter_Bytes);
+   end ChaCha20_Key_IV_Setup;
+
+   procedure ChaCha20_Key_IV_IETF_Setup (Context :    out ChaCha20_Context;
+                                         K       : in     ChaCha20_Key;
+                                         N       : in     ChaCha20_IETF_Nonce;
+                                         Counter : in     U32)
+   is
+      Counter_Bytes : Bytes_4;
+   begin
+      ST32 (Counter_Bytes, Counter);
+
+      Context.F :=
+         (0  => LD32 (Sigma (0 .. 3)),
+          1  => LD32 (Sigma (4 .. 7)),
+          2  => LD32 (Sigma (8 .. 11)),
+          3  => LD32 (Sigma (12 .. 15)),
+          4  => LD32 (K.F (0 .. 3)),
+          5  => LD32 (K.F (4 .. 7)),
+          6  => LD32 (K.F (8 .. 11)),
+          7  => LD32 (K.F (12 .. 15)),
+          8  => LD32 (K.F (16 .. 19)),
+          9  => LD32 (K.F (20 .. 23)),
+          10 => LD32 (K.F (24 .. 27)),
+          11 => LD32 (K.F (28 .. 31)),
+          12 => LD32 (Counter_Bytes (0 .. 3)),
+          13 => LD32 (N (0 .. 3)),
+          14 => LD32 (N (4 .. 7)),
+          15 => LD32 (N (8 .. 11)));
+
+      pragma Unreferenced (Counter_Bytes);
+   end ChaCha20_Key_IV_IETF_Setup;
+
+   procedure ChaCha20_Encrypt_Bytes (Context : in     ChaCha20_Context;
+                                     C       :    out Byte_Seq;
+                                     M       : in     Byte_Seq;
+                                     Xor_M   : in     Boolean)
+   is
+      --  Fwd declare
+      procedure Quarter_Round (a, b, c, d : in out U32) with Global => null;
+
+      procedure Quarter_Round (a, b, c, d : in out U32) is
+      begin
+         a := a + b;
+         d := RL32 (d xor a, 16);
+         c := c + d;
+         b := RL32 (b xor c, 12);
+         a := a + b;
+         d := RL32 (d xor a, 8);
+         c := c + d;
+         b := RL32 (b xor c, 7);
+      end Quarter_Round;
+
+      --  state after each round
+      x0, x1, x2, x3, x4, x5, x6, x7,
+      x8, x9, x10, x11, x12, x13, x14, x15 : U32;
+
+      --  initial state
+      j0, j1, j2, j3, j4, j5, j6, j7,
+      j8, j9, j10, j11, j12, j13, j14, j15 : U32;
+
+      B : N32 := C'Length;
+
+      --  Used for the last block if < 64 bytes
+      Tmp : Bytes_64 := (others => 0);
+
+      CI : N32 := C'First;
+      MI : N32 := M'First;
+
+   begin
+      j0  := Context.F (0);
+      j1  := Context.F (1);
+      j2  := Context.F (2);
+      j3  := Context.F (3);
+      j4  := Context.F (4);
+      j5  := Context.F (5);
+      j6  := Context.F (6);
+      j7  := Context.F (7);
+      j8  := Context.F (8);
+      j9  := Context.F (9);
+      j10 := Context.F (10);
+      j11 := Context.F (11);
+      j12 := Context.F (12);
+      j13 := Context.F (13);
+      j14 := Context.F (14);
+      j15 := Context.F (15);
+
+      loop
+         if B < 64 then
+            Tmp (0 .. B - 1) := M (MI .. MI + B - 1);
+         end if;
+
+         x0  := j0;
+         x1  := j1;
+         x2  := j2;
+         x3  := j3;
+         x4  := j4;
+         x5  := j5;
+         x6  := j6;
+         x7  := j7;
+         x8  := j8;
+         x9  := j9;
+         x10 := j10;
+         x11 := j11;
+         x12 := j12;
+         x13 := j13;
+         x14 := j14;
+         x15 := j15;
+
+         for R in 1 .. 10 loop
+            Quarter_Round (x0, x4,  x8, x12);
+            Quarter_Round (x1, x5,  x9, x13);
+            Quarter_Round (x2, x6, x10, x14);
+            Quarter_Round (x3, x7, x11, x15);
+            Quarter_Round (x0, x5, x10, x15);
+            Quarter_Round (x1, x6, x11, x12);
+            Quarter_Round (x2, x7,  x8, x13);
+            Quarter_Round (x3, x4,  x9, x14);
+         end loop;
+
+         x0  := x0  + j0;
+         x1  := x1  + j1;
+         x2  := x2  + j2;
+         x3  := x3  + j3;
+         x4  := x4  + j4;
+         x5  := x5  + j5;
+         x6  := x6  + j6;
+         x7  := x7  + j7;
+         x8  := x8  + j8;
+         x9  := x9  + j9;
+         x10 := x10 + j10;
+         x11 := x11 + j11;
+         x12 := x12 + j12;
+         x13 := x13 + j13;
+         x14 := x14 + j14;
+         x15 := x15 + j15;
+
+         if B >= 64 then
+            x0  := x0  xor LD32 (M (MI + 0  .. MI + 3));
+            x1  := x1  xor LD32 (M (MI + 4  .. MI + 7));
+            x2  := x2  xor LD32 (M (MI + 8  .. MI + 11));
+            x3  := x3  xor LD32 (M (MI + 12 .. MI + 15));
+            x4  := x4  xor LD32 (M (MI + 16 .. MI + 19));
+            x5  := x5  xor LD32 (M (MI + 20 .. MI + 23));
+            x6  := x6  xor LD32 (M (MI + 24 .. MI + 27));
+            x7  := x7  xor LD32 (M (MI + 28 .. MI + 31));
+            x8  := x8  xor LD32 (M (MI + 32 .. MI + 35));
+            x9  := x9  xor LD32 (M (MI + 36 .. MI + 39));
+            x10 := x10 xor LD32 (M (MI + 40 .. MI + 43));
+            x11 := x11 xor LD32 (M (MI + 44 .. MI + 47));
+            x12 := x12 xor LD32 (M (MI + 48 .. MI + 51));
+            x13 := x13 xor LD32 (M (MI + 52 .. MI + 55));
+            x14 := x14 xor LD32 (M (MI + 56 .. MI + 59));
+            x15 := x15 xor LD32 (M (MI + 60 .. MI + 63));
+         else
+            x0  := x0  xor LD32 (Tmp (0  .. 3));
+            x1  := x1  xor LD32 (Tmp (4  .. 7));
+            x2  := x2  xor LD32 (Tmp (8  .. 11));
+            x3  := x3  xor LD32 (Tmp (12 .. 15));
+            x4  := x4  xor LD32 (Tmp (16 .. 19));
+            x5  := x5  xor LD32 (Tmp (20 .. 23));
+            x6  := x6  xor LD32 (Tmp (24 .. 27));
+            x7  := x7  xor LD32 (Tmp (28 .. 31));
+            x8  := x8  xor LD32 (Tmp (32 .. 35));
+            x9  := x9  xor LD32 (Tmp (36 .. 39));
+            x10 := x10 xor LD32 (Tmp (40 .. 43));
+            x11 := x11 xor LD32 (Tmp (44 .. 47));
+            x12 := x12 xor LD32 (Tmp (48 .. 51));
+            x13 := x13 xor LD32 (Tmp (52 .. 55));
+            x14 := x14 xor LD32 (Tmp (56 .. 59));
+            x15 := x15 xor LD32 (Tmp (60 .. 63));
+         end if;
+
+         --  increment counter - note that for IETF usage this will clobber
+         --  the nonce if counter overflows.
+         j12 := j12 + 1;
+         if j12 = 0 then
+            j13 := j13 + 1;
+         end if;
+
+         if B >= 64 then
+            ST32 (C (CI + 0  .. CI + 3),  x0);
+            ST32 (C (CI + 4  .. CI + 7),  x1);
+            ST32 (C (CI + 8  .. CI + 11), x2);
+            ST32 (C (CI + 12 .. CI + 15), x3);
+            ST32 (C (CI + 16 .. CI + 19), x4);
+            ST32 (C (CI + 20 .. CI + 23), x5);
+            ST32 (C (CI + 24 .. CI + 27), x6);
+            ST32 (C (CI + 28 .. CI + 31), x7);
+            ST32 (C (CI + 32 .. CI + 35), x8);
+            ST32 (C (CI + 36 .. CI + 39), x9);
+            ST32 (C (CI + 40 .. CI + 43), x10);
+            ST32 (C (CI + 44 .. CI + 47), x11);
+            ST32 (C (CI + 48 .. CI + 51), x12);
+            ST32 (C (CI + 52 .. CI + 55), x13);
+            ST32 (C (CI + 56 .. CI + 59), x14);
+            ST32 (C (CI + 60 .. CI + 63), x15);
+         else
+            ST32 (Tmp (0  .. 3),  x0);
+            ST32 (Tmp (4  .. 7),  x1);
+            ST32 (Tmp (8  .. 11), x2);
+            ST32 (Tmp (12 .. 15), x3);
+            ST32 (Tmp (16 .. 19), x4);
+            ST32 (Tmp (20 .. 23), x5);
+            ST32 (Tmp (24 .. 27), x6);
+            ST32 (Tmp (28 .. 31), x7);
+            ST32 (Tmp (32 .. 35), x8);
+            ST32 (Tmp (36 .. 39), x9);
+            ST32 (Tmp (40 .. 43), x10);
+            ST32 (Tmp (44 .. 47), x11);
+            ST32 (Tmp (48 .. 51), x12);
+            ST32 (Tmp (52 .. 55), x13);
+            ST32 (Tmp (56 .. 59), x14);
+            ST32 (Tmp (60 .. 63), x15);
+         end if;
+
+         if B <= 64 then
+            if B < 64 then
+               C (CI .. CI + B - 1) := Tmp (0 .. B - 1);
+            end if;
+
+            --  ref impl has these lines but other implementations treat the
+            --  context/initial state as purely read-only, leaving it to the
+            --  application to keep track of updating the counter between
+            --  invocations of the chacha20 function.
+            --  Context (12) := j12;
+            --  Context (13) := j13;
+            return;
+         else
+            B := B - 64;
+            CI := CI + 64;
+
+            --  If we are just generating the cipher stream, then expect M
+            --  to be a 64-byte array of just zeroes. We'll always start it
+            --  from 0.
+            if Xor_M then
+               MI := MI + 64;
+            end if;
+         end if;
+      end loop;
+   end ChaCha20_Encrypt_Bytes;
 
 end SPARKNaCl.Core;

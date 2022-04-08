@@ -41,6 +41,9 @@ is
    --==============================================
 
    subtype Byte     is Unsigned_8;
+   subtype U16      is Unsigned_16;
+   subtype U32      is Unsigned_32;
+   subtype U64      is Unsigned_64;
 
    subtype I32      is Integer_32;
    subtype N32      is I32 range 0 .. I32'Last;
@@ -53,13 +56,17 @@ is
    --  Byte_Seq and constrained subtypes thereof
    type Byte_Seq is array (N32 range <>) of Byte;
 
+   subtype Index_4  is I32 range 0 .. 3;
    subtype Index_8  is I32 range 0 .. 7;
+   subtype Index_12 is I32 range 0 .. 11;
    subtype Index_16 is I32 range 0 .. 15;
    subtype Index_24 is I32 range 0 .. 23;
    subtype Index_32 is I32 range 0 .. 31;
    subtype Index_64 is I32 range 0 .. 63;
 
+   subtype Bytes_4  is Byte_Seq (Index_4);
    subtype Bytes_8  is Byte_Seq (Index_8);
+   subtype Bytes_12 is Byte_Seq (Index_12);
    subtype Bytes_16 is Byte_Seq (Index_16);
    subtype Bytes_24 is Byte_Seq (Index_24);
    subtype Bytes_32 is Byte_Seq (Index_32);
@@ -67,7 +74,6 @@ is
 
    Zero_Bytes_16 : constant Bytes_16 := (others => 0);
    Zero_Bytes_32 : constant Bytes_32 := (others => 0);
-
 
    --  A sequence of I64 values, but where each is limited to
    --  values 0 .. 255;
@@ -77,6 +83,7 @@ is
    type I64_Seq  is array (N32 range <>) of I64;
    subtype I64_Seq_64 is I64_Seq (Index_64);
 
+   type U32_Seq  is array (N32 range <>) of U32;
 
    --------------------------------------------------------
    --  Intrinsic functions
@@ -131,20 +138,14 @@ private
    --  body and in the bodies of child packages
    --==============================================
 
-   subtype U16 is Unsigned_16;
-   subtype U32 is Unsigned_32;
-   subtype U64 is Unsigned_64;
 
-   subtype Index_4  is I32 range 0 .. 3;
    subtype Index_15 is I32 range 0 .. 14;
    subtype Index_20 is I32 range 0 .. 19;
    subtype Index_31 is I32 range 0 .. 30;
    subtype Index_256 is I32 range 0 .. 255;
 
-   subtype Bytes_4  is Byte_Seq (Index_4);
    subtype Bytes_256 is Byte_Seq (Index_256);
 
-   type U32_Seq  is array (N32 range <>) of U32;
    type U64_Seq  is array (N32 range <>) of U64;
 
    subtype U32_Seq_4   is U32_Seq (Index_4);
@@ -459,6 +460,10 @@ private
           No_Inline;
 
    procedure Sanitize_I64_Seq (R : out I64_Seq)
+     with Global => null,
+          No_Inline;
+
+   procedure Sanitize_U32_Seq (R : out U32_Seq)
      with Global => null,
           No_Inline;
 
