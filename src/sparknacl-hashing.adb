@@ -116,7 +116,7 @@ is
    end TS64;
 
    --  Big-Endian 4 bytes to U32. The input bytes are in
-   --  X (I) (the MSB) through X (I + 4) (the LSB)
+   --  X (I) through X (I + 4)
    function DL32 (X : in Byte_Seq;
                   I : in N32) return U32
      with Global => null,
@@ -127,13 +127,13 @@ is
    function DL32 (X : in Byte_Seq;
                   I : in N32) return U32
    is
-      LSW : U32;
+      W : U32;
    begin
-      LSW := Shift_Left (U32 (X (I + 4)), 24) or
-             Shift_Left (U32 (X (I + 5)), 16) or
-             Shift_Left (U32 (X (I + 6)), 8) or
-                         U32 (X (I + 7));
-      return LSW;
+      W := Shift_Left (U32 (X (I)),     24) or
+           Shift_Left (U32 (X (I + 1)), 16) or
+           Shift_Left (U32 (X (I + 2)), 8) or
+                       U32 (X (I + 3));
+      return W;
    end DL32;
 
    --  Big-Endian 8 bytes to U64. The input bytes are in
@@ -176,7 +176,7 @@ is
       Z  : U32_Seq_8;    -- previous intermediate hashes
       W  : U32_Seq_16;   -- message schedule
       T  : U32;
-      LN : I32;
+      LN : I64;
       CB : I32;
 
       function RR32 (X : in U32;
@@ -223,7 +223,7 @@ is
             7 => DL32 (X, 28));
       Z := A;
 
-      LN := I32 (M'Length);  --  Remaining bytes
+      LN := I64 (M'Length);  --  Remaining bytes
       CB := M'First;         --  Current block base offset
 
       while (LN >= 64) loop
@@ -231,34 +231,34 @@ is
 
          pragma Warnings (Off, "lower bound test*");
          pragma Loop_Invariant
-           ((LN + CB = I32 (M'Last) + 1) and
-              (LN in 128 .. M'Length) and
-              (CB in M'First .. (M'Last - 127)));
+           ((LN + I64 (CB) = I64 (M'Last) + 1) and
+              (LN in 64 .. M'Length) and
+              (CB in M'First .. (M'Last - 63)));
 
          --  1. start preparing message schedule, Wt = Mt for 0 <= t <= 15
          W := (0  => DL32 (M, CB),
-               1  => DL32 (M, CB + 8),
-               2  => DL32 (M, CB + 16),
-               3  => DL32 (M, CB + 24),
-               4  => DL32 (M, CB + 32),
-               5  => DL32 (M, CB + 40),
-               6  => DL32 (M, CB + 48),
-               7  => DL32 (M, CB + 56),
-               8  => DL32 (M, CB + 64),
-               9  => DL32 (M, CB + 72),
-               10 => DL32 (M, CB + 80),
-               11 => DL32 (M, CB + 88),
-               12 => DL32 (M, CB + 96),
-               13 => DL32 (M, CB + 104),
-               14 => DL32 (M, CB + 112),
-               15 => DL32 (M, CB + 120));
+               1  => DL32 (M, CB + 4),
+               2  => DL32 (M, CB + 8),
+               3  => DL32 (M, CB + 12),
+               4  => DL32 (M, CB + 16),
+               5  => DL32 (M, CB + 20),
+               6  => DL32 (M, CB + 24),
+               7  => DL32 (M, CB + 28),
+               8  => DL32 (M, CB + 32),
+               9  => DL32 (M, CB + 36),
+               10 => DL32 (M, CB + 40),
+               11 => DL32 (M, CB + 44),
+               12 => DL32 (M, CB + 48),
+               13 => DL32 (M, CB + 52),
+               14 => DL32 (M, CB + 56),
+               15 => DL32 (M, CB + 60));
 
          for I in Index_64 loop
             pragma Loop_Optimize (No_Unroll);
 
-            pragma Loop_Invariant ((LN + CB = I32 (M'Last) + 1) and
-                                     (LN in 128 .. M'Length) and
-                                     (CB in M'First .. (M'Last - 127)));
+            pragma Loop_Invariant ((LN + I64 (CB) = I64 (M'Last) + 1) and
+                                     (LN in 64 .. M'Length) and
+                                     (CB in M'First .. (M'Last - 63)));
             --  2. Initialize working variables
             B := A;
 
@@ -305,16 +305,16 @@ is
             Z (I) := A (I);
          end loop;
 
-         exit when LN < 256;
-         pragma Assert (LN >= 128);
-         CB := CB + 128;
-         LN := LN - 128;
+         exit when LN < 128;
+         pragma Assert (LN >= 64);
+         CB := CB + 64;
+         LN := LN - 64;
       end loop;
 
       --  Concatenate intermediate hash values into final digest
       for I in Index_8 loop
          pragma Loop_Optimize (No_Unroll);
-         X (8 * I .. (8 * I + 3)) := TS32 (Z (I));
+         X (4 * I .. (4 * I + 3)) := TS32 (Z (I));
       end loop;
 
    end Hashblocks_256;
@@ -333,7 +333,7 @@ is
 
       Hashblocks_256 (H, M);
 
-      B := Final_Block_Length (M'Length mod 128);
+      B := Final_Block_Length (M'Length mod 64);
 
       --  If message doesn't end on block boundary, then copy message
       --  bytes into the padding block. If it _did_ end on block boundary,

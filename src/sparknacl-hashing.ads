@@ -9,8 +9,8 @@ is
 
    --  Use IV to initialize a Digest before first call
    --  to Hashblocks
-   IV_512 : constant Digest_512;
    IV_256 : constant Digest_256;
+   IV_512 : constant Digest_512;
 
    procedure Hashblocks_256
      (X : in out Digest_256;
@@ -23,17 +23,19 @@ is
      with Global => null;
 
    --------------------------------------------------------
-   --  Procedural interface. Faster assuming Output is passed by reference
+   --  Procedural interface. Faster assuming Output is
+   --  passed by reference
    --------------------------------------------------------
-
-   procedure Hash_512 (Output :    out Digest_512;
-                       M      : in     Byte_Seq)
-     with Global => null;
 
    procedure Hash_256 (Output :    out Digest_256;
                        M      : in     Byte_Seq)
      with Global => null;
 
+   procedure Hash_512 (Output :    out Digest_512;
+                       M      : in     Byte_Seq)
+     with Global => null;
+
+   --  Defaults to Hash_512 for compatibility w/ TweetNaCl
    procedure Hash (Output :    out Digest_512;
                    M      : in     Byte_Seq)
      with Global => null;
@@ -42,10 +44,10 @@ is
    --  Functional interfaces
    --------------------------------------------------------
 
-   function Hash_512 (M : in Byte_Seq) return Digest_512
+   function Hash_256 (M : in Byte_Seq) return Digest_256
      with Global => null;
 
-   function Hash_256 (M : in Byte_Seq) return Digest_256
+   function Hash_512 (M : in Byte_Seq) return Digest_512
      with Global => null;
 
    --  Defaults to Hash_512 for compatibility w/ TweetNaCl
@@ -53,6 +55,16 @@ is
      with Global => null;
 
 private
+   IV_256 : constant Digest_256 :=
+     (16#6a#, 16#09#, 16#e6#, 16#67#,
+      16#bb#, 16#67#, 16#ae#, 16#85#,
+      16#3c#, 16#6e#, 16#f3#, 16#72#,
+      16#a5#, 16#4f#, 16#f5#, 16#3a#,
+      16#51#, 16#0e#, 16#52#, 16#7f#,
+      16#9b#, 16#05#, 16#68#, 16#8c#,
+      16#1f#, 16#83#, 16#d9#, 16#ab#,
+      16#5b#, 16#e0#, 16#cd#, 16#19#);
+
    IV_512 : constant Digest_512 :=
      (16#6a#, 16#09#, 16#e6#, 16#67#, 16#f3#, 16#bc#, 16#c9#, 16#08#,
       16#bb#, 16#67#, 16#ae#, 16#85#, 16#84#, 16#ca#, 16#a7#, 16#3b#,
@@ -63,13 +75,4 @@ private
       16#1f#, 16#83#, 16#d9#, 16#ab#, 16#fb#, 16#41#, 16#bd#, 16#6b#,
       16#5b#, 16#e0#, 16#cd#, 16#19#, 16#13#, 16#7e#, 16#21#, 16#79#);
 
-   IV_256 : constant Digest_256 :=
-     (16#6a#, 16#09#, 16#e6#, 16#67#,
-      16#bb#, 16#67#, 16#ae#, 16#85#,
-      16#3c#, 16#6e#, 16#f3#, 16#72#,
-      16#a5#, 16#4f#, 16#f5#, 16#3a#,
-      16#51#, 16#0e#, 16#52#, 16#7f#,
-      16#9b#, 16#05#, 16#68#, 16#8c#,
-      16#1f#, 16#83#, 16#d9#, 16#ab#,
-      16#5b#, 16#e0#, 16#cd#, 16#19#);
 end SPARKNaCl.Hashing;

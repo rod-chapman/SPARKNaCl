@@ -1,4 +1,5 @@
 with Hash;
+with Hash1;
 with Box;
 with Box7;
 with Box8;
@@ -36,6 +37,8 @@ is
 begin
    Put_Line ("Hash");
    Hash;
+   Put_Line ("Hash1");
+   Hash1;
    Put_Line ("Box");
    Box;
    Put_Line ("Box7");
