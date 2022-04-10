@@ -1,3 +1,5 @@
+with SPARKNaCl.Hashing;
+
 package body SPARKNaCl.MAC
   with SPARK_Mode => On
 is
@@ -190,5 +192,34 @@ is
       Onetimeauth (X, M, K);
       return Equal (H, X);
    end Onetimeauth_Verify;
+
+   --------------------------------------------------------
+   --  HMAC
+   --------------------------------------------------------
+
+   procedure HMAC_SHA_256 (Output :    out Bytes_32;
+                           M      : in     Byte_Seq;
+                           K      : in     Byte_Seq)
+   is
+      IPad : Bytes_64 := (others => 16#36#);
+      OPad : Bytes_64 := (others => 16#5C#);
+
+      --  K', pad to the right with zeroes if shorter than Block_Size, or
+      --  Hash down to less than block size first if greater than Block_Size.
+      Key : Bytes_64 := (others => 0);
+   begin
+      if K'Length > 64 then
+         Key (0 .. 31) := Hashing.Hash_256 (K);
+      else
+         Key (K'Range) := K;
+      end if;
+
+      for I in Index_64'Range loop
+         IPad (I) := IPad (I) xor Key (I);
+         OPad (I) := OPad (I) xor Key (I);
+      end loop;
+
+      Output := Hashing.Hash_256 (OPad & Hashing.Hash_256 (IPad & M));
+   end HMAC_SHA_256;
 
 end SPARKNaCl.MAC;

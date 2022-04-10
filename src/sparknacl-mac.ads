@@ -35,6 +35,17 @@ is
      with Global => null,
           Pre    => M'First = 0;
 
+   --------------------------------------------------------
+   --  Hash-based MAC
+   --------------------------------------------------------
+
+   procedure HMAC_SHA_256 (Output :    out Bytes_32;
+                           M      : in     Byte_Seq;
+                           K      : in     Byte_Seq)
+     with Global => null,
+          Pre    => M'First = 0 and
+                    K'First = 0 and
+                    M'Last <= N32'Last - 64;
 
 private
    --  Note - also limited here in the full view to ensure

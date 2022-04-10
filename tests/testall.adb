@@ -9,6 +9,7 @@ with ECDH;
 with Onetimeauth;
 with Onetimeauth2;
 with Onetimeauth7;
+with HMAC;
 with Scalarmult;
 with Scalarmult2;
 with Scalarmult5;
@@ -55,6 +56,8 @@ begin
    Onetimeauth2;
    Put_Line ("Onetimeauth7");
    Onetimeauth7;
+   Put_Line ("HMAC");
+   HMAC;
    Put_Line ("Scalarmult");
    Scalarmult;
    Put_Line ("Scalarmult2");
