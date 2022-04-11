@@ -6,15 +6,6 @@ procedure Hash1
 is
    R1 : Digest_256;
 
-   function To_Byte_Seq (s : String) return Byte_Seq is
-      ret : Byte_Seq (N32 (s'First - 1) .. N32 (s'Last - 1));
-   begin
-      for i in s'Range loop
-         ret (N32 (i - 1)) := Character'Pos (s (i));
-      end loop;
-      return ret;
-   end To_Byte_Seq;
-
    --  FIPS 180-2 SHA-256 test cases
 
    --  Case 1: One-block message

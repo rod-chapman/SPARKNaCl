@@ -24,17 +24,6 @@ is
 
    --  C.3 Long message
    C3 : constant String (1 .. 1_000_000) := (others => 'a');
-
-   function To_Byte_Seq (s : String) return Byte_Seq is
-      ret : Byte_Seq (N32 (s'First - 1) .. N32 (s'Last - 1));
-   begin
-      for i in s'Range loop
-         ret (N32 (i - 1)) := Character'Pos (s (i));
-      end loop;
-      return ret;
-   end To_Byte_Seq;
-
-
 begin
    Hash (R1, To_Byte_Seq (M3));
    DH ("Case 1 - Hash is", R1);
