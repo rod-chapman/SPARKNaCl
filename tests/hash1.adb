@@ -4,7 +4,7 @@ with SPARKNaCl.Hashing; use SPARKNaCl.Hashing;
 with Interfaces;        use Interfaces;
 procedure Hash1
 is
-   R1 : Bytes_32;
+   R1 : Digest_256;
 
    function To_Byte_Seq (s : String) return Byte_Seq is
       ret : Byte_Seq (N32 (s'First - 1) .. N32 (s'Last - 1));
