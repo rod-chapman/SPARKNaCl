@@ -28,15 +28,15 @@ is
    M3 : constant String (1 .. 1_000_000) := (others => 'a');
 begin
    Hash_256 (R1, To_Byte_Seq (M1));
-   DH ("Hash 1 is", R1);
+   DH ("FIPS 180-2 B.1 procedural API - Hash is", R1);
 
    --  Functional style interface
    R1 := Hash_256 (To_Byte_Seq (M1));
-   DH ("Hash 2 is", R1);
+   DH ("FIPS 180-2 B.1 functional API - Hash is", R1);
 
    Hash_256 (R1, To_Byte_Seq (M2));
-   DH ("Hash 3 is", R1);
+   DH ("FIPS 180-2 B.2 procedural API - Hash is", R1);
 
    Hash_256 (R1, To_Byte_Seq (M3));
-   DH ("Hash 4 is", R1);
+   DH ("FIPS 180-2 B.3 procedural API - Hash is", R1);
 end Hash1;
