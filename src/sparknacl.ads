@@ -117,6 +117,22 @@ is
           Post   => Equal'Result =
                       (for all I in X'Range => X (I) = Y (I));
 
+
+   --------------------------------------------------------
+   --  Utility functions
+   --------------------------------------------------------
+
+   --  Convert String to Byte_Seq using Character'Pos to
+   --  map each character to a Byte value
+   function To_Byte_Seq (S : String) return Byte_Seq
+     with Global => null,
+          Pre    => S'Length >= 1,
+          Post   => To_Byte_Seq'Result'Length = S'Length and then
+                    To_Byte_Seq'Result'First = 0,
+          Pure_Function;
+
+
+
    --------------------------------------------------------
    --  Data sanitization
    --------------------------------------------------------
