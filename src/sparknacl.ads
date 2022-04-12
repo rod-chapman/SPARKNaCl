@@ -117,6 +117,22 @@ is
           Post   => Equal'Result =
                       (for all I in X'Range => X (I) = Y (I));
 
+
+   --------------------------------------------------------
+   --  Utility functions
+   --------------------------------------------------------
+
+   --  Convert String to Byte_Seq using Character'Pos to
+   --  map each character to a Byte value
+   function To_Byte_Seq (S : String) return Byte_Seq
+     with Global => null,
+          Pre    => S'Length >= 1,
+          Post   => To_Byte_Seq'Result'Length = S'Length and then
+                    To_Byte_Seq'Result'First = 0,
+          Pure_Function;
+
+
+
    --------------------------------------------------------
    --  Data sanitization
    --------------------------------------------------------
@@ -142,19 +158,22 @@ private
    subtype Index_15 is I32 range 0 .. 14;
    subtype Index_20 is I32 range 0 .. 19;
    subtype Index_31 is I32 range 0 .. 30;
+   subtype Index_128 is I32 range 0 .. 127;
    subtype Index_256 is I32 range 0 .. 255;
 
+   subtype Bytes_128 is Byte_Seq (Index_128);
    subtype Bytes_256 is Byte_Seq (Index_256);
 
    type U64_Seq  is array (N32 range <>) of U64;
 
    subtype U32_Seq_4   is U32_Seq (Index_4);
+   subtype U32_Seq_8   is U32_Seq (Index_8);
    subtype U32_Seq_16  is U32_Seq (Index_16);
 
    subtype I64_Byte_Seq_32 is I64_Byte_Seq (Index_32);
 
-   subtype U64_Seq_16 is U64_Seq (Index_16);
    subtype U64_Seq_8  is U64_Seq (Index_8);
+   subtype U64_Seq_16 is U64_Seq (Index_16);
 
 
    --  Constant Sigma used for initialization of Core Salsa20
