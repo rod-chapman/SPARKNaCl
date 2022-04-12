@@ -1,5 +1,3 @@
-with SPARKNaCl.Hashing;
-
 package body SPARKNaCl.MAC
   with SPARK_Mode => On
 is
@@ -197,7 +195,7 @@ is
    --  HMAC
    --------------------------------------------------------
 
-   procedure HMAC_SHA_256 (Output :    out Bytes_32;
+   procedure HMAC_SHA_256 (Output :    out Hashing.Digest_256;
                            M      : in     Byte_Seq;
                            K      : in     Byte_Seq)
    is
@@ -211,6 +209,7 @@ is
       if K'Length > 64 then
          Key (0 .. 31) := Hashing.Hash_256 (K);
       else
+         pragma Assert (K'Length <= 64);
          Key (K'Range) := K;
       end if;
 
@@ -220,6 +219,7 @@ is
       end loop;
 
       Output := Hashing.Hash_256 (OPad & Hashing.Hash_256 (IPad & M));
+      pragma Assert (Output'Initialized);
    end HMAC_SHA_256;
 
 end SPARKNaCl.MAC;
