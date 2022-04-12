@@ -25,14 +25,12 @@ is
                      PRK  : in     Hashing.Digest_256;
                      Info : in     Byte_Seq)
      with Global => null,
-          Relaxed_Initialization => OKM,
           Pre    => OKM'First   = 0 and
                     OKM'Length  > 0 and
                     OKM'Length  <= 255 * 32 and  -- per RFC 5869
                     PRK'First   = 0 and
                     (if Info'Length > 0 then Info'First = 0) and
-                    Info'Length < U32 (N32'Last) - 97,
-          Post   => OKM'Initialized;
+                    Info'Length < U32 (N32'Last) - 97;
 
    procedure KDF (OKM  :    out OKM_256;
                   IKM  : in     Byte_Seq;
