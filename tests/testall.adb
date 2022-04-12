@@ -10,6 +10,7 @@ with Onetimeauth;
 with Onetimeauth2;
 with Onetimeauth7;
 with HMAC;
+with HKDF1;
 with Scalarmult;
 with Scalarmult2;
 with Scalarmult5;
@@ -96,6 +97,8 @@ begin
    Stream7;
    Put_Line ("ECDH");
    ECDH;
+   Put_Line ("HKDF");
+   HKDF1;
 exception
    when E : others =>
       Put_Line (Exception_Message (E));

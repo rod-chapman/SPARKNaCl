@@ -44,7 +44,6 @@ is
                            K      : in     Byte_Seq)
      with Global => null,
           Pre    => M'First = 0 and
-                    K'First = 0 and
                     M'Last <= N32'Last - 64;
 
 private

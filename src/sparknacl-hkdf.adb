@@ -4,16 +4,16 @@ package body SPARKNaCl.HKDF
   with SPARK_Mode => On
 is
 
-   procedure Extract (PRK  :    out Byte_Seq; -- output pseudo-random key
+   procedure Extract (PRK  :    out Bytes_32; -- output pseudo-random key
                       Salt : in     Byte_Seq; -- input salt (can be 0 bytes)
                       IKM  : in     Byte_Seq) -- input keying material
    is
    begin
-      MAC.HMAC_SHA_256 (PRK, Salt, IKM);
+      MAC.HMAC_SHA_256 (PRK, IKM, Salt);
    end Extract;
 
    procedure Expand (OKM  :    out Byte_Seq; -- output key material
-                     PRK  : in     Byte_Seq; -- pseudo-random key
+                     PRK  : in     Bytes_32; -- pseudo-random key
                      Info : in     Byte_Seq) -- optional context
    is
 
@@ -34,14 +34,14 @@ is
       T : T_Arr;
    begin
 
-      MAC.HMAC_SHA_256 (T (1), PRK, Info & 1);
+      MAC.HMAC_SHA_256 (T (1), Info & 1, PRK);
 
       for I in 2 .. N loop
-         MAC.HMAC_SHA_256 (T (I), PRK, T (I - 1) & Info & Byte (I));
+         MAC.HMAC_SHA_256 (T (I), T (I - 1) & Info & Byte (I), PRK);
       end loop;
 
       for J in OKM'Range loop
-         OKM (J) := T (J / 32) (J mod 32);
+         OKM (J) := T ((J / 32) + 1) (J mod 32);
       end loop;
 
    end Expand;
