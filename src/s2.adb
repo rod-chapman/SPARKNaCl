@@ -488,7 +488,7 @@ is
       pragma Assert (D0 <= LMM1 + R2256 * C15UB);
 
       declare
-         R  : Nearlynormal_GF with Relaxed_Initialization;
+         R  : GF32 with Relaxed_Initialization;
          C2 : GF32_Normal_Limb;
          T  : GF32_Any_Limb;
       begin
@@ -575,7 +575,7 @@ is
 
          R (0) := R (0) + R2256 * C2;
 
-         return Car.Nearlynormal_To_Normal (R);
+         return Car.Nearlynormal_To_Normal (Nearlynormal_GF (R));
       end;
    end "*";
 
