@@ -4,7 +4,10 @@ with S2.Car;
 package body S2
   with SPARK_Mode => On
 is
-
+   pragma Warnings (Off, "lower bound test optimized away");
+   pragma Warnings (Off, "value is known to be in range");
+   pragma Warnings (Off, "explicit membership test may be optimized away");
+   pragma Warnings (Off, "use 'Valid attribute instead");
    function "*" (Left, Right : in Normal_GF) return Normal_GF
    is
       L : Normal_GF renames Left;
@@ -115,7 +118,7 @@ is
              LP (L3  * R13) + LP (L2  * R14) + LP (L1  * R15);
       TF0  := T0  + R2256 * T16;
       pragma Assert (TF0 in GF64_Natural_Limb);
-      C := TF0/ LM;
+      C := TF0 / LM;
       pragma Assert (C in 0 .. 37419914);
       TF0 := TF0 mod LM;
       pragma Assert_And_Cut (TF0 in U64NL and C in 0 .. 37419914);
@@ -131,7 +134,9 @@ is
       C := TF1 / LM;
       pragma Assert (C in 0 .. 34995726);
       TF1 := TF1 mod LM;
-      pragma Assert_And_Cut (TF0 in U64NL and TF1 in U64NL and C in 0 .. 34995726);
+      pragma Assert_And_Cut (TF0 in U64NL
+                             and TF1 in U64NL
+                             and C in 0 .. 34995726);
 
       T2 := LP (L2 * R0) + LP (L1 * R1) + LP (L0 * R2);
       T18 := LP (L15 * R3)  + LP (L14 * R4)  + LP (L13 * R5) +

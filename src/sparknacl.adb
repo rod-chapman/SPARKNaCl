@@ -757,6 +757,21 @@ is
    end Equal;
 
    --------------------------------------------------------
+   --  Utility functions
+   --------------------------------------------------------
+
+   function To_Byte_Seq (S : String) return Byte_Seq
+   is
+      Ret : Byte_Seq (0 .. S'Length - 1);
+   begin
+      for I in Ret'Range loop
+         Ret (I) := Character'Pos (S (S'First + Natural (I)));
+      end loop;
+
+      return Ret;
+   end To_Byte_Seq;
+
+   --------------------------------------------------------
    --  Data sanitization
    --------------------------------------------------------
 
@@ -775,6 +790,8 @@ is
    procedure Sanitize_GF64_PA (R : out GF64_PA) is separate;
 
    procedure Sanitize_I64_Seq (R : out I64_Seq) is separate;
+
+   procedure Sanitize_U32_Seq (R : out U32_Seq) is separate;
 
    procedure Sanitize_Boolean (R : out Boolean) is separate;
 
