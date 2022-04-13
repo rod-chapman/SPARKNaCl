@@ -114,11 +114,11 @@ is
              LP (L6  * R10) + LP (L5  * R11) + LP (L4  * R12) +
              LP (L3  * R13) + LP (L2  * R14) + LP (L1  * R15);
       TF0  := T0  + R2256 * T16;
-      pragma Assert (TF0 in GF64_Natural_Limb);
-      C := TF0/ LM;
-      pragma Assert (C in 0 .. 37419914);
+      C := TF0 / LM;
+      pragma Assert (C <= 37419914);
       TF0 := TF0 mod LM;
-      pragma Assert_And_Cut (TF0 in U64NL and C in 0 .. 37419914);
+      pragma Assert_And_Cut (TF0 in U64NL and
+                             C <= 37419914);
 
       T1 := LP (L1 * R0) + LP (L0 * R1);
       T17 := LP (L15 * R2)  + LP (L14 * R3)  + LP (L13 * R4) +
@@ -127,11 +127,13 @@ is
              LP (L6  * R11) + LP (L5  * R12) + LP (L4  * R13) +
              LP (L3  * R14) + LP (L2  * R15);
       TF1  := T1  + R2256 * T17 + C;
-      pragma Assert (TF1 in 0 .. 534 * MGFLP + 37419914);
+      pragma Assert (TF1 <= 534 * MGFLP + 37419914);
       C := TF1 / LM;
-      pragma Assert (C in 0 .. 34995726);
+      pragma Assert (C <= 34995726);
       TF1 := TF1 mod LM;
-      pragma Assert_And_Cut (TF0 in U64NL and TF1 in U64NL and C in 0 .. 34995726);
+      pragma Assert_And_Cut (TF0 in U64NL and
+                             TF1 in U64NL and
+                             C <= 34995726);
 
       T2 := LP (L2 * R0) + LP (L1 * R1) + LP (L0 * R2);
       T18 := LP (L15 * R3)  + LP (L14 * R4)  + LP (L13 * R5) +
@@ -140,14 +142,14 @@ is
              LP (L6  * R12) + LP (L5  * R13) + LP (L4  * R14) +
              LP (L3  * R15);
       TF2  := T2  + R2256 * T18 + C;
-      pragma Assert (TF2 in 0 .. 497 * MGFLP + 34995726);
+      pragma Assert (TF2 <= 497 * MGFLP + 34995726);
       C := TF2 / LM;
-      pragma Assert (C in 0 .. 32570931);
+      pragma Assert (C <= 32570931);
       TF2 := TF2 mod LM;
       pragma Assert_And_Cut (TF0 in U64NL and
                              TF1 in U64NL and
                              TF2 in U64NL and
-                             C in 0 .. 32570931);
+                             C <= 32570931);
 
       T3 := LP (L3 * R0) + LP (L2 * R1) + LP (L1 * R2) +
             LP (L0 * R3);
@@ -156,15 +158,15 @@ is
              LP (L9  * R10) + LP (L8  * R11) + LP (L7  * R12) +
              LP (L6  * R13) + LP (L5  * R14) + LP (L4  * R15);
       TF3  := T3  + R2256 * T19 + C;
-      pragma Assert (TF3 in 0 .. 460 * MGFLP + 32570931);
+      pragma Assert (TF3 <= 460 * MGFLP + 32570931);
       C := TF3 / LM;
-      pragma Assert (C in 0 .. 30146136);
+      pragma Assert (C <= 30146136);
       TF3 := TF3 mod LM;
       pragma Assert_And_Cut (TF0 in U64NL and
                              TF1 in U64NL and
                              TF2 in U64NL and
                              TF3 in U64NL and
-                             C in 0 .. 30146136);
+                             C <= 30146136);
 
 
 
@@ -175,16 +177,16 @@ is
              LP (L9  * R11) + LP (L8  * R12) + LP (L7  * R13) +
              LP (L6  * R14) + LP (L5  * R15);
       TF4  := T4  + R2256 * T20 + C;
-      pragma Assert (TF4 in 0 .. 423 * MGFLP + 30146136);
+      pragma Assert (TF4 <= 423 * MGFLP + 30146136);
       C := TF4 / LM;
-      pragma Assert (C in 0 .. 27721341);
+      pragma Assert (C <= 27721341);
       TF4 := TF4 mod LM;
       pragma Assert_And_Cut (TF0 in U64NL and
                              TF1 in U64NL and
                              TF2 in U64NL and
                              TF3 in U64NL and
                              TF4 in U64NL and
-                             C in 0 .. 27721341);
+                             C <= 27721341);
 
       T5 := LP (L5 * R0) + LP (L4 * R1) + LP (L3 * R2) +
             LP (L2 * R3) + LP (L1 * R4) + LP (L0 * R5);
@@ -193,9 +195,9 @@ is
              LP (L9  * R12) + LP (L8  * R13) + LP (L7  * R14) +
              LP (L6  * R15);
       TF5  := T5  + R2256 * T21 + C;
-      pragma Assert (TF5 in 0 .. 386 * MGFLP + 27721341);
+      pragma Assert (TF5 <= 386 * MGFLP + 27721341);
       C := TF5 / LM;
-      pragma Assert (C in 0 .. 25296546);
+      pragma Assert (C <= 25296546);
       TF5 := TF5 mod LM;
       pragma Assert_And_Cut (TF0 in U64NL and
                              TF1 in U64NL and
@@ -203,7 +205,7 @@ is
                              TF3 in U64NL and
                              TF4 in U64NL and
                              TF5 in U64NL and
-                             C in 0 .. 25296546);
+                             C <= 25296546);
 
       T6 := LP (L6 * R0) + LP (L5 * R1) + LP (L4 * R2) +
             LP (L3 * R3) + LP (L2 * R4) + LP (L1 * R5) +
@@ -212,9 +214,9 @@ is
              LP (L12 * R10) + LP (L11 * R11) + LP (L10 * R12) +
              LP (L9  * R13) + LP (L8  * R14) + LP (L7  * R15);
       TF6  := T6  + R2256 * T22 + C;
-      pragma Assert (TF6 in 0 .. 349 * MGFLP + 25296546);
+      pragma Assert (TF6 <= 349 * MGFLP + 25296546);
       C := TF6 / LM;
-      pragma Assert (C in 0 .. 22871751);
+      pragma Assert (C <= 22871751);
       TF6 := TF6 mod LM;
 
       pragma Assert_And_Cut (TF0 in U64NL and
@@ -224,7 +226,7 @@ is
                              TF4 in U64NL and
                              TF5 in U64NL and
                              TF6 in U64NL and
-                             C in 0 .. 22871751);
+                             C <= 22871751);
 
       T7 := LP (L7 * R0) + LP (L6 * R1) + LP (L5 * R2) +
             LP (L4 * R3) + LP (L3 * R4) + LP (L2 * R5) +
@@ -233,9 +235,9 @@ is
              LP (L12 * R11) + LP (L11 * R12) + LP (L10 * R13) +
              LP (L9  * R14) + LP (L8  * R15);
       TF7  := T7  + R2256 * T23 + C;
-      pragma Assert (TF7 in 0 .. 312 * MGFLP + 22871751);
+      pragma Assert (TF7 <= 312 * MGFLP + 22871751);
       C := TF7 / LM;
-      pragma Assert (C in 0 .. 20446956);
+      pragma Assert (C <= 20446956);
       TF7 := TF7 mod LM;
 
       pragma Assert_And_Cut (TF0 in U64NL and
@@ -246,7 +248,7 @@ is
                              TF5 in U64NL and
                              TF6 in U64NL and
                              TF7 in U64NL and
-                             C in 0 .. 20446956);
+                             C <= 20446956);
 
 
       T8 := LP (L8 * R0) + LP (L7 * R1) + LP (L6 * R2) +
@@ -256,9 +258,9 @@ is
              LP (L12 * R12) + LP (L11 * R13) + LP (L10 * R14) +
              LP (L9  * R15);
       TF8  := T8  + R2256 * T24 + C;
-      pragma Assert (TF8 in 0 .. 275 * MGFLP + 20446956);
+      pragma Assert (TF8 <= 275 * MGFLP + 20446956);
       C := TF8 / LM;
-      pragma Assert (C in 0 .. 18022161);
+      pragma Assert (C <= 18022161);
       TF8 := TF8 mod LM;
 
       pragma Assert_And_Cut (TF0 in U64NL and
@@ -270,7 +272,7 @@ is
                              TF6 in U64NL and
                              TF7 in U64NL and
                              TF8 in U64NL and
-                             C in 0 .. 18022161);
+                             C <= 18022161);
 
 
       T9 := LP (L9 * R0) + LP (L8 * R1) + LP (L7 * R2) +
@@ -280,9 +282,9 @@ is
       T25 := LP (L15 * R10) + LP (L14 * R11) + LP (L13 * R12) +
         LP (L12 * R13) + LP (L11 * R14) + LP (L10 * R15);
       TF9  := T9  + R2256 * T25 + C;
-      pragma Assert (TF9 in 0 .. 238 * MGFLP + 18022161);
+      pragma Assert (TF9 <= 238 * MGFLP + 18022161);
       C := TF9 / LM;
-      pragma Assert (C in 0 .. 15597366);
+      pragma Assert (C <= 15597366);
       TF9 := TF9 mod LM;
 
       pragma Assert_And_Cut (TF0 in U64NL and
@@ -295,7 +297,7 @@ is
                              TF7 in U64NL and
                              TF8 in U64NL and
                              TF9 in U64NL and
-                             C in 0 .. 15597366);
+                             C <= 15597366);
 
       T10 := LP (L10 * R0) + LP (L9 * R1) + LP (L8 * R2) +
         LP (L7  * R3) + LP (L6 * R4) + LP (L5 * R5) +
@@ -304,9 +306,9 @@ is
       T26 := LP (L15 * R11) + LP (L14 * R12) + LP (L13 * R13) +
         LP (L12 * R14) + LP (L11 * R15);
       TF10 := T10 + R2256 * T26 + C;
-      pragma Assert (TF10 in 0 .. 201 * MGFLP + 15597366);
+      pragma Assert (TF10 <= 201 * MGFLP + 15597366);
       C := TF10 / LM;
-      pragma Assert (C in 0 .. 13172571);
+      pragma Assert (C <= 13172571);
       TF10 := TF10 mod LM;
 
       pragma Assert_And_Cut (TF0 in U64NL and
@@ -320,7 +322,7 @@ is
                              TF8 in U64NL and
                              TF9 in U64NL and
                              TF10 in U64NL and
-                             C in 0 .. 13172571);
+                             C <= 13172571);
 
       T11 := LP (L11 * R0) + LP (L10 * R1)  + LP (L9 * R2) +
         LP (L8  * R3) + LP (L7  * R4)  + LP (L6 * R5) +
@@ -329,9 +331,9 @@ is
       T27 := LP (L15 * R12) + LP (L14 * R13) + LP (L13 * R14) +
         LP (L12 * R15);
       TF11 := T11 + R2256 * T27 + C;
-      pragma Assert (TF11 in 0 ..  164 * MGFLP + 13172571);
+      pragma Assert (TF11 <=  164 * MGFLP + 13172571);
       C := TF11 / LM;
-      pragma Assert (C in 0 .. 10747776);
+      pragma Assert (C <= 10747776);
       TF11 := TF11 mod LM;
 
       pragma Assert_And_Cut (TF0 in U64NL and
@@ -346,7 +348,7 @@ is
                              TF9 in U64NL and
                              TF10 in U64NL and
                              TF11 in U64NL and
-                             C in 0 .. 10747776);
+                             C <= 10747776);
 
 
       T12 := LP (L12 * R0) + LP (L11 * R1)  + LP (L10 * R2) +
@@ -356,9 +358,9 @@ is
         LP (L0  * R12);
       T28 := LP (L15 * R13) + LP (L14 * R14) + LP (L13 * R15);
       TF12 := T12 + R2256 * T28 + C;
-      pragma Assert (TF12 in 0 ..  127 * MGFLP + 10747776);
+      pragma Assert (TF12 <=  127 * MGFLP + 10747776);
       C := TF12 / LM;
-      pragma Assert (C in 0 .. 8322981);
+      pragma Assert (C <= 8322981);
       TF12 := TF12 mod LM;
 
       pragma Assert_And_Cut (TF0 in U64NL and
@@ -374,7 +376,7 @@ is
                              TF10 in U64NL and
                              TF11 in U64NL and
                              TF12 in U64NL and
-                             C in 0 .. 8322981);
+                             C <= 8322981);
 
 
       T13 := LP (L13 * R0)  + LP (L12 * R1)  + LP (L11 * R2) +
@@ -384,9 +386,9 @@ is
         LP (L1  * R12) + LP (L0  * R13);
       T29 := LP (L15 * R14) + LP (L14 * R15);
       TF13 := T13 + R2256 * T29 + C;
-      pragma Assert (TF13 in 0 ..  90 * MGFLP + 8322981);
+      pragma Assert (TF13 <=  90 * MGFLP + 8322981);
       C := TF13 / LM;
-      pragma Assert (C in 0 .. 5898186);
+      pragma Assert (C <= 5898186);
       TF13 := TF13 mod LM;
 
       pragma Assert_And_Cut (TF0 in U64NL and
@@ -403,7 +405,7 @@ is
                              TF11 in U64NL and
                              TF12 in U64NL and
                              TF13 in U64NL and
-                             C in 0 .. 5898186);
+                             C <= 5898186);
 
       T14 := LP (L14 * R0)  + LP (L13 * R1)  + LP (L12 * R2) +
         LP (L11 * R3)  + LP (L10 * R4)  + LP (L9  * R5) +
@@ -412,9 +414,9 @@ is
         LP (L2  * R12) + LP (L1  * R13) + LP (L0  * R14);
       T30 := LP (L15 * R15);
       TF14 := T14 + R2256 * T30 + C;
-      pragma Assert (TF14 in 0 ..  53 * MGFLP + 5898186);
+      pragma Assert (TF14 <=  53 * MGFLP + 5898186);
       C := TF14 / LM;
-      pragma Assert (C in 0 .. 3473391);
+      pragma Assert (C <= 3473391);
       TF14 := TF14 mod LM;
 
       pragma Assert_And_Cut (TF0 in U64NL and
@@ -432,7 +434,7 @@ is
                              TF12 in U64NL and
                              TF13 in U64NL and
                              TF14 in U64NL and
-                             C in 0 .. 3473391);
+                             C <= 3473391);
 
       T15 := LP (L15 * R0)  + LP (L14 * R1)  + LP (L13 * R2) +
              LP (L12 * R3)  + LP (L11 * R4)  + LP (L10 * R5) +
@@ -441,9 +443,9 @@ is
              LP (L3  * R12) + LP (L2  * R13) + LP (L1  * R14) +
              LP (L0  * R15);
       TF15 := T15 + C;
-      pragma Assert (TF15 in 0 ..  16 * MGFLP + 3473391);
+      pragma Assert (TF15 <=  16 * MGFLP + 3473391);
       C := TF15 / LM;
-      pragma Assert (C in 0 .. 1048596);
+      pragma Assert (C <= 1048596);
       TF15 := TF15 mod LM;
 
       pragma Assert_And_Cut (TF0 in U64NL and
@@ -462,11 +464,10 @@ is
                              TF13 in U64NL and
                              TF14 in U64NL and
                              TF15 in U64NL and
-                             C in 0 .. 1048596);
+                             C <= 1048596);
 
       TF0 := TF0 + R2256 * C;
-      pragma Assert (TF0 in 0 .. LMM1 + R2256 * 1048596);
-      pragma Assert (TF0 in 0 .. GF32_Any_Limb_Max);
+      pragma Assert (TF0 <= LMM1 + R2256 * 1048596);
 
       declare
          O32sn : constant Seminormal_GF :=
@@ -495,6 +496,5 @@ is
       end;
 
    end "*";
-
 
 end S2;
