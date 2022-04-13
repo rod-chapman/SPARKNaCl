@@ -757,6 +757,20 @@ is
    end Equal;
 
    --------------------------------------------------------
+   --  Utility functions
+   --------------------------------------------------------
+
+   function To_Byte_Seq (S : String) return Byte_Seq
+   is
+      Ret : Byte_Seq (0 .. S'Length - 1);
+   begin
+      for I in Ret'Range loop
+         Ret (I) := Character'Pos (S (S'First + Natural (I)));
+      end loop;
+      return Ret;
+   end To_Byte_Seq;
+
+   --------------------------------------------------------
    --  Data sanitization
    --------------------------------------------------------
 
