@@ -722,6 +722,9 @@ is
       --  to D0
       pragma Assert (C15UB = 1048596);
       D0 := D0 + R2256 * C;
+
+      --  Knowing the value of C15UB, we can deduce the upper-bound
+      --  on D0. It's 29_912_183
       pragma Assert (D0 <= LMM1 + R2256 * C15UB);
 
       declare
@@ -731,11 +734,14 @@ is
       begin
          R (0) := I32 (D0) mod LM;
          C2 := I32 (D0) / LM;
+         --  Knowing the upper-bound on D0 means that we know C2
+         --  is in 0 .. 609
          pragma Assert (R (0)'Initialized and C2 <= 609);
 
          T := I32 (D1) + C2;
          R (1) := T mod LM;
          C2 := T / LM;
+         --  C2 is now in range 0 .. 1, and it stays that way...
          pragma Assert (R (0 .. 1)'Initialized and C2 <= 1);
 
          T := I32 (D2) + C2;
