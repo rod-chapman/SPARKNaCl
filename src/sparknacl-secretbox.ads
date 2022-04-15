@@ -1,7 +1,7 @@
 with SPARKNaCl.Stream;
 with SPARKNaCl.Core;
 package SPARKNaCl.Secretbox
-  with Pure,
+  with --  Pure,
        SPARK_Mode => On
 is
    --------------------------------------------------------
@@ -38,5 +38,25 @@ is
                     Equal (C (0 .. 15), Zero_Bytes_16),
           Post   => Equal (M (0 .. 31), Zero_Bytes_32);
 
+   --------------------------------------------------------
+   --  TLS 1.3 AEAD using ChaCha20 and Poly1305 (RFC 8439)
+   --------------------------------------------------------
+
+   procedure Create (C   :    out Byte_Seq;
+                     Tag :    out Bytes_16;
+                     M   : in     Byte_Seq;
+                     N   : in     Core.ChaCha20_IETF_Nonce;
+                     K   : in     Core.ChaCha20_Key;
+                     AAD : in     Byte_Seq)
+     with Global => null,
+          Pre    => M'First    = 0 and
+                    C'First    = 0 and
+                    M'Last     = C'Last and
+                    C'Length   <= U32 (N32'Last) and
+                    M'Length   <= U32 (N32'Last) and
+                    C'Length   = M'Length and
+                    AAD'First  = 0 and
+                    AAD'Length <= U32 (N32'Last) and
+                    C'Length + AAD'Length <= U32 (N32'Last - 192);
 
 end SPARKNaCl.Secretbox;

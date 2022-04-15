@@ -21,6 +21,7 @@ with Secretbox3;
 with Secretbox7;
 with Secretbox8;
 with Secretbox9;
+with Secretbox10;
 with Sign;
 with Stream;
 with Stream2;
@@ -79,6 +80,8 @@ begin
    Secretbox8;
    Put_Line ("Secretbox9");
    Secretbox9;
+   Put_Line ("Secretbox10");
+   Secretbox10;
    Put_Line ("Sign");
    Sign;
    Put_Line ("Stream");
