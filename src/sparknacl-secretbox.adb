@@ -100,12 +100,21 @@ is
    --  TLS 1.3 AEAD using ChaCha20 and Poly1305 (RFC 8439)
    --------------------------------------------------------
 
-   procedure Create (C      :    out Byte_Seq;
-                     Tag    :    out Bytes_16;
-                     M      : in     Byte_Seq;
-                     N      : in     Core.ChaCha20_IETF_Nonce;
-                     K      : in     Core.ChaCha20_Key;
-                     AAD    : in     Byte_Seq)
+   --  Poly_1305 message authentication is performed on a
+   --  combination of the ciphertext and additional data
+   --  (AAD). This creates that combination.
+   function Gen_Auth_Msg (C   : in Byte_Seq;
+                          AAD : in Byte_Seq) return Byte_Seq
+     with Global => null,
+          Pre    => AAD'First  = 0 and
+                    AAD'Length <= U32 (N32'Last) and
+                    C'First    = 0 and
+                    C'Length   <= U32 (N32'Last) and
+                    C'Length + AAD'Length <= U32 (N32'Last - 192),
+          Post   => Gen_Auth_Msg'Result'First = 0;
+
+   function Gen_Auth_Msg (C   : in Byte_Seq;
+                          AAD : in Byte_Seq) return Byte_Seq
    is
       function LE64 (U : in U64) return Bytes_8
         with Global => null;
@@ -147,9 +156,6 @@ is
          end if;
       end Pad16;
 
-      OTK_Bytes : Bytes_32;
-      OTK : MAC.Poly_1305_Key;
-
       AAD_Len   : constant Bytes_8 := LE64 (U64 (AAD'Length));
       C_Len     : constant Bytes_8 := LE64 (U64 (C'Length));
 
@@ -157,34 +163,62 @@ is
       C_Pad     : constant Byte_Seq := Pad16 (C'Length);
 
    begin
+      return AAD & AAD_Pad & C & C_Pad & AAD_Len & C_Len;
+   end Gen_Auth_Msg;
+
+   --  AEAD Encryption
+   procedure Create (C      :    out Byte_Seq;
+                     Tag    :    out Bytes_16;
+                     M      : in     Byte_Seq;
+                     N      : in     Core.ChaCha20_IETF_Nonce;
+                     K      : in     Core.ChaCha20_Key;
+                     AAD    : in     Byte_Seq)
+   is
+      --  one-time key
+      OTK_Bytes : Bytes_32;
+      OTK : MAC.Poly_1305_Key;
+   begin
       --  Generate Poly1305 one-time key from 256-bit key and nonce
       Stream.ChaCha20_IETF (OTK_Bytes, N, K, 0);
-
       MAC.Construct (OTK, OTK_Bytes);
 
-      --  Next, ChaCha20 is called to encrypt plaintext, using the same key
-      --  and nonce, and with initial counter set to 1.
       Stream.ChaCha20_IETF_Xor (C => C,
                                 M => M,
                                 N => N,
                                 K => K,
                                 Counter => 1);
 
-      --  Finally, Poly1305 function is called with the Poly1305 key
-      --  calculated above, and a message constructed as a concatenation
-      --  of the following:
-      --   1. AAD
-      --   2. padding1 (up to 15 zero bytes, brings
-      --    total length so far to an integral multiple of 16.) If the length
-      --    of the AAD was already a multiple of 16 bytes, padding is zero.
-      --   3. ciphertext
-      --   4. padding2
-      --   5. length of additional data in octets (64-bit LE)
-      --   6. length of ciphertext in octets (64-bit LE)
-
       MAC.Onetimeauth (Output => Tag,
-                       M      => AAD & AAD_Pad & C & C_Pad & AAD_Len & C_Len,
+                       M      => Gen_Auth_Msg (C, AAD),
                        K      => OTK);
    end Create;
 
+   --  AEAD Decryption
+   procedure Open (M        :    out Byte_Seq;
+                   Status   :    out Boolean;
+                   Tag      : in     Bytes_16;
+                   C        : in     Byte_Seq;
+                   N        : in     Core.ChaCha20_IETF_Nonce;
+                   K        : in     Core.ChaCha20_Key;
+                   AAD      : in     Byte_Seq)
+   is
+      --  one-time key
+      OTK_Bytes : Bytes_32;
+      OTK : MAC.Poly_1305_Key;
+   begin
+      Stream.ChaCha20_IETF (OTK_Bytes, N, K, 0);
+      MAC.Construct (OTK, OTK_Bytes);
+
+      if MAC.Onetimeauth_Verify (Tag, Gen_Auth_Msg (C, AAD), OTK) then
+         Stream.ChaCha20_IETF_Xor (C => M,
+                                   M => C,
+                                   N => N,
+                                   K => K,
+                                   Counter => 1);
+         Status := True;
+      else
+         M := (others => 0);
+         Status := False;
+      end if;
+   end Open;
 end SPARKNaCl.Secretbox;

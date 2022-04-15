@@ -59,4 +59,21 @@ is
                     AAD'Length <= U32 (N32'Last) and
                     C'Length + AAD'Length <= U32 (N32'Last - 192);
 
+   procedure Open (M        :    out Byte_Seq;
+                   Status   :    out Boolean;
+                   Tag      : in     Bytes_16;
+                   C        : in     Byte_Seq;
+                   N        : in     Core.ChaCha20_IETF_Nonce;
+                   K        : in     Core.ChaCha20_Key;
+                   AAD      : in     Byte_Seq)
+     with Global => null,
+          Pre    => M'First    = 0 and
+                    C'First    = 0 and
+                    M'Last     = C'Last and
+                    C'Length   <= U32 (N32'Last) and
+                    M'Length   <= U32 (N32'Last) and
+                    C'Length   = M'Length and
+                    AAD'First  = 0 and
+                    AAD'Length <= U32 (N32'Last) and
+                    C'Length + AAD'Length <= U32 (N32'Last - 192);
 end SPARKNaCl.Secretbox;
