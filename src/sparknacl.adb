@@ -720,23 +720,22 @@ is
 
       --  The carry from D15 is now multiplied by R2256 and added
       --  to D0
-      pragma Assert (C15UB = 1048596);
       D0 := D0 + R2256 * C;
 
-      --  Knowing the value of C15UB, we can deduce the upper-bound
-      --  on D0. It's 29_912_183
-      pragma Assert (D0 <= LMM1 + R2256 * C15UB);
-
       declare
+         --  Knowing the value of C15UB, we can deduce the upper-bound
+         --  on D0, and thus the upper-bound on the carry from D0
+         D0UB : constant := LMM1 + R2256 * C15UB;
+         C2UB : constant := D0UB / LM;
          R  : GF32 with Relaxed_Initialization;
          C2 : GF32_Normal_Limb;
          T  : GF32_Any_Limb;
       begin
+         pragma Assert (D0 <= D0UB);
+
          R (0) := I32 (D0) mod LM;
          C2 := I32 (D0) / LM;
-         --  Knowing the upper-bound on D0 means that we know C2
-         --  is in 0 .. 609
-         pragma Assert (R (0)'Initialized and C2 <= 609);
+         pragma Assert (R (0)'Initialized and C2 <= C2UB);
 
          T := I32 (D1) + C2;
          R (1) := T mod LM;
