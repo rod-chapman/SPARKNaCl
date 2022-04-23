@@ -42,12 +42,13 @@ is
    --  TLS 1.3 AEAD using ChaCha20 and Poly1305 (RFC 8439)
    --------------------------------------------------------
 
-   procedure Create (C   :    out Byte_Seq;
-                     Tag :    out Bytes_16;
-                     M   : in     Byte_Seq;
-                     N   : in     Core.ChaCha20_IETF_Nonce;
-                     K   : in     Core.ChaCha20_Key;
-                     AAD : in     Byte_Seq)
+   procedure Create (C       :    out Byte_Seq;
+                     Tag     :    out Bytes_16;
+                     M       : in     Byte_Seq;
+                     N       : in     Core.ChaCha20_IETF_Nonce;
+                     K       : in     Core.ChaCha20_Key;
+                     AAD     : in     Byte_Seq;
+                     Counter : in     U32)
      with Global => null,
           Pre    => M'First    = 0 and
                     C'First    = 0 and
@@ -65,7 +66,8 @@ is
                    C        : in     Byte_Seq;
                    N        : in     Core.ChaCha20_IETF_Nonce;
                    K        : in     Core.ChaCha20_Key;
-                   AAD      : in     Byte_Seq)
+                   AAD      : in     Byte_Seq;
+                   Counter  : in     U32)
      with Global => null,
           Pre    => M'First    = 0 and
                     C'First    = 0 and

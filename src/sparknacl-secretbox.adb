@@ -167,12 +167,13 @@ is
    end Gen_Auth_Msg;
 
    --  AEAD Encryption
-   procedure Create (C      :    out Byte_Seq;
-                     Tag    :    out Bytes_16;
-                     M      : in     Byte_Seq;
-                     N      : in     Core.ChaCha20_IETF_Nonce;
-                     K      : in     Core.ChaCha20_Key;
-                     AAD    : in     Byte_Seq)
+   procedure Create (C       :    out Byte_Seq;
+                     Tag     :    out Bytes_16;
+                     M       : in     Byte_Seq;
+                     N       : in     Core.ChaCha20_IETF_Nonce;
+                     K       : in     Core.ChaCha20_Key;
+                     AAD     : in     Byte_Seq;
+                     Counter : in     U32)
    is
       --  one-time key
       OTK_Bytes : Bytes_32;
@@ -186,7 +187,7 @@ is
                                 M => M,
                                 N => N,
                                 K => K,
-                                Counter => 1);
+                                Counter => Counter);
 
       MAC.Onetimeauth (Output => Tag,
                        M      => Gen_Auth_Msg (C, AAD),
@@ -200,7 +201,8 @@ is
                    C        : in     Byte_Seq;
                    N        : in     Core.ChaCha20_IETF_Nonce;
                    K        : in     Core.ChaCha20_Key;
-                   AAD      : in     Byte_Seq)
+                   AAD      : in     Byte_Seq;
+                   Counter  : in     U32)
    is
       --  one-time key
       OTK_Bytes : Bytes_32;
@@ -214,7 +216,7 @@ is
                                    M => C,
                                    N => N,
                                    K => K,
-                                   Counter => 1);
+                                   Counter => Counter);
          Status := True;
       else
          M := (others => 0);

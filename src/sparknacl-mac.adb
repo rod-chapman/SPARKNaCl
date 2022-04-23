@@ -1,3 +1,5 @@
+--  with Ada.Text_IO;
+--  with SPARKNaCl.Debug; use SPARKNaCl.Debug;
 package body SPARKNaCl.MAC
   with SPARK_Mode => On
 is
@@ -219,6 +221,7 @@ is
       end loop;
 
       Output := Hashing.Hash_256 (OPad & Hashing.Hash_256 (IPad & M));
+
       pragma Assert (Output'Initialized);
    end HMAC_SHA_256;
 

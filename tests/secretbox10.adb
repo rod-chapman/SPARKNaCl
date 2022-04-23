@@ -104,14 +104,14 @@ is
    M_2 : Byte_Seq (C_2'Range);
    S_2 : Boolean;
 begin
-   Create (C_1, T_1, M_1, Nonce_1, Key_1, AAD_1);
+   Create (C_1, T_1, M_1, Nonce_1, Key_1, AAD_1, 1);
    DH ("C_1 is", C_1);
    DH ("T_1 is", T_1);
 
-   Open (M_2, S_2, Tag_2, C_2, N_2, Key_2, AAD_2);
+   Open (M_2, S_2, Tag_2, C_2, N_2, Key_2, AAD_2, 1);
    Ada.Text_IO.Put_Line ("Verified: " & S_2'Image);
    DH ("M_2 is", M_2);
 
-   Open (M_2, S_2, Bad_Tag_2, C_2, N_2, Key_2, AAD_2);
+   Open (M_2, S_2, Bad_Tag_2, C_2, N_2, Key_2, AAD_2, 1);
    Ada.Text_IO.Put_Line ("Verified: " & S_2'Image);
 end Secretbox10;

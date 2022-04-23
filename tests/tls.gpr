@@ -1,0 +1,9 @@
+with "../sparknacl.gpr";
+project TLS is
+
+   for Create_Missing_Dirs use "True";
+   for Object_Dir use ".";
+   for Source_Dirs use (".");
+   for Main use ("tls.adb");
+
+end TLS;

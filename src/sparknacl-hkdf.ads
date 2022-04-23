@@ -1,6 +1,6 @@
 with SPARKNaCl.Hashing;
 package SPARKNaCl.HKDF
-  with Pure,
+  with --  Pure,
        SPARK_Mode => On
 is
    --------------------------------------------------------

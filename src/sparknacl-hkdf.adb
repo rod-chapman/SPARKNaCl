@@ -1,5 +1,4 @@
 with SPARKNaCl.MAC;
-
 package body SPARKNaCl.HKDF
   with SPARK_Mode => On
 is
@@ -24,26 +23,37 @@ is
                      PRK  : in     Hashing.Digest_256; -- pseudo-random key
                      Info : in     Byte_Seq)   -- optional context
    is
-      type T_Arr is array (N32 range 1 .. (OKM'Length + 31) / 32) of Bytes_32;
-
-      T : T_Arr with Relaxed_Initialization;
+      N  : constant N32 := (OKM'Length + 31) / 32;
+      Ti : Bytes_32;    -- T (I - 1)
+      Tj : Bytes_32;    -- T (I)
+      OKM_Block : N32 := 0;
+      tmp : constant Byte_Seq := Info & Byte (1);
    begin
-      pragma Assert (OKM'Last <= T'Last * 32);
+      MAC.HMAC_SHA_256 (Ti, tmp, PRK);
 
-      MAC.HMAC_SHA_256 (T (1), Info & 1, PRK);
+      for J in Index_32'Range loop
+         OKM (J) := Ti (J);
 
-      for I in 2 .. T_Arr'Last loop
-         pragma Loop_Invariant (T (1 .. I - 1)'Initialized);
-         MAC.HMAC_SHA_256 (T (I), T (I - 1) & Info & Byte (I), PRK);
-         pragma Assert (T (I)'Initialized);
+         if J = OKM'Last then
+            return;
+         end if;
       end loop;
 
-      pragma Assert (T'Initialized);
 
-      for J in OKM'Range loop
-         OKM (J) := T ((J / 32) + 1) (J mod 32);
+      for I in 2 .. N loop
+         MAC.HMAC_SHA_256 (Tj, Ti & Info & Byte (I), PRK);
+         OKM_Block := (I - 1) * 32;
+
+         for J in Index_32'Range loop
+            OKM (OKM_Block + J) := Tj (J);
+
+            if OKM_Block + J = OKM'Last then
+               return;
+            end if;
+         end loop;
+
+         Ti := Tj;
       end loop;
-
    end Expand;
 
    procedure KDF (OKM  :    out OKM_256;
