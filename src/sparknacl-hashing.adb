@@ -346,7 +346,7 @@ is
       X (B) := 128;     --  set leading bit at end of message
 
       --  Final 8 bytes are the length of M in bits
-      if B < 55 then
+      if B < 56 then
          --  fill end of message's final 512-bit block, and hash only that.
          X (56 .. 63) := TS64 (U64 (M'Length * 8));
          Hashblocks_256 (H, X (0 .. 63));
