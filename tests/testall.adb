@@ -9,6 +9,8 @@ with ECDH;
 with Onetimeauth;
 with Onetimeauth2;
 with Onetimeauth7;
+with HMAC;
+with HKDF1;
 with Scalarmult;
 with Scalarmult2;
 with Scalarmult5;
@@ -19,6 +21,7 @@ with Secretbox3;
 with Secretbox7;
 with Secretbox8;
 with Secretbox9;
+with Secretbox10;
 with Sign;
 with Stream;
 with Stream2;
@@ -55,6 +58,8 @@ begin
    Onetimeauth2;
    Put_Line ("Onetimeauth7");
    Onetimeauth7;
+   Put_Line ("HMAC");
+   HMAC;
    Put_Line ("Scalarmult");
    Scalarmult;
    Put_Line ("Scalarmult2");
@@ -75,6 +80,8 @@ begin
    Secretbox8;
    Put_Line ("Secretbox9");
    Secretbox9;
+   Put_Line ("Secretbox10");
+   Secretbox10;
    Put_Line ("Sign");
    Sign;
    Put_Line ("Stream");
@@ -93,6 +100,8 @@ begin
    Stream7;
    Put_Line ("ECDH");
    ECDH;
+   Put_Line ("HKDF");
+   HKDF1;
 exception
    when E : others =>
       Put_Line (Exception_Message (E));
