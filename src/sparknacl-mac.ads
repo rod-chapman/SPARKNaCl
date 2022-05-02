@@ -1,6 +1,6 @@
 with SPARKNaCl.Hashing;
 package SPARKNaCl.MAC
-  with --  Pure,
+  with Pure,
        SPARK_Mode => On
 is
    --  Limited, so no assignment or comparison, and always
