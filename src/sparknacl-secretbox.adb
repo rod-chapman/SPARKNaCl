@@ -1,5 +1,4 @@
 with SPARKNaCl.MAC;
---  with SPARKNaCl.Debug;
 package body SPARKNaCl.Secretbox
   with SPARK_Mode => On
 is

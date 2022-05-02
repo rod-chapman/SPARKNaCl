@@ -1,7 +1,7 @@
 with SPARKNaCl.Stream;
 with SPARKNaCl.Core;
 package SPARKNaCl.Secretbox
-  with --  Pure,
+  with Pure,
        SPARK_Mode => On
 is
    --------------------------------------------------------
