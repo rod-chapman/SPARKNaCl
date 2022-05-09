@@ -19,7 +19,6 @@ is
    M3 : constant String (1 .. 1_000_000) := (others => 'a');
 
    --  FIPS 180-4 SHA-256 Test Cases
-   --  (SHA Test Vectors for Hashing Byte-Oriented Messages)
    --  From https://csrc.nist.gov/Projects/ \
    --         Cryptographic-Algorithm-Validation-Program/Secure-Hashing
    --  SHA Test Vectors for Hashing Byte-Oriented Messages 
