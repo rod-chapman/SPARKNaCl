@@ -21,9 +21,10 @@ is
    --  SHA-256 HKDF-Expand per RFC 5869
    --------------------------------------------------------
 
-   procedure Expand (OKM  :    out OKM_256;   -- output key material
-                     PRK  : in     Hashing.Digest_256; -- pseudo-random key
-                     Info : in     Byte_Seq)   -- optional context
+   procedure Expand
+     (OKM  :    out OKM_Seq;
+      PRK  : in     Hashing.Digest_256;
+      Info : in     Byte_Seq)
    is
       Ti : Bytes_32;    -- T (I - 1)
       Tj : Bytes_32;    -- T (I)
@@ -33,12 +34,12 @@ is
 
       if OKM'Last <= Ti'Last then
          --  Only need first T block to complete OKM
-         OKM (OKM'Range) := OKM_256 (Ti (OKM'Range));
+         OKM (OKM'Range) := OKM_Seq (Ti (OKM'Range)); -- Slice and Slide
          pragma Assert (OKM'Initialized);
          return;
       else
          --  OKM larger than hash len, fill the first hash len bytes of OKM
-         OKM (Ti'Range) := OKM_256 (Ti);
+         OKM (Ti'Range) := OKM_Seq (Ti);
       end if;
 
       pragma Assert (OKM (0 .. 31)'Initialized);
@@ -56,7 +57,7 @@ is
       end loop;
    end Expand;
 
-   procedure KDF (OKM  :    out OKM_256;
+   procedure KDF (OKM  :    out OKM_Seq;
                   IKM  : in     Byte_Seq;
                   Salt : in     Byte_Seq;
                   Info : in     Byte_Seq)
