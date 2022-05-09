@@ -33,28 +33,25 @@ is
       MAC.HMAC_SHA_256 (Ti, Info & B, PRK);
 
       if OKM'Last <= Ti'Last then
-         --  Only need first T block to complete OKM
-         OKM (OKM'Range) := OKM_Seq (Ti (OKM'Range)); -- Slice and Slide
-         pragma Assert (OKM'Initialized);
-         return;
+         --  Only need first block Ti to complete OKM
+         OKM := OKM_Seq (Ti (OKM'Range)); -- Slice and Slide
       else
          --  OKM larger than hash len, fill the first hash len bytes of OKM
          OKM (Ti'Range) := OKM_Seq (Ti);
+         pragma Assert (OKM (Ti'Range)'Initialized);
+
+         for I in Hash_Len .. OKM'Last loop
+            if I mod Hash_Len = 0 then
+               --  generate new output block
+               B := B + 1;
+               MAC.HMAC_SHA_256 (Tj, Ti & Info & B, PRK);
+               Ti := Tj;
+            end if;
+
+            OKM (I) := Ti (I mod Hash_Len);
+            pragma Loop_Invariant (OKM (0 .. I)'Initialized);
+         end loop;
       end if;
-
-      pragma Assert (OKM (0 .. 31)'Initialized);
-
-      for I in Hash_Len .. OKM'Last loop
-         if I mod Hash_Len = 0 then
-            --  generate new output block
-            B := B + 1;
-            MAC.HMAC_SHA_256 (Tj, Ti & Info & B, PRK);
-            Ti := Tj;
-         end if;
-
-         OKM (I) := Ti (I mod Hash_Len);
-         pragma Loop_Invariant (OKM (0 .. I)'Initialized);
-      end loop;
    end Expand;
 
    procedure KDF (OKM  :    out OKM_Seq;
