@@ -20,6 +20,10 @@ is
 
    --  FIPS 180-4 SHA-256 Test Cases
    --  (SHA Test Vectors for Hashing Byte-Oriented Messages)
+   --  From https://csrc.nist.gov/Projects/ \
+   --         Cryptographic-Algorithm-Validation-Program/Secure-Hashing
+   --  SHA Test Vectors for Hashing Byte-Oriented Messages 
+   --  (SHA256ShortMsg.rsp)
    FIPS_0   : constant Byte_Seq (1 .. 0) := (others => <>);
    FIPS_8   : constant Byte_Seq (0 .. 0) := (others => 16#D3#);
    FIPS_16  : constant Byte_Seq := (16#11#, 16#AF#);
