@@ -179,6 +179,7 @@ is
       OTK : MAC.Poly_1305_Key;
    begin
       --  Generate Poly1305 one-time key from 256-bit key and nonce
+      --  See RFC 8439 section 2.6
       Stream.ChaCha20_IETF (OTK_Bytes, N, K, 0);
       MAC.Construct (OTK, OTK_Bytes);
 
@@ -203,10 +204,12 @@ is
                    AAD      : in     Byte_Seq;
                    Counter  : in     U32)
    is
-      --  one-time key
+      --  One-Time Key
       OTK_Bytes : Bytes_32;
-      OTK : MAC.Poly_1305_Key;
+      OTK       : MAC.Poly_1305_Key;
    begin
+      --  Generate Poly1305 one-time key from 256-bit key and nonce
+      --  See RFC 8439 section 2.6
       Stream.ChaCha20_IETF (OTK_Bytes, N, K, 0);
       MAC.Construct (OTK, OTK_Bytes);
 
