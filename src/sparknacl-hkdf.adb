@@ -26,8 +26,7 @@ is
       PRK  : in     Hashing.Digest_256;
       Info : in     Byte_Seq)
    is
-      Ti : Bytes_32;    -- T (I - 1)
-      Tj : Bytes_32;    -- T (I)
+      Ti : Bytes_32;
       B  : Byte := 1;   -- Output block counter
    begin
       MAC.HMAC_SHA_256 (Ti, Info & B, PRK);
@@ -44,8 +43,7 @@ is
             if I mod Hash_Len = 0 then
                --  generate new output block
                B := B + 1;
-               MAC.HMAC_SHA_256 (Tj, Ti & Info & B, PRK);
-               Ti := Tj;
+               MAC.HMAC_SHA_256 (Ti, Ti & Info & B, PRK);
             end if;
 
             OKM (I) := Ti (I mod Hash_Len);
