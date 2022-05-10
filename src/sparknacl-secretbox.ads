@@ -51,8 +51,7 @@ is
       M       : in     Byte_Seq;           --  Message
       N       : in     Core.ChaCha20_IETF_Nonce; --  Nonce
       K       : in     Core.ChaCha20_Key;  --  Key
-      AAD     : in     Byte_Seq;           --  Additional Authenticated Data
-      Counter : in     U32)
+      AAD     : in     Byte_Seq)           --  Additional Authenticated Data
      with Global => null,
           Pre    => M'First    = 0 and
                     C'First    = 0 and
@@ -72,8 +71,7 @@ is
       C        : in     Byte_Seq;            --  Input ciphertext
       N        : in     Core.ChaCha20_IETF_Nonce; --  Nonce
       K        : in     Core.ChaCha20_Key;   --  Key
-      AAD      : in     Byte_Seq;            --  Additional Authenticated Data
-      Counter  : in     U32)
+      AAD      : in     Byte_Seq)            --  Additional Authenticated Data
      with Global => null,
           Pre    => M'First    = 0 and
                     C'First    = 0 and
