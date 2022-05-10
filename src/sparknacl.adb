@@ -854,6 +854,7 @@ is
       for I in Ret'Range loop
          Ret (I) := Character'Pos (S (S'First + Natural (I)));
       end loop;
+
       return Ret;
    end To_Byte_Seq;
 
