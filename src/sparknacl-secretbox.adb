@@ -171,8 +171,7 @@ is
                      M       : in     Byte_Seq;
                      N       : in     Core.ChaCha20_IETF_Nonce;
                      K       : in     Core.ChaCha20_Key;
-                     AAD     : in     Byte_Seq;
-                     Counter : in     U32)
+                     AAD     : in     Byte_Seq)
    is
       --  one-time key
       OTK_Bytes : Bytes_32;
@@ -183,11 +182,11 @@ is
       Stream.ChaCha20_IETF (OTK_Bytes, N, K, 0);
       MAC.Construct (OTK, OTK_Bytes);
 
-      Stream.ChaCha20_IETF_Xor (C => C,
-                                M => M,
-                                N => N,
-                                K => K,
-                                Counter => Counter);
+      Stream.ChaCha20_IETF_Xor (C       => C,
+                                M       => M,
+                                N       => N,
+                                K       => K,
+                                Counter => 1);
 
       MAC.Onetimeauth (Output => Tag,
                        M      => Gen_Auth_Msg (C, AAD),
@@ -201,8 +200,7 @@ is
                    C        : in     Byte_Seq;
                    N        : in     Core.ChaCha20_IETF_Nonce;
                    K        : in     Core.ChaCha20_Key;
-                   AAD      : in     Byte_Seq;
-                   Counter  : in     U32)
+                   AAD      : in     Byte_Seq)
    is
       --  One-Time Key
       OTK_Bytes : Bytes_32;
@@ -214,11 +212,11 @@ is
       MAC.Construct (OTK, OTK_Bytes);
 
       if MAC.Onetimeauth_Verify (Tag, Gen_Auth_Msg (C, AAD), OTK) then
-         Stream.ChaCha20_IETF_Xor (C => M,
-                                   M => C,
-                                   N => N,
-                                   K => K,
-                                   Counter => Counter);
+         Stream.ChaCha20_IETF_Xor (C       => M,
+                                   M       => C,
+                                   N       => N,
+                                   K       => K,
+                                   Counter => 1);
          Status := True;
       else
          M := (others => 0);
