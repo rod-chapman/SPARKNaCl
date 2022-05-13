@@ -78,11 +78,76 @@ is
       return Car.Nearlynormal_To_Normal (R);
    end "-";
 
+   -----------------------------------------------------
+   --  Subtypes and constants supporting "*" operator
+   -----------------------------------------------------
+
+   subtype U32NL is U32 range 0 .. LMM1;
+   subtype U64NL is U64 range 0 .. LMM1;
+   subtype GF64_Natural_Limb is U64 range 0 .. (MGFLC * MGFLP);
+
+   --  Limb Product (LP) - a subtype for representing the product
+   --  of two normalized GF64 Limbs
+   subtype LP   is GF64_Natural_Limb range 0 .. MGFLP;
+
+   --  Upper Bounds on Digits and Carry values during phase 1
+   --  ripple carry and reduction.
+   C0UB : constant := GF64_Natural_Limb'Last / LM;
+
+   subtype D1S is GF64_Natural_Limb range 0 .. 534 * MGFLP + C0UB;
+   C1UB : constant := D1S'Last / LM;
+
+   subtype D2S is GF64_Natural_Limb range 0 .. 497 * MGFLP + C1UB;
+   C2UB : constant := D2S'Last / LM;
+
+   subtype D3S is GF64_Natural_Limb range 0 .. 460 * MGFLP + C2UB;
+   C3UB : constant := D3S'Last / LM;
+
+   subtype D4S is GF64_Natural_Limb range 0 .. 423 * MGFLP + C3UB;
+   C4UB : constant := D4S'Last / LM;
+
+   subtype D5S is GF64_Natural_Limb range 0 .. 386 * MGFLP + C4UB;
+   C5UB : constant := D5S'Last / LM;
+
+   subtype D6S is GF64_Natural_Limb range 0 .. 349 * MGFLP + C5UB;
+   C6UB : constant := D6S'Last / LM;
+
+   subtype D7S is GF64_Natural_Limb range 0 .. 312 * MGFLP + C6UB;
+   C7UB : constant := D7S'Last / LM;
+
+   subtype D8S is GF64_Natural_Limb range 0 .. 275 * MGFLP + C7UB;
+   C8UB : constant := D8S'Last / LM;
+
+   subtype D9S is GF64_Natural_Limb range 0 .. 238 * MGFLP + C8UB;
+   C9UB : constant := D9S'Last / LM;
+
+   subtype D10S is GF64_Natural_Limb range 0 .. 201 * MGFLP + C9UB;
+   C10UB : constant := D10S'Last / LM;
+
+   subtype D11S is GF64_Natural_Limb range 0 .. 164 * MGFLP + C10UB;
+   C11UB : constant := D11S'Last / LM;
+
+   subtype D12S is GF64_Natural_Limb range 0 .. 127 * MGFLP + C11UB;
+   C12UB : constant := D12S'Last / LM;
+
+   subtype D13S is GF64_Natural_Limb range 0 .. 90 * MGFLP + C12UB;
+   C13UB : constant := D13S'Last / LM;
+
+   subtype D14S is GF64_Natural_Limb range 0 .. 53 * MGFLP + C13UB;
+   C14UB : constant := D14S'Last / LM;
+
+   subtype D15S is GF64_Natural_Limb range 0 .. 16 * MGFLP + C14UB;
+   C15UB : constant := D15S'Last / LM;
+
+   --  Phase 2 carry and reduction
+   --
+   --  Knowing the value of C15UB, we can deduce the upper-bound
+   --  on D0, and thus the upper-bound on the carry from D0
+   P2_D0UB : constant := LMM1 + R2256 * C15UB;
+   P2_C2UB : constant := P2_D0UB / LM;
+
    function "*" (Left, Right : in Normal_GF) return Normal_GF
    is
-      subtype U32NL is U32 range 0 .. LMM1;
-      subtype U64NL is U64 range 0 .. LMM1;
-
       L0  : constant U32NL := U32NL (Left (0));
       L1  : constant U32NL := U32NL (Left (1));
       L2  : constant U32NL := U32NL (Left (2));
@@ -116,78 +181,29 @@ is
       R14 : constant U32NL := U32NL (Right (14));
       R15 : constant U32NL := U32NL (Right (15));
 
-      subtype GF64_Natural_Limb is U64 range 0 .. (MGFLC * MGFLP);
-
-      --  Limb Product (LP) - a subtype for representing the product
-      --  of two normalized GF64 Limbs
-      subtype LP   is GF64_Natural_Limb range 0 .. MGFLP;
-
       C : GF64_Natural_Limb;
 
-      --  Upper Bounds on Digits and Carry values during phase 1
-      --  ripple carry and reduction.
       D0 : GF64_Natural_Limb;
-      C0UB : constant := GF64_Natural_Limb'Last / LM;
-
-      subtype D1S is GF64_Natural_Limb range 0 .. 534 * MGFLP + C0UB;
       D1 : D1S;
-      C1UB : constant := D1S'Last / LM;
-
-      subtype D2S is GF64_Natural_Limb range 0 .. 497 * MGFLP + C1UB;
       D2 : D2S;
-      C2UB : constant := D2S'Last / LM;
-
-      subtype D3S is GF64_Natural_Limb range 0 .. 460 * MGFLP + C2UB;
       D3 : D3S;
-      C3UB : constant := D3S'Last / LM;
-
-      subtype D4S is GF64_Natural_Limb range 0 .. 423 * MGFLP + C3UB;
       D4 : D4S;
-      C4UB : constant := D4S'Last / LM;
-
-      subtype D5S is GF64_Natural_Limb range 0 .. 386 * MGFLP + C4UB;
       D5 : D5S;
-      C5UB : constant := D5S'Last / LM;
-
-      subtype D6S is GF64_Natural_Limb range 0 .. 349 * MGFLP + C5UB;
       D6 : D6S;
-      C6UB : constant := D6S'Last / LM;
-
-      subtype D7S is GF64_Natural_Limb range 0 .. 312 * MGFLP + C6UB;
       D7 : D7S;
-      C7UB : constant := D7S'Last / LM;
-
-      subtype D8S is GF64_Natural_Limb range 0 .. 275 * MGFLP + C7UB;
       D8 : D8S;
-      C8UB : constant := D8S'Last / LM;
-
-      subtype D9S is GF64_Natural_Limb range 0 .. 238 * MGFLP + C8UB;
       D9 : D9S;
-      C9UB : constant := D9S'Last / LM;
-
-      subtype D10S is GF64_Natural_Limb range 0 .. 201 * MGFLP + C9UB;
       D10 : D10S;
-      C10UB : constant := D10S'Last / LM;
-
-      subtype D11S is GF64_Natural_Limb range 0 .. 164 * MGFLP + C10UB;
       D11 : D11S;
-      C11UB : constant := D11S'Last / LM;
-
-      subtype D12S is GF64_Natural_Limb range 0 .. 127 * MGFLP + C11UB;
       D12 : D12S;
-      C12UB : constant := D12S'Last / LM;
-
-      subtype D13S is GF64_Natural_Limb range 0 .. 90 * MGFLP + C12UB;
       D13 : D13S;
-      C13UB : constant := D13S'Last / LM;
-
-      subtype D14S is GF64_Natural_Limb range 0 .. 53 * MGFLP + C13UB;
       D14 : D14S;
-      C14UB : constant := D14S'Last / LM;
-
-      subtype D15S is GF64_Natural_Limb range 0 .. 16 * MGFLP + C14UB;
       D15 : D15S;
-      C15UB : constant := D15S'Last / LM;
+
+      --  Local vars used in Phase 2 carry and reduction
+      R  : GF32 with Relaxed_Initialization;
+      C2 : GF32_Normal_Limb;
+      T  : GF32_Any_Limb;
    begin
       D0  := LP (L0 * R0) +
         R2256 * (LP (L15 * R1)  + LP (L14 * R2)  + LP (L13 * R3) +
@@ -512,103 +528,94 @@ is
       --  to D0
       D0 := D0 + R2256 * C;
 
-      declare
-         --  Knowing the value of C15UB, we can deduce the upper-bound
-         --  on D0, and thus the upper-bound on the carry from D0
-         D0UB : constant := LMM1 + R2256 * C15UB;
-         C2UB : constant := D0UB / LM;
-         R  : GF32 with Relaxed_Initialization;
-         C2 : GF32_Normal_Limb;
-         T  : GF32_Any_Limb;
-      begin
-         pragma Assert (D0 <= D0UB);
+      --  Phase 2 carry and reduction
+      pragma Assert (D0 <= P2_D0UB);
 
-         R (0) := I32 (D0) mod LM;
-         C2 := I32 (D0) / LM;
-         pragma Assert (R (0)'Initialized and C2 <= C2UB);
+      R (0) := I32 (D0) mod LM;
+      C2 := I32 (D0) / LM;
+      pragma Assert (R (0)'Initialized and C2 <= P2_C2UB);
 
-         T := I32 (D1) + C2;
-         R (1) := T mod LM;
-         C2 := T / LM;
-         --  C2 is now in range 0 .. 1, and it stays that way...
-         pragma Assert (R (0 .. 1)'Initialized and C2 <= 1);
+      T := I32 (D1) + C2;
+      R (1) := T mod LM;
+      C2 := T / LM;
+      --  C2 is now in range 0 .. 1, and it stays that way...
+      pragma Assert (R (0 .. 1)'Initialized and C2 <= 1);
 
-         T := I32 (D2) + C2;
-         R (2) := T mod LM;
-         C2 := T / LM;
-         pragma Assert (R (0 .. 2)'Initialized and C2 <= 1);
+      T := I32 (D2) + C2;
+      R (2) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 2)'Initialized and C2 <= 1);
 
-         T := I32 (D3) + C2;
-         R (3) := T mod LM;
-         C2 := T / LM;
-         pragma Assert (R (0 .. 3)'Initialized and C2 <= 1);
+      T := I32 (D3) + C2;
+      R (3) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 3)'Initialized and C2 <= 1);
 
-         T := I32 (D4) + C2;
-         R (4) := T mod LM;
-         C2 := T / LM;
-         pragma Assert (R (0 .. 4)'Initialized and C2 <= 1);
+      T := I32 (D4) + C2;
+      R (4) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 4)'Initialized and C2 <= 1);
 
-         T := I32 (D5) + C2;
-         R (5) := T mod LM;
-         C2 := T / LM;
-         pragma Assert (R (0 .. 5)'Initialized and C2 <= 1);
+      T := I32 (D5) + C2;
+      R (5) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 5)'Initialized and C2 <= 1);
 
-         T := I32 (D6) + C2;
-         R (6) := T mod LM;
-         C2 := T / LM;
-         pragma Assert (R (0 .. 6)'Initialized and C2 <= 1);
+      T := I32 (D6) + C2;
+      R (6) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 6)'Initialized and C2 <= 1);
 
-         T := I32 (D7) + C2;
-         R (7) := T mod LM;
-         C2 := T / LM;
-         pragma Assert (R (0 .. 7)'Initialized and C2 <= 1);
+      T := I32 (D7) + C2;
+      R (7) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 7)'Initialized and C2 <= 1);
 
-         T := I32 (D8) + C2;
-         R (8) := T mod LM;
-         C2 := T / LM;
-         pragma Assert (R (0 .. 8)'Initialized and C2 <= 1);
+      T := I32 (D8) + C2;
+      R (8) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 8)'Initialized and C2 <= 1);
 
-         T := I32 (D9) + C2;
-         R (9) := T mod LM;
-         C2 := T / LM;
-         pragma Assert (R (0 .. 9)'Initialized and C2 <= 1);
+      T := I32 (D9) + C2;
+      R (9) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 9)'Initialized and C2 <= 1);
 
-         T := I32 (D10) + C2;
-         R (10) := T mod LM;
-         C2 := T / LM;
-         pragma Assert (R (0 .. 10)'Initialized and C2 <= 1);
+      T := I32 (D10) + C2;
+      R (10) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 10)'Initialized and C2 <= 1);
 
-         T := I32 (D11) + C2;
-         R (11) := T mod LM;
-         C2 := T / LM;
-         pragma Assert (R (0 .. 11)'Initialized and C2 <= 1);
+      T := I32 (D11) + C2;
+      R (11) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 11)'Initialized and C2 <= 1);
 
-         T := I32 (D12) + C2;
-         R (12) := T mod LM;
-         C2 := T / LM;
-         pragma Assert (R (0 .. 12)'Initialized and C2 <= 1);
+      T := I32 (D12) + C2;
+      R (12) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 12)'Initialized and C2 <= 1);
 
-         T := I32 (D13) + C2;
-         R (13) := T mod LM;
-         C2 := T / LM;
-         pragma Assert (R (0 .. 13)'Initialized and C2 <= 1);
+      T := I32 (D13) + C2;
+      R (13) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 13)'Initialized and C2 <= 1);
 
-         T := I32 (D14) + C2;
-         R (14) := T mod LM;
-         C2 := T / LM;
-         pragma Assert (R (0 .. 14)'Initialized and C2 <= 1);
+      T := I32 (D14) + C2;
+      R (14) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 14)'Initialized and C2 <= 1);
 
-         T := I32 (D15) + C2;
-         R (15) := T mod LM;
-         C2 := T / LM;
-         pragma Assert (R (0 .. 15)'Initialized and C2 <= 1);
+      T := I32 (D15) + C2;
+      R (15) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 15)'Initialized and C2 <= 1);
 
-         pragma Assert (R'Initialized and C2 <= 1);
+      pragma Assert (R'Initialized and C2 <= 1);
 
-         R (0) := R (0) + R2256 * C2;
+      R (0) := R (0) + R2256 * C2;
 
-         return Car.Nearlynormal_To_Normal (Nearlynormal_GF (R));
-      end;
+      return Car.Nearlynormal_To_Normal (Nearlynormal_GF (R));
    end "*";
 
    --------------------------------------------------------
