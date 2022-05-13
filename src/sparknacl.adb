@@ -124,41 +124,6 @@ is
       --  Limb Product (LP) - a subtype for representing the product
       --  of two normalized GF64 Limbs
       subtype LP   is GF64_Natural_Limb range 0 .. MGFLP;
-      --  Sum of 2 Limb Products...
-      subtype LP2  is GF64_Natural_Limb range 0 .. 2 * MGFLP;
-      --  ... and so on...
-      subtype LP3  is GF64_Natural_Limb range 0 .. 3 * MGFLP;
-      subtype LP4  is GF64_Natural_Limb range 0 .. 4 * MGFLP;
-      subtype LP5  is GF64_Natural_Limb range 0 .. 5 * MGFLP;
-      subtype LP6  is GF64_Natural_Limb range 0 .. 6 * MGFLP;
-      subtype LP7  is GF64_Natural_Limb range 0 .. 7 * MGFLP;
-      subtype LP8  is GF64_Natural_Limb range 0 .. 8 * MGFLP;
-      subtype LP9  is GF64_Natural_Limb range 0 .. 9 * MGFLP;
-      subtype LP10 is GF64_Natural_Limb range 0 .. 10 * MGFLP;
-      subtype LP11 is GF64_Natural_Limb range 0 .. 11 * MGFLP;
-      subtype LP12 is GF64_Natural_Limb range 0 .. 12 * MGFLP;
-      subtype LP13 is GF64_Natural_Limb range 0 .. 13 * MGFLP;
-      subtype LP14 is GF64_Natural_Limb range 0 .. 14 * MGFLP;
-      subtype LP15 is GF64_Natural_Limb range 0 .. 15 * MGFLP;
-      subtype LP16 is GF64_Natural_Limb range 0 .. 16 * MGFLP;
-
-
-      T0,  T30 : LP;
-      T1,  T29 : LP2;
-      T2,  T28 : LP3;
-      T3,  T27 : LP4;
-      T4,  T26 : LP5;
-      T5,  T25 : LP6;
-      T6,  T24 : LP7;
-      T7,  T23 : LP8;
-      T8,  T22 : LP9;
-      T9,  T21 : LP10;
-      T10, T20 : LP11;
-      T11, T19 : LP12;
-      T12, T18 : LP13;
-      T13, T17 : LP14;
-      T14, T16 : LP15;
-      T15 : LP16;
 
       C : GF64_Natural_Limb;
 
@@ -227,39 +192,37 @@ is
       D15 : D15S;
       C15UB : constant := D15S'Last / LM;
    begin
-      T0 := LP (L0 * R0);
-      T16 := LP (L15 * R1)  + LP (L14 * R2)  + LP (L13 * R3) +
-             LP (L12 * R4)  + LP (L11 * R5)  + LP (L10 * R6) +
-             LP (L9  * R7)  + LP (L8  * R8)  + LP (L7  * R9) +
-             LP (L6  * R10) + LP (L5  * R11) + LP (L4  * R12) +
-             LP (L3  * R13) + LP (L2  * R14) + LP (L1  * R15);
-      D0  := T0  + R2256 * T16;
+      D0  := LP (L0 * R0) +
+        R2256 * (LP (L15 * R1)  + LP (L14 * R2)  + LP (L13 * R3) +
+                   LP (L12 * R4)  + LP (L11 * R5)  + LP (L10 * R6) +
+                   LP (L9  * R7)  + LP (L8  * R8)  + LP (L7  * R9) +
+                   LP (L6  * R10) + LP (L5  * R11) + LP (L4  * R12) +
+                   LP (L3  * R13) + LP (L2  * R14) + LP (L1  * R15));
+
       C := D0 / LM;
-      pragma Assert (C <= C0UB);
       D0 := D0 mod LM;
       pragma Assert_And_Cut (D0 in U64NL and
                              C <= C0UB);
 
-      T1 := LP (L1 * R0) + LP (L0 * R1);
-      T17 := LP (L15 * R2)  + LP (L14 * R3)  + LP (L13 * R4) +
-             LP (L12 * R5)  + LP (L11 * R6)  + LP (L10 * R7) +
-             LP (L9  * R8)  + LP (L8  * R9)  + LP (L7  * R10) +
-             LP (L6  * R11) + LP (L5  * R12) + LP (L4  * R13) +
-             LP (L3  * R14) + LP (L2  * R15);
-      D1  := T1  + R2256 * T17 + C;
+      D1  := C + LP (L1 * R0) + LP (L0 * R1) +
+        R2256 * (LP (L15 * R2)  + LP (L14 * R3)  + LP (L13 * R4) +
+                   LP (L12 * R5)  + LP (L11 * R6)  + LP (L10 * R7) +
+                   LP (L9  * R8)  + LP (L8  * R9)  + LP (L7  * R10) +
+                   LP (L6  * R11) + LP (L5  * R12) + LP (L4  * R13) +
+                   LP (L3  * R14) + LP (L2  * R15));
       C := D1 / LM;
       D1 := D1 mod LM;
       pragma Assert_And_Cut (D0 in U64NL and
                              D1 in U64NL and
                              C <= C1UB);
 
-      T2 := LP (L2 * R0) + LP (L1 * R1) + LP (L0 * R2);
-      T18 := LP (L15 * R3)  + LP (L14 * R4)  + LP (L13 * R5) +
-             LP (L12 * R6)  + LP (L11 * R7)  + LP (L10 * R8) +
-             LP (L9  * R9)  + LP (L8  * R10) + LP (L7  * R11) +
-             LP (L6  * R12) + LP (L5  * R13) + LP (L4  * R14) +
-             LP (L3  * R15);
-      D2  := T2  + R2256 * T18 + C;
+      D2  := C + LP (L2 * R0) + LP (L1 * R1) + LP (L0 * R2) +
+        R2256 * (LP (L15 * R3)  + LP (L14 * R4)  + LP (L13 * R5) +
+                   LP (L12 * R6)  + LP (L11 * R7)  + LP (L10 * R8) +
+                   LP (L9  * R9)  + LP (L8  * R10) + LP (L7  * R11) +
+                   LP (L6  * R12) + LP (L5  * R13) + LP (L4  * R14) +
+                   LP (L3  * R15));
+
       C := D2 / LM;
       D2 := D2 mod LM;
       pragma Assert_And_Cut (D0 in U64NL and
@@ -267,13 +230,12 @@ is
                              D2 in U64NL and
                              C <= C2UB);
 
-      T3 := LP (L3 * R0) + LP (L2 * R1) + LP (L1 * R2) +
-            LP (L0 * R3);
-      T19 := LP (L15 * R4)  + LP (L14 * R5)  + LP (L13 * R6) +
-             LP (L12 * R7)  + LP (L11 * R8)  + LP (L10 * R9) +
-             LP (L9  * R10) + LP (L8  * R11) + LP (L7  * R12) +
-             LP (L6  * R13) + LP (L5  * R14) + LP (L4  * R15);
-      D3  := T3  + R2256 * T19 + C;
+      D3 := C + LP (L3 * R0) + LP (L2 * R1) + LP (L1 * R2) + LP (L0 * R3) +
+        R2256 * (LP (L15 * R4)  + LP (L14 * R5)  + LP (L13 * R6) +
+                   LP (L12 * R7)  + LP (L11 * R8)  + LP (L10 * R9) +
+                   LP (L9  * R10) + LP (L8  * R11) + LP (L7  * R12) +
+                   LP (L6  * R13) + LP (L5  * R14) + LP (L4  * R15));
+
       C := D3 / LM;
       D3 := D3 mod LM;
       pragma Assert_And_Cut (D0 in U64NL and
@@ -282,13 +244,13 @@ is
                              D3 in U64NL and
                              C <= C3UB);
 
-      T4 := LP (L4 * R0) + LP (L3 * R1) + LP (L2 * R2) +
-            LP (L1 * R3) + LP (L0 * R4);
-      T20 := LP (L15 * R5)  + LP (L14 * R6)  + LP (L13 * R7) +
-             LP (L12 * R8)  + LP (L11 * R9)  + LP (L10 * R10) +
-             LP (L9  * R11) + LP (L8  * R12) + LP (L7  * R13) +
-             LP (L6  * R14) + LP (L5  * R15);
-      D4  := T4  + R2256 * T20 + C;
+      D4 := C + LP (L4 * R0) + LP (L3 * R1) + LP (L2 * R2) +
+        LP (L1 * R3) + LP (L0 * R4) +
+        R2256 * (LP (L15 * R5)  + LP (L14 * R6)  + LP (L13 * R7) +
+                   LP (L12 * R8)  + LP (L11 * R9)  + LP (L10 * R10) +
+                   LP (L9  * R11) + LP (L8  * R12) + LP (L7  * R13) +
+                   LP (L6  * R14) + LP (L5  * R15));
+
       C := D4 / LM;
       D4 := D4 mod LM;
       pragma Assert_And_Cut (D0 in U64NL and
@@ -298,13 +260,13 @@ is
                              D4 in U64NL and
                              C <= C4UB);
 
-      T5 := LP (L5 * R0) + LP (L4 * R1) + LP (L3 * R2) +
-            LP (L2 * R3) + LP (L1 * R4) + LP (L0 * R5);
-      T21 := LP (L15 * R6)  + LP (L14 * R7)  + LP (L13 * R8) +
-             LP (L12 * R9)  + LP (L11 * R10) + LP (L10 * R11) +
-             LP (L9  * R12) + LP (L8  * R13) + LP (L7  * R14) +
-             LP (L6  * R15);
-      D5  := T5  + R2256 * T21 + C;
+      D5 := C + LP (L5 * R0) + LP (L4 * R1) + LP (L3 * R2) +
+        LP (L2 * R3) + LP (L1 * R4) + LP (L0 * R5) +
+        R2256 * (LP (L15 * R6)  + LP (L14 * R7)  + LP (L13 * R8) +
+                   LP (L12 * R9)  + LP (L11 * R10) + LP (L10 * R11) +
+                   LP (L9  * R12) + LP (L8  * R13) + LP (L7  * R14) +
+                   LP (L6  * R15));
+
       C := D5 / LM;
       D5 := D5 mod LM;
       pragma Assert_And_Cut (D0 in U64NL and
@@ -315,13 +277,12 @@ is
                              D5 in U64NL and
                              C <= C5UB);
 
-      T6 := LP (L6 * R0) + LP (L5 * R1) + LP (L4 * R2) +
-            LP (L3 * R3) + LP (L2 * R4) + LP (L1 * R5) +
-            LP (L0 * R6);
-      T22 := LP (L15 * R7)  + LP (L14 * R8)  + LP (L13 * R9) +
-             LP (L12 * R10) + LP (L11 * R11) + LP (L10 * R12) +
-             LP (L9  * R13) + LP (L8  * R14) + LP (L7  * R15);
-      D6  := T6  + R2256 * T22 + C;
+      D6 := C + LP (L6 * R0) + LP (L5 * R1) + LP (L4 * R2) +
+        LP (L3 * R3) + LP (L2 * R4) + LP (L1 * R5) +
+        LP (L0 * R6) +
+        R2256 * (LP (L15 * R7)  + LP (L14 * R8)  + LP (L13 * R9) +
+                   LP (L12 * R10) + LP (L11 * R11) + LP (L10 * R12) +
+                   LP (L9  * R13) + LP (L8  * R14) + LP (L7  * R15));
       C := D6 / LM;
       D6 := D6 mod LM;
 
@@ -334,13 +295,13 @@ is
                              D6 in U64NL and
                              C <= C6UB);
 
-      T7 := LP (L7 * R0) + LP (L6 * R1) + LP (L5 * R2) +
-            LP (L4 * R3) + LP (L3 * R4) + LP (L2 * R5) +
-            LP (L1 * R6) + LP (L0 * R7);
-      T23 := LP (L15 * R8)  + LP (L14 * R9)  + LP (L13 * R10) +
-             LP (L12 * R11) + LP (L11 * R12) + LP (L10 * R13) +
-             LP (L9  * R14) + LP (L8  * R15);
-      D7  := T7  + R2256 * T23 + C;
+      D7 := C + LP (L7 * R0) + LP (L6 * R1) + LP (L5 * R2) +
+        LP (L4 * R3) + LP (L3 * R4) + LP (L2 * R5) +
+        LP (L1 * R6) + LP (L0 * R7) +
+        R2256 * (LP (L15 * R8)  + LP (L14 * R9)  + LP (L13 * R10) +
+                   LP (L12 * R11) + LP (L11 * R12) + LP (L10 * R13) +
+                   LP (L9  * R14) + LP (L8  * R15));
+
       C := D7 / LM;
       D7 := D7 mod LM;
 
@@ -354,14 +315,13 @@ is
                              D7 in U64NL and
                              C <= C7UB);
 
+      D8 := C + LP (L8 * R0) + LP (L7 * R1) + LP (L6 * R2) +
+        LP (L5 * R3) + LP (L4 * R4) + LP (L3 * R5) +
+        LP (L2 * R6) + LP (L1 * R7) + LP (L0 * R8) +
+        R2256 * (LP (L15 * R9)  + LP (L14 * R10) + LP (L13 * R11) +
+                   LP (L12 * R12) + LP (L11 * R13) + LP (L10 * R14) +
+                   LP (L9  * R15));
 
-      T8 := LP (L8 * R0) + LP (L7 * R1) + LP (L6 * R2) +
-            LP (L5 * R3) + LP (L4 * R4) + LP (L3 * R5) +
-            LP (L2 * R6) + LP (L1 * R7) + LP (L0 * R8);
-      T24 := LP (L15 * R9)  + LP (L14 * R10) + LP (L13 * R11) +
-             LP (L12 * R12) + LP (L11 * R13) + LP (L10 * R14) +
-             LP (L9  * R15);
-      D8  := T8  + R2256 * T24 + C;
       C := D8 / LM;
       D8 := D8 mod LM;
 
@@ -376,14 +336,13 @@ is
                              D8 in U64NL and
                              C <= C8UB);
 
-
-      T9 := LP (L9 * R0) + LP (L8 * R1) + LP (L7 * R2) +
+      D9 := C + LP (L9 * R0) + LP (L8 * R1) + LP (L7 * R2) +
         LP (L6 * R3) + LP (L5 * R4) + LP (L4 * R5) +
         LP (L3 * R6) + LP (L2 * R7) + LP (L1 * R8) +
-        LP (L0 * R9);
-      T25 := LP (L15 * R10) + LP (L14 * R11) + LP (L13 * R12) +
-        LP (L12 * R13) + LP (L11 * R14) + LP (L10 * R15);
-      D9  := T9  + R2256 * T25 + C;
+        LP (L0 * R9) +
+        R2256 * (LP (L15 * R10) + LP (L14 * R11) + LP (L13 * R12) +
+                   LP (L12 * R13) + LP (L11 * R14) + LP (L10 * R15));
+
       C := D9 / LM;
       D9 := D9 mod LM;
 
@@ -399,13 +358,13 @@ is
                              D9 in U64NL and
                              C <= C9UB);
 
-      T10 := LP (L10 * R0) + LP (L9 * R1) + LP (L8 * R2) +
+      D10 := C + LP (L10 * R0) + LP (L9 * R1) + LP (L8 * R2) +
         LP (L7  * R3) + LP (L6 * R4) + LP (L5 * R5) +
         LP (L4  * R6) + LP (L3 * R7) + LP (L2 * R8) +
-        LP (L1  * R9) + LP (L0 * R10);
-      T26 := LP (L15 * R11) + LP (L14 * R12) + LP (L13 * R13) +
-        LP (L12 * R14) + LP (L11 * R15);
-      D10 := T10 + R2256 * T26 + C;
+        LP (L1  * R9) + LP (L0 * R10) +
+        R2256 * (LP (L15 * R11) + LP (L14 * R12) + LP (L13 * R13) +
+                   LP (L12 * R14) + LP (L11 * R15));
+
       C := D10 / LM;
       D10 := D10 mod LM;
 
@@ -422,13 +381,13 @@ is
                              D10 in U64NL and
                              C <= C10UB);
 
-      T11 := LP (L11 * R0) + LP (L10 * R1)  + LP (L9 * R2) +
+      D11 := C + LP (L11 * R0) + LP (L10 * R1)  + LP (L9 * R2) +
         LP (L8  * R3) + LP (L7  * R4)  + LP (L6 * R5) +
         LP (L5  * R6) + LP (L4  * R7)  + LP (L3 * R8) +
-        LP (L2  * R9) + LP (L1  * R10) + LP (L0 * R11);
-      T27 := LP (L15 * R12) + LP (L14 * R13) + LP (L13 * R14) +
-        LP (L12 * R15);
-      D11 := T11 + R2256 * T27 + C;
+        LP (L2  * R9) + LP (L1  * R10) + LP (L0 * R11) +
+        R2256 * (LP (L15 * R12) + LP (L14 * R13) + LP (L13 * R14) +
+                   LP (L12 * R15));
+
       C := D11 / LM;
       D11 := D11 mod LM;
 
@@ -446,14 +405,13 @@ is
                              D11 in U64NL and
                              C <= C11UB);
 
-
-      T12 := LP (L12 * R0) + LP (L11 * R1)  + LP (L10 * R2) +
+      D12 := C + LP (L12 * R0) + LP (L11 * R1)  + LP (L10 * R2) +
         LP (L9  * R3) + LP (L8  * R4)  + LP (L7  * R5) +
         LP (L6  * R6) + LP (L5  * R7)  + LP (L4  * R8) +
         LP (L3  * R9) + LP (L2  * R10) + LP (L1  * R11) +
-        LP (L0  * R12);
-      T28 := LP (L15 * R13) + LP (L14 * R14) + LP (L13 * R15);
-      D12 := T12 + R2256 * T28 + C;
+        LP (L0  * R12) +
+        R2256 * (LP (L15 * R13) + LP (L14 * R14) + LP (L13 * R15));
+
       C := D12 / LM;
       D12 := D12 mod LM;
 
@@ -472,14 +430,13 @@ is
                              D12 in U64NL and
                              C <= C12UB);
 
-
-      T13 := LP (L13 * R0)  + LP (L12 * R1)  + LP (L11 * R2) +
+      D13 := C + LP (L13 * R0)  + LP (L12 * R1)  + LP (L11 * R2) +
         LP (L10 * R3)  + LP (L9  * R4)  + LP (L8  * R5) +
         LP (L7  * R6)  + LP (L6  * R7)  + LP (L5  * R8) +
         LP (L4  * R9)  + LP (L3  * R10) + LP (L2  * R11) +
-        LP (L1  * R12) + LP (L0  * R13);
-      T29 := LP (L15 * R14) + LP (L14 * R15);
-      D13 := T13 + R2256 * T29 + C;
+        LP (L1  * R12) + LP (L0  * R13) +
+        R2256 * (LP (L15 * R14) + LP (L14 * R15));
+
       C := D13 / LM;
       D13 := D13 mod LM;
 
@@ -499,13 +456,13 @@ is
                              D13 in U64NL and
                              C <= C13UB);
 
-      T14 := LP (L14 * R0)  + LP (L13 * R1)  + LP (L12 * R2) +
+      D14 := C + LP (L14 * R0)  + LP (L13 * R1)  + LP (L12 * R2) +
         LP (L11 * R3)  + LP (L10 * R4)  + LP (L9  * R5) +
         LP (L8  * R6)  + LP (L7  * R7)  + LP (L6  * R8) +
         LP (L5  * R9)  + LP (L4  * R10) + LP (L3  * R11) +
-        LP (L2  * R12) + LP (L1  * R13) + LP (L0  * R14);
-      T30 := LP (L15 * R15);
-      D14 := T14 + R2256 * T30 + C;
+        LP (L2  * R12) + LP (L1  * R13) + LP (L0  * R14) +
+        R2256 * LP (L15 * R15);
+
       C := D14 / LM;
       D14 := D14 mod LM;
 
@@ -526,13 +483,13 @@ is
                              D14 in U64NL and
                              C <= C14UB);
 
-      T15 := LP (L15 * R0)  + LP (L14 * R1)  + LP (L13 * R2) +
+      D15 := C + LP (L15 * R0)  + LP (L14 * R1)  + LP (L13 * R2) +
              LP (L12 * R3)  + LP (L11 * R4)  + LP (L10 * R5) +
              LP (L9  * R6)  + LP (L8  * R7)  + LP (L7  * R8) +
              LP (L6  * R9)  + LP (L5  * R10) + LP (L4  * R11) +
              LP (L3  * R12) + LP (L2  * R13) + LP (L1  * R14) +
              LP (L0  * R15);
-      D15 := T15 + C;
+
       C := D15 / LM;
       D15 := D15 mod LM;
 
