@@ -80,44 +80,41 @@ is
 
    function "*" (Left, Right : in Normal_GF) return Normal_GF
    is
-      L : Normal_GF renames Left;
-      R : Normal_GF renames Right;
-
       subtype U32NL is U32 range 0 .. LMM1;
       subtype U64NL is U64 range 0 .. LMM1;
 
-      L0  : constant U32NL := U32NL (L (0));
-      L1  : constant U32NL := U32NL (L (1));
-      L2  : constant U32NL := U32NL (L (2));
-      L3  : constant U32NL := U32NL (L (3));
-      L4  : constant U32NL := U32NL (L (4));
-      L5  : constant U32NL := U32NL (L (5));
-      L6  : constant U32NL := U32NL (L (6));
-      L7  : constant U32NL := U32NL (L (7));
-      L8  : constant U32NL := U32NL (L (8));
-      L9  : constant U32NL := U32NL (L (9));
-      L10 : constant U32NL := U32NL (L (10));
-      L11 : constant U32NL := U32NL (L (11));
-      L12 : constant U32NL := U32NL (L (12));
-      L13 : constant U32NL := U32NL (L (13));
-      L14 : constant U32NL := U32NL (L (14));
-      L15 : constant U32NL := U32NL (L (15));
-      R0  : constant U32NL := U32NL (R (0));
-      R1  : constant U32NL := U32NL (R (1));
-      R2  : constant U32NL := U32NL (R (2));
-      R3  : constant U32NL := U32NL (R (3));
-      R4  : constant U32NL := U32NL (R (4));
-      R5  : constant U32NL := U32NL (R (5));
-      R6  : constant U32NL := U32NL (R (6));
-      R7  : constant U32NL := U32NL (R (7));
-      R8  : constant U32NL := U32NL (R (8));
-      R9  : constant U32NL := U32NL (R (9));
-      R10 : constant U32NL := U32NL (R (10));
-      R11 : constant U32NL := U32NL (R (11));
-      R12 : constant U32NL := U32NL (R (12));
-      R13 : constant U32NL := U32NL (R (13));
-      R14 : constant U32NL := U32NL (R (14));
-      R15 : constant U32NL := U32NL (R (15));
+      L0  : constant U32NL := U32NL (Left (0));
+      L1  : constant U32NL := U32NL (Left (1));
+      L2  : constant U32NL := U32NL (Left (2));
+      L3  : constant U32NL := U32NL (Left (3));
+      L4  : constant U32NL := U32NL (Left (4));
+      L5  : constant U32NL := U32NL (Left (5));
+      L6  : constant U32NL := U32NL (Left (6));
+      L7  : constant U32NL := U32NL (Left (7));
+      L8  : constant U32NL := U32NL (Left (8));
+      L9  : constant U32NL := U32NL (Left (9));
+      L10 : constant U32NL := U32NL (Left (10));
+      L11 : constant U32NL := U32NL (Left (11));
+      L12 : constant U32NL := U32NL (Left (12));
+      L13 : constant U32NL := U32NL (Left (13));
+      L14 : constant U32NL := U32NL (Left (14));
+      L15 : constant U32NL := U32NL (Left (15));
+      R0  : constant U32NL := U32NL (Right (0));
+      R1  : constant U32NL := U32NL (Right (1));
+      R2  : constant U32NL := U32NL (Right (2));
+      R3  : constant U32NL := U32NL (Right (3));
+      R4  : constant U32NL := U32NL (Right (4));
+      R5  : constant U32NL := U32NL (Right (5));
+      R6  : constant U32NL := U32NL (Right (6));
+      R7  : constant U32NL := U32NL (Right (7));
+      R8  : constant U32NL := U32NL (Right (8));
+      R9  : constant U32NL := U32NL (Right (9));
+      R10 : constant U32NL := U32NL (Right (10));
+      R11 : constant U32NL := U32NL (Right (11));
+      R12 : constant U32NL := U32NL (Right (12));
+      R13 : constant U32NL := U32NL (Right (13));
+      R14 : constant U32NL := U32NL (Right (14));
+      R15 : constant U32NL := U32NL (Right (15));
 
       subtype GF64_Natural_Limb is U64 range 0 .. (MGFLC * MGFLP);
 
