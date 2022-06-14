@@ -92,27 +92,14 @@ is
 
    --  Upper Bounds on Digits and Carry values during phase 1
    --  ripple carry and reduction.
-
-   --  Digit 0 has same upper-bound as GF64_Natural_Limb, and no carry-in
-   subtype D0S is GF64_Natural_Limb;
    C0UB : constant := GF64_Natural_Limb'Last / LM;
 
-   --  The upper-bound on D0S is GF64_Natural_Limb'Last = (MGFLC * MGFLP).
-   --  Where MGFLC is described in sparknacl.ads
-   --
-   --  For the remaining intermediate results, the upper-bound decreases
-   --  by 37*MGFLP for each digit.
-   --
-   --  Intermediate digit D1 is the sum of (2 + (R2256 * 14)) multiplications
-   --  so is bounded to (2+38*14)*MGFLP = 534*MGFLP
    subtype D1S is GF64_Natural_Limb range 0 .. 534 * MGFLP + C0UB;
    C1UB : constant := D1S'Last / LM;
 
-   --  D2S is bounded to (3+38*13)*MGFLP = 497*MGFLP
    subtype D2S is GF64_Natural_Limb range 0 .. 497 * MGFLP + C1UB;
    C2UB : constant := D2S'Last / LM;
 
-   --  and so on... the upper bound decreases by 37*MGFLP each time...
    subtype D3S is GF64_Natural_Limb range 0 .. 460 * MGFLP + C2UB;
    C3UB : constant := D3S'Last / LM;
 
@@ -196,16 +183,16 @@ is
 
       C : GF64_Natural_Limb;
 
-      D0  : D0S;
-      D1  : D1S;
-      D2  : D2S;
-      D3  : D3S;
-      D4  : D4S;
-      D5  : D5S;
-      D6  : D6S;
-      D7  : D7S;
-      D8  : D8S;
-      D9  : D9S;
+      D0 : GF64_Natural_Limb;
+      D1 : D1S;
+      D2 : D2S;
+      D3 : D3S;
+      D4 : D4S;
+      D5 : D5S;
+      D6 : D6S;
+      D7 : D7S;
+      D8 : D8S;
+      D9 : D9S;
       D10 : D10S;
       D11 : D11S;
       D12 : D12S;
@@ -218,19 +205,6 @@ is
       C2 : GF32_Normal_Limb;
       T  : GF32_Any_Limb;
    begin
-      -----------------------------------------------------------------
-      --  Having unrolled the loops here fully, the intermediate
-      --  digits could be computed in any order, or even in parallel.
-      --
-      --  BUT... if we compute in order D0 .. D15, then we can
-      --  normalize (D0 mod LM) AND compute the carry C from D0 to D1
-      --  immediately, and incorporate that carry into the calculation
-      --  of D1.
-      --
-      --  This trick essentially fuses the first "CAR" loop into this
-      --  code in-line, and allows us to assert a tight upper-bound on
-      --  the value of C as we go along.
-      -----------------------------------------------------------------
       D0  := LP (L0 * R0) +
         R2256 * (LP (L15 * R1)  + LP (L14 * R2)  + LP (L13 * R3) +
                    LP (L12 * R4)  + LP (L11 * R5)  + LP (L10 * R6) +
@@ -238,19 +212,11 @@ is
                    LP (L6  * R10) + LP (L5  * R11) + LP (L4  * R12) +
                    LP (L3  * R13) + LP (L2  * R14) + LP (L1  * R15));
 
-      --  Immediately compute C and normalize D0
       C := D0 / LM;
       D0 := D0 mod LM;
-      --  For proof of type safety and to prove that this converges,
-      --  we only need to keep track of the fact that each digit is now
-      --  normalized and assert an upper-bound on C.
-      --
-      --  We use "Assert_And_Cut" here to control the size of the
-      --  VCs that arise.
       pragma Assert_And_Cut (D0 in U64NL and
                              C <= C0UB);
 
-      --  And so on ... but add C from D0 into the calculation of D1
       D1  := C + LP (L1 * R0) + LP (L0 * R1) +
         R2256 * (LP (L15 * R2)  + LP (L14 * R3)  + LP (L13 * R4) +
                    LP (L12 * R5)  + LP (L11 * R6)  + LP (L10 * R7) +
@@ -561,10 +527,10 @@ is
       --  The carry from D15 is now multiplied by R2256 and added
       --  to D0
       D0 := D0 + R2256 * C;
+
+      --  Phase 2 carry and reduction
       pragma Assert (D0 <= P2_D0UB);
 
-      --  Phase 2 carry and reduction.
-      --  From here on, all arithmetic can be 32-bit.
       R (0) := I32 (D0) mod LM;
       C2 := I32 (D0) / LM;
       pragma Assert (R (0)'Initialized and C2 <= P2_C2UB);
