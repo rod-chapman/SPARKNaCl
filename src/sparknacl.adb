@@ -78,164 +78,578 @@ is
       return Car.Nearlynormal_To_Normal (R);
    end "-";
 
+   -----------------------------------------------------
+   --  Subtypes and constants supporting "*" operator
+   -----------------------------------------------------
+
+   subtype U32NL is U32 range 0 .. LMM1;
+   subtype U64NL is U64 range 0 .. LMM1;
+   subtype GF64_Natural_Limb is U64 range 0 .. (MGFLC * MGFLP);
+
+   --  Limb Product (LP) - a subtype for representing the product
+   --  of two normalized GF64 Limbs
+   subtype LP   is GF64_Natural_Limb range 0 .. MGFLP;
+
+   --  Upper Bounds on Digits and Carry values during phase 1
+   --  ripple carry and reduction.
+
+   --  Digit 0 has same upper-bound as GF64_Natural_Limb, and no carry-in
+   subtype D0S is GF64_Natural_Limb;
+   C0UB : constant := GF64_Natural_Limb'Last / LM;
+
+   --  The upper-bound on D0S is GF64_Natural_Limb'Last = (MGFLC * MGFLP).
+   --  Where MGFLC is described in sparknacl.ads
+   --
+   --  For the remaining intermediate results, the upper-bound decreases
+   --  by 37*MGFLP for each digit.
+   --
+   --  Intermediate digit D1 is the sum of (2 + (R2256 * 14)) multiplications
+   --  so is bounded to (2+38*14)*MGFLP = 534*MGFLP
+   subtype D1S is GF64_Natural_Limb range 0 .. 534 * MGFLP + C0UB;
+   C1UB : constant := D1S'Last / LM;
+
+   --  D2S is bounded to (3+38*13)*MGFLP = 497*MGFLP
+   subtype D2S is GF64_Natural_Limb range 0 .. 497 * MGFLP + C1UB;
+   C2UB : constant := D2S'Last / LM;
+
+   --  and so on... the upper bound decreases by 37*MGFLP each time...
+   subtype D3S is GF64_Natural_Limb range 0 .. 460 * MGFLP + C2UB;
+   C3UB : constant := D3S'Last / LM;
+
+   subtype D4S is GF64_Natural_Limb range 0 .. 423 * MGFLP + C3UB;
+   C4UB : constant := D4S'Last / LM;
+
+   subtype D5S is GF64_Natural_Limb range 0 .. 386 * MGFLP + C4UB;
+   C5UB : constant := D5S'Last / LM;
+
+   subtype D6S is GF64_Natural_Limb range 0 .. 349 * MGFLP + C5UB;
+   C6UB : constant := D6S'Last / LM;
+
+   subtype D7S is GF64_Natural_Limb range 0 .. 312 * MGFLP + C6UB;
+   C7UB : constant := D7S'Last / LM;
+
+   subtype D8S is GF64_Natural_Limb range 0 .. 275 * MGFLP + C7UB;
+   C8UB : constant := D8S'Last / LM;
+
+   subtype D9S is GF64_Natural_Limb range 0 .. 238 * MGFLP + C8UB;
+   C9UB : constant := D9S'Last / LM;
+
+   subtype D10S is GF64_Natural_Limb range 0 .. 201 * MGFLP + C9UB;
+   C10UB : constant := D10S'Last / LM;
+
+   subtype D11S is GF64_Natural_Limb range 0 .. 164 * MGFLP + C10UB;
+   C11UB : constant := D11S'Last / LM;
+
+   subtype D12S is GF64_Natural_Limb range 0 .. 127 * MGFLP + C11UB;
+   C12UB : constant := D12S'Last / LM;
+
+   subtype D13S is GF64_Natural_Limb range 0 .. 90 * MGFLP + C12UB;
+   C13UB : constant := D13S'Last / LM;
+
+   subtype D14S is GF64_Natural_Limb range 0 .. 53 * MGFLP + C13UB;
+   C14UB : constant := D14S'Last / LM;
+
+   subtype D15S is GF64_Natural_Limb range 0 .. 16 * MGFLP + C14UB;
+   C15UB : constant := D15S'Last / LM;
+
+   --  Phase 2 carry and reduction
+   --
+   --  Knowing the value of C15UB, we can deduce the upper-bound
+   --  on D0, and thus the upper-bound on the carry from D0
+   P2_D0UB : constant := LMM1 + R2256 * C15UB;
+   P2_C2UB : constant := P2_D0UB / LM;
+
    function "*" (Left, Right : in Normal_GF) return Normal_GF
    is
-      subtype U32_Normal_Limb is U32 range 0 .. LMM1;
+      L0  : constant U32NL := U32NL (Left (0));
+      L1  : constant U32NL := U32NL (Left (1));
+      L2  : constant U32NL := U32NL (Left (2));
+      L3  : constant U32NL := U32NL (Left (3));
+      L4  : constant U32NL := U32NL (Left (4));
+      L5  : constant U32NL := U32NL (Left (5));
+      L6  : constant U32NL := U32NL (Left (6));
+      L7  : constant U32NL := U32NL (Left (7));
+      L8  : constant U32NL := U32NL (Left (8));
+      L9  : constant U32NL := U32NL (Left (9));
+      L10 : constant U32NL := U32NL (Left (10));
+      L11 : constant U32NL := U32NL (Left (11));
+      L12 : constant U32NL := U32NL (Left (12));
+      L13 : constant U32NL := U32NL (Left (13));
+      L14 : constant U32NL := U32NL (Left (14));
+      L15 : constant U32NL := U32NL (Left (15));
+      R0  : constant U32NL := U32NL (Right (0));
+      R1  : constant U32NL := U32NL (Right (1));
+      R2  : constant U32NL := U32NL (Right (2));
+      R3  : constant U32NL := U32NL (Right (3));
+      R4  : constant U32NL := U32NL (Right (4));
+      R5  : constant U32NL := U32NL (Right (5));
+      R6  : constant U32NL := U32NL (Right (6));
+      R7  : constant U32NL := U32NL (Right (7));
+      R8  : constant U32NL := U32NL (Right (8));
+      R9  : constant U32NL := U32NL (Right (9));
+      R10 : constant U32NL := U32NL (Right (10));
+      R11 : constant U32NL := U32NL (Right (11));
+      R12 : constant U32NL := U32NL (Right (12));
+      R13 : constant U32NL := U32NL (Right (13));
+      R14 : constant U32NL := U32NL (Right (14));
+      R15 : constant U32NL := U32NL (Right (15));
 
-      T  : GF64_PA;
-      TF : GF64 with Relaxed_Initialization;
-      LT : U32_Normal_Limb;
+      C : GF64_Natural_Limb;
+
+      D0  : D0S;
+      D1  : D1S;
+      D2  : D2S;
+      D3  : D3S;
+      D4  : D4S;
+      D5  : D5S;
+      D6  : D6S;
+      D7  : D7S;
+      D8  : D8S;
+      D9  : D9S;
+      D10 : D10S;
+      D11 : D11S;
+      D12 : D12S;
+      D13 : D13S;
+      D14 : D14S;
+      D15 : D15S;
+
+      --  Local vars used in Phase 2 carry and reduction
+      R  : GF32 with Relaxed_Initialization;
+      C2 : GF32_Normal_Limb;
+      T  : GF32_Any_Limb;
    begin
-      LT := U32_Normal_Limb (Left (0));
-
-      --  Initialization of T and unrolling of the first loop
-      --  iteration can both be done in a single assignment here.
-      T := GF64_PA'(0  => I64 (LT * U32_Normal_Limb (Right (0))),
-                    1  => I64 (LT * U32_Normal_Limb (Right (1))),
-                    2  => I64 (LT * U32_Normal_Limb (Right (2))),
-                    3  => I64 (LT * U32_Normal_Limb (Right (3))),
-                    4  => I64 (LT * U32_Normal_Limb (Right (4))),
-                    5  => I64 (LT * U32_Normal_Limb (Right (5))),
-                    6  => I64 (LT * U32_Normal_Limb (Right (6))),
-                    7  => I64 (LT * U32_Normal_Limb (Right (7))),
-                    8  => I64 (LT * U32_Normal_Limb (Right (8))),
-                    9  => I64 (LT * U32_Normal_Limb (Right (9))),
-                    10 => I64 (LT * U32_Normal_Limb (Right (10))),
-                    11 => I64 (LT * U32_Normal_Limb (Right (11))),
-                    12 => I64 (LT * U32_Normal_Limb (Right (12))),
-                    13 => I64 (LT * U32_Normal_Limb (Right (13))),
-                    14 => I64 (LT * U32_Normal_Limb (Right (14))),
-                    15 => I64 (LT * U32_Normal_Limb (Right (15))),
-                    others => 0);
-
-      --  Based on the loop invariant below, but substituting I for 0,
-      --  we can assert...
-      pragma Assert
-        ((for all K in Index_31 range 0 .. 15 =>
-            T (K) >= 0 and T (K) <= MGFLP) and
-         (for all K in Index_31 range 16 .. 30 =>
-            T (K) = 0));
-
-      --  "Textbook" ladder multiplication
-      for I in Index_16 range 1 .. 15 loop
-
-         pragma Loop_Optimize (No_Unroll);
-         --  Manual unroll and PRE of the inner loop here gives a significant
-         --  performance gain at all optimization levels, preserves proof,
-         --  and avoids the need for a complex inner loop invariant.
-         --
-         --  for J in Index_16 loop
-         --     T (I + J) := T (I + J) + (Left (I) * Right (J));
-         --  end loop;
-
-         LT := U32_Normal_Limb (Left (I));
-
-         --  Note that the "*" here is done in 32-bit Unsigned arithmetic
-         --  before the result is converted to 64-bit and accumulated into T.
-         --  This is much faster on 32-bit platforms that don't do 64-bit
-         --  multiplication in a single instruction.
-         T (I)      := T (I)      + I64 (LT * U32_Normal_Limb (Right (0)));
-         T (I + 1)  := T (I + 1)  + I64 (LT * U32_Normal_Limb (Right (1)));
-         T (I + 2)  := T (I + 2)  + I64 (LT * U32_Normal_Limb (Right (2)));
-         T (I + 3)  := T (I + 3)  + I64 (LT * U32_Normal_Limb (Right (3)));
-         T (I + 4)  := T (I + 4)  + I64 (LT * U32_Normal_Limb (Right (4)));
-         T (I + 5)  := T (I + 5)  + I64 (LT * U32_Normal_Limb (Right (5)));
-         T (I + 6)  := T (I + 6)  + I64 (LT * U32_Normal_Limb (Right (6)));
-         T (I + 7)  := T (I + 7)  + I64 (LT * U32_Normal_Limb (Right (7)));
-         T (I + 8)  := T (I + 8)  + I64 (LT * U32_Normal_Limb (Right (8)));
-         T (I + 9)  := T (I + 9)  + I64 (LT * U32_Normal_Limb (Right (9)));
-         T (I + 10) := T (I + 10) + I64 (LT * U32_Normal_Limb (Right (10)));
-         T (I + 11) := T (I + 11) + I64 (LT * U32_Normal_Limb (Right (11)));
-         T (I + 12) := T (I + 12) + I64 (LT * U32_Normal_Limb (Right (12)));
-         T (I + 13) := T (I + 13) + I64 (LT * U32_Normal_Limb (Right (13)));
-         T (I + 14) := T (I + 14) + I64 (LT * U32_Normal_Limb (Right (14)));
-         T (I + 15) := T (I + 15) + I64 (LT * U32_Normal_Limb (Right (15)));
-
-         pragma Loop_Invariant
-            (for all K in Index_31 => T (K) >= 0);
-         pragma Loop_Invariant
-            (for all K in Index_31 range 0 .. (I - 1)   =>
-               T (K) <= (I64 (K + 1) * MGFLP));
-         pragma Loop_Invariant
-            (for all K in Index_31 range I .. 15        =>
-               T (K) <= (I64 (I + 1) * MGFLP));
-         pragma Loop_Invariant
-            (for all K in Index_31 range 16 .. (I + 15) =>
-               T (K) <= (I64 (16 + I) - I64 (K)) * MGFLP);
-         pragma Loop_Invariant
-            (for all K in Index_31 range I + 16 .. 30   =>
-               T (K) = 0);
-      end loop;
-
-      --  Substituting I = 15 into the outer loop invariant above,
-      --  and eliminating quantifiers with null ranges yields
-      --  the following assertion.
+      -----------------------------------------------------------------
+      --  Having unrolled the loops here fully, the intermediate
+      --  digits could be computed in any order, or even in parallel.
       --
-      --  The coefficients of MGFLP in the upper bound for limbs 0 .. 30
-      --  form a "pyramid" which peaks at 16 for T (15), like this:
+      --  BUT... if we compute in order D0 .. D15, then we can
+      --  normalize (D0 mod LM) AND compute the carry C from D0 to D1
+      --  immediately, and incorporate that carry into the calculation
+      --  of D1.
       --
-      --- 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 15 14 13 12 11 10 ... 1
-      pragma Assert
-        (
-         --  Lower bound
-         (for all K in Index_31 => T (K) >= 0) and
-         --  Upper bounds
-         (for all K in Index_31 range  0 .. 14 =>
-            T (K) <= (I64 (K) + 1) * MGFLP) and
-         T (15) <= 16 * MGFLP and
-         (for all K in Index_31 range 16 .. 30 =>
-            T (K) <= (31 - I64 (K)) * MGFLP)
-        );
+      --  This trick essentially fuses the first "CAR" loop into this
+      --  code in-line, and allows us to assert a tight upper-bound on
+      --  the value of C as we go along.
+      -----------------------------------------------------------------
+      D0  := LP (L0 * R0) +
+        R2256 * (LP (L15 * R1)  + LP (L14 * R2)  + LP (L13 * R3) +
+                   LP (L12 * R4)  + LP (L11 * R5)  + LP (L10 * R6) +
+                   LP (L9  * R7)  + LP (L8  * R8)  + LP (L7  * R9) +
+                   LP (L6  * R10) + LP (L5  * R11) + LP (L4  * R12) +
+                   LP (L3  * R13) + LP (L2  * R14) + LP (L1  * R15));
 
-      --  To "carry" the value in limbs 16 .. 30 and above down into
-      --  limbs 0 .. 14, we need to multiply each upper limb by 2**256.
+      --  Immediately compute C and normalize D0
+      C := D0 / LM;
+      D0 := D0 mod LM;
+      --  For proof of type safety and to prove that this converges,
+      --  we only need to keep track of the fact that each digit is now
+      --  normalized and assert an upper-bound on C.
       --
-      --  Unfortutely, our limbs don't have enough bits for that to work,
-      --  but we're working in mod (2**255 - 19) arithmetic, and we know that
-      --  2**256 mod (2**255 - 19) = R2256, so we can multiply by that instead.
-      --
-      --  Given the upper bounds established above, we _can_ prove that
-      --  T (I) + R2256 * T (I + 16) WILL fit in 64 bits.
-      for I in Index_15 loop
-         pragma Loop_Optimize (No_Unroll);
-         TF (I) := T (I) + R2256 * T (I + 16);
+      --  We use "Assert_And_Cut" here to control the size of the
+      --  VCs that arise.
+      pragma Assert_And_Cut (D0 in U64NL and
+                             C <= C0UB);
 
-         pragma Loop_Invariant
-           (for all J in Index_15 range 0 .. I => TF (J)'Initialized);
+      --  And so on ... but add C from D0 into the calculation of D1
+      D1  := C + LP (L1 * R0) + LP (L0 * R1) +
+        R2256 * (LP (L15 * R2)  + LP (L14 * R3)  + LP (L13 * R4) +
+                   LP (L12 * R5)  + LP (L11 * R6)  + LP (L10 * R7) +
+                   LP (L9  * R8)  + LP (L8  * R9)  + LP (L7  * R10) +
+                   LP (L6  * R11) + LP (L5  * R12) + LP (L4  * R13) +
+                   LP (L3  * R14) + LP (L2  * R15));
+      C := D1 / LM;
+      D1 := D1 mod LM;
+      pragma Assert_And_Cut (D0 in U64NL and
+                             D1 in U64NL and
+                             C <= C1UB);
 
-         pragma Loop_Invariant
-           (
-            (for all J in Index_15 range 0 .. I =>
-               TF (J) = T (J) + R2256 * T (J + 16))
-           );
-      end loop;
+      D2  := C + LP (L2 * R0) + LP (L1 * R1) + LP (L0 * R2) +
+        R2256 * (LP (L15 * R3)  + LP (L14 * R4)  + LP (L13 * R5) +
+                   LP (L12 * R6)  + LP (L11 * R7)  + LP (L10 * R8) +
+                   LP (L9  * R9)  + LP (L8  * R10) + LP (L7  * R11) +
+                   LP (L6  * R12) + LP (L5  * R13) + LP (L4  * R14) +
+                   LP (L3  * R15));
 
-      pragma Assert
-        (for all J in Index_15 => TF (J)'Initialized);
+      C := D2 / LM;
+      D2 := D2 mod LM;
+      pragma Assert_And_Cut (D0 in U64NL and
+                             D1 in U64NL and
+                             D2 in U64NL and
+                             C <= C2UB);
 
-      TF (15) := T (15);
+      D3 := C + LP (L3 * R0) + LP (L2 * R1) + LP (L1 * R2) + LP (L0 * R3) +
+        R2256 * (LP (L15 * R4)  + LP (L14 * R5)  + LP (L13 * R6) +
+                   LP (L12 * R7)  + LP (L11 * R8)  + LP (L10 * R9) +
+                   LP (L9  * R10) + LP (L8  * R11) + LP (L7  * R12) +
+                   LP (L6  * R13) + LP (L5  * R14) + LP (L4  * R15));
 
-      pragma Assert (TF'Initialized);
-      pragma Assert (TF in Product_GF);
+      C := D3 / LM;
+      D3 := D3 mod LM;
+      pragma Assert_And_Cut (D0 in U64NL and
+                             D1 in U64NL and
+                             D2 in U64NL and
+                             D3 in U64NL and
+                             C <= C3UB);
 
+      D4 := C + LP (L4 * R0) + LP (L3 * R1) + LP (L2 * R2) +
+        LP (L1 * R3) + LP (L0 * R4) +
+        R2256 * (LP (L15 * R5)  + LP (L14 * R6)  + LP (L13 * R7) +
+                   LP (L12 * R8)  + LP (L11 * R9)  + LP (L10 * R10) +
+                   LP (L9  * R11) + LP (L8  * R12) + LP (L7  * R13) +
+                   LP (L6  * R14) + LP (L5  * R15));
 
-      --  Sanitize T, as per WireGuard sources
-      pragma Warnings (GNATProve, Off, "statement has no effect");
-      Sanitize_GF64_PA (T);
-      pragma Unreferenced (T);
+      C := D4 / LM;
+      D4 := D4 mod LM;
+      pragma Assert_And_Cut (D0 in U64NL and
+                             D1 in U64NL and
+                             D2 in U64NL and
+                             D3 in U64NL and
+                             D4 in U64NL and
+                             C <= C4UB);
 
-      --  In SPARKNaCl, we normalize after "*".
-      --
-      --  Interestingly, in the TweetNaCl sources, only TWO
-      --  applications of the "car_25519" function are used here.
-      --
-      --  In SPARKNaCl we have proved that THREE
-      --  applications of car_25519 are required to definitely
-      --  return any possible Product_GF to a fully normalized
-      --  Normal_GF.
-      return Car.Nearlynormal_To_Normal
-               (Car.Seminormal_To_Nearlynormal
-                 (Car.Product_To_Seminormal (TF)));
+      D5 := C + LP (L5 * R0) + LP (L4 * R1) + LP (L3 * R2) +
+        LP (L2 * R3) + LP (L1 * R4) + LP (L0 * R5) +
+        R2256 * (LP (L15 * R6)  + LP (L14 * R7)  + LP (L13 * R8) +
+                   LP (L12 * R9)  + LP (L11 * R10) + LP (L10 * R11) +
+                   LP (L9  * R12) + LP (L8  * R13) + LP (L7  * R14) +
+                   LP (L6  * R15));
+
+      C := D5 / LM;
+      D5 := D5 mod LM;
+      pragma Assert_And_Cut (D0 in U64NL and
+                             D1 in U64NL and
+                             D2 in U64NL and
+                             D3 in U64NL and
+                             D4 in U64NL and
+                             D5 in U64NL and
+                             C <= C5UB);
+
+      D6 := C + LP (L6 * R0) + LP (L5 * R1) + LP (L4 * R2) +
+        LP (L3 * R3) + LP (L2 * R4) + LP (L1 * R5) +
+        LP (L0 * R6) +
+        R2256 * (LP (L15 * R7)  + LP (L14 * R8)  + LP (L13 * R9) +
+                   LP (L12 * R10) + LP (L11 * R11) + LP (L10 * R12) +
+                   LP (L9  * R13) + LP (L8  * R14) + LP (L7  * R15));
+      C := D6 / LM;
+      D6 := D6 mod LM;
+
+      pragma Assert_And_Cut (D0 in U64NL and
+                             D1 in U64NL and
+                             D2 in U64NL and
+                             D3 in U64NL and
+                             D4 in U64NL and
+                             D5 in U64NL and
+                             D6 in U64NL and
+                             C <= C6UB);
+
+      D7 := C + LP (L7 * R0) + LP (L6 * R1) + LP (L5 * R2) +
+        LP (L4 * R3) + LP (L3 * R4) + LP (L2 * R5) +
+        LP (L1 * R6) + LP (L0 * R7) +
+        R2256 * (LP (L15 * R8)  + LP (L14 * R9)  + LP (L13 * R10) +
+                   LP (L12 * R11) + LP (L11 * R12) + LP (L10 * R13) +
+                   LP (L9  * R14) + LP (L8  * R15));
+
+      C := D7 / LM;
+      D7 := D7 mod LM;
+
+      pragma Assert_And_Cut (D0 in U64NL and
+                             D1 in U64NL and
+                             D2 in U64NL and
+                             D3 in U64NL and
+                             D4 in U64NL and
+                             D5 in U64NL and
+                             D6 in U64NL and
+                             D7 in U64NL and
+                             C <= C7UB);
+
+      D8 := C + LP (L8 * R0) + LP (L7 * R1) + LP (L6 * R2) +
+        LP (L5 * R3) + LP (L4 * R4) + LP (L3 * R5) +
+        LP (L2 * R6) + LP (L1 * R7) + LP (L0 * R8) +
+        R2256 * (LP (L15 * R9)  + LP (L14 * R10) + LP (L13 * R11) +
+                   LP (L12 * R12) + LP (L11 * R13) + LP (L10 * R14) +
+                   LP (L9  * R15));
+
+      C := D8 / LM;
+      D8 := D8 mod LM;
+
+      pragma Assert_And_Cut (D0 in U64NL and
+                             D1 in U64NL and
+                             D2 in U64NL and
+                             D3 in U64NL and
+                             D4 in U64NL and
+                             D5 in U64NL and
+                             D6 in U64NL and
+                             D7 in U64NL and
+                             D8 in U64NL and
+                             C <= C8UB);
+
+      D9 := C + LP (L9 * R0) + LP (L8 * R1) + LP (L7 * R2) +
+        LP (L6 * R3) + LP (L5 * R4) + LP (L4 * R5) +
+        LP (L3 * R6) + LP (L2 * R7) + LP (L1 * R8) +
+        LP (L0 * R9) +
+        R2256 * (LP (L15 * R10) + LP (L14 * R11) + LP (L13 * R12) +
+                   LP (L12 * R13) + LP (L11 * R14) + LP (L10 * R15));
+
+      C := D9 / LM;
+      D9 := D9 mod LM;
+
+      pragma Assert_And_Cut (D0 in U64NL and
+                             D1 in U64NL and
+                             D2 in U64NL and
+                             D3 in U64NL and
+                             D4 in U64NL and
+                             D5 in U64NL and
+                             D6 in U64NL and
+                             D7 in U64NL and
+                             D8 in U64NL and
+                             D9 in U64NL and
+                             C <= C9UB);
+
+      D10 := C + LP (L10 * R0) + LP (L9 * R1) + LP (L8 * R2) +
+        LP (L7  * R3) + LP (L6 * R4) + LP (L5 * R5) +
+        LP (L4  * R6) + LP (L3 * R7) + LP (L2 * R8) +
+        LP (L1  * R9) + LP (L0 * R10) +
+        R2256 * (LP (L15 * R11) + LP (L14 * R12) + LP (L13 * R13) +
+                   LP (L12 * R14) + LP (L11 * R15));
+
+      C := D10 / LM;
+      D10 := D10 mod LM;
+
+      pragma Assert_And_Cut (D0 in U64NL and
+                             D1 in U64NL and
+                             D2 in U64NL and
+                             D3 in U64NL and
+                             D4 in U64NL and
+                             D5 in U64NL and
+                             D6 in U64NL and
+                             D7 in U64NL and
+                             D8 in U64NL and
+                             D9 in U64NL and
+                             D10 in U64NL and
+                             C <= C10UB);
+
+      D11 := C + LP (L11 * R0) + LP (L10 * R1)  + LP (L9 * R2) +
+        LP (L8  * R3) + LP (L7  * R4)  + LP (L6 * R5) +
+        LP (L5  * R6) + LP (L4  * R7)  + LP (L3 * R8) +
+        LP (L2  * R9) + LP (L1  * R10) + LP (L0 * R11) +
+        R2256 * (LP (L15 * R12) + LP (L14 * R13) + LP (L13 * R14) +
+                   LP (L12 * R15));
+
+      C := D11 / LM;
+      D11 := D11 mod LM;
+
+      pragma Assert_And_Cut (D0 in U64NL and
+                             D1 in U64NL and
+                             D2 in U64NL and
+                             D3 in U64NL and
+                             D4 in U64NL and
+                             D5 in U64NL and
+                             D6 in U64NL and
+                             D7 in U64NL and
+                             D8 in U64NL and
+                             D9 in U64NL and
+                             D10 in U64NL and
+                             D11 in U64NL and
+                             C <= C11UB);
+
+      D12 := C + LP (L12 * R0) + LP (L11 * R1)  + LP (L10 * R2) +
+        LP (L9  * R3) + LP (L8  * R4)  + LP (L7  * R5) +
+        LP (L6  * R6) + LP (L5  * R7)  + LP (L4  * R8) +
+        LP (L3  * R9) + LP (L2  * R10) + LP (L1  * R11) +
+        LP (L0  * R12) +
+        R2256 * (LP (L15 * R13) + LP (L14 * R14) + LP (L13 * R15));
+
+      C := D12 / LM;
+      D12 := D12 mod LM;
+
+      pragma Assert_And_Cut (D0 in U64NL and
+                             D1 in U64NL and
+                             D2 in U64NL and
+                             D3 in U64NL and
+                             D4 in U64NL and
+                             D5 in U64NL and
+                             D6 in U64NL and
+                             D7 in U64NL and
+                             D8 in U64NL and
+                             D9 in U64NL and
+                             D10 in U64NL and
+                             D11 in U64NL and
+                             D12 in U64NL and
+                             C <= C12UB);
+
+      D13 := C + LP (L13 * R0)  + LP (L12 * R1)  + LP (L11 * R2) +
+        LP (L10 * R3)  + LP (L9  * R4)  + LP (L8  * R5) +
+        LP (L7  * R6)  + LP (L6  * R7)  + LP (L5  * R8) +
+        LP (L4  * R9)  + LP (L3  * R10) + LP (L2  * R11) +
+        LP (L1  * R12) + LP (L0  * R13) +
+        R2256 * (LP (L15 * R14) + LP (L14 * R15));
+
+      C := D13 / LM;
+      D13 := D13 mod LM;
+
+      pragma Assert_And_Cut (D0 in U64NL and
+                             D1 in U64NL and
+                             D2 in U64NL and
+                             D3 in U64NL and
+                             D4 in U64NL and
+                             D5 in U64NL and
+                             D6 in U64NL and
+                             D7 in U64NL and
+                             D8 in U64NL and
+                             D9 in U64NL and
+                             D10 in U64NL and
+                             D11 in U64NL and
+                             D12 in U64NL and
+                             D13 in U64NL and
+                             C <= C13UB);
+
+      D14 := C + LP (L14 * R0)  + LP (L13 * R1)  + LP (L12 * R2) +
+        LP (L11 * R3)  + LP (L10 * R4)  + LP (L9  * R5) +
+        LP (L8  * R6)  + LP (L7  * R7)  + LP (L6  * R8) +
+        LP (L5  * R9)  + LP (L4  * R10) + LP (L3  * R11) +
+        LP (L2  * R12) + LP (L1  * R13) + LP (L0  * R14) +
+        R2256 * LP (L15 * R15);
+
+      C := D14 / LM;
+      D14 := D14 mod LM;
+
+      pragma Assert_And_Cut (D0 in U64NL and
+                             D1 in U64NL and
+                             D2 in U64NL and
+                             D3 in U64NL and
+                             D4 in U64NL and
+                             D5 in U64NL and
+                             D6 in U64NL and
+                             D7 in U64NL and
+                             D8 in U64NL and
+                             D9 in U64NL and
+                             D10 in U64NL and
+                             D11 in U64NL and
+                             D12 in U64NL and
+                             D13 in U64NL and
+                             D14 in U64NL and
+                             C <= C14UB);
+
+      D15 := C + LP (L15 * R0)  + LP (L14 * R1)  + LP (L13 * R2) +
+             LP (L12 * R3)  + LP (L11 * R4)  + LP (L10 * R5) +
+             LP (L9  * R6)  + LP (L8  * R7)  + LP (L7  * R8) +
+             LP (L6  * R9)  + LP (L5  * R10) + LP (L4  * R11) +
+             LP (L3  * R12) + LP (L2  * R13) + LP (L1  * R14) +
+             LP (L0  * R15);
+
+      C := D15 / LM;
+      D15 := D15 mod LM;
+
+      pragma Assert_And_Cut (D0 in U64NL and
+                             D1 in U64NL and
+                             D2 in U64NL and
+                             D3 in U64NL and
+                             D4 in U64NL and
+                             D5 in U64NL and
+                             D6 in U64NL and
+                             D7 in U64NL and
+                             D8 in U64NL and
+                             D9 in U64NL and
+                             D10 in U64NL and
+                             D11 in U64NL and
+                             D12 in U64NL and
+                             D13 in U64NL and
+                             D14 in U64NL and
+                             D15 in U64NL and
+                             C <= C15UB);
+
+      --  The carry from D15 is now multiplied by R2256 and added
+      --  to D0
+      D0 := D0 + R2256 * C;
+      pragma Assert (D0 <= P2_D0UB);
+
+      --  Phase 2 carry and reduction.
+      --  From here on, all arithmetic can be 32-bit.
+      R (0) := I32 (D0) mod LM;
+      C2 := I32 (D0) / LM;
+      pragma Assert (R (0)'Initialized and C2 <= P2_C2UB);
+
+      T := I32 (D1) + C2;
+      R (1) := T mod LM;
+      C2 := T / LM;
+      --  C2 is now in range 0 .. 1, and it stays that way...
+      pragma Assert (R (0 .. 1)'Initialized and C2 <= 1);
+
+      T := I32 (D2) + C2;
+      R (2) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 2)'Initialized and C2 <= 1);
+
+      T := I32 (D3) + C2;
+      R (3) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 3)'Initialized and C2 <= 1);
+
+      T := I32 (D4) + C2;
+      R (4) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 4)'Initialized and C2 <= 1);
+
+      T := I32 (D5) + C2;
+      R (5) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 5)'Initialized and C2 <= 1);
+
+      T := I32 (D6) + C2;
+      R (6) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 6)'Initialized and C2 <= 1);
+
+      T := I32 (D7) + C2;
+      R (7) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 7)'Initialized and C2 <= 1);
+
+      T := I32 (D8) + C2;
+      R (8) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 8)'Initialized and C2 <= 1);
+
+      T := I32 (D9) + C2;
+      R (9) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 9)'Initialized and C2 <= 1);
+
+      T := I32 (D10) + C2;
+      R (10) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 10)'Initialized and C2 <= 1);
+
+      T := I32 (D11) + C2;
+      R (11) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 11)'Initialized and C2 <= 1);
+
+      T := I32 (D12) + C2;
+      R (12) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 12)'Initialized and C2 <= 1);
+
+      T := I32 (D13) + C2;
+      R (13) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 13)'Initialized and C2 <= 1);
+
+      T := I32 (D14) + C2;
+      R (14) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 14)'Initialized and C2 <= 1);
+
+      T := I32 (D15) + C2;
+      R (15) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 15)'Initialized and C2 <= 1);
+
+      pragma Assert (R'Initialized and C2 <= 1);
+
+      R (0) := R (0) + R2256 * C2;
+
+      return Car.Nearlynormal_To_Normal (Nearlynormal_GF (R));
    end "*";
 
    --------------------------------------------------------
