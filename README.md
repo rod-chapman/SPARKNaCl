@@ -33,6 +33,19 @@ This library is a compact reference implementation of the NaCl crypto library. I
 
 ## Latest news
 
+### 22nd June 2022
+
+A bunch of updates have been merged to the master branch recently. Specifically:
+
+* [Jon Andrew](https://github.com/docandrew) has kindly contributed implementations of the ChaCha20 stream cipher (in SPARKNaCl.Stream), SHA-256 (in SPARKNaCl.Hashing), SHA-256-based HMAC and HKDF algorithms (in SPARKNaCl.MAC and SPARKNaCl.HKDF respectively) and the TLS 1.3 AEAD algorithm (RFC 8439) using ChaCha20 and Poly1305 (in SPARKNaCl.SecretBox), plus additional test cases and clean proofs.  These additions take the library well beyond the original specification of NaCl, and move towards supporting TLS 1.3.
+
+* I have merged a new implementation of the "*" operation on the Normal_GF type in the body of SPARKNaCl. This is significantly faster with optimization enabled at -O1 and above, but noticeably slower at -O0. I hope to document and explain these results soon.
+
+Work in progress
+
+I also hope to prepare a new release soon using the latest FSF GNAT and GNATprove builds available from Alire. These new builds effectively take over from what would have been the GNAT Community 2022 release.
+
+
 ### 21st September 2021
 
 Release 3.0.0 of SPARKNaCl is now available from the Alire package manager. This incorporates all recent changes, and is compatible with the 2020 and 2021 releases of GNAT Community or FSF GNAT 11.2.1 or better.  This release is also tagged "alire3.0.0" in the GitHub repo here.
