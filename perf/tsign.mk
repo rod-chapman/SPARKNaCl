@@ -13,17 +13,17 @@ tsign: tsign.adb io.adb io.ads tweetnacl_api.ads tweetnacl.c
 	@grep "__bss_end =" tsign.map
 
 tsign.hex: tsign
-	riscv32-elf-objcopy -O ihex tsign tsign.hex
+	riscv64-elf-objcopy -O ihex tsign tsign.hex
 
 tsign.asm: tsign
-	riscv32-elf-objdump -S tsign >tsign.asm
+	riscv64-elf-objdump -S tsign >tsign.asm
 
 stack: tsign
 	gnatstack -Ptsign -p -v -XSPARKNACL_RUNTIME_MODE=zfp -XSPARKNACL_RUNTIME_CHECKS=disabled -XSPARKNACL_CONTRACTS=disabled -XSPARKNACL_TARGET_ARCH=rv32im -XSPARKNACL_BUILD_MODE=debug -esparknacl.sign.sign
 
 size:	tsign
-	riscv32-elf-strip $(SIZE_OBJS)
-	riscv32-elf-size -t $(SIZE_OBJS)
+	riscv64-elf-strip $(SIZE_OBJS)
+	riscv64-elf-size -t $(SIZE_OBJS)
 
 run: tsign.hex
 	-cp tsign.hex /media/psf/HiFive

@@ -5,7 +5,7 @@ with "perf.gpr";
 project TSign is
 
   for Runtime ("ada") use HiFive1_rev_B_ZFP'Runtime ("Ada");
-  for Target use "riscv32-elf";
+  for Target use "riscv64-elf";
   for Languages use ("Ada", "C", "Asm");
   for Source_Dirs use (".");
   for Object_Dir use ".";
