@@ -4,7 +4,8 @@ with "perf.gpr";
 
 project TSign is
 
-  for Runtime ("ada") use HiFive1_rev_B_ZFP'Runtime ("Ada");
+--  for Runtime ("ada") use HiFive1_rev_B_ZFP'Runtime ("Ada");
+  for Runtime ("ada") use "light-rv32imac";
   for Target use "riscv64-elf";
   for Languages use ("Ada", "C", "Asm");
   for Source_Dirs use (".");
