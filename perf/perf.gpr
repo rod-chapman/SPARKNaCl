@@ -36,10 +36,13 @@ abstract project Perf is
 
   package Compiler is
 
+    for Default_Switches ("Asm") use Compiler'Default_Switches ("Asm") &
+        ("-march=rv32imac_zicsr");
+
     for Default_Switches ("C") use Compiler'Default_Switches ("C") &
         Callgraph_Switch &
         Opt_Switch &
-        ("-march=rv32im",       -- No compressed instructions for C
+        ("-march=rv32imac_zicsr",
          "-ffunction-sections", -- Create a linker section for each function
          "-fdata-sections");    -- Create a linker section for each data
 
@@ -55,7 +58,7 @@ abstract project Perf is
          "-gnatRms", -- Output representation info for subprograms
          "-gnatQ",   -- Don't quit. Generate ALI and tree files even if illegalities
          "-gnatw.X", -- Disable warnings for No_Exception_Propagation
-         "-march=rv32im", -- No compressed instructions please
+         "-march=rv32imac_zicsr",
          "-ffunction-sections", -- Create a linker section for each function
          "-fdata-sections");    -- Create a linker section for each data
   end Compiler;
