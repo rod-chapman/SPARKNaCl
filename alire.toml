@@ -11,7 +11,7 @@ maintainers = ["Rod Chapman <rod@proteancode.com>"]
 maintainers-logins = ["rod-chapman"]
 
 [[depends-on]]
-gnat=">=11.2.1"
+gnat=">=12.1.1"
 
 [gpr-externals]
 SPARKNACL_LIBRARY_TYPE = ["relocatable", "static", "static-pic"]
@@ -22,3 +22,5 @@ SPARKNACL_CONTRACTS = ["enabled", "disabled"]
 SPARKNACL_RUNTIME_MODE = ["full", "zfp"]
 SPARKNACL_BUILD_MODE = ["debug", "O1", "O2", "O3", "Os"]
 SPARKNACL_TARGET_ARCH = ["unspecified", "rv32im", "rv32imc", "rv32imc_a4"]
+[[depends-on]]
+gnatprove = "=12.1.1"
