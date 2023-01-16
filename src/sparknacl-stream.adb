@@ -42,7 +42,7 @@ is
      with Global => null,
           Pre    => M'First = 0 and then
                     C'First = 0 and then
-                    U32 (C'Length) <= U32 (N32'Last) and then
+                    C'Last < N32'Last and then
                     (if Xor_M then (C'Last = M'Last)) and then
                     (if not Xor_M then M'Last = 63);
 

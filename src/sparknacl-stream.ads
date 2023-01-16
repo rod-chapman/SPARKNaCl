@@ -76,7 +76,7 @@ is
                             Counter : in     U32)
      with Global => null,
           Pre    => C'First = 0 and
-                    U32 (C'Length) <= U32 (N32'Last);
+                    C'Last < N32'Last;
 
    procedure ChaCha20_IETF_Xor (C       :    out Byte_Seq;  -- Output stream
                                 M       : in     Byte_Seq;  -- Input message
@@ -87,6 +87,6 @@ is
           Pre    => M'First = 0 and
                     C'First = 0 and
                     C'Last  = M'Last and
-                    U32 (C'Length) <= U32 (N32'Last);
+                    C'Last < N32'Last;
 
 end SPARKNaCl.Stream;
