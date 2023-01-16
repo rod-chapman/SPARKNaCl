@@ -94,6 +94,8 @@ is
       pragma Assume
         (for all K in I32 => To_I32 (To_U32 (K)) = K);
 
+      pragma Assert (if Swap then C = 16#FFFF_FFFF# else C = 0);
+
       for I in Index_16 loop
          pragma Loop_Optimize (No_Unroll);
          T := C and (To_U32 (P (I)) xor To_U32 (Q (I)));
@@ -157,27 +159,25 @@ is
             (for all K in Index_16 range 0 .. 14 =>
                Temp_GF (K) in GF32_Normal_Limb));
 
-      --  Expand a NormaL_16 (16 bit limbs) to 32-bit limbs
-      function To_GF32 (X : in Normal_GF) return GF32
-        is (GF32'(0  => GF32_Any_Limb (X (0)),
-                  1  => GF32_Any_Limb (X (1)),
-                  2  => GF32_Any_Limb (X (2)),
-                  3  => GF32_Any_Limb (X (3)),
-                  4  => GF32_Any_Limb (X (4)),
-                  5  => GF32_Any_Limb (X (5)),
-                  6  => GF32_Any_Limb (X (6)),
-                  7  => GF32_Any_Limb (X (7)),
-                  8  => GF32_Any_Limb (X (8)),
-                  9  => GF32_Any_Limb (X (9)),
-                  10 => GF32_Any_Limb (X (10)),
-                  11 => GF32_Any_Limb (X (11)),
-                  12 => GF32_Any_Limb (X (12)),
-                  13 => GF32_Any_Limb (X (13)),
-                  14 => GF32_Any_Limb (X (14)),
-                  15 => GF32_Any_Limb (X (15))))
+      function To_Normal_GF32 (X : in Normal_GF) return Normal_GF32
+        is (Normal_GF32'(0  => GF32_Normal_Limb (X (0)),
+                         1  => GF32_Normal_Limb (X (1)),
+                         2  => GF32_Normal_Limb (X (2)),
+                         3  => GF32_Normal_Limb (X (3)),
+                         4  => GF32_Normal_Limb (X (4)),
+                         5  => GF32_Normal_Limb (X (5)),
+                         6  => GF32_Normal_Limb (X (6)),
+                         7  => GF32_Normal_Limb (X (7)),
+                         8  => GF32_Normal_Limb (X (8)),
+                         9  => GF32_Normal_Limb (X (9)),
+                        10 => GF32_Normal_Limb (X (10)),
+                        11 => GF32_Normal_Limb (X (11)),
+                        12 => GF32_Normal_Limb (X (12)),
+                        13 => GF32_Normal_Limb (X (13)),
+                        14 => GF32_Normal_Limb (X (14)),
+                        15 => GF32_Normal_Limb (X (15))))
         with Global => null,
              Pure_Function;
-
 
       --  Result := T - P;
       --  if     Underflow, then Result is not a Normal_GF
@@ -188,7 +188,7 @@ is
         with Global => null,
              Pre    => T (15) >= -16#8000#,
              Post   => (Result (15) >= T (15) - 16#8000#) and then
-                       (Underflow /= (Result in Normal_GF32));
+                       (if not Underflow then (Result in Normal_GF32));
 
       function To_Bytes_32 (X : in Normal_GF32) return Bytes_32
         with Global => null;
@@ -197,8 +197,9 @@ is
                             Result    :    out Temp_GF;
                             Underflow :    out Boolean)
       is
-         Carry : I32_Bit;
-         R     : GF32;
+         Carry  : I32_Bit;
+         R      : GF32;
+         Normal : Boolean;
       begin
          R := GF32_0;
 
@@ -217,6 +218,11 @@ is
                  R (J) in GF32_Normal_Limb);
          end loop;
 
+         --  Substitute I=14 into loop invariant to get
+         pragma Assert
+           (for all J in Index_16 range 0 .. 13 =>
+              R (J) in GF32_Normal_Limb);
+
          --  Limb 15 - Subtract MSL (Most Significant Limb)
          --  of P (16#7FFF#) with carry.
          --  Note that Limb 15 might become negative on underflow
@@ -233,10 +239,22 @@ is
          --  R (15) := R (15) mod LM;
          R (14) := R (14) mod LM;
 
+         pragma Assert
+           (for all J in Index_16 range 0 .. 14 =>
+              R (J) in GF32_Normal_Limb);
+         --  Carry can only be 0 or 1, so...
+         pragma Assert (R (15) >= T (15) - 16#8000#);
+         pragma Assert (R (15) in Temp_GF_MSL);
+
+
          --  Note that R (15) is not normalized here, so that the
          --  result of the first subtraction is numerically correct
          --  as the input to the second.
-         Underflow := R (15) < 0;
+         Normal := R (15) >= 0;
+
+         pragma Assert (if Normal then (R in Normal_GF32));
+
+         Underflow := not Normal;
          Result    := R;
          Sanitize_GF32 (R);
          pragma Unreferenced (R);
@@ -254,7 +272,7 @@ is
          return Result;
       end To_Bytes_32;
 
-      L      : GF32;
+      L      : Temp_GF;
       R1, R2 : Temp_GF;
 
       First_Underflow  : Boolean;
@@ -262,7 +280,7 @@ is
    begin
       --  Make a variable copy of N so can be passed to
       --  calls to CSwap below
-      L := To_GF32 (N);
+      L := Temp_GF (To_Normal_GF32 (N));
 
       --  SPARKNaCl differs from TweetNaCl here, in that Pack_25519
       --  takes a Normal_GF parameter N, so no further normalization
