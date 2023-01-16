@@ -106,10 +106,14 @@ is
                           AAD : in Byte_Seq) return Byte_Seq
      with Global => null,
           Pre    => AAD'First  = 0 and
-                    AAD'Length <= U32 (N32'Last) and
+                    AAD'Last   < N32'Last and
                     C'First    = 0 and
-                    C'Length   <= U32 (N32'Last) and
-                    C'Length + AAD'Length <= U32 (N32'Last - 192),
+                    C'Last     < N32'Last and
+                    --  Padding C might add 15 bytes to its length.
+                    --  Ditto for AAD.
+                    --  Final length fields add another 16 bytes on then end,
+                    --  so the whole result will fit if...
+                    I64 (C'Length) + I64 (AAD'Length) + 45 <= I64 (N32'Last),
           Post   => Gen_Auth_Msg'Result'First = 0;
 
    function Gen_Auth_Msg (C   : in Byte_Seq;
@@ -155,14 +159,16 @@ is
          end if;
       end Pad16;
 
-      AAD_Len   : constant Bytes_8 := LE64 (U64 (AAD'Length));
-      C_Len     : constant Bytes_8 := LE64 (U64 (C'Length));
+      Padded_AAD : constant Byte_Seq := AAD & Pad16 (AAD'Length);
+      pragma Assert (Padded_AAD'Length <= AAD'Length + 15);
 
-      AAD_Pad   : constant Byte_Seq := Pad16 (AAD'Length);
-      C_Pad     : constant Byte_Seq := Pad16 (C'Length);
+      Padded_C   : constant Byte_Seq := C & Pad16 (C'Length);
+      pragma Assert (Padded_C'Length <= C'Length + 15);
 
+      Lengths    : constant Bytes_16 := LE64 (U64 (AAD'Length)) &
+                                        LE64 (U64 (C'Length));
    begin
-      return AAD & AAD_Pad & C & C_Pad & AAD_Len & C_Len;
+      return Padded_AAD & Padded_C & Lengths;
    end Gen_Auth_Msg;
 
    --  AEAD Encryption
