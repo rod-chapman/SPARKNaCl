@@ -391,21 +391,6 @@ is
                                      M       : in     Byte_Seq;
                                      Xor_M   : in     Boolean)
    is
-      --  Fwd declare
-      procedure Quarter_Round (a, b, c, d : in out U32) with Global => null;
-
-      procedure Quarter_Round (a, b, c, d : in out U32) is
-      begin
-         a := a + b;
-         d := RL32 (d xor a, 16);
-         c := c + d;
-         b := RL32 (b xor c, 12);
-         a := a + b;
-         d := RL32 (d xor a, 8);
-         c := c + d;
-         b := RL32 (b xor c, 7);
-      end Quarter_Round;
-
       --  state after each round
       x0, x1, x2, x3, x4, x5, x6, x7,
       x8, x9, x10, x11, x12, x13, x14, x15 : U32;
@@ -421,6 +406,64 @@ is
 
       CI : N32 := C'First;
       MI : N32 := M'First;
+
+      procedure Quarter_Round (a, b, c, d : in out U32)
+        with Global => null;
+
+      procedure Assign_X_To (Y : out Bytes_64)
+        with Global => (x0, x1,  x2,  x3,  x4,  x5,  x6,  x7,
+                        x8, x9, x10, x11, x12, x13, x14, x15),
+             Relaxed_Initialization => Y,
+             Post => Y'Initialized;
+
+      procedure Quarter_Round (a, b, c, d : in out U32) is
+      begin
+         a := a + b;
+         d := RL32 (d xor a, 16);
+         c := c + d;
+         b := RL32 (b xor c, 12);
+         a := a + b;
+         d := RL32 (d xor a, 8);
+         c := c + d;
+         b := RL32 (b xor c, 7);
+      end Quarter_Round;
+
+      procedure Assign_X_To (Y : out Bytes_64)
+      is
+      begin
+         ST32 (Y (0  .. 3),  x0);
+         pragma Assert (Y (0 .. 3)'Initialized);
+         ST32 (Y (4  .. 7),  x1);
+         pragma Assert (Y (0 .. 7)'Initialized);
+         ST32 (Y (8  .. 11), x2);
+         pragma Assert (Y (0 .. 11)'Initialized);
+         ST32 (Y (12 .. 15), x3);
+         pragma Assert (Y (0 .. 15)'Initialized);
+         ST32 (Y (16 .. 19), x4);
+         pragma Assert (Y (0 .. 19)'Initialized);
+         ST32 (Y (20 .. 23), x5);
+         pragma Assert (Y (0 .. 23)'Initialized);
+         ST32 (Y (24 .. 27), x6);
+         pragma Assert (Y (0 .. 27)'Initialized);
+         ST32 (Y (28 .. 31), x7);
+         pragma Assert (Y (0 .. 31)'Initialized);
+         ST32 (Y (32 .. 35), x8);
+         pragma Assert (Y (0 .. 35)'Initialized);
+         ST32 (Y (36 .. 39), x9);
+         pragma Assert (Y (0 .. 39)'Initialized);
+         ST32 (Y (40 .. 43), x10);
+         pragma Assert (Y (0 .. 43)'Initialized);
+         ST32 (Y (44 .. 47), x11);
+         pragma Assert (Y (0 .. 47)'Initialized);
+         ST32 (Y (48 .. 51), x12);
+         pragma Assert (Y (0 .. 51)'Initialized);
+         ST32 (Y (52 .. 55), x13);
+         pragma Assert (Y (0 .. 55)'Initialized);
+         ST32 (Y (56 .. 59), x14);
+         pragma Assert (Y (0 .. 59)'Initialized);
+         ST32 (Y (60 .. 63), x15);
+         pragma Assert (Y (0 .. 63)'Initialized);
+      end Assign_X_To;
 
    begin
       j0  := Context.F (0);
@@ -537,23 +580,7 @@ is
 
          if B = 64 then
             --  Final block of exactly 64 bytes
-            ST32 (C (CI + 0  .. CI + 3),  x0);
-            ST32 (C (CI + 4  .. CI + 7),  x1);
-            ST32 (C (CI + 8  .. CI + 11), x2);
-            ST32 (C (CI + 12 .. CI + 15), x3);
-            ST32 (C (CI + 16 .. CI + 19), x4);
-            ST32 (C (CI + 20 .. CI + 23), x5);
-            ST32 (C (CI + 24 .. CI + 27), x6);
-            ST32 (C (CI + 28 .. CI + 31), x7);
-            ST32 (C (CI + 32 .. CI + 35), x8);
-            ST32 (C (CI + 36 .. CI + 39), x9);
-            ST32 (C (CI + 40 .. CI + 43), x10);
-            ST32 (C (CI + 44 .. CI + 47), x11);
-            ST32 (C (CI + 48 .. CI + 51), x12);
-            ST32 (C (CI + 52 .. CI + 55), x13);
-            ST32 (C (CI + 56 .. CI + 59), x14);
-            ST32 (C (CI + 60 .. CI + 63), x15);
-
+            Assign_X_To (C (CI .. CI + 63));
             --  On exit, we should have initialized the whole of C
             pragma Assert (CI + 63 = C'Last and then
                            C (C'First .. C'Last)'Initialized);
@@ -561,23 +588,7 @@ is
             exit;
          elsif B < 64 then
             --  Final block, less than 64 bytes
-            ST32 (Tmp (0  .. 3),  x0);
-            ST32 (Tmp (4  .. 7),  x1);
-            ST32 (Tmp (8  .. 11), x2);
-            ST32 (Tmp (12 .. 15), x3);
-            ST32 (Tmp (16 .. 19), x4);
-            ST32 (Tmp (20 .. 23), x5);
-            ST32 (Tmp (24 .. 27), x6);
-            ST32 (Tmp (28 .. 31), x7);
-            ST32 (Tmp (32 .. 35), x8);
-            ST32 (Tmp (36 .. 39), x9);
-            ST32 (Tmp (40 .. 43), x10);
-            ST32 (Tmp (44 .. 47), x11);
-            ST32 (Tmp (48 .. 51), x12);
-            ST32 (Tmp (52 .. 55), x13);
-            ST32 (Tmp (56 .. 59), x14);
-            ST32 (Tmp (60 .. 63), x15);
-
+            Assign_X_To (Tmp);
             C (CI .. CI + B - 1) := Tmp (0 .. B - 1);
 
             --  On exit, we should have initialized the whole of C
@@ -592,23 +603,7 @@ is
             exit;
          else
             pragma Assert (B > 64);
-            ST32 (C (CI + 0  .. CI + 3),  x0);
-            ST32 (C (CI + 4  .. CI + 7),  x1);
-            ST32 (C (CI + 8  .. CI + 11), x2);
-            ST32 (C (CI + 12 .. CI + 15), x3);
-            ST32 (C (CI + 16 .. CI + 19), x4);
-            ST32 (C (CI + 20 .. CI + 23), x5);
-            ST32 (C (CI + 24 .. CI + 27), x6);
-            ST32 (C (CI + 28 .. CI + 31), x7);
-            ST32 (C (CI + 32 .. CI + 35), x8);
-            ST32 (C (CI + 36 .. CI + 39), x9);
-            ST32 (C (CI + 40 .. CI + 43), x10);
-            ST32 (C (CI + 44 .. CI + 47), x11);
-            ST32 (C (CI + 48 .. CI + 51), x12);
-            ST32 (C (CI + 52 .. CI + 55), x13);
-            ST32 (C (CI + 56 .. CI + 59), x14);
-            ST32 (C (CI + 60 .. CI + 63), x15);
-
+            Assign_X_To (C (CI .. CI + 63));
             pragma Assert (CI + B - 1 = C'Last and then
                            C (CI + 0 .. CI + 63)'Initialized);
 

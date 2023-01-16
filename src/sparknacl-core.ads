@@ -90,7 +90,7 @@ is
                     M'First = 0 and
                     (if Xor_M then M'Length = C'Length) and
                     (if not Xor_M then M'Length = 64) and
-                    U32 (C'Length) <= U32 (N32'Last) and
+                    C'Last < N32'Last and
                     C'First >= N32'First and
                     M'First >= N32'First,
           Post   => C'Initialized;
