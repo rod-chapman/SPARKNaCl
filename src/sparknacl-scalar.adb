@@ -16,8 +16,14 @@ is
    is
       --  X and Z are variables not constants, so can be sanitized
       X : Normal_GF := Utils.Unpack_25519 (P);
+
+      --  Convert random 32-byte value N into a useful scalar.
       Z : Bytes_32 :=
-         (N (0) and 248) & N (1 .. 30) & ((N (31) and 127) or 64);
+         (N (0) and 248) & -- Clear 3 least-signif bits to make sure Z is a
+                           -- multiple of 8 - the co-factor of the curve
+         N (1 .. 30) &     -- Just copy these bytes
+         ((N (31) and 127) or 64); -- Clear msb, and set next bit to make sure
+                                   -- Z is really large
 
       Swap  : Boolean;
       CB    : Byte;
