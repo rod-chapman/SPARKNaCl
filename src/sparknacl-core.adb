@@ -410,11 +410,19 @@ is
       procedure Quarter_Round (a, b, c, d : in out U32)
         with Global => null;
 
+      procedure Quarter_Rounds
+        with Global => (In_Out => (x0, x1,  x2,  x3,  x4,  x5,  x6,  x7,
+                                   x8, x9, x10, x11, x12, x13, x14, x15));
+
       procedure Assign_X_To (Y : out Bytes_64)
         with Global => (x0, x1,  x2,  x3,  x4,  x5,  x6,  x7,
                         x8, x9, x10, x11, x12, x13, x14, x15),
              Relaxed_Initialization => Y,
              Post => Y'Initialized;
+
+      procedure Update_Xs (Y : in Bytes_64)
+        with Global => (In_Out => (x0, x1,  x2,  x3,  x4,  x5,  x6,  x7,
+                                   x8, x9, x10, x11, x12, x13, x14, x15));
 
       procedure Quarter_Round (a, b, c, d : in out U32) is
       begin
@@ -427,6 +435,21 @@ is
          c := c + d;
          b := RL32 (b xor c, 7);
       end Quarter_Round;
+
+      procedure Quarter_Rounds
+      is
+      begin
+         for R in 1 .. 10 loop
+            Quarter_Round (x0, x4,  x8, x12);
+            Quarter_Round (x1, x5,  x9, x13);
+            Quarter_Round (x2, x6, x10, x14);
+            Quarter_Round (x3, x7, x11, x15);
+            Quarter_Round (x0, x5, x10, x15);
+            Quarter_Round (x1, x6, x11, x12);
+            Quarter_Round (x2, x7,  x8, x13);
+            Quarter_Round (x3, x4,  x9, x14);
+         end loop;
+      end Quarter_Rounds;
 
       procedure Assign_X_To (Y : out Bytes_64)
       is
@@ -464,6 +487,27 @@ is
          ST32 (Y (60 .. 63), x15);
          pragma Assert (Y (0 .. 63)'Initialized);
       end Assign_X_To;
+
+      procedure Update_Xs (Y : in Bytes_64)
+      is
+      begin
+         x0  := x0  xor LD32 (Y (0  .. 3));
+         x1  := x1  xor LD32 (Y (4  .. 7));
+         x2  := x2  xor LD32 (Y (8  .. 11));
+         x3  := x3  xor LD32 (Y (12 .. 15));
+         x4  := x4  xor LD32 (Y (16 .. 19));
+         x5  := x5  xor LD32 (Y (20 .. 23));
+         x6  := x6  xor LD32 (Y (24 .. 27));
+         x7  := x7  xor LD32 (Y (28 .. 31));
+         x8  := x8  xor LD32 (Y (32 .. 35));
+         x9  := x9  xor LD32 (Y (36 .. 39));
+         x10 := x10 xor LD32 (Y (40 .. 43));
+         x11 := x11 xor LD32 (Y (44 .. 47));
+         x12 := x12 xor LD32 (Y (48 .. 51));
+         x13 := x13 xor LD32 (Y (52 .. 55));
+         x14 := x14 xor LD32 (Y (56 .. 59));
+         x15 := x15 xor LD32 (Y (60 .. 63));
+      end Update_Xs;
 
    begin
       j0  := Context.F (0);
@@ -507,16 +551,7 @@ is
          x14 := j14;
          x15 := j15;
 
-         for R in 1 .. 10 loop
-            Quarter_Round (x0, x4,  x8, x12);
-            Quarter_Round (x1, x5,  x9, x13);
-            Quarter_Round (x2, x6, x10, x14);
-            Quarter_Round (x3, x7, x11, x15);
-            Quarter_Round (x0, x5, x10, x15);
-            Quarter_Round (x1, x6, x11, x12);
-            Quarter_Round (x2, x7,  x8, x13);
-            Quarter_Round (x3, x4,  x9, x14);
-         end loop;
+         Quarter_Rounds;
 
          x0  := x0  + j0;
          x1  := x1  + j1;
@@ -536,39 +571,9 @@ is
          x15 := x15 + j15;
 
          if B >= 64 then
-            x0  := x0  xor LD32 (M (MI + 0  .. MI + 3));
-            x1  := x1  xor LD32 (M (MI + 4  .. MI + 7));
-            x2  := x2  xor LD32 (M (MI + 8  .. MI + 11));
-            x3  := x3  xor LD32 (M (MI + 12 .. MI + 15));
-            x4  := x4  xor LD32 (M (MI + 16 .. MI + 19));
-            x5  := x5  xor LD32 (M (MI + 20 .. MI + 23));
-            x6  := x6  xor LD32 (M (MI + 24 .. MI + 27));
-            x7  := x7  xor LD32 (M (MI + 28 .. MI + 31));
-            x8  := x8  xor LD32 (M (MI + 32 .. MI + 35));
-            x9  := x9  xor LD32 (M (MI + 36 .. MI + 39));
-            x10 := x10 xor LD32 (M (MI + 40 .. MI + 43));
-            x11 := x11 xor LD32 (M (MI + 44 .. MI + 47));
-            x12 := x12 xor LD32 (M (MI + 48 .. MI + 51));
-            x13 := x13 xor LD32 (M (MI + 52 .. MI + 55));
-            x14 := x14 xor LD32 (M (MI + 56 .. MI + 59));
-            x15 := x15 xor LD32 (M (MI + 60 .. MI + 63));
+            Update_Xs (M (MI + 0  .. MI + 63));
          else
-            x0  := x0  xor LD32 (Tmp (0  .. 3));
-            x1  := x1  xor LD32 (Tmp (4  .. 7));
-            x2  := x2  xor LD32 (Tmp (8  .. 11));
-            x3  := x3  xor LD32 (Tmp (12 .. 15));
-            x4  := x4  xor LD32 (Tmp (16 .. 19));
-            x5  := x5  xor LD32 (Tmp (20 .. 23));
-            x6  := x6  xor LD32 (Tmp (24 .. 27));
-            x7  := x7  xor LD32 (Tmp (28 .. 31));
-            x8  := x8  xor LD32 (Tmp (32 .. 35));
-            x9  := x9  xor LD32 (Tmp (36 .. 39));
-            x10 := x10 xor LD32 (Tmp (40 .. 43));
-            x11 := x11 xor LD32 (Tmp (44 .. 47));
-            x12 := x12 xor LD32 (Tmp (48 .. 51));
-            x13 := x13 xor LD32 (Tmp (52 .. 55));
-            x14 := x14 xor LD32 (Tmp (56 .. 59));
-            x15 := x15 xor LD32 (Tmp (60 .. 63));
+            Update_Xs (Tmp);
          end if;
 
          --  increment counter - note that for IETF usage this will clobber
@@ -629,12 +634,8 @@ is
          pragma Loop_Invariant
            (C (C'First .. C'Last - B)'Initialized);
          pragma Loop_Invariant
-           (if not Xor_M then MI = M'First);
-         pragma Loop_Invariant
-           (if Xor_M then M'Length = C'Length);
-         pragma Loop_Invariant
-           (if Xor_M then B + MI = M'Length);
-
+           (if Xor_M then (M'Length = C'Length and B + MI = M'Length)
+                     else (MI = M'First));
       end loop;
       pragma Assert (C (C'First .. C'Last)'Initialized);
       pragma Assert (C'Initialized);
