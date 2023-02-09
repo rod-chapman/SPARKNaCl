@@ -16,9 +16,9 @@ is
                      N      : in     Stream.HSalsa20_Nonce;
                      K      : in     Core.Salsa20_Key)
      with Global => null,
-          Pre    => (M'First = 0 and
-                     C'First = 0 and
-                     C'Last  = M'Last and
+          Pre    => (M'First = 0 and then
+                     C'First = 0 and then
+                     C'Last  = M'Last and then
                      M'Length >= 32) and then
                     Equal (M (0 .. 31), Zero_Bytes_32),
           Post   => Equal (C (0 .. 15), Zero_Bytes_16);
@@ -31,9 +31,9 @@ is
       N      : in     Stream.HSalsa20_Nonce;
       K      : in     Core.Salsa20_Key)
      with Global => null,
-          Pre    => (M'First = 0 and
-                     C'First = 0 and
-                     M'Last  = C'Last and
+          Pre    => (M'First = 0 and then
+                     C'First = 0 and then
+                     M'Last  = C'Last and then
                      C'Length >= 32) and then
                     Equal (C (0 .. 15), Zero_Bytes_16),
           Post   => Equal (M (0 .. 31), Zero_Bytes_32);
@@ -53,15 +53,15 @@ is
       K       : in     Core.ChaCha20_Key;  --  Key
       AAD     : in     Byte_Seq)           --  Additional Authenticated Data
      with Global => null,
-          Pre    => M'First    = 0 and
-                    C'First    = 0 and
-                    M'Last     = C'Last and
-                    C'Length   <= U32 (N32'Last) and
-                    M'Length   <= U32 (N32'Last) and
-                    C'Length   = M'Length and
-                    AAD'First  = 0 and
-                    AAD'Length <= U32 (N32'Last) and
-                    C'Length + AAD'Length <= U32 (N32'Last - 192);
+          Pre    => M'First    = 0 and then
+                    C'First    = 0 and then
+                    AAD'First  = 0 and then
+                    M'Last     = C'Last and then
+                    C'Last     < N32'Last and then
+                    M'Last     < N32'Last and then
+                    C'Length   = M'Length and then
+                    AAD'Last   < N32'Last and then
+                    I64 (C'Length) + I64 (AAD'Length) + 192 <= I64 (N32'Last);
 
    procedure Open
      (M        :    out Byte_Seq;            --  Output message
@@ -73,13 +73,13 @@ is
       K        : in     Core.ChaCha20_Key;   --  Key
       AAD      : in     Byte_Seq)            --  Additional Authenticated Data
      with Global => null,
-          Pre    => M'First    = 0 and
-                    C'First    = 0 and
-                    M'Last     = C'Last and
-                    C'Length   <= U32 (N32'Last) and
-                    M'Length   <= U32 (N32'Last) and
-                    C'Length   = M'Length and
-                    AAD'First  = 0 and
-                    AAD'Length <= U32 (N32'Last) and
-                    C'Length + AAD'Length <= U32 (N32'Last - 192);
+          Pre    => M'First    = 0 and then
+                    C'First    = 0 and then
+                    AAD'First  = 0 and then
+                    M'Last     = C'Last and then
+                    C'Last     < N32'Last and then
+                    M'Last     < N32'Last and then
+                    C'Length   = M'Length and then
+                    AAD'Last   < N32'Last and then
+                    I64 (C'Length) + I64 (AAD'Length) + 192 <= I64 (N32'Last);
 end SPARKNaCl.Secretbox;

@@ -105,10 +105,10 @@ is
    function Gen_Auth_Msg (C   : in Byte_Seq;
                           AAD : in Byte_Seq) return Byte_Seq
      with Global => null,
-          Pre    => AAD'First  = 0 and
-                    AAD'Last   < N32'Last and
-                    C'First    = 0 and
-                    C'Last     < N32'Last and
+          Pre    => AAD'First  = 0 and then
+                    C'First    = 0 and then
+                    AAD'Last   < N32'Last and then
+                    C'Last     < N32'Last and then
                     --  Padding C might add 15 bytes to its length.
                     --  Ditto for AAD.
                     --  Final length fields add another 16 bytes on then end,
