@@ -288,6 +288,18 @@ private
      with Dynamic_Predicate =>
        (for all I in Index_16 => Normal_GF32 (I) in GF32_Normal_Limb);
 
+   --  NOTE: a "Normal_GF" is 16 digits of 16 bits each, representing
+   --  a 256-but unsigned integer, little-endian, so least-significant
+   --  digit is in element 0.  The integer represented is in the range
+   --  0 .. 2**256-1 and NOT in the range 0 .. P-1 where P = 2**255-19
+   --
+   --  The "+", "-", "*" and Square operators on Normal_GF return
+   --  values in 0 .. 2**256-1, so are not "fully reduced" to be
+   --  in 0 .. P-1 at all, but this doesn't matter.
+   --
+   --  Where required, the _final_ reduction step of a Normal_GF
+   --  to be in the range 0 .. P-1 is done by the function
+   --  Utils.Pack_25519
    type Normal_GF is array (Index_16) of GF16_Normal_Limb
      with Alignment => 4;
 
