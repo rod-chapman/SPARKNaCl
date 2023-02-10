@@ -289,7 +289,7 @@ private
        (for all I in Index_16 => Normal_GF32 (I) in GF32_Normal_Limb);
 
    --  NOTE: a "Normal_GF" is 16 digits of 16 bits each, representing
-   --  a 256-but unsigned integer, little-endian, so least-significant
+   --  a 256-bit unsigned integer, little-endian, so least-significant
    --  digit is in element 0.  The integer represented is in the range
    --  0 .. 2**256-1 and NOT in the range 0 .. P-1 where P = 2**255-19
    --
