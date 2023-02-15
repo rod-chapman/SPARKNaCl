@@ -28,9 +28,20 @@ is
            (for all J in Index_16 range 0 .. I => R (J)'Initialized);
          pragma Loop_Invariant
            (for all J in Index_16 range 0 .. I => R (J) in GF32_Normal_Limb);
+         pragma Loop_Invariant (Carry >= 0);
+         pragma Loop_Invariant (Carry <= 1);
       end loop;
 
-      pragma Assert (R'Initialized and then R in Normal_GF32);
+      --  Substitute I=15 into the loop invariant and simplify to get:
+      pragma Assert_And_Cut
+        ((for all J in Index_16 => R (J)'Initialized) and then
+         (for all J in Index_16 => R (J) in GF32_Normal_Limb) and then
+          Carry >= 0 and then
+          Carry <= 1);
+
+      --  and therefore...
+      pragma Assert (R'Initialized);
+      pragma Assert (R in Normal_GF32);
 
       --  The "Carry" from limb 15 can only be 0 or 1, so we
       --  multiply that by R2256 and add to limb 0. R is then a
@@ -38,7 +49,7 @@ is
       --  Car.Nearlynormal_To_Normal is required
       R (0) := R (0) + (R2256 * Carry);
 
-      pragma Assert (R'Initialized and then R in Nearlynormal_GF);
+      pragma Assert (R in Nearlynormal_GF);
 
       return Car.Nearlynormal_To_Normal (R);
    end "+";
@@ -83,19 +94,21 @@ is
    -----------------------------------------------------
 
    subtype U32NL is U32 range 0 .. LMM1;
-   subtype U64NL is U64 range 0 .. LMM1;
-   subtype GF64_Natural_Limb is U64 range 0 .. (MGFLC * MGFLP);
+   subtype GF64_Natural_Limb is I64 range 0 .. (MGFLC * MGFLP);
 
    --  Limb Product (LP) - a subtype for representing the product
    --  of two normalized GF64 Limbs
-   subtype LP   is GF64_Natural_Limb range 0 .. MGFLP;
+   subtype LP  is GF64_Natural_Limb range 0 .. MGFLP;
+
+   --  A fully normalized limb, signed 64-bit representation
+   subtype I64NL is I64 range 0 .. LMM1;
 
    --  Upper Bounds on Digits and Carry values during phase 1
    --  ripple carry and reduction.
 
    --  Digit 0 has same upper-bound as GF64_Natural_Limb, and no carry-in
    subtype D0S is GF64_Natural_Limb;
-   C0UB : constant := GF64_Natural_Limb'Last / LM;
+   C0UB : constant := D0S'Last / LM;
 
    --  The upper-bound on D0S is GF64_Natural_Limb'Last = (MGFLC * MGFLP).
    --  Where MGFLC is described in sparknacl.ads
@@ -231,331 +244,633 @@ is
       --  code in-line, and allows us to assert a tight upper-bound on
       --  the value of C as we go along.
       -----------------------------------------------------------------
-      D0  := LP (L0 * R0) +
-        R2256 * (LP (L15 * R1)  + LP (L14 * R2)  + LP (L13 * R3) +
-                   LP (L12 * R4)  + LP (L11 * R5)  + LP (L10 * R6) +
-                   LP (L9  * R7)  + LP (L8  * R8)  + LP (L7  * R9) +
-                   LP (L6  * R10) + LP (L5  * R11) + LP (L4  * R12) +
-                   LP (L3  * R13) + LP (L2  * R14) + LP (L1  * R15));
+      declare
+         L15R1  : constant LP := LP (L15 * R1);
+         L14R2  : constant LP := LP (L14 * R2);
+         L13R3  : constant LP := LP (L13 * R3);
+         L12R4  : constant LP := LP (L12 * R4);
+         L11R5  : constant LP := LP (L11 * R5);
+         L10R6  : constant LP := LP (L10 * R6);
+         L9R7   : constant LP := LP (L9  * R7);
+         L8R8   : constant LP := LP (L8  * R8);
+         L7R9   : constant LP := LP (L7  * R9);
+         L6R10  : constant LP := LP (L6  * R10);
+         L5R11  : constant LP := LP (L5  * R11);
+         L4R12  : constant LP := LP (L4  * R12);
+         L3R13  : constant LP := LP (L3  * R13);
+         L2R14  : constant LP := LP (L2  * R14);
+         L1R15  : constant LP := LP (L1  * R15);
 
-      --  Immediately compute C and normalize D0
-      C := D0 / LM;
-      D0 := D0 mod LM;
-      --  For proof of type safety and to prove that this converges,
-      --  we only need to keep track of the fact that each digit is now
-      --  normalized and assert an upper-bound on C.
-      --
-      --  We use "Assert_And_Cut" here to control the size of the
-      --  VCs that arise.
-      pragma Assert_And_Cut (D0 in U64NL and
+         L0R0   : constant LP := LP (L0 * R0);
+      begin
+         D0 := L15R1 + L14R2 + L13R3 +
+               L12R4 + L11R5 + L10R6 +
+               L9R7  + L8R8  + L7R9 +
+               L6R10 + L5R11 + L4R12 +
+               L3R13 + L2R14 + L1R15;
+         pragma Assert (D0 <= 15 * LP'Last);
+
+         D0  := L0R0 + (R2256 * D0);
+         --  Immediately compute C and normalize D0
+         --  For proof of type safety and to prove that this converges,
+         --  we only need to keep track of the fact that each digit is now
+         --  normalized and assert an upper-bound on C.
+         C := D0 / LM;
+         D0 := D0 mod LM;
+      end;
+
+      pragma Assert_And_Cut (D0 in I64NL and
                              C <= C0UB);
 
-      --  And so on ... but add C from D0 into the calculation of D1
-      D1  := C + LP (L1 * R0) + LP (L0 * R1) +
-        R2256 * (LP (L15 * R2)  + LP (L14 * R3)  + LP (L13 * R4) +
-                   LP (L12 * R5)  + LP (L11 * R6)  + LP (L10 * R7) +
-                   LP (L9  * R8)  + LP (L8  * R9)  + LP (L7  * R10) +
-                   LP (L6  * R11) + LP (L5  * R12) + LP (L4  * R13) +
-                   LP (L3  * R14) + LP (L2  * R15));
-      C := D1 / LM;
-      D1 := D1 mod LM;
-      pragma Assert_And_Cut (D0 in U64NL and
-                             D1 in U64NL and
+
+      declare
+         L15R2  : constant LP := LP (L15 * R2);
+         L14R3  : constant LP := LP (L14 * R3);
+         L13R4  : constant LP := LP (L13 * R4);
+         L12R5  : constant LP := LP (L12 * R5);
+         L11R6  : constant LP := LP (L11 * R6);
+         L10R7  : constant LP := LP (L10 * R7);
+         L9R8   : constant LP := LP (L9  * R8);
+         L8R9   : constant LP := LP (L8  * R9);
+         L7R10  : constant LP := LP (L7  * R10);
+         L6R11  : constant LP := LP (L6  * R11);
+         L5R12  : constant LP := LP (L5  * R12);
+         L4R13  : constant LP := LP (L4  * R13);
+         L3R14  : constant LP := LP (L3  * R14);
+         L2R15  : constant LP := LP (L2  * R15);
+
+         L1R0   : constant LP := LP (L1 * R0);
+         L0R1   : constant LP := LP (L0 * R1);
+      begin
+         --  And so on ... but add C from D0 into the calculation of D1
+         D1  := C + L1R0 + L0R1 +
+                R2256 * (L15R2 + L14R3 + L13R4 +
+                         L12R5 + L11R6 + L10R7 +
+                         L9R8  + L8R9  + L7R10 +
+                         L6R11 + L5R12 + L4R13 +
+                         L3R14 + L2R15);
+         C := D1 / LM;
+         D1 := D1 mod LM;
+      end;
+
+      pragma Assert_And_Cut (D0 in I64NL and
+                             D1 in I64NL and
                              C <= C1UB);
 
-      D2  := C + LP (L2 * R0) + LP (L1 * R1) + LP (L0 * R2) +
-        R2256 * (LP (L15 * R3)  + LP (L14 * R4)  + LP (L13 * R5) +
-                   LP (L12 * R6)  + LP (L11 * R7)  + LP (L10 * R8) +
-                   LP (L9  * R9)  + LP (L8  * R10) + LP (L7  * R11) +
-                   LP (L6  * R12) + LP (L5  * R13) + LP (L4  * R14) +
-                   LP (L3  * R15));
+      declare
+         L15R3 : constant LP := LP (L15 * R3);
+         L14R4 : constant LP := LP (L14 * R4);
+         L13R5 : constant LP := LP (L13 * R5);
+         L12R6 : constant LP := LP (L12 * R6);
+         L11R7 : constant LP := LP (L11 * R7);
+         L10R8 : constant LP := LP (L10 * R8);
+         L9R9  : constant LP := LP (L9  * R9);
+         L8R10 : constant LP := LP (L8  * R10);
+         L7R11 : constant LP := LP (L7  * R11);
+         L6R12 : constant LP := LP (L6  * R12);
+         L5R13 : constant LP := LP (L5  * R13);
+         L4R14 : constant LP := LP (L4  * R14);
+         L3R15 : constant LP := LP (L3  * R15);
 
-      C := D2 / LM;
-      D2 := D2 mod LM;
-      pragma Assert_And_Cut (D0 in U64NL and
-                             D1 in U64NL and
-                             D2 in U64NL and
+         L2R0  : constant LP := LP (L2 * R0);
+         L1R1  : constant LP := LP (L1 * R1);
+         L0R2  : constant LP := LP (L0 * R2);
+      begin
+         D2  := C + L2R0 + L1R1 + L0R2 +
+                R2256 * (L15R3 + L14R4 + L13R5 +
+                         L12R6 + L11R7 + L10R8 +
+                         L9R9  + L8R10 + L7R11 +
+                         L6R12 + L5R13 + L4R14 +
+                         L3R15);
+
+         C := D2 / LM;
+         D2 := D2 mod LM;
+      end;
+
+      pragma Assert_And_Cut (D0 in I64NL and
+                             D1 in I64NL and
+                             D2 in I64NL and
                              C <= C2UB);
 
-      D3 := C + LP (L3 * R0) + LP (L2 * R1) + LP (L1 * R2) + LP (L0 * R3) +
-        R2256 * (LP (L15 * R4)  + LP (L14 * R5)  + LP (L13 * R6) +
-                   LP (L12 * R7)  + LP (L11 * R8)  + LP (L10 * R9) +
-                   LP (L9  * R10) + LP (L8  * R11) + LP (L7  * R12) +
-                   LP (L6  * R13) + LP (L5  * R14) + LP (L4  * R15));
+      declare
+         L15R4 : constant LP := LP (L15 * R4);
+         L14R5 : constant LP := LP (L14 * R5);
+         L13R6 : constant LP := LP (L13 * R6);
+         L12R7 : constant LP := LP (L12 * R7);
+         L11R8 : constant LP := LP (L11 * R8);
+         L10R9 : constant LP := LP (L10 * R9);
+         L9R10 : constant LP := LP (L9  * R10);
+         L8R11 : constant LP := LP (L8  * R11);
+         L7R12 : constant LP := LP (L7  * R12);
+         L6R13 : constant LP := LP (L6  * R13);
+         L5R14 : constant LP := LP (L5  * R14);
+         L4R15 : constant LP := LP (L4  * R15);
 
-      C := D3 / LM;
-      D3 := D3 mod LM;
-      pragma Assert_And_Cut (D0 in U64NL and
-                             D1 in U64NL and
-                             D2 in U64NL and
-                             D3 in U64NL and
+         L3R0  : constant LP := LP (L3 * R0);
+         L2R1  : constant LP := LP (L2 * R1);
+         L1R2  : constant LP := LP (L1 * R2);
+         L0R3  : constant LP := LP (L0 * R3);
+      begin
+         D3 := C + L3R0 + L2R1 + L1R2 + L0R3 +
+               R2256 * (L15R4 + L14R5 + L13R6 +
+                        L12R7 + L11R8 + L10R9 +
+                        L9R10 + L8R11 + L7R12 +
+                        L6R13 + L5R14 + L4R15);
+
+         C := D3 / LM;
+         D3 := D3 mod LM;
+      end;
+
+      pragma Assert_And_Cut (D0 in I64NL and
+                             D1 in I64NL and
+                             D2 in I64NL and
+                             D3 in I64NL and
                              C <= C3UB);
 
-      D4 := C + LP (L4 * R0) + LP (L3 * R1) + LP (L2 * R2) +
-        LP (L1 * R3) + LP (L0 * R4) +
-        R2256 * (LP (L15 * R5)  + LP (L14 * R6)  + LP (L13 * R7) +
-                   LP (L12 * R8)  + LP (L11 * R9)  + LP (L10 * R10) +
-                   LP (L9  * R11) + LP (L8  * R12) + LP (L7  * R13) +
-                   LP (L6  * R14) + LP (L5  * R15));
+      declare
+         L15R5  : constant LP := LP (L15 * R5);
+         L14R6  : constant LP := LP (L14 * R6);
+         L13R7  : constant LP := LP (L13 * R7);
+         L12R8  : constant LP := LP (L12 * R8);
+         L11R9  : constant LP := LP (L11 * R9);
+         L10R10 : constant LP := LP (L10 * R10);
+         L9R11  : constant LP := LP (L9  * R11);
+         L8R12  : constant LP := LP (L8  * R12);
+         L7R13  : constant LP := LP (L7  * R13);
+         L6R14  : constant LP := LP (L6  * R14);
+         L5R15  : constant LP := LP (L5  * R15);
 
-      C := D4 / LM;
-      D4 := D4 mod LM;
-      pragma Assert_And_Cut (D0 in U64NL and
-                             D1 in U64NL and
-                             D2 in U64NL and
-                             D3 in U64NL and
-                             D4 in U64NL and
+         L4R0 : constant LP := LP (L4 * R0);
+         L3R1 : constant LP := LP (L3 * R1);
+         L2R2 : constant LP := LP (L2 * R2);
+         L1R3 : constant LP := LP (L1 * R3);
+         L0R4 : constant LP := LP (L0 * R4);
+      begin
+         D4 := C + L4R0 + L3R1 + L2R2 + L1R3 + L0R4 +
+           R2256 * (L15R5 + L14R6 + L13R7 +
+                    L12R8 + L11R9 + L10R10 +
+                    L9R11 + L8R12 + L7R13 +
+                    L6R14 + L5R15);
+
+         C := D4 / LM;
+         D4 := D4 mod LM;
+      end;
+
+      pragma Assert_And_Cut (D0 in I64NL and
+                             D1 in I64NL and
+                             D2 in I64NL and
+                             D3 in I64NL and
+                             D4 in I64NL and
                              C <= C4UB);
 
-      D5 := C + LP (L5 * R0) + LP (L4 * R1) + LP (L3 * R2) +
-        LP (L2 * R3) + LP (L1 * R4) + LP (L0 * R5) +
-        R2256 * (LP (L15 * R6)  + LP (L14 * R7)  + LP (L13 * R8) +
-                   LP (L12 * R9)  + LP (L11 * R10) + LP (L10 * R11) +
-                   LP (L9  * R12) + LP (L8  * R13) + LP (L7  * R14) +
-                   LP (L6  * R15));
+      declare
+         L15R6  : constant LP := LP (L15 * R6);
+         L14R7  : constant LP := LP (L14 * R7);
+         L13R8  : constant LP := LP (L13 * R8);
+         L12R9  : constant LP := LP (L12 * R9);
+         L11R10 : constant LP := LP (L11 * R10);
+         L10R11 : constant LP := LP (L10 * R11);
+         L9R12  : constant LP := LP (L9  * R12);
+         L8R13  : constant LP := LP (L8  * R13);
+         L7R14  : constant LP := LP (L7  * R14);
+         L6R15  : constant LP := LP (L6  * R15);
 
-      C := D5 / LM;
-      D5 := D5 mod LM;
-      pragma Assert_And_Cut (D0 in U64NL and
-                             D1 in U64NL and
-                             D2 in U64NL and
-                             D3 in U64NL and
-                             D4 in U64NL and
-                             D5 in U64NL and
+         L5R0 : constant LP := LP (L5 * R0);
+         L4R1 : constant LP := LP (L4 * R1);
+         L3R2 : constant LP := LP (L3 * R2);
+         L2R3 : constant LP := LP (L2 * R3);
+         L1R4 : constant LP := LP (L1 * R4);
+         L0R5 : constant LP := LP (L0 * R5);
+      begin
+         D5 := C + L5R0 + L4R1 + L3R2 + L2R3 + L1R4 + L0R5 +
+           R2256 * (L15R6 + L14R7  + L13R8 +
+                    L12R9 + L11R10 + L10R11 +
+                    L9R12 + L8R13  + L7R14 +
+                    L6R15);
+
+         C := D5 / LM;
+         D5 := D5 mod LM;
+      end;
+
+      pragma Assert_And_Cut (D0 in I64NL and
+                             D1 in I64NL and
+                             D2 in I64NL and
+                             D3 in I64NL and
+                             D4 in I64NL and
+                             D5 in I64NL and
                              C <= C5UB);
 
-      D6 := C + LP (L6 * R0) + LP (L5 * R1) + LP (L4 * R2) +
-        LP (L3 * R3) + LP (L2 * R4) + LP (L1 * R5) +
-        LP (L0 * R6) +
-        R2256 * (LP (L15 * R7)  + LP (L14 * R8)  + LP (L13 * R9) +
-                   LP (L12 * R10) + LP (L11 * R11) + LP (L10 * R12) +
-                   LP (L9  * R13) + LP (L8  * R14) + LP (L7  * R15));
-      C := D6 / LM;
-      D6 := D6 mod LM;
+      declare
+         L15R7  : constant LP := LP (L15 * R7);
+         L14R8  : constant LP := LP (L14 * R8);
+         L13R9  : constant LP := LP (L13 * R9);
+         L12R10 : constant LP := LP (L12 * R10);
+         L11R11 : constant LP := LP (L11 * R11);
+         L10R12 : constant LP := LP (L10 * R12);
+         L9R13  : constant LP := LP (L9  * R13);
+         L8R14  : constant LP := LP (L8  * R14);
+         L7R15  : constant LP := LP (L7  * R15);
 
-      pragma Assert_And_Cut (D0 in U64NL and
-                             D1 in U64NL and
-                             D2 in U64NL and
-                             D3 in U64NL and
-                             D4 in U64NL and
-                             D5 in U64NL and
-                             D6 in U64NL and
+         L6R0 : constant LP := LP (L6 * R0);
+         L5R1 : constant LP := LP (L5 * R1);
+         L4R2 : constant LP := LP (L4 * R2);
+         L3R3 : constant LP := LP (L3 * R3);
+         L2R4 : constant LP := LP (L2 * R4);
+         L1R5 : constant LP := LP (L1 * R5);
+         L0R6 : constant LP := LP (L0 * R6);
+      begin
+         D6 := C + L6R0 + L5R1 + L4R2 + L3R3 + L2R4 + L1R5 + L0R6 +
+           R2256 * (L15R7  + L14R8  + L13R9 +
+                    L12R10 + L11R11 + L10R12 +
+                    L9R13  + L8R14  + L7R15);
+         C := D6 / LM;
+         D6 := D6 mod LM;
+      end;
+
+      pragma Assert_And_Cut (D0 in I64NL and
+                             D1 in I64NL and
+                             D2 in I64NL and
+                             D3 in I64NL and
+                             D4 in I64NL and
+                             D5 in I64NL and
+                             D6 in I64NL and
                              C <= C6UB);
 
-      D7 := C + LP (L7 * R0) + LP (L6 * R1) + LP (L5 * R2) +
-        LP (L4 * R3) + LP (L3 * R4) + LP (L2 * R5) +
-        LP (L1 * R6) + LP (L0 * R7) +
-        R2256 * (LP (L15 * R8)  + LP (L14 * R9)  + LP (L13 * R10) +
-                   LP (L12 * R11) + LP (L11 * R12) + LP (L10 * R13) +
-                   LP (L9  * R14) + LP (L8  * R15));
 
-      C := D7 / LM;
-      D7 := D7 mod LM;
+      declare
+         L15R8  : constant LP := LP (L15 * R8);
+         L14R9  : constant LP := LP (L14 * R9);
+         L13R10 : constant LP := LP (L13 * R10);
+         L12R11 : constant LP := LP (L12 * R11);
+         L11R12 : constant LP := LP (L11 * R12);
+         L10R13 : constant LP := LP (L10 * R13);
+         L9R14  : constant LP := LP (L9  * R14);
+         L8R15  : constant LP := LP (L8  * R15);
 
-      pragma Assert_And_Cut (D0 in U64NL and
-                             D1 in U64NL and
-                             D2 in U64NL and
-                             D3 in U64NL and
-                             D4 in U64NL and
-                             D5 in U64NL and
-                             D6 in U64NL and
-                             D7 in U64NL and
+         L7R0 : constant LP := LP (L7 * R0);
+         L6R1 : constant LP := LP (L6 * R1);
+         L5R2 : constant LP := LP (L5 * R2);
+         L4R3 : constant LP := LP (L4 * R3);
+         L3R4 : constant LP := LP (L3 * R4);
+         L2R5 : constant LP := LP (L2 * R5);
+         L1R6 : constant LP := LP (L1 * R6);
+         L0R7 : constant LP := LP (L0 * R7);
+      begin
+         D7 := C + L7R0 + L6R1 + L5R2 + L4R3 + L3R4 + L2R5 + L1R6 + L0R7 +
+               R2256 * (L15R8  + L14R9  + L13R10 +
+                        L12R11 + L11R12 + L10R13 +
+                        L9R14  + L8R15);
+
+         C := D7 / LM;
+         D7 := D7 mod LM;
+      end;
+
+      pragma Assert_And_Cut (D0 in I64NL and
+                             D1 in I64NL and
+                             D2 in I64NL and
+                             D3 in I64NL and
+                             D4 in I64NL and
+                             D5 in I64NL and
+                             D6 in I64NL and
+                             D7 in I64NL and
                              C <= C7UB);
 
-      D8 := C + LP (L8 * R0) + LP (L7 * R1) + LP (L6 * R2) +
-        LP (L5 * R3) + LP (L4 * R4) + LP (L3 * R5) +
-        LP (L2 * R6) + LP (L1 * R7) + LP (L0 * R8) +
-        R2256 * (LP (L15 * R9)  + LP (L14 * R10) + LP (L13 * R11) +
-                   LP (L12 * R12) + LP (L11 * R13) + LP (L10 * R14) +
-                   LP (L9  * R15));
+      declare
+         L15R9  : constant LP := LP (L15 * R9);
+         L14R10 : constant LP := LP (L14 * R10);
+         L13R11 : constant LP := LP (L13 * R11);
+         L12R12 : constant LP := LP (L12 * R12);
+         L11R13 : constant LP := LP (L11 * R13);
+         L10R14 : constant LP := LP (L10 * R14);
+         L9R15  : constant LP := LP (L9  * R15);
 
-      C := D8 / LM;
-      D8 := D8 mod LM;
+         L8R0 : constant LP := LP (L8 * R0);
+         L7R1 : constant LP := LP (L7 * R1);
+         L6R2 : constant LP := LP (L6 * R2);
+         L5R3 : constant LP := LP (L5 * R3);
+         L4R4 : constant LP := LP (L4 * R4);
+         L3R5 : constant LP := LP (L3 * R5);
+         L2R6 : constant LP := LP (L2 * R6);
+         L1R7 : constant LP := LP (L1 * R7);
+         L0R8 : constant LP := LP (L0 * R8);
+      begin
+         D8 := C + L8R0 + L7R1 + L6R2 + L5R3 + L4R4 +
+                   L3R5 + L2R6 + L1R7 + L0R8 +
+               R2256 * (L15R9 + L14R10 + L13R11 +
+                        L12R12 + L11R13 + L10R14 +
+                        L9R15);
 
-      pragma Assert_And_Cut (D0 in U64NL and
-                             D1 in U64NL and
-                             D2 in U64NL and
-                             D3 in U64NL and
-                             D4 in U64NL and
-                             D5 in U64NL and
-                             D6 in U64NL and
-                             D7 in U64NL and
-                             D8 in U64NL and
+         C := D8 / LM;
+         D8 := D8 mod LM;
+      end;
+
+      pragma Assert_And_Cut (D0 in I64NL and
+                             D1 in I64NL and
+                             D2 in I64NL and
+                             D3 in I64NL and
+                             D4 in I64NL and
+                             D5 in I64NL and
+                             D6 in I64NL and
+                             D7 in I64NL and
+                             D8 in I64NL and
                              C <= C8UB);
 
-      D9 := C + LP (L9 * R0) + LP (L8 * R1) + LP (L7 * R2) +
-        LP (L6 * R3) + LP (L5 * R4) + LP (L4 * R5) +
-        LP (L3 * R6) + LP (L2 * R7) + LP (L1 * R8) +
-        LP (L0 * R9) +
-        R2256 * (LP (L15 * R10) + LP (L14 * R11) + LP (L13 * R12) +
-                   LP (L12 * R13) + LP (L11 * R14) + LP (L10 * R15));
+      declare
+         L15R10 : constant LP := LP (L15 * R10);
+         L14R11 : constant LP := LP (L14 * R11);
+         L13R12 : constant LP := LP (L13 * R12);
+         L12R13 : constant LP := LP (L12 * R13);
+         L11R14 : constant LP := LP (L11 * R14);
+         L10R15 : constant LP := LP (L10 * R15);
 
-      C := D9 / LM;
-      D9 := D9 mod LM;
+         L9R0 : constant LP := LP (L9 * R0);
+         L8R1 : constant LP := LP (L8 * R1);
+         L7R2 : constant LP := LP (L7 * R2);
+         L6R3 : constant LP := LP (L6 * R3);
+         L5R4 : constant LP := LP (L5 * R4);
+         L4R5 : constant LP := LP (L4 * R5);
+         L3R6 : constant LP := LP (L3 * R6);
+         L2R7 : constant LP := LP (L2 * R7);
+         L1R8 : constant LP := LP (L1 * R8);
+         L0R9 : constant LP := LP (L0 * R9);
+      begin
+         D9 := C + L9R0 + L8R1 + L7R2 + L6R3 + L5R4 +
+                   L4R5 + L3R6 + L2R7 + L1R8 + L0R9 +
+               R2256 * (L15R10 + L14R11 + L13R12 +
+                        L12R13 + L11R14 + L10R15);
 
-      pragma Assert_And_Cut (D0 in U64NL and
-                             D1 in U64NL and
-                             D2 in U64NL and
-                             D3 in U64NL and
-                             D4 in U64NL and
-                             D5 in U64NL and
-                             D6 in U64NL and
-                             D7 in U64NL and
-                             D8 in U64NL and
-                             D9 in U64NL and
+         C := D9 / LM;
+         D9 := D9 mod LM;
+      end;
+
+      pragma Assert_And_Cut (D0 in I64NL and
+                             D1 in I64NL and
+                             D2 in I64NL and
+                             D3 in I64NL and
+                             D4 in I64NL and
+                             D5 in I64NL and
+                             D6 in I64NL and
+                             D7 in I64NL and
+                             D8 in I64NL and
+                             D9 in I64NL and
                              C <= C9UB);
 
-      D10 := C + LP (L10 * R0) + LP (L9 * R1) + LP (L8 * R2) +
-        LP (L7  * R3) + LP (L6 * R4) + LP (L5 * R5) +
-        LP (L4  * R6) + LP (L3 * R7) + LP (L2 * R8) +
-        LP (L1  * R9) + LP (L0 * R10) +
-        R2256 * (LP (L15 * R11) + LP (L14 * R12) + LP (L13 * R13) +
-                   LP (L12 * R14) + LP (L11 * R15));
+      declare
+         L15R11 : constant LP := LP (L15 * R11);
+         L14R12 : constant LP := LP (L14 * R12);
+         L13R13 : constant LP := LP (L13 * R13);
+         L12R14 : constant LP := LP (L12 * R14);
+         L11R15 : constant LP := LP (L11 * R15);
 
-      C := D10 / LM;
-      D10 := D10 mod LM;
+         L10R0 : constant LP := LP (L10 * R0);
+         L9R1  : constant LP := LP (L9 * R1);
+         L8R2  : constant LP := LP (L8 * R2);
+         L7R3  : constant LP := LP (L7 * R3);
+         L6R4  : constant LP := LP (L6 * R4);
+         L5R5  : constant LP := LP (L5 * R5);
+         L4R6  : constant LP := LP (L4 * R6);
+         L3R7  : constant LP := LP (L3 * R7);
+         L2R8  : constant LP := LP (L2 * R8);
+         L1R9  : constant LP := LP (L1 * R9);
+         L0R10 : constant LP := LP (L0 * R10);
+      begin
+         D10 := C + L10R0 + L9R1 + L8R2 + L7R3 + L6R4 + L5R5 +
+                    L4R6  + L3R7 + L2R8 + L1R9 + L0R10 +
+                R2256 * (L15R11 + L14R12 + L13R13 +
+                         L12R14 + L11R15);
 
-      pragma Assert_And_Cut (D0 in U64NL and
-                             D1 in U64NL and
-                             D2 in U64NL and
-                             D3 in U64NL and
-                             D4 in U64NL and
-                             D5 in U64NL and
-                             D6 in U64NL and
-                             D7 in U64NL and
-                             D8 in U64NL and
-                             D9 in U64NL and
-                             D10 in U64NL and
+         C := D10 / LM;
+         D10 := D10 mod LM;
+      end;
+
+      pragma Assert_And_Cut (D0 in I64NL and
+                             D1 in I64NL and
+                             D2 in I64NL and
+                             D3 in I64NL and
+                             D4 in I64NL and
+                             D5 in I64NL and
+                             D6 in I64NL and
+                             D7 in I64NL and
+                             D8 in I64NL and
+                             D9 in I64NL and
+                             D10 in I64NL and
                              C <= C10UB);
 
-      D11 := C + LP (L11 * R0) + LP (L10 * R1)  + LP (L9 * R2) +
-        LP (L8  * R3) + LP (L7  * R4)  + LP (L6 * R5) +
-        LP (L5  * R6) + LP (L4  * R7)  + LP (L3 * R8) +
-        LP (L2  * R9) + LP (L1  * R10) + LP (L0 * R11) +
-        R2256 * (LP (L15 * R12) + LP (L14 * R13) + LP (L13 * R14) +
-                   LP (L12 * R15));
+      declare
+         L15R12 : constant LP := LP (L15 * R12);
+         L14R13 : constant LP := LP (L14 * R13);
+         L13R14 : constant LP := LP (L13 * R14);
+         L12R15 : constant LP := LP (L12 * R15);
 
-      C := D11 / LM;
-      D11 := D11 mod LM;
+         L11R0 : constant LP := LP (L11 * R0);
+         L10R1 : constant LP := LP (L10 * R1);
+         L9R2  : constant LP := LP (L9 * R2);
+         L8R3  : constant LP := LP (L8 * R3);
+         L7R4  : constant LP := LP (L7 * R4);
+         L6R5  : constant LP := LP (L6 * R5);
+         L5R6  : constant LP := LP (L5 * R6);
+         L4R7  : constant LP := LP (L4 * R7);
+         L3R8  : constant LP := LP (L3 * R8);
+         L2R9  : constant LP := LP (L2 * R9);
+         L1R10 : constant LP := LP (L1 * R10);
+         L0R11 : constant LP := LP (L0 * R11);
+      begin
+         D11 := C + L11R0 + L10R1 + L9R2 + L8R3 + L7R4  + L6R5 +
+                    L5R6  + L4R7  + L3R8 + L2R9 + L1R10 + L0R11 +
+                R2256 * (L15R12 + L14R13 + L13R14 + L12R15);
 
-      pragma Assert_And_Cut (D0 in U64NL and
-                             D1 in U64NL and
-                             D2 in U64NL and
-                             D3 in U64NL and
-                             D4 in U64NL and
-                             D5 in U64NL and
-                             D6 in U64NL and
-                             D7 in U64NL and
-                             D8 in U64NL and
-                             D9 in U64NL and
-                             D10 in U64NL and
-                             D11 in U64NL and
+         C := D11 / LM;
+         D11 := D11 mod LM;
+      end;
+
+      pragma Assert_And_Cut (D0 in I64NL and
+                             D1 in I64NL and
+                             D2 in I64NL and
+                             D3 in I64NL and
+                             D4 in I64NL and
+                             D5 in I64NL and
+                             D6 in I64NL and
+                             D7 in I64NL and
+                             D8 in I64NL and
+                             D9 in I64NL and
+                             D10 in I64NL and
+                             D11 in I64NL and
                              C <= C11UB);
 
-      D12 := C + LP (L12 * R0) + LP (L11 * R1)  + LP (L10 * R2) +
-        LP (L9  * R3) + LP (L8  * R4)  + LP (L7  * R5) +
-        LP (L6  * R6) + LP (L5  * R7)  + LP (L4  * R8) +
-        LP (L3  * R9) + LP (L2  * R10) + LP (L1  * R11) +
-        LP (L0  * R12) +
-        R2256 * (LP (L15 * R13) + LP (L14 * R14) + LP (L13 * R15));
+      declare
+         L15R13 : constant LP := LP (L15 * R13);
+         L14R14 : constant LP := LP (L14 * R14);
+         L13R15 : constant LP := LP (L13 * R15);
 
-      C := D12 / LM;
-      D12 := D12 mod LM;
+         L12R0 : constant LP := LP (L12 * R0);
+         L11R1 : constant LP := LP (L11 * R1);
+         L10R2 : constant LP := LP (L10 * R2);
+         L9R3  : constant LP := LP (L9 * R3);
+         L8R4  : constant LP := LP (L8 * R4);
+         L7R5  : constant LP := LP (L7 * R5);
+         L6R6  : constant LP := LP (L6 * R6);
+         L5R7  : constant LP := LP (L5 * R7);
+         L4R8  : constant LP := LP (L4 * R8);
+         L3R9  : constant LP := LP (L3 * R9);
+         L2R10 : constant LP := LP (L2 * R10);
+         L1R11 : constant LP := LP (L1 * R11);
+         L0R12 : constant LP := LP (L0 * R12);
+      begin
+         D12 := C + L12R0 + L11R1 + L10R2 + L9R3 + L8R4  + L7R5 +
+                    L6R6  + L5R7  + L4R8  + L3R9 + L2R10 + L1R11 +
+                    L0R12 +
+                R2256 * (L15R13 + L14R14 + L13R15);
 
-      pragma Assert_And_Cut (D0 in U64NL and
-                             D1 in U64NL and
-                             D2 in U64NL and
-                             D3 in U64NL and
-                             D4 in U64NL and
-                             D5 in U64NL and
-                             D6 in U64NL and
-                             D7 in U64NL and
-                             D8 in U64NL and
-                             D9 in U64NL and
-                             D10 in U64NL and
-                             D11 in U64NL and
-                             D12 in U64NL and
+         C := D12 / LM;
+         D12 := D12 mod LM;
+      end;
+
+      pragma Assert_And_Cut (D0 in I64NL and
+                             D1 in I64NL and
+                             D2 in I64NL and
+                             D3 in I64NL and
+                             D4 in I64NL and
+                             D5 in I64NL and
+                             D6 in I64NL and
+                             D7 in I64NL and
+                             D8 in I64NL and
+                             D9 in I64NL and
+                             D10 in I64NL and
+                             D11 in I64NL and
+                             D12 in I64NL and
                              C <= C12UB);
 
-      D13 := C + LP (L13 * R0)  + LP (L12 * R1)  + LP (L11 * R2) +
-        LP (L10 * R3)  + LP (L9  * R4)  + LP (L8  * R5) +
-        LP (L7  * R6)  + LP (L6  * R7)  + LP (L5  * R8) +
-        LP (L4  * R9)  + LP (L3  * R10) + LP (L2  * R11) +
-        LP (L1  * R12) + LP (L0  * R13) +
-        R2256 * (LP (L15 * R14) + LP (L14 * R15));
+      declare
+         L15R14 : constant LP := LP (L15 * R14);
+         L14R15 : constant LP := LP (L14 * R15);
 
-      C := D13 / LM;
-      D13 := D13 mod LM;
+         L13R0 : constant LP := LP (L13 * R0);
+         L12R1 : constant LP := LP (L12 * R1);
+         L11R2 : constant LP := LP (L11 * R2);
+         L10R3 : constant LP := LP (L10 * R3);
+         L9R4  : constant LP := LP (L9 * R4);
+         L8R5  : constant LP := LP (L8 * R5);
+         L7R6  : constant LP := LP (L7 * R6);
+         L6R7  : constant LP := LP (L6 * R7);
+         L5R8  : constant LP := LP (L5 * R8);
+         L4R9  : constant LP := LP (L4 * R9);
+         L3R10 : constant LP := LP (L3 * R10);
+         L2R11 : constant LP := LP (L2 * R11);
+         L1R12 : constant LP := LP (L1 * R12);
+         L0R13 : constant LP := LP (L0 * R13);
+      begin
+         D13 := C + L13R0 + L12R1 + L11R2 + L10R3 + L9R4  + L8R5 +
+                    L7R6  + L6R7  + L5R8  + L4R9  + L3R10 + L2R11 +
+                    L1R12 + L0R13 +
+                R2256 * (L15R14 + L14R15);
 
-      pragma Assert_And_Cut (D0 in U64NL and
-                             D1 in U64NL and
-                             D2 in U64NL and
-                             D3 in U64NL and
-                             D4 in U64NL and
-                             D5 in U64NL and
-                             D6 in U64NL and
-                             D7 in U64NL and
-                             D8 in U64NL and
-                             D9 in U64NL and
-                             D10 in U64NL and
-                             D11 in U64NL and
-                             D12 in U64NL and
-                             D13 in U64NL and
+         C := D13 / LM;
+         D13 := D13 mod LM;
+      end;
+
+      pragma Assert_And_Cut (D0 in I64NL and
+                             D1 in I64NL and
+                             D2 in I64NL and
+                             D3 in I64NL and
+                             D4 in I64NL and
+                             D5 in I64NL and
+                             D6 in I64NL and
+                             D7 in I64NL and
+                             D8 in I64NL and
+                             D9 in I64NL and
+                             D10 in I64NL and
+                             D11 in I64NL and
+                             D12 in I64NL and
+                             D13 in I64NL and
                              C <= C13UB);
 
-      D14 := C + LP (L14 * R0)  + LP (L13 * R1)  + LP (L12 * R2) +
-        LP (L11 * R3)  + LP (L10 * R4)  + LP (L9  * R5) +
-        LP (L8  * R6)  + LP (L7  * R7)  + LP (L6  * R8) +
-        LP (L5  * R9)  + LP (L4  * R10) + LP (L3  * R11) +
-        LP (L2  * R12) + LP (L1  * R13) + LP (L0  * R14) +
-        R2256 * LP (L15 * R15);
+      declare
+         L15R15 : constant LP := LP (L15 * R15);
 
-      C := D14 / LM;
-      D14 := D14 mod LM;
+         L14R0 : constant LP := LP (L14 * R0);
+         L13R1 : constant LP := LP (L13 * R1);
+         L12R2 : constant LP := LP (L12 * R2);
+         L11R3 : constant LP := LP (L11 * R3);
+         L10R4 : constant LP := LP (L10 * R4);
+         L9R5  : constant LP := LP (L9 * R5);
+         L8R6  : constant LP := LP (L8 * R6);
+         L7R7  : constant LP := LP (L7 * R7);
+         L6R8  : constant LP := LP (L6 * R8);
+         L5R9  : constant LP := LP (L5 * R9);
+         L4R10 : constant LP := LP (L4 * R10);
+         L3R11 : constant LP := LP (L3 * R11);
+         L2R12 : constant LP := LP (L2 * R12);
+         L1R13 : constant LP := LP (L1 * R13);
+         L0R14 : constant LP := LP (L0 * R14);
+      begin
+         D14 := C + L14R0 + L13R1 + L12R2 + L11R3 + L10R4 + L9R5 +
+                    L8R6  + L7R7  + L6R8  + L5R9  + L4R10 + L3R11 +
+                    L2R12 + L1R13 + L0R14 +
+                R2256 * L15R15;
 
-      pragma Assert_And_Cut (D0 in U64NL and
-                             D1 in U64NL and
-                             D2 in U64NL and
-                             D3 in U64NL and
-                             D4 in U64NL and
-                             D5 in U64NL and
-                             D6 in U64NL and
-                             D7 in U64NL and
-                             D8 in U64NL and
-                             D9 in U64NL and
-                             D10 in U64NL and
-                             D11 in U64NL and
-                             D12 in U64NL and
-                             D13 in U64NL and
-                             D14 in U64NL and
+         C := D14 / LM;
+         D14 := D14 mod LM;
+      end;
+
+      pragma Assert_And_Cut (D0 in I64NL and
+                             D1 in I64NL and
+                             D2 in I64NL and
+                             D3 in I64NL and
+                             D4 in I64NL and
+                             D5 in I64NL and
+                             D6 in I64NL and
+                             D7 in I64NL and
+                             D8 in I64NL and
+                             D9 in I64NL and
+                             D10 in I64NL and
+                             D11 in I64NL and
+                             D12 in I64NL and
+                             D13 in I64NL and
+                             D14 in I64NL and
                              C <= C14UB);
 
-      D15 := C + LP (L15 * R0)  + LP (L14 * R1)  + LP (L13 * R2) +
-             LP (L12 * R3)  + LP (L11 * R4)  + LP (L10 * R5) +
-             LP (L9  * R6)  + LP (L8  * R7)  + LP (L7  * R8) +
-             LP (L6  * R9)  + LP (L5  * R10) + LP (L4  * R11) +
-             LP (L3  * R12) + LP (L2  * R13) + LP (L1  * R14) +
-             LP (L0  * R15);
+      declare
+         L15R0 : constant LP := LP (L15 * R0);
+         L14R1 : constant LP := LP (L14 * R1);
+         L13R2 : constant LP := LP (L13 * R2);
+         L12R3 : constant LP := LP (L12 * R3);
+         L11R4 : constant LP := LP (L11 * R4);
+         L10R5 : constant LP := LP (L10 * R5);
+         L9R6  : constant LP := LP (L9 * R6);
+         L8R7  : constant LP := LP (L8 * R7);
+         L7R8  : constant LP := LP (L7 * R8);
+         L6R9  : constant LP := LP (L6 * R9);
+         L5R10 : constant LP := LP (L5 * R10);
+         L4R11 : constant LP := LP (L4 * R11);
+         L3R12 : constant LP := LP (L3 * R12);
+         L2R13 : constant LP := LP (L2 * R13);
+         L1R14 : constant LP := LP (L1 * R14);
+         L0R15 : constant LP := LP (L0 * R15);
+      begin
+         D15 := C + L15R0 + L14R1 + L13R2 + L12R3 + L11R4 + L10R5 +
+                    L9R6  + L8R7  + L7R8  + L6R9  + L5R10 + L4R11 +
+                    L3R12 + L2R13 + L1R14 + L0R15;
 
-      C := D15 / LM;
-      D15 := D15 mod LM;
+         C := D15 / LM;
+         D15 := D15 mod LM;
+      end;
 
-      pragma Assert_And_Cut (D0 in U64NL and
-                             D1 in U64NL and
-                             D2 in U64NL and
-                             D3 in U64NL and
-                             D4 in U64NL and
-                             D5 in U64NL and
-                             D6 in U64NL and
-                             D7 in U64NL and
-                             D8 in U64NL and
-                             D9 in U64NL and
-                             D10 in U64NL and
-                             D11 in U64NL and
-                             D12 in U64NL and
-                             D13 in U64NL and
-                             D14 in U64NL and
-                             D15 in U64NL and
+      pragma Assert_And_Cut (D0 in I64NL and
+                             D1 in I64NL and
+                             D2 in I64NL and
+                             D3 in I64NL and
+                             D4 in I64NL and
+                             D5 in I64NL and
+                             D6 in I64NL and
+                             D7 in I64NL and
+                             D8 in I64NL and
+                             D9 in I64NL and
+                             D10 in I64NL and
+                             D11 in I64NL and
+                             D12 in I64NL and
+                             D13 in I64NL and
+                             D14 in I64NL and
+                             D15 in I64NL and
                              C <= C15UB);
 
       --  The carry from D15 is now multiplied by R2256 and added
@@ -563,11 +878,18 @@ is
       D0 := D0 + R2256 * C;
       pragma Assert (D0 <= P2_D0UB);
 
+      --  Sanity checks on these constants against actual literal values
+      pragma Assert (C15UB   =  1_048_596);
+      pragma Assert (P2_D0UB = 39_912_183);
+      pragma Assert (P2_C2UB =        609);
+
       --  Phase 2 carry and reduction.
       --  From here on, all arithmetic can be 32-bit.
       R (0) := I32 (D0) mod LM;
       C2 := I32 (D0) / LM;
-      pragma Assert (R (0)'Initialized and C2 <= P2_C2UB);
+      pragma Assert (R (0)'Initialized);
+      pragma Assert (R (0) in GF32_Normal_Limb);
+      pragma Assert (C2 <= P2_C2UB);
 
       T := I32 (D1) + C2;
       R (1) := T mod LM;
