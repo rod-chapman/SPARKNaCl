@@ -7,6 +7,16 @@ is
    function To_U32 is new Ada.Unchecked_Conversion (I32, U32);
    function To_I32 is new Ada.Unchecked_Conversion (U32, I32);
 
+   procedure CSwapI32 (P    : in out I32;
+                       Q    : in out I32;
+                       Mask : in     U32)
+     with Inline,
+          Global => null,
+          Pre    => (Mask = 0 or Mask = 16#FFFF_FFFF#),
+          Post   =>
+            ((if (Mask = 16#FFFF_FFFF#) then (P = Q'Old and Q = P'Old)) and
+             (if (Mask = 0)             then (P = P'Old and Q = Q'Old)));
+
    --  Constant-time conditional swap for a GF32 (32-bit limbs)
    procedure CSwap32 (P    : in out GF32;
                       Q    : in out GF32;
@@ -78,50 +88,64 @@ is
       pragma Unreferenced (C);
    end CSwap16;
 
+   procedure CSwapI32 (P    : in out I32;
+                       Q    : in out I32;
+                       Mask : in     U32)
+   is
+      T : U32;
+      pragma Assertion_Policy (Assume => Ignore);
+   begin
+      --  We need these axioms
+      pragma Assume (To_I32 (To_U32 (P)) = P);
+      pragma Assume (To_I32 (To_U32 (Q)) = Q);
 
+      T := Mask and (To_U32 (P) xor To_U32 (Q));
+
+      pragma Assert
+        ((if (Mask = 16#FFFF_FFFF#) then (T = (To_U32 (P) xor To_U32 (Q)))) and
+         (if (Mask = 0)             then (T = 0)));
+
+      pragma Assume
+        ((To_U32 (P) xor (To_U32 (P) xor To_U32 (Q))) = To_U32 (Q));
+      pragma Assume
+        ((To_U32 (Q) xor (To_U32 (P) xor To_U32 (Q))) = To_U32 (P));
+      pragma Assume
+        ((To_U32 (P) xor 0) = To_U32 (P));
+      pragma Assume
+        ((To_U32 (Q) xor 0) = To_U32 (Q));
+
+      pragma Assume
+        (To_I32 (To_U32 (P) xor (To_U32 (P) xor To_U32 (Q))) = Q);
+      pragma Assume
+        (To_I32 (To_U32 (Q) xor (To_U32 (P) xor To_U32 (Q))) = P);
+      pragma Assume
+        (To_I32 (To_U32 (P) xor 0) = P);
+      pragma Assume
+        (To_I32 (To_U32 (Q) xor 0) = Q);
+
+      P := To_I32 (To_U32 (P) xor T);
+      Q := To_I32 (To_U32 (Q) xor T);
+
+      --  Sanitize local variables as per the implementation in WireGuard.
+      --  Note that Swap cannot be sanitized here since it is
+      --  an "in" parameter
+      pragma Warnings (GNATProve, Off, "statement has no effect");
+      Sanitize_U32 (T);
+      pragma Unreferenced (T);
+   end CSwapI32;
 
    procedure CSwap32 (P    : in out GF32;
                       Q    : in out GF32;
                       Swap : in     Boolean)
    is
-      T : U32;
       C : U32 := 16#FFFF_FFFF# * Boolean'Pos (Swap);
-
-      --  Do NOT try to evaluate the assumption below at run-time
-      pragma Assertion_Policy (Assume => Ignore);
    begin
-      --  We need this axiom
-      pragma Assume
-        (for all K in I32 => To_I32 (To_U32 (K)) = K);
-
       pragma Assert (if Swap then C = 16#FFFF_FFFF# else C = 0);
 
       for I in Index_16 loop
          pragma Loop_Optimize (No_Unroll);
-         T := C and (To_U32 (P (I)) xor To_U32 (Q (I)));
 
-         --  Case 1 - "Swap"
-         --   Swap -> C = 16#FFFF....# -> T = P(I) xor Q (I) ->
-         --   P (I) xor T = Q (I) and
-         --   Q (I) xor T = P (I)
-         --
-         --  Case 2 - "Don't Swap"
-         --   not Swap -> C = 0 -> T = 0 ->
-         --   P (I) xor T = P (I) and
-         --   Q (I) xor T = Q (I)
-         pragma Assert
-           ((if Swap then
-              (T = (To_U32 (P (I)) xor To_U32 (Q (I))) and then
-               (To_U32 (P (I)) xor T) = To_U32 (Q (I)) and then
-               (To_U32 (Q (I)) xor T) = To_U32 (P (I)))
-             else
-              (T = 0 and then
-               (To_U32 (P (I)) xor T) = To_U32 (P (I)) and then
-               (To_U32 (Q (I)) xor T) = To_U32 (Q (I))))
-           );
-
-         P (I) := To_I32 (To_U32 (P (I)) xor T);
-         Q (I) := To_I32 (To_U32 (Q (I)) xor T);
+         CSwapI32 (P (I), Q (I), C);
 
          pragma Loop_Invariant
            (if Swap then
@@ -139,9 +163,7 @@ is
       --  Note that Swap cannot be sanitized here since it is
       --  an "in" parameter
       pragma Warnings (GNATProve, Off, "statement has no effect");
-      Sanitize_U32 (T);
       Sanitize_U32 (C);
-      pragma Unreferenced (T);
       pragma Unreferenced (C);
    end CSwap32;
 
