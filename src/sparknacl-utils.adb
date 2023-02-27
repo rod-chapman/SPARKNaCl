@@ -140,23 +140,16 @@ is
    is
       C : U32 := 16#FFFF_FFFF# * Boolean'Pos (Swap);
    begin
-      pragma Assert (if Swap then C = 16#FFFF_FFFF# else C = 0);
-
       for I in Index_16 loop
-         pragma Loop_Optimize (No_Unroll);
-
          CSwapI32 (P (I), Q (I), C);
 
          pragma Loop_Invariant
            (if Swap then
-              (for all J in Index_16 range 0 .. I =>
-                   (P (J) = Q'Loop_Entry (J) and
-                    Q (J) = P'Loop_Entry (J)))
+               P (0 .. I) = Q'Loop_Entry (0 .. I) and
+               Q (0 .. I) = P'Loop_Entry (0 .. I)
             else
-              (for all J in Index_16 range 0 .. I =>
-                   (P (J) = P'Loop_Entry (J) and
-                    Q (J) = Q'Loop_Entry (J)))
-           );
+               P (0 .. I) = P'Loop_Entry (0 .. I) and
+               Q (0 .. I) = Q'Loop_Entry (0 .. I));
       end loop;
 
       --  Sanitize local variables as per the implementation in WireGuard.
