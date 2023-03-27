@@ -1,4 +1,4 @@
-with SPARKNaCl.Hashing;
+with SPARKNaCl.Hashing.SHA256;
 package SPARKNaCl.MAC
   with Pure,
        SPARK_Mode => On
@@ -40,7 +40,7 @@ is
    --  Hash-based MAC
    --------------------------------------------------------
 
-   procedure HMAC_SHA_256 (Output :    out Hashing.Digest_256;
+   procedure HMAC_SHA_256 (Output :    out Hashing.SHA256.Digest;
                            M      : in     Byte_Seq;
                            K      : in     Byte_Seq)
      with Global => null,

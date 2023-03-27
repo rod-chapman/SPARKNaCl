@@ -1,5 +1,5 @@
 with SPARKNaCl.Utils;
-with SPARKNaCl.Hashing;
+with SPARKNaCl.Hashing.SHA512; use SPARKNaCl.Hashing.SHA512;
 package body SPARKNaCl.Sign
   with SPARK_Mode => On
 is
@@ -730,10 +730,10 @@ is
 
    function Hash_Reduce (M : in Byte_Seq) return Bytes_32
    is
-      R : Hashing.Digest;
+      R : Digest;
       X : I64_Seq_64;
    begin
-      Hashing.Hash (R, M);
+      Hash (R, M);
       X := (others => 0);
       for I in Index_64 loop
          pragma Loop_Optimize (No_Unroll);
@@ -866,7 +866,7 @@ is
       D   : Bytes_64;
       LPK : Bytes_32;
    begin
-      Hashing.Hash (D, SK_Raw);
+      Hash (D, SK_Raw);
       D (0)  := D (0) and 248;
       D (31) := (D (31) and 127) or 64;
 
@@ -928,7 +928,7 @@ is
 
 
    begin
-      Hashing.Hash (D, Serialize (SK) (0 .. 31));
+      Hash (D, Serialize (SK) (0 .. 31));
       D (0)  := D (0) and 248;
       D (31) := (D (31) and 127) or 64;
 

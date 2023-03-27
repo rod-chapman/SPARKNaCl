@@ -195,7 +195,7 @@ is
    --  HMAC
    --------------------------------------------------------
 
-   procedure HMAC_SHA_256 (Output :    out Hashing.Digest_256;
+   procedure HMAC_SHA_256 (Output :    out Hashing.SHA256.Digest;
                            M      : in     Byte_Seq;
                            K      : in     Byte_Seq)
    is
@@ -207,7 +207,7 @@ is
       Key : Bytes_64 := (others => 0);
    begin
       if K'Length > 64 then
-         Key (0 .. 31) := Hashing.Hash_256 (K);
+         Key (0 .. 31) := Hashing.SHA256.Hash (K);
       else
          pragma Assert (K'Length <= 64);
          Key (K'Range) := K;
@@ -218,7 +218,7 @@ is
          OPad (I) := OPad (I) xor Key (I);
       end loop;
 
-      Output := Hashing.Hash_256 (OPad & Hashing.Hash_256 (IPad & M));
+      Output := Hashing.SHA256.Hash (OPad & Hashing.SHA256.Hash (IPad & M));
 
       pragma Assert (Output'Initialized);
    end HMAC_SHA_256;

@@ -7,7 +7,7 @@ is
    --  SHA-256 HKDF-Extract per RFC 5869
    --------------------------------------------------------
 
-   procedure Extract (PRK  :    out Hashing.Digest_256; -- output key
+   procedure Extract (PRK  :    out Hashing.SHA256.Digest; -- output key
                       IKM  : in     Byte_Seq; -- input keying material
                       Salt : in     Byte_Seq) -- input salt (can be 0 bytes)
    is
@@ -23,7 +23,7 @@ is
 
    procedure Expand
      (OKM  :    out OKM_Seq;
-      PRK  : in     Hashing.Digest_256;
+      PRK  : in     Hashing.SHA256.Digest;
       Info : in     Byte_Seq)
    is
       Ti : Bytes_32;

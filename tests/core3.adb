@@ -1,8 +1,8 @@
-with SPARKNaCl;          use SPARKNaCl;
-with SPARKNaCl.Core;     use SPARKNaCl.Core;
-with SPARKNaCl.Debug;    use SPARKNaCl.Debug;
-with SPARKNaCl.Hashing;  use SPARKNaCl.Hashing;
-with Interfaces;         use Interfaces;
+with SPARKNaCl;                 use SPARKNaCl;
+with SPARKNaCl.Core;            use SPARKNaCl.Core;
+with SPARKNaCl.Debug;           use SPARKNaCl.Debug;
+with SPARKNaCl.Hashing.SHA512;  use SPARKNaCl.Hashing.SHA512;
+with Interfaces;                use Interfaces;
 procedure Core3
 is
    Second_Key : constant Salsa20_Key :=

@@ -1,7 +1,7 @@
-with SPARKNaCl;         use SPARKNaCl;
-with SPARKNaCl.Debug;   use SPARKNaCl.Debug;
-with SPARKNaCl.Hashing; use SPARKNaCl.Hashing;
-with Interfaces;        use Interfaces;
+with SPARKNaCl;                use SPARKNaCl;
+with SPARKNaCl.Debug;          use SPARKNaCl.Debug;
+with SPARKNaCl.Hashing.SHA512; use SPARKNaCl.Hashing.SHA512;
+with Interfaces;               use Interfaces;
 procedure Hash
 is
    R1 : Digest;

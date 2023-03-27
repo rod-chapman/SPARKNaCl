@@ -35,7 +35,7 @@ library project Sparknacl is
    case Compile_Checks is
       when "enabled" =>
          Compile_Checks_Switches :=
-           ("-gnatwa",  -- All warnings
+           ("-gnatwaC",  -- All warnings except redundant checks
             "-gnatwe"); -- Warnings as errors
       when others => null;
    end case;
@@ -161,7 +161,7 @@ library project Sparknacl is
 
 
    --  All the main NaCl entry points
-   Stack_Entry_Points := ("-esparknacl.sign.open,sparknacl.sign.sign,sparknacl.sign.keypair,sparknacl.cryptobox.create,sparknacl.cryptobox.open,sparknacl.cryptobox.keypair,sparknacl.secretbox.create,sparknacl.secretbox.open,sparknacl.core.salsa20,sparknacl.core.hsalsa20,sparknacl.stream.salsa20,sparknacl.stream.salsa20_xor,sparknacl.stream.hsalsa20,sparknacl.stream.hsalsa20_xor,sparknacl.mac.onetimeauth,sparknacl.mac.onetimeauth_verify,sparknacl.hashing.hash,sparknacl.hashing.hashblocks,sparknacl.scalar.mult,sparknacl.scalar.mult_base,sparknacl.equal,sparknacl.random_bytes");
+   Stack_Entry_Points := ("-esparknacl.sign.open,sparknacl.sign.sign,sparknacl.sign.keypair,sparknacl.cryptobox.create,sparknacl.cryptobox.open,sparknacl.cryptobox.keypair,sparknacl.secretbox.create,sparknacl.secretbox.open,sparknacl.core.salsa20,sparknacl.core.hsalsa20,sparknacl.stream.salsa20,sparknacl.stream.salsa20_xor,sparknacl.stream.hsalsa20,sparknacl.stream.hsalsa20_xor,sparknacl.mac.onetimeauth,sparknacl.mac.onetimeauth_verify,sparknacl.hashing.sha512.hash,sparknacl.hashing.sha256.hash,sparknacl.scalar.mult,sparknacl.scalar.mult_base,sparknacl.equal,sparknacl.random_bytes");
 
    package Stack is
       for Switches use ("-Wa", "-u 128", "-np", "-v") & Stack_Entry_Points;

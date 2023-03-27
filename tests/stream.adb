@@ -1,8 +1,8 @@
-with SPARKNaCl;          use SPARKNaCl;
-with SPARKNaCl.Core;     use SPARKNaCl.Core;
-with SPARKNaCl.Debug;    use SPARKNaCl.Debug;
-with SPARKNaCl.Stream;   use SPARKNaCl.Stream;
-with SPARKNaCl.Hashing;  use SPARKNaCl.Hashing;
+with SPARKNaCl;                 use SPARKNaCl;
+with SPARKNaCl.Core;            use SPARKNaCl.Core;
+with SPARKNaCl.Debug;           use SPARKNaCl.Debug;
+with SPARKNaCl.Stream;          use SPARKNaCl.Stream;
+with SPARKNaCl.Hashing.SHA512;  use SPARKNaCl.Hashing.SHA512;
 procedure Stream
 is
    Firstkey : constant Salsa20_Key :=

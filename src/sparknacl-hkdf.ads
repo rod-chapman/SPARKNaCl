@@ -1,4 +1,4 @@
-with SPARKNaCl.Hashing;
+with SPARKNaCl.Hashing.SHA256;
 package SPARKNaCl.HKDF
   with Pure,
        SPARK_Mode => On
@@ -12,7 +12,7 @@ is
    subtype OKM_Index is N32 range 0 .. Hash_Len * 255 - 1;
    type OKM_Seq is array (OKM_Index range <>) of Byte;
 
-   procedure Extract (PRK  :    out Hashing.Digest_256;
+   procedure Extract (PRK  :    out Hashing.SHA256.Digest;
                       IKM  : in     Byte_Seq;
                       Salt : in     Byte_Seq)
      with Global => null,
@@ -23,9 +23,9 @@ is
                     (if Salt'Length > 0 then Salt'First = 0);
 
    procedure Expand
-     (OKM  :    out OKM_Seq;            -- Unconstrained
-      PRK  : in     Hashing.Digest_256; -- Pseudo-random key
-      Info : in     Byte_Seq)           -- Optional context
+     (OKM  :    out OKM_Seq;               -- Unconstrained
+      PRK  : in     Hashing.SHA256.Digest; -- Pseudo-random key
+      Info : in     Byte_Seq)              -- Optional context
      with Global => null,
           Relaxed_Initialization => OKM,
           Pre    => OKM'First   = 0 and
