@@ -926,22 +926,44 @@ is
          X (64 .. X'Last) := M;
       end Initialize_SM;
 
-
    begin
+      --  Commentary here is based on the description of the Ed25519
+      --  signing algorithm here:
+      --  https://www.eiken.dev/blog/2020/11/
+      --    code-spotlight-the-reference-implementation-of-ed25519-part-1/
+      --  and RFC 8032
+
+      --  RFC 8032 5.1.5 "Key Generation"
+      --  Hash the private key (bytes 0 .. 31 of SK) to get
+      --  64-byte Digest D
       Hash (D, Serialize (SK) (0 .. 31));
+      --  Clamp the first 32 bytes of D so that they represent a useful
+      --  scalar value for scalar*point multiplication.  The top-most bit
+      --  is cleared, and the next-to-top-most bit is set, so the value
+      --  is definitely larger than 2**254.  The botton 3 bits are cleared
+      --  to ensure that the value is a multiple of 8 - the group cofactor
       D (0)  := D (0) and 248;
       D (31) := (D (31) and 127) or 64;
 
+      --  RFC 8032 5.1.6 "Sign"
+      --  Set SM to concatenation of Zero_Bytes_32 || Prefix || M
       Initialize_SM (SM);
+      --  Compute ModL (Hash (Prefix || M)) which starts at offset 32 in SM now
       R := Hash_Reduce (SM (32 .. SM'Last));
 
+      --  Now R is reduced, use it as a scalar to multiply the base point
       P := Scalarbase (R);
 
+      --  Put 32 bytes of P into bytes 0 .. 31 of SM
       SM (0 .. 31) := Pack (P);
+      --  Put public key into bytes 32 .. 63
       SM (32 .. 63) := Serialize (SK) (32 .. 63);
 
+      --  Message M is in bytd 64 .. SM'Last, so hash the lot now,
+      --  and reduce the result modulo L
       H := Hash_Reduce (SM);
 
+      --  Copy R into the least significant 32 bytes of X
       X := (others => 0);
       for I in Index_32 loop
          pragma Loop_Optimize (No_Unroll);
@@ -959,6 +981,7 @@ is
 
       pragma Warnings (Off, "explicit membership test may be optimized");
 
+      --  Now compute X := X + (H * D) using simple lattice multiplication
       for I in Index_32 loop
          pragma Loop_Optimize (No_Unroll);
          for J in Index_32 loop
@@ -1047,8 +1070,10 @@ is
       pragma Assert
         (for all K in Index_64 => X (K) in 0 .. (32 * MBP + 255));
 
+      --   Reduce X modulo L and put the result into SM (32..63)
       SM (32 .. 63) := ModL (X);
 
+      --  The final signature is now in SM (0 .. 63)
       Sanitize (D);
       Sanitize (H);
       Sanitize (R);

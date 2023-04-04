@@ -20,6 +20,8 @@ is
                             PK     :    out Signing_PK)
      with Global => null;
 
+   --  Returns K as 64 bytes. Bytes 0 .. 31 are the secret
+   --  key. Bytes 32 .. 63 are the public key
    function Serialize (K : in Signing_SK) return Bytes_64
      with Global => null;
 
