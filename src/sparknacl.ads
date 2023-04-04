@@ -264,7 +264,8 @@ private
    GF32_Any_Limb_Max : constant := (LMM1 + R2256 * ((53 * MGFLP) / LM));
    subtype GF32_Any_Limb is I32
      range -LM .. GF32_Any_Limb_Max;
-   type GF32 is array (Index_16) of GF32_Any_Limb;
+   type GF32 is array (Index_16) of GF32_Any_Limb
+     with Alignment => 4;
 
    --  In the "*" operator for GF, intermediate results require
    --  64 bit integers before being normalized, so...
