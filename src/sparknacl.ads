@@ -459,7 +459,6 @@ private
           Global => null;
 
    function Square (A : in Normal_GF) return Normal_GF
-     is (A * A)
      with Pure_Function,
           Global => null;
 
