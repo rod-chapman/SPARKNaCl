@@ -360,13 +360,17 @@ is
    begin
       C := I;
 
-      for A in reverse 0 .. 253 loop
-         pragma Loop_Optimize (No_Unroll);
-         C := Square (C);
-         if (A /= 2 and A /= 4) then
-            C := C * I;
-         end if;
+      --  Unroll final 5 loop iterations and simplify to remove branch
+      --  from inside this loop.
+      for A in reverse 5 .. 253 loop
+         C := Square (C) * I;
       end loop;
+
+      C := Square (C);      --  A = 4
+      C := Square (C) * I;  --  A = 3
+      C := Square (C);      --  A = 2
+      C := Square (C) * I;  --  A = 1
+      C := Square (C) * I;  --  A = 0
 
       return C;
    end Inv_25519;
