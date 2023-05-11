@@ -172,6 +172,134 @@ is
    P2_D0UB : constant := LMM1 + R2256 * C15UB;
    P2_C2UB : constant := P2_D0UB / LM;
 
+   --  Input to phase 2 reduction is all digits reduced except
+   --  LSB, which may be up to P2_D0UB
+   type Mul_Product is array (Index_16) of GF64_Natural_Limb
+     with Dynamic_Predicate => Mul_Product (0) >= 0 and
+                               Mul_Product (0) <= P2_D0UB and
+                               Mul_Product (1) in I64NL and
+                               Mul_Product (2) in I64NL and
+                               Mul_Product (3) in I64NL and
+                               Mul_Product (4) in I64NL and
+                               Mul_Product (5) in I64NL and
+                               Mul_Product (6) in I64NL and
+                               Mul_Product (7) in I64NL and
+                               Mul_Product (8) in I64NL and
+                               Mul_Product (9) in I64NL and
+                               Mul_Product (10) in I64NL and
+                               Mul_Product (11) in I64NL and
+                               Mul_Product (12) in I64NL and
+                               Mul_Product (13) in I64NL and
+                               Mul_Product (14) in I64NL and
+                               Mul_Product (15) in I64NL;
+
+
+   function Mul_Phase2_Reduction (D : in Mul_Product) return Normal_GF
+     with Global => null;
+
+   function Mul_Phase2_Reduction (D : in Mul_Product) return Normal_GF
+   is
+      --  Local vars used in Phase 2 carry and reduction
+      R  : GF32 with Relaxed_Initialization;
+      C2 : GF32_Normal_Limb;
+      T  : GF32_Any_Limb;
+   begin
+      --  Sanity checks on these constants against actual literal values
+      pragma Assert (C15UB   =  1_048_596);
+      pragma Assert (P2_D0UB = 39_912_183);
+      pragma Assert (P2_C2UB =        609);
+
+      --  Phase 2 carry and reduction.
+      --  From here on, all arithmetic can be 32-bit.
+      R (0) := I32 (D (0)) mod LM;
+      C2 := I32 (D (0)) / LM;
+      pragma Assert (R (0)'Initialized);
+      pragma Assert (R (0) in GF32_Normal_Limb);
+      pragma Assert (C2 <= P2_C2UB);
+
+      T := I32 (D (1)) + C2;
+      R (1) := T mod LM;
+      C2 := T / LM;
+      --  C2 is now in range 0 .. 1, and it stays that way...
+      pragma Assert (R (0 .. 1)'Initialized and C2 <= 1);
+
+      T := I32 (D (2)) + C2;
+      R (2) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 2)'Initialized and C2 <= 1);
+
+      T := I32 (D (3)) + C2;
+      R (3) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 3)'Initialized and C2 <= 1);
+
+      T := I32 (D (4)) + C2;
+      R (4) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 4)'Initialized and C2 <= 1);
+
+      T := I32 (D (5)) + C2;
+      R (5) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 5)'Initialized and C2 <= 1);
+
+      T := I32 (D (6)) + C2;
+      R (6) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 6)'Initialized and C2 <= 1);
+
+      T := I32 (D (7)) + C2;
+      R (7) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 7)'Initialized and C2 <= 1);
+
+      T := I32 (D (8)) + C2;
+      R (8) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 8)'Initialized and C2 <= 1);
+
+      T := I32 (D (9)) + C2;
+      R (9) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 9)'Initialized and C2 <= 1);
+
+      T := I32 (D (10)) + C2;
+      R (10) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 10)'Initialized and C2 <= 1);
+
+      T := I32 (D (11)) + C2;
+      R (11) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 11)'Initialized and C2 <= 1);
+
+      T := I32 (D (12)) + C2;
+      R (12) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 12)'Initialized and C2 <= 1);
+
+      T := I32 (D (13)) + C2;
+      R (13) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 13)'Initialized and C2 <= 1);
+
+      T := I32 (D (14)) + C2;
+      R (14) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 14)'Initialized and C2 <= 1);
+
+      T := I32 (D (15)) + C2;
+      R (15) := T mod LM;
+      C2 := T / LM;
+      pragma Assert (R (0 .. 15)'Initialized and C2 <= 1);
+
+      pragma Assert (R'Initialized and C2 <= 1);
+
+      R (0) := R (0) + R2256 * C2;
+
+      return Car.Nearlynormal_To_Normal (Nearlynormal_GF (R));
+   end Mul_Phase2_Reduction;
+
    function "*" (Left, Right : in Normal_GF) return Normal_GF
    is
       L0  : constant U32NL := U32NL (Left (0));
@@ -208,37 +336,18 @@ is
       R15 : constant U32NL := U32NL (Right (15));
 
       C : GF64_Natural_Limb;
-
-      D0  : D0S;
-      D1  : D1S;
-      D2  : D2S;
-      D3  : D3S;
-      D4  : D4S;
-      D5  : D5S;
-      D6  : D6S;
-      D7  : D7S;
-      D8  : D8S;
-      D9  : D9S;
-      D10 : D10S;
-      D11 : D11S;
-      D12 : D12S;
-      D13 : D13S;
-      D14 : D14S;
-      D15 : D15S;
-
-      --  Local vars used in Phase 2 carry and reduction
-      R  : GF32 with Relaxed_Initialization;
-      C2 : GF32_Normal_Limb;
-      T  : GF32_Any_Limb;
+      D : Mul_Product;
    begin
+      D := (others => 0);
+
       -----------------------------------------------------------------
       --  Having unrolled the loops here fully, the intermediate
       --  digits could be computed in any order, or even in parallel.
       --
-      --  BUT... if we compute in order D0 .. D15, then we can
-      --  normalize (D0 mod LM) AND compute the carry C from D0 to D1
+      --  BUT... if we compute in order D (0) .. D (15), then we can
+      --  normalize (D (0) mod LM) AND compute the carry C from D (0) to D (1)
       --  immediately, and incorporate that carry into the calculation
-      --  of D1.
+      --  of D (1).
       --
       --  This trick essentially fuses the first "CAR" loop into this
       --  code in-line, and allows us to assert a tight upper-bound on
@@ -262,6 +371,7 @@ is
          L1R15  : constant LP := LP (L1  * R15);
 
          L0R0   : constant LP := LP (L0 * R0);
+         D0     : D0S;
       begin
          D0 := L15R1 + L14R2 + L13R3 +
                L12R4 + L11R5 + L10R6 +
@@ -271,15 +381,16 @@ is
          pragma Assert (D0 <= 15 * LP'Last);
 
          D0  := L0R0 + (R2256 * D0);
-         --  Immediately compute C and normalize D0
+         --  Immediately compute C and normalize D (0)
          --  For proof of type safety and to prove that this converges,
          --  we only need to keep track of the fact that each digit is now
          --  normalized and assert an upper-bound on C.
          C := D0 / LM;
-         D0 := D0 mod LM;
+         D (0) := D0 mod LM;
       end;
 
-      pragma Assert_And_Cut (D0 in I64NL and
+      pragma Assert_And_Cut (D in Mul_Product and then
+                             D (0) in I64NL and then
                              C <= C0UB);
 
 
@@ -301,8 +412,9 @@ is
 
          L1R0   : constant LP := LP (L1 * R0);
          L0R1   : constant LP := LP (L0 * R1);
+         D1     : D1S;
       begin
-         --  And so on ... but add C from D0 into the calculation of D1
+         --  And so on ... but add C from D (0) into the calculation of D (1)
          D1  := C + L1R0 + L0R1 +
                 R2256 * (L15R2 + L14R3 + L13R4 +
                          L12R5 + L11R6 + L10R7 +
@@ -310,11 +422,11 @@ is
                          L6R11 + L5R12 + L4R13 +
                          L3R14 + L2R15);
          C := D1 / LM;
-         D1 := D1 mod LM;
+         D (1) := D1 mod LM;
       end;
 
-      pragma Assert_And_Cut (D0 in I64NL and
-                             D1 in I64NL and
+      pragma Assert_And_Cut (D in Mul_Product and then
+                             D (0) in I64NL and then
                              C <= C1UB);
 
       declare
@@ -335,6 +447,7 @@ is
          L2R0  : constant LP := LP (L2 * R0);
          L1R1  : constant LP := LP (L1 * R1);
          L0R2  : constant LP := LP (L0 * R2);
+         D2    : D2S;
       begin
          D2  := C + L2R0 + L1R1 + L0R2 +
                 R2256 * (L15R3 + L14R4 + L13R5 +
@@ -344,12 +457,11 @@ is
                          L3R15);
 
          C := D2 / LM;
-         D2 := D2 mod LM;
+         D (2) := D2 mod LM;
       end;
 
-      pragma Assert_And_Cut (D0 in I64NL and
-                             D1 in I64NL and
-                             D2 in I64NL and
+      pragma Assert_And_Cut (D in Mul_Product and then
+                             D (0) in I64NL and then
                              C <= C2UB);
 
       declare
@@ -370,6 +482,7 @@ is
          L2R1  : constant LP := LP (L2 * R1);
          L1R2  : constant LP := LP (L1 * R2);
          L0R3  : constant LP := LP (L0 * R3);
+         D3    : D3S;
       begin
          D3 := C + L3R0 + L2R1 + L1R2 + L0R3 +
                R2256 * (L15R4 + L14R5 + L13R6 +
@@ -378,13 +491,11 @@ is
                         L6R13 + L5R14 + L4R15);
 
          C := D3 / LM;
-         D3 := D3 mod LM;
+         D (3) := D3 mod LM;
       end;
 
-      pragma Assert_And_Cut (D0 in I64NL and
-                             D1 in I64NL and
-                             D2 in I64NL and
-                             D3 in I64NL and
+      pragma Assert_And_Cut (D in Mul_Product and then
+                             D (0) in I64NL and then
                              C <= C3UB);
 
       declare
@@ -405,6 +516,7 @@ is
          L2R2 : constant LP := LP (L2 * R2);
          L1R3 : constant LP := LP (L1 * R3);
          L0R4 : constant LP := LP (L0 * R4);
+         D4   : D4S;
       begin
          D4 := C + L4R0 + L3R1 + L2R2 + L1R3 + L0R4 +
            R2256 * (L15R5 + L14R6 + L13R7 +
@@ -413,14 +525,11 @@ is
                     L6R14 + L5R15);
 
          C := D4 / LM;
-         D4 := D4 mod LM;
+         D (4) := D4 mod LM;
       end;
 
-      pragma Assert_And_Cut (D0 in I64NL and
-                             D1 in I64NL and
-                             D2 in I64NL and
-                             D3 in I64NL and
-                             D4 in I64NL and
+      pragma Assert_And_Cut (D in Mul_Product and then
+                             D (0) in I64NL and then
                              C <= C4UB);
 
       declare
@@ -441,6 +550,7 @@ is
          L2R3 : constant LP := LP (L2 * R3);
          L1R4 : constant LP := LP (L1 * R4);
          L0R5 : constant LP := LP (L0 * R5);
+         D5   : D5S;
       begin
          D5 := C + L5R0 + L4R1 + L3R2 + L2R3 + L1R4 + L0R5 +
            R2256 * (L15R6 + L14R7  + L13R8 +
@@ -449,15 +559,11 @@ is
                     L6R15);
 
          C := D5 / LM;
-         D5 := D5 mod LM;
+         D (5) := D5 mod LM;
       end;
 
-      pragma Assert_And_Cut (D0 in I64NL and
-                             D1 in I64NL and
-                             D2 in I64NL and
-                             D3 in I64NL and
-                             D4 in I64NL and
-                             D5 in I64NL and
+      pragma Assert_And_Cut (D in Mul_Product and then
+                             D (0) in I64NL and then
                              C <= C5UB);
 
       declare
@@ -478,24 +584,19 @@ is
          L2R4 : constant LP := LP (L2 * R4);
          L1R5 : constant LP := LP (L1 * R5);
          L0R6 : constant LP := LP (L0 * R6);
+         D6   : D6S;
       begin
          D6 := C + L6R0 + L5R1 + L4R2 + L3R3 + L2R4 + L1R5 + L0R6 +
            R2256 * (L15R7  + L14R8  + L13R9 +
                     L12R10 + L11R11 + L10R12 +
                     L9R13  + L8R14  + L7R15);
          C := D6 / LM;
-         D6 := D6 mod LM;
+         D (6) := D6 mod LM;
       end;
 
-      pragma Assert_And_Cut (D0 in I64NL and
-                             D1 in I64NL and
-                             D2 in I64NL and
-                             D3 in I64NL and
-                             D4 in I64NL and
-                             D5 in I64NL and
-                             D6 in I64NL and
+      pragma Assert_And_Cut (D in Mul_Product and then
+                             D (0) in I64NL and then
                              C <= C6UB);
-
 
       declare
          L15R8  : constant LP := LP (L15 * R8);
@@ -515,6 +616,7 @@ is
          L2R5 : constant LP := LP (L2 * R5);
          L1R6 : constant LP := LP (L1 * R6);
          L0R7 : constant LP := LP (L0 * R7);
+         D7   : D7S;
       begin
          D7 := C + L7R0 + L6R1 + L5R2 + L4R3 + L3R4 + L2R5 + L1R6 + L0R7 +
                R2256 * (L15R8  + L14R9  + L13R10 +
@@ -522,17 +624,11 @@ is
                         L9R14  + L8R15);
 
          C := D7 / LM;
-         D7 := D7 mod LM;
+         D (7) := D7 mod LM;
       end;
 
-      pragma Assert_And_Cut (D0 in I64NL and
-                             D1 in I64NL and
-                             D2 in I64NL and
-                             D3 in I64NL and
-                             D4 in I64NL and
-                             D5 in I64NL and
-                             D6 in I64NL and
-                             D7 in I64NL and
+      pragma Assert_And_Cut (D in Mul_Product and then
+                             D (0) in I64NL and then
                              C <= C7UB);
 
       declare
@@ -553,6 +649,7 @@ is
          L2R6 : constant LP := LP (L2 * R6);
          L1R7 : constant LP := LP (L1 * R7);
          L0R8 : constant LP := LP (L0 * R8);
+         D8   : D8S;
       begin
          D8 := C + L8R0 + L7R1 + L6R2 + L5R3 + L4R4 +
                    L3R5 + L2R6 + L1R7 + L0R8 +
@@ -561,18 +658,11 @@ is
                         L9R15);
 
          C := D8 / LM;
-         D8 := D8 mod LM;
+         D (8) := D8 mod LM;
       end;
 
-      pragma Assert_And_Cut (D0 in I64NL and
-                             D1 in I64NL and
-                             D2 in I64NL and
-                             D3 in I64NL and
-                             D4 in I64NL and
-                             D5 in I64NL and
-                             D6 in I64NL and
-                             D7 in I64NL and
-                             D8 in I64NL and
+      pragma Assert_And_Cut (D in Mul_Product and then
+                             D (0) in I64NL and then
                              C <= C8UB);
 
       declare
@@ -593,6 +683,7 @@ is
          L2R7 : constant LP := LP (L2 * R7);
          L1R8 : constant LP := LP (L1 * R8);
          L0R9 : constant LP := LP (L0 * R9);
+         D9   : D9S;
       begin
          D9 := C + L9R0 + L8R1 + L7R2 + L6R3 + L5R4 +
                    L4R5 + L3R6 + L2R7 + L1R8 + L0R9 +
@@ -600,19 +691,11 @@ is
                         L12R13 + L11R14 + L10R15);
 
          C := D9 / LM;
-         D9 := D9 mod LM;
+         D (9) := D9 mod LM;
       end;
 
-      pragma Assert_And_Cut (D0 in I64NL and
-                             D1 in I64NL and
-                             D2 in I64NL and
-                             D3 in I64NL and
-                             D4 in I64NL and
-                             D5 in I64NL and
-                             D6 in I64NL and
-                             D7 in I64NL and
-                             D8 in I64NL and
-                             D9 in I64NL and
+      pragma Assert_And_Cut (D in Mul_Product and then
+                             D (0) in I64NL and then
                              C <= C9UB);
 
       declare
@@ -633,6 +716,7 @@ is
          L2R8  : constant LP := LP (L2 * R8);
          L1R9  : constant LP := LP (L1 * R9);
          L0R10 : constant LP := LP (L0 * R10);
+         D10   : D10S;
       begin
          D10 := C + L10R0 + L9R1 + L8R2 + L7R3 + L6R4 + L5R5 +
                     L4R6  + L3R7 + L2R8 + L1R9 + L0R10 +
@@ -640,20 +724,11 @@ is
                          L12R14 + L11R15);
 
          C := D10 / LM;
-         D10 := D10 mod LM;
+         D (10) := D10 mod LM;
       end;
 
-      pragma Assert_And_Cut (D0 in I64NL and
-                             D1 in I64NL and
-                             D2 in I64NL and
-                             D3 in I64NL and
-                             D4 in I64NL and
-                             D5 in I64NL and
-                             D6 in I64NL and
-                             D7 in I64NL and
-                             D8 in I64NL and
-                             D9 in I64NL and
-                             D10 in I64NL and
+      pragma Assert_And_Cut (D in Mul_Product and then
+                             D (0) in I64NL and then
                              C <= C10UB);
 
       declare
@@ -674,27 +749,18 @@ is
          L2R9  : constant LP := LP (L2 * R9);
          L1R10 : constant LP := LP (L1 * R10);
          L0R11 : constant LP := LP (L0 * R11);
+         D11   : D11S;
       begin
          D11 := C + L11R0 + L10R1 + L9R2 + L8R3 + L7R4  + L6R5 +
                     L5R6  + L4R7  + L3R8 + L2R9 + L1R10 + L0R11 +
                 R2256 * (L15R12 + L14R13 + L13R14 + L12R15);
 
          C := D11 / LM;
-         D11 := D11 mod LM;
+         D (11) := D11 mod LM;
       end;
 
-      pragma Assert_And_Cut (D0 in I64NL and
-                             D1 in I64NL and
-                             D2 in I64NL and
-                             D3 in I64NL and
-                             D4 in I64NL and
-                             D5 in I64NL and
-                             D6 in I64NL and
-                             D7 in I64NL and
-                             D8 in I64NL and
-                             D9 in I64NL and
-                             D10 in I64NL and
-                             D11 in I64NL and
+      pragma Assert_And_Cut (D in Mul_Product and then
+                             D (0) in I64NL and then
                              C <= C11UB);
 
       declare
@@ -715,6 +781,7 @@ is
          L2R10 : constant LP := LP (L2 * R10);
          L1R11 : constant LP := LP (L1 * R11);
          L0R12 : constant LP := LP (L0 * R12);
+         D12   : D12S;
       begin
          D12 := C + L12R0 + L11R1 + L10R2 + L9R3 + L8R4  + L7R5 +
                     L6R6  + L5R7  + L4R8  + L3R9 + L2R10 + L1R11 +
@@ -722,22 +789,11 @@ is
                 R2256 * (L15R13 + L14R14 + L13R15);
 
          C := D12 / LM;
-         D12 := D12 mod LM;
+         D (12) := D12 mod LM;
       end;
 
-      pragma Assert_And_Cut (D0 in I64NL and
-                             D1 in I64NL and
-                             D2 in I64NL and
-                             D3 in I64NL and
-                             D4 in I64NL and
-                             D5 in I64NL and
-                             D6 in I64NL and
-                             D7 in I64NL and
-                             D8 in I64NL and
-                             D9 in I64NL and
-                             D10 in I64NL and
-                             D11 in I64NL and
-                             D12 in I64NL and
+      pragma Assert_And_Cut (D in Mul_Product and then
+                             D (0) in I64NL and then
                              C <= C12UB);
 
       declare
@@ -758,6 +814,7 @@ is
          L2R11 : constant LP := LP (L2 * R11);
          L1R12 : constant LP := LP (L1 * R12);
          L0R13 : constant LP := LP (L0 * R13);
+         D13   : D13S;
       begin
          D13 := C + L13R0 + L12R1 + L11R2 + L10R3 + L9R4  + L8R5 +
                     L7R6  + L6R7  + L5R8  + L4R9  + L3R10 + L2R11 +
@@ -765,23 +822,11 @@ is
                 R2256 * (L15R14 + L14R15);
 
          C := D13 / LM;
-         D13 := D13 mod LM;
+         D (13) := D13 mod LM;
       end;
 
-      pragma Assert_And_Cut (D0 in I64NL and
-                             D1 in I64NL and
-                             D2 in I64NL and
-                             D3 in I64NL and
-                             D4 in I64NL and
-                             D5 in I64NL and
-                             D6 in I64NL and
-                             D7 in I64NL and
-                             D8 in I64NL and
-                             D9 in I64NL and
-                             D10 in I64NL and
-                             D11 in I64NL and
-                             D12 in I64NL and
-                             D13 in I64NL and
+      pragma Assert_And_Cut (D in Mul_Product and then
+                             D (0) in I64NL and then
                              C <= C13UB);
 
       declare
@@ -802,6 +847,7 @@ is
          L2R12 : constant LP := LP (L2 * R12);
          L1R13 : constant LP := LP (L1 * R13);
          L0R14 : constant LP := LP (L0 * R14);
+         D14   : D14S;
       begin
          D14 := C + L14R0 + L13R1 + L12R2 + L11R3 + L10R4 + L9R5 +
                     L8R6  + L7R7  + L6R8  + L5R9  + L4R10 + L3R11 +
@@ -809,24 +855,11 @@ is
                 R2256 * L15R15;
 
          C := D14 / LM;
-         D14 := D14 mod LM;
+         D (14) := D14 mod LM;
       end;
 
-      pragma Assert_And_Cut (D0 in I64NL and
-                             D1 in I64NL and
-                             D2 in I64NL and
-                             D3 in I64NL and
-                             D4 in I64NL and
-                             D5 in I64NL and
-                             D6 in I64NL and
-                             D7 in I64NL and
-                             D8 in I64NL and
-                             D9 in I64NL and
-                             D10 in I64NL and
-                             D11 in I64NL and
-                             D12 in I64NL and
-                             D13 in I64NL and
-                             D14 in I64NL and
+      pragma Assert_And_Cut (D in Mul_Product and then
+                             D (0) in I64NL and then
                              C <= C14UB);
 
       declare
@@ -846,132 +879,26 @@ is
          L2R13 : constant LP := LP (L2 * R13);
          L1R14 : constant LP := LP (L1 * R14);
          L0R15 : constant LP := LP (L0 * R15);
+         D15   : D15S;
       begin
          D15 := C + L15R0 + L14R1 + L13R2 + L12R3 + L11R4 + L10R5 +
                     L9R6  + L8R7  + L7R8  + L6R9  + L5R10 + L4R11 +
                     L3R12 + L2R13 + L1R14 + L0R15;
 
          C := D15 / LM;
-         D15 := D15 mod LM;
+         D (15) := D15 mod LM;
       end;
 
-      pragma Assert_And_Cut (D0 in I64NL and
-                             D1 in I64NL and
-                             D2 in I64NL and
-                             D3 in I64NL and
-                             D4 in I64NL and
-                             D5 in I64NL and
-                             D6 in I64NL and
-                             D7 in I64NL and
-                             D8 in I64NL and
-                             D9 in I64NL and
-                             D10 in I64NL and
-                             D11 in I64NL and
-                             D12 in I64NL and
-                             D13 in I64NL and
-                             D14 in I64NL and
-                             D15 in I64NL and
+      pragma Assert_And_Cut (D in Mul_Product and then
+                             D (0) in I64NL and then
                              C <= C15UB);
 
-      --  The carry from D15 is now multiplied by R2256 and added
-      --  to D0
-      D0 := D0 + R2256 * C;
-      pragma Assert (D0 <= P2_D0UB);
+      --  The carry from D (15) is now multiplied by R2256 and added
+      --  to D (0)
+      D (0) := D (0) + R2256 * C;
+      pragma Assert (D in Mul_Product);
 
-      --  Sanity checks on these constants against actual literal values
-      pragma Assert (C15UB   =  1_048_596);
-      pragma Assert (P2_D0UB = 39_912_183);
-      pragma Assert (P2_C2UB =        609);
-
-      --  Phase 2 carry and reduction.
-      --  From here on, all arithmetic can be 32-bit.
-      R (0) := I32 (D0) mod LM;
-      C2 := I32 (D0) / LM;
-      pragma Assert (R (0)'Initialized);
-      pragma Assert (R (0) in GF32_Normal_Limb);
-      pragma Assert (C2 <= P2_C2UB);
-
-      T := I32 (D1) + C2;
-      R (1) := T mod LM;
-      C2 := T / LM;
-      --  C2 is now in range 0 .. 1, and it stays that way...
-      pragma Assert (R (0 .. 1)'Initialized and C2 <= 1);
-
-      T := I32 (D2) + C2;
-      R (2) := T mod LM;
-      C2 := T / LM;
-      pragma Assert (R (0 .. 2)'Initialized and C2 <= 1);
-
-      T := I32 (D3) + C2;
-      R (3) := T mod LM;
-      C2 := T / LM;
-      pragma Assert (R (0 .. 3)'Initialized and C2 <= 1);
-
-      T := I32 (D4) + C2;
-      R (4) := T mod LM;
-      C2 := T / LM;
-      pragma Assert (R (0 .. 4)'Initialized and C2 <= 1);
-
-      T := I32 (D5) + C2;
-      R (5) := T mod LM;
-      C2 := T / LM;
-      pragma Assert (R (0 .. 5)'Initialized and C2 <= 1);
-
-      T := I32 (D6) + C2;
-      R (6) := T mod LM;
-      C2 := T / LM;
-      pragma Assert (R (0 .. 6)'Initialized and C2 <= 1);
-
-      T := I32 (D7) + C2;
-      R (7) := T mod LM;
-      C2 := T / LM;
-      pragma Assert (R (0 .. 7)'Initialized and C2 <= 1);
-
-      T := I32 (D8) + C2;
-      R (8) := T mod LM;
-      C2 := T / LM;
-      pragma Assert (R (0 .. 8)'Initialized and C2 <= 1);
-
-      T := I32 (D9) + C2;
-      R (9) := T mod LM;
-      C2 := T / LM;
-      pragma Assert (R (0 .. 9)'Initialized and C2 <= 1);
-
-      T := I32 (D10) + C2;
-      R (10) := T mod LM;
-      C2 := T / LM;
-      pragma Assert (R (0 .. 10)'Initialized and C2 <= 1);
-
-      T := I32 (D11) + C2;
-      R (11) := T mod LM;
-      C2 := T / LM;
-      pragma Assert (R (0 .. 11)'Initialized and C2 <= 1);
-
-      T := I32 (D12) + C2;
-      R (12) := T mod LM;
-      C2 := T / LM;
-      pragma Assert (R (0 .. 12)'Initialized and C2 <= 1);
-
-      T := I32 (D13) + C2;
-      R (13) := T mod LM;
-      C2 := T / LM;
-      pragma Assert (R (0 .. 13)'Initialized and C2 <= 1);
-
-      T := I32 (D14) + C2;
-      R (14) := T mod LM;
-      C2 := T / LM;
-      pragma Assert (R (0 .. 14)'Initialized and C2 <= 1);
-
-      T := I32 (D15) + C2;
-      R (15) := T mod LM;
-      C2 := T / LM;
-      pragma Assert (R (0 .. 15)'Initialized and C2 <= 1);
-
-      pragma Assert (R'Initialized and C2 <= 1);
-
-      R (0) := R (0) + R2256 * C2;
-
-      return Car.Nearlynormal_To_Normal (Nearlynormal_GF (R));
+      return Mul_Phase2_Reduction (D);
    end "*";
 
    function Square (A : in Normal_GF) return Normal_GF
@@ -994,29 +921,10 @@ is
       L15 : constant U32NL := U32NL (A (15));
 
       C : GF64_Natural_Limb;
-
-      D0  : D0S;
-      D1  : D1S;
-      D2  : D2S;
-      D3  : D3S;
-      D4  : D4S;
-      D5  : D5S;
-      D6  : D6S;
-      D7  : D7S;
-      D8  : D8S;
-      D9  : D9S;
-      D10 : D10S;
-      D11 : D11S;
-      D12 : D12S;
-      D13 : D13S;
-      D14 : D14S;
-      D15 : D15S;
-
-      --  Local vars used in Phase 2 carry and reduction
-      R  : GF32 with Relaxed_Initialization;
-      C2 : GF32_Normal_Limb;
-      T  : GF32_Any_Limb;
+      D : Mul_Product;
    begin
+      D := (others => 0);
+
       -----------------------------------------------------------------
       --  This is basically the same code as "*", but we know
       --  that A = Left = Right.
@@ -1033,16 +941,17 @@ is
       --  collecting like terms, and simplying yields:
       -----------------------------------------------------------------
       declare
-         L15L1  : constant LP := LP (L15 * L1);
-         L14L2  : constant LP := LP (L14 * L2);
-         L13L3  : constant LP := LP (L13 * L3);
-         L12L4  : constant LP := LP (L12 * L4);
-         L11L5  : constant LP := LP (L11 * L5);
-         L10L6  : constant LP := LP (L10 * L6);
-         L9L7   : constant LP := LP (L9  * L7);
-         L8L8   : constant LP := LP (L8  * L8);
+         L15L1 : constant LP := LP (L15 * L1);
+         L14L2 : constant LP := LP (L14 * L2);
+         L13L3 : constant LP := LP (L13 * L3);
+         L12L4 : constant LP := LP (L12 * L4);
+         L11L5 : constant LP := LP (L11 * L5);
+         L10L6 : constant LP := LP (L10 * L6);
+         L9L7  : constant LP := LP (L9  * L7);
+         L8L8  : constant LP := LP (L8  * L8);
 
-         L0L0   : constant LP := LP (L0 * L0);
+         L0L0  : constant LP := LP (L0 * L0);
+         D0    : D0S;
       begin
          D0 := 2 * (L15L1 + L14L2 + L13L3 + L12L4 + L11L5 + L10L6 +
                     L9L7) + L8L8;
@@ -1054,23 +963,24 @@ is
          --  we only need to keep track of the fact that each digit is now
          --  normalized and assert an upper-bound on C.
          C := D0 / LM;
-         D0 := D0 mod LM;
+         D (0) := D0 mod LM;
       end;
 
-      pragma Assert_And_Cut (D0 in I64NL and
+      pragma Assert_And_Cut (D in Mul_Product and then
+                             D (0) in I64NL and then
                              C <= C0UB);
 
-
       declare
-         L15L2  : constant LP := LP (L15 * L2);
-         L14L3  : constant LP := LP (L14 * L3);
-         L13L4  : constant LP := LP (L13 * L4);
-         L12L5  : constant LP := LP (L12 * L5);
-         L11L6  : constant LP := LP (L11 * L6);
-         L10L7  : constant LP := LP (L10 * L7);
-         L9L8   : constant LP := LP (L9  * L8);
+         L15L2 : constant LP := LP (L15 * L2);
+         L14L3 : constant LP := LP (L14 * L3);
+         L13L4 : constant LP := LP (L13 * L4);
+         L12L5 : constant LP := LP (L12 * L5);
+         L11L6 : constant LP := LP (L11 * L6);
+         L10L7 : constant LP := LP (L10 * L7);
+         L9L8  : constant LP := LP (L9  * L8);
 
-         L0L1   : constant LP := LP (L0 * L1);
+         L0L1  : constant LP := LP (L0 * L1);
+         D1    : D1S;
       begin
          --  And so on ... but add C from D0 into the calculation of D1
          D1  := C +
@@ -1078,11 +988,11 @@ is
                      R2256 * (L15L2 + L14L3 + L13L4 +
                               L12L5 + L11L6 + L10L7 + L9L8));
          C := D1 / LM;
-         D1 := D1 mod LM;
+         D (1) := D1 mod LM;
       end;
 
-      pragma Assert_And_Cut (D0 in I64NL and
-                             D1 in I64NL and
+      pragma Assert_And_Cut (D in Mul_Product and then
+                             D (0) in I64NL and then
                              C <= C1UB);
 
       declare
@@ -1096,6 +1006,7 @@ is
 
          L2L0  : constant LP := LP (L2 * L0);
          L1L1  : constant LP := LP (L1 * L1);
+         D2    : D2S;
       begin
          D2  := C +
                 2 * L2L0 + L1L1 +
@@ -1103,12 +1014,11 @@ is
                          L9L9);
 
          C := D2 / LM;
-         D2 := D2 mod LM;
+         D (2) := D2 mod LM;
       end;
 
-      pragma Assert_And_Cut (D0 in I64NL and
-                             D1 in I64NL and
-                             D2 in I64NL and
+      pragma Assert_And_Cut (D in Mul_Product and then
+                             D (0) in I64NL and then
                              C <= C2UB);
 
       declare
@@ -1121,6 +1031,7 @@ is
 
          L3L0  : constant LP := LP (L3 * L0);
          L2L1  : constant LP := LP (L2 * L1);
+         D3    : D3S;
       begin
          D3 := C +
                2 * ((L3L0 + L2L1) +
@@ -1128,13 +1039,11 @@ is
                              L12L7 + L11L8 + L10L9));
 
          C := D3 / LM;
-         D3 := D3 mod LM;
+         D (3) := D3 mod LM;
       end;
 
-      pragma Assert_And_Cut (D0 in I64NL and
-                             D1 in I64NL and
-                             D2 in I64NL and
-                             D3 in I64NL and
+      pragma Assert_And_Cut (D in Mul_Product and then
+                             D (0) in I64NL and then
                              C <= C3UB);
 
       declare
@@ -1148,20 +1057,18 @@ is
          L4L0 : constant LP := LP (L4 * L0);
          L3L1 : constant LP := LP (L3 * L1);
          L2L2 : constant LP := LP (L2 * L2);
+         D4   : D4S;
       begin
          D4 := C +
                2 * (L4L0 + L3L1) + L2L2 +
                R2256 * (2 * (L15L5 + L14L6 + L13L7 + L12L8 + L11L9) + L10L10);
 
          C := D4 / LM;
-         D4 := D4 mod LM;
+         D (4) := D4 mod LM;
       end;
 
-      pragma Assert_And_Cut (D0 in I64NL and
-                             D1 in I64NL and
-                             D2 in I64NL and
-                             D3 in I64NL and
-                             D4 in I64NL and
+      pragma Assert_And_Cut (D in Mul_Product and then
+                             D (0) in I64NL and then
                              C <= C4UB);
 
       declare
@@ -1174,21 +1081,18 @@ is
          L5L0 : constant LP := LP (L5 * L0);
          L4L1 : constant LP := LP (L4 * L1);
          L3L2 : constant LP := LP (L3 * L2);
+         D5   : D5S;
       begin
          D5 := C +
                2 * ((L5L0 + L4L1 + L3L2) +
                     R2256 * (L15L6 + L14L7 + L13L8 + L12L9 + L11L10));
 
          C := D5 / LM;
-         D5 := D5 mod LM;
+         D (5) := D5 mod LM;
       end;
 
-      pragma Assert_And_Cut (D0 in I64NL and
-                             D1 in I64NL and
-                             D2 in I64NL and
-                             D3 in I64NL and
-                             D4 in I64NL and
-                             D5 in I64NL and
+      pragma Assert_And_Cut (D in Mul_Product and then
+                             D (0) in I64NL and then
                              C <= C5UB);
 
       declare
@@ -1202,23 +1106,18 @@ is
          L5L1 : constant LP := LP (L5 * L1);
          L4L2 : constant LP := LP (L4 * L2);
          L3L3 : constant LP := LP (L3 * L3);
+         D6   : D6S;
       begin
          D6 := C +
                2 * (L6L0 + L5L1 + L4L2) + L3L3 +
                R2256 * (2 * (L15L7 + L14L8 + L13L9 + L12L10) + L11L11);
          C := D6 / LM;
-         D6 := D6 mod LM;
+         D (6) := D6 mod LM;
       end;
 
-      pragma Assert_And_Cut (D0 in I64NL and
-                             D1 in I64NL and
-                             D2 in I64NL and
-                             D3 in I64NL and
-                             D4 in I64NL and
-                             D5 in I64NL and
-                             D6 in I64NL and
+      pragma Assert_And_Cut (D in Mul_Product and then
+                             D (0) in I64NL and then
                              C <= C6UB);
-
 
       declare
          L15L8  : constant LP := LP (L15 * L8);
@@ -1230,23 +1129,18 @@ is
          L6L1 : constant LP := LP (L6 * L1);
          L5L2 : constant LP := LP (L5 * L2);
          L4L3 : constant LP := LP (L4 * L3);
+         D7   : D7S;
       begin
          D7 := C +
                2 * ((L7L0 + L6L1 + L5L2 + L4L3) +
                     R2256 * (L15L8 + L14L9 + L13L10 + L12L11));
 
          C := D7 / LM;
-         D7 := D7 mod LM;
+         D (7) := D7 mod LM;
       end;
 
-      pragma Assert_And_Cut (D0 in I64NL and
-                             D1 in I64NL and
-                             D2 in I64NL and
-                             D3 in I64NL and
-                             D4 in I64NL and
-                             D5 in I64NL and
-                             D6 in I64NL and
-                             D7 in I64NL and
+      pragma Assert_And_Cut (D in Mul_Product and then
+                             D (0) in I64NL and then
                              C <= C7UB);
 
       declare
@@ -1260,24 +1154,18 @@ is
          L6L2 : constant LP := LP (L6 * L2);
          L5L3 : constant LP := LP (L5 * L3);
          L4L4 : constant LP := LP (L4 * L4);
+         D8   : D8S;
       begin
          D8 := C +
                2 * (L8L0 + L7L1 + L6L2 + L5L3) + L4L4 +
                R2256 * (2 * (L15L9 + L14L10 + L13L11) + L12L12);
 
          C := D8 / LM;
-         D8 := D8 mod LM;
+         D (8) := D8 mod LM;
       end;
 
-      pragma Assert_And_Cut (D0 in I64NL and
-                             D1 in I64NL and
-                             D2 in I64NL and
-                             D3 in I64NL and
-                             D4 in I64NL and
-                             D5 in I64NL and
-                             D6 in I64NL and
-                             D7 in I64NL and
-                             D8 in I64NL and
+      pragma Assert_And_Cut (D in Mul_Product and then
+                             D (0) in I64NL and then
                              C <= C8UB);
 
       declare
@@ -1290,25 +1178,18 @@ is
          L7L2 : constant LP := LP (L7 * L2);
          L6L3 : constant LP := LP (L6 * L3);
          L5L4 : constant LP := LP (L5 * L4);
+         D9   : D9S;
       begin
          D9 := C +
                2 * ((L9L0 + L8L1 + L7L2 + L6L3 + L5L4) +
                     (R2256 * (L15L10 + L14L11 + L13L12)));
 
          C := D9 / LM;
-         D9 := D9 mod LM;
+         D (9) := D9 mod LM;
       end;
 
-      pragma Assert_And_Cut (D0 in I64NL and
-                             D1 in I64NL and
-                             D2 in I64NL and
-                             D3 in I64NL and
-                             D4 in I64NL and
-                             D5 in I64NL and
-                             D6 in I64NL and
-                             D7 in I64NL and
-                             D8 in I64NL and
-                             D9 in I64NL and
+      pragma Assert_And_Cut (D in Mul_Product and then
+                             D (0) in I64NL and then
                              C <= C9UB);
 
       declare
@@ -1322,26 +1203,18 @@ is
          L7L3  : constant LP := LP (L7 * L3);
          L6L4  : constant LP := LP (L6 * L4);
          L5L5  : constant LP := LP (L5 * L5);
+         D10   : D10S;
       begin
          D10 := C +
                 2 * (L10L0 + L9L1 + L8L2 + L7L3 + L6L4) + L5L5 +
                 R2256 * (2 * (L15L11 + L14L12) + L13L13);
 
          C := D10 / LM;
-         D10 := D10 mod LM;
+         D (10) := D10 mod LM;
       end;
 
-      pragma Assert_And_Cut (D0 in I64NL and
-                             D1 in I64NL and
-                             D2 in I64NL and
-                             D3 in I64NL and
-                             D4 in I64NL and
-                             D5 in I64NL and
-                             D6 in I64NL and
-                             D7 in I64NL and
-                             D8 in I64NL and
-                             D9 in I64NL and
-                             D10 in I64NL and
+      pragma Assert_And_Cut (D in Mul_Product and then
+                             D (0) in I64NL and then
                              C <= C10UB);
 
       declare
@@ -1354,27 +1227,18 @@ is
          L8L3  : constant LP := LP (L8 * L3);
          L7L4  : constant LP := LP (L7 * L4);
          L6L5  : constant LP := LP (L6 * L5);
+         D11   : D11S;
       begin
          D11 := C +
                 2 * ((L11L0 + L10L1 + L9L2 + L8L3 + L7L4  + L6L5) +
                      (R2256 * (L15L12 + L14L13)));
 
          C := D11 / LM;
-         D11 := D11 mod LM;
+         D (11) := D11 mod LM;
       end;
 
-      pragma Assert_And_Cut (D0 in I64NL and
-                             D1 in I64NL and
-                             D2 in I64NL and
-                             D3 in I64NL and
-                             D4 in I64NL and
-                             D5 in I64NL and
-                             D6 in I64NL and
-                             D7 in I64NL and
-                             D8 in I64NL and
-                             D9 in I64NL and
-                             D10 in I64NL and
-                             D11 in I64NL and
+      pragma Assert_And_Cut (D in Mul_Product and then
+                             D (0) in I64NL and then
                              C <= C11UB);
 
       declare
@@ -1388,28 +1252,18 @@ is
          L8L4  : constant LP := LP (L8 * L4);
          L7L5  : constant LP := LP (L7 * L5);
          L6L6  : constant LP := LP (L6 * L6);
+         D12   : D12S;
       begin
          D12 := C +
                 2 * (L12L0 + L11L1 + L10L2 + L9L3 + L8L4  + L7L5) + L6L6 +
                 R2256 * (2 * L15L13 + L14L14);
 
          C := D12 / LM;
-         D12 := D12 mod LM;
+         D (12) := D12 mod LM;
       end;
 
-      pragma Assert_And_Cut (D0 in I64NL and
-                             D1 in I64NL and
-                             D2 in I64NL and
-                             D3 in I64NL and
-                             D4 in I64NL and
-                             D5 in I64NL and
-                             D6 in I64NL and
-                             D7 in I64NL and
-                             D8 in I64NL and
-                             D9 in I64NL and
-                             D10 in I64NL and
-                             D11 in I64NL and
-                             D12 in I64NL and
+      pragma Assert_And_Cut (D in Mul_Product and then
+                             D (0) in I64NL and then
                              C <= C12UB);
 
       declare
@@ -1422,29 +1276,18 @@ is
          L9L4  : constant LP := LP (L9 * L4);
          L8L5  : constant LP := LP (L8 * L5);
          L7L6  : constant LP := LP (L7 * L6);
+         D13   : D13S;
       begin
          D13 := C +
                 2 * ((L13L0 + L12L1 + L11L2 + L10L3 + L9L4 + L8L5 + L7L6) +
                      (R2256 * L15L14));
 
          C := D13 / LM;
-         D13 := D13 mod LM;
+         D (13) := D13 mod LM;
       end;
 
-      pragma Assert_And_Cut (D0 in I64NL and
-                             D1 in I64NL and
-                             D2 in I64NL and
-                             D3 in I64NL and
-                             D4 in I64NL and
-                             D5 in I64NL and
-                             D6 in I64NL and
-                             D7 in I64NL and
-                             D8 in I64NL and
-                             D9 in I64NL and
-                             D10 in I64NL and
-                             D11 in I64NL and
-                             D12 in I64NL and
-                             D13 in I64NL and
+      pragma Assert_And_Cut (D in Mul_Product and then
+                             D (0) in I64NL and then
                              C <= C13UB);
 
       declare
@@ -1458,6 +1301,7 @@ is
          L9L5  : constant LP := LP (L9 * L5);
          L8L6  : constant LP := LP (L8 * L6);
          L7L7  : constant LP := LP (L7 * L7);
+         D14   : D14S;
       begin
          D14 := C +
                 2 * (L14L0 + L13L1 + L12L2 + L11L3 + L10L4 + L9L5 + L8L6) +
@@ -1465,24 +1309,11 @@ is
                 R2256 * L15L15;
 
          C := D14 / LM;
-         D14 := D14 mod LM;
+         D (14) := D14 mod LM;
       end;
 
-      pragma Assert_And_Cut (D0 in I64NL and
-                             D1 in I64NL and
-                             D2 in I64NL and
-                             D3 in I64NL and
-                             D4 in I64NL and
-                             D5 in I64NL and
-                             D6 in I64NL and
-                             D7 in I64NL and
-                             D8 in I64NL and
-                             D9 in I64NL and
-                             D10 in I64NL and
-                             D11 in I64NL and
-                             D12 in I64NL and
-                             D13 in I64NL and
-                             D14 in I64NL and
+      pragma Assert_And_Cut (D in Mul_Product and then
+                             D (0) in I64NL and then
                              C <= C14UB);
 
       declare
@@ -1494,132 +1325,26 @@ is
          L10L5 : constant LP := LP (L10 * L5);
          L9L6  : constant LP := LP (L9 * L6);
          L8L7  : constant LP := LP (L8 * L7);
+         D15   : D15S;
       begin
          D15 := C +
                 2 * (L15L0 + L14L1 + L13L2 + L12L3 + L11L4 + L10L5 +
                      L9L6  + L8L7);
 
          C := D15 / LM;
-         D15 := D15 mod LM;
+         D (15) := D15 mod LM;
       end;
 
-      pragma Assert_And_Cut (D0 in I64NL and
-                             D1 in I64NL and
-                             D2 in I64NL and
-                             D3 in I64NL and
-                             D4 in I64NL and
-                             D5 in I64NL and
-                             D6 in I64NL and
-                             D7 in I64NL and
-                             D8 in I64NL and
-                             D9 in I64NL and
-                             D10 in I64NL and
-                             D11 in I64NL and
-                             D12 in I64NL and
-                             D13 in I64NL and
-                             D14 in I64NL and
-                             D15 in I64NL and
+      pragma Assert_And_Cut (D in Mul_Product and then
+                             D (0) in I64NL and then
                              C <= C15UB);
 
       --  The carry from D15 is now multiplied by R2256 and added
       --  to D0
-      D0 := D0 + R2256 * C;
-      pragma Assert (D0 <= P2_D0UB);
+      D (0) := D (0) + R2256 * C;
+      pragma Assert (D in Mul_Product);
 
-      --  Sanity checks on these constants against actual literal values
-      pragma Assert (C15UB   =  1_048_596);
-      pragma Assert (P2_D0UB = 39_912_183);
-      pragma Assert (P2_C2UB =        609);
-
-      --  Phase 2 carry and reduction.
-      --  From here on, all arithmetic can be 32-bit.
-      R (0) := I32 (D0) mod LM;
-      C2 := I32 (D0) / LM;
-      pragma Assert (R (0)'Initialized);
-      pragma Assert (R (0) in GF32_Normal_Limb);
-      pragma Assert (C2 <= P2_C2UB);
-
-      T := I32 (D1) + C2;
-      R (1) := T mod LM;
-      C2 := T / LM;
-      --  C2 is now in range 0 .. 1, and it stays that way...
-      pragma Assert (R (0 .. 1)'Initialized and C2 <= 1);
-
-      T := I32 (D2) + C2;
-      R (2) := T mod LM;
-      C2 := T / LM;
-      pragma Assert (R (0 .. 2)'Initialized and C2 <= 1);
-
-      T := I32 (D3) + C2;
-      R (3) := T mod LM;
-      C2 := T / LM;
-      pragma Assert (R (0 .. 3)'Initialized and C2 <= 1);
-
-      T := I32 (D4) + C2;
-      R (4) := T mod LM;
-      C2 := T / LM;
-      pragma Assert (R (0 .. 4)'Initialized and C2 <= 1);
-
-      T := I32 (D5) + C2;
-      R (5) := T mod LM;
-      C2 := T / LM;
-      pragma Assert (R (0 .. 5)'Initialized and C2 <= 1);
-
-      T := I32 (D6) + C2;
-      R (6) := T mod LM;
-      C2 := T / LM;
-      pragma Assert (R (0 .. 6)'Initialized and C2 <= 1);
-
-      T := I32 (D7) + C2;
-      R (7) := T mod LM;
-      C2 := T / LM;
-      pragma Assert (R (0 .. 7)'Initialized and C2 <= 1);
-
-      T := I32 (D8) + C2;
-      R (8) := T mod LM;
-      C2 := T / LM;
-      pragma Assert (R (0 .. 8)'Initialized and C2 <= 1);
-
-      T := I32 (D9) + C2;
-      R (9) := T mod LM;
-      C2 := T / LM;
-      pragma Assert (R (0 .. 9)'Initialized and C2 <= 1);
-
-      T := I32 (D10) + C2;
-      R (10) := T mod LM;
-      C2 := T / LM;
-      pragma Assert (R (0 .. 10)'Initialized and C2 <= 1);
-
-      T := I32 (D11) + C2;
-      R (11) := T mod LM;
-      C2 := T / LM;
-      pragma Assert (R (0 .. 11)'Initialized and C2 <= 1);
-
-      T := I32 (D12) + C2;
-      R (12) := T mod LM;
-      C2 := T / LM;
-      pragma Assert (R (0 .. 12)'Initialized and C2 <= 1);
-
-      T := I32 (D13) + C2;
-      R (13) := T mod LM;
-      C2 := T / LM;
-      pragma Assert (R (0 .. 13)'Initialized and C2 <= 1);
-
-      T := I32 (D14) + C2;
-      R (14) := T mod LM;
-      C2 := T / LM;
-      pragma Assert (R (0 .. 14)'Initialized and C2 <= 1);
-
-      T := I32 (D15) + C2;
-      R (15) := T mod LM;
-      C2 := T / LM;
-      pragma Assert (R (0 .. 15)'Initialized and C2 <= 1);
-
-      pragma Assert (R'Initialized and C2 <= 1);
-
-      R (0) := R (0) + R2256 * C2;
-
-      return Car.Nearlynormal_To_Normal (Nearlynormal_GF (R));
+      return Mul_Phase2_Reduction (D);
    end Square;
 
    --------------------------------------------------------
