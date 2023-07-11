@@ -1,11 +1,8 @@
 with SPARKNaCl.Hashing.SHA512;
 with SPARKNaCl.Stream;
-package body SPARKNaCl.Hashing.RFSB
+package body SPARKNaCl.Hashing.RFSB509
   with SPARK_Mode => On
 is
-   RFSB_IV             : constant Digest := (others => 0);
-   RFSB_Padding_Marker : constant Byte := 2#1000_0000#;
-
    --  Three most significant bits
    Three_MSB_Mask : constant Byte := 2#1110_0000#;
 
@@ -16,12 +13,12 @@ is
    --  Dervied from those parameters is:
    --    s: length of the input in bits (w * b)
    --  In order for RFSB-509 to be a "compression" function s > r.
-   RFSB_W : constant I32 := 112;
-   RFSB_B : constant I32 := 8;
-   RFSB_R : constant I32 := 509;
-   RFSB_S : constant I32 := RFSB_W * RFSB_B;
+   RFSB509_W : constant I32 := 112;
+   RFSB509_B : constant I32 := 8;
+   RFSB509_R : constant I32 := 509;
+   RFSB509_S : constant I32 := RFSB509_W * RFSB509_B;
 
-   pragma Assert (RFSB_S > RFSB_R);
+   pragma Assert (RFSB509_S > RFSB509_R);
 
    subtype Matrix_Column is Bytes_64;
    subtype Data_Block    is Bytes_48;
@@ -183,15 +180,18 @@ is
                          Input  : in     Byte_Seq;
                          Key    : in     ChaCha20_Key)
    is
+      IV             : constant Digest := (others => 0);
+      Padding_Marker : constant Byte := 2#1000_0000#;
+
       Input_Length : I64 := Input'Length;
       Current_Byte : I32 := Input'First;
 
-      Hash  : Digest := RFSB_IV;
+      Hash  : Digest := IV;
       Block : Data_Block with Relaxed_Initialization;
 
       Final_Block_Index : Index_48;
    begin
-      pragma Assert (Block'Length = (RFSB_S - RFSB_R) / RFSB_B);
+      pragma Assert (Block'Length = (RFSB509_S - RFSB509_R) / RFSB509_B);
 
       while (Input_Length >= Block'Length) loop
          pragma Loop_Variant
@@ -223,7 +223,7 @@ is
          Final_Block_Index := Index_48'First;
       end if;
 
-      Block (Final_Block_Index) := RFSB_Padding_Marker;
+      Block (Final_Block_Index) := Padding_Marker;
 
       if I32 (Final_Block_Index) > (Block'Last - 8) then
          Block (I32 (Final_Block_Index) .. Block'Last) :=
@@ -263,4 +263,4 @@ is
       return Output;
    end Hash;
 
-end SPARKNaCl.Hashing.RFSB;
+end SPARKNaCl.Hashing.RFSB509;

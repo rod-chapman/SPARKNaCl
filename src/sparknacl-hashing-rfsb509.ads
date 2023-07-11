@@ -1,5 +1,5 @@
 with SPARKNaCl.Core; use SPARKNaCl.Core;
-package SPARKNaCl.Hashing.RFSB
+package SPARKNaCl.Hashing.RFSB509
   with Pure,
        SPARK_Mode => On
 is
@@ -23,4 +23,4 @@ is
                   Key   : in ChaCha20_Key) return Digest
      with Global => null;
 
-end SPARKNaCl.Hashing.RFSB;
+end SPARKNaCl.Hashing.RFSB509;
