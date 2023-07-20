@@ -1,3 +1,5 @@
+with AES256_ECB_KAT;
+with AES256_ECB_Composition;
 with Hash;
 with Hash1;
 with Box;
@@ -38,6 +40,10 @@ with GNAT.Traceback.Symbolic; use GNAT.Traceback.Symbolic;
 procedure Testall
 is
 begin
+   Put_Line ("AES256 ECB KAT");
+   AES256_ECB_KAT;
+   Put_Line ("AES256 ECB Composition");
+   AES256_ECB_Composition;
    Put_Line ("Hash");
    Hash;
    Put_Line ("Hash1");
