@@ -9,7 +9,7 @@ with RISCV.CSR; use RISCV.CSR;
 
 with SPARKNaCl;                 use SPARKNaCl;
 with SPARKNaCl.Hashing.RFSB509; use SPARKNaCl.Hashing.RFSB509;
-with SPARKNaCl.Core;            use SPARKNaCl.Core;
+with SPARKNaCl.AES256;          use SPARKNaCl.AES256;
 
 with IO;
 
@@ -19,11 +19,11 @@ procedure RFSB509 is
 
    CPU_Hz1, CPU_Hz2 : UInt32;
 
-   Output : Digest := (others => 0);
+   Output : Digest;
    Input  : constant Byte_Seq (0 .. 1023) := (others => 77);
 
-   Key_Raw : constant Bytes_32 := (others => 66);
-   Key     : constant ChaCha20_Key := Core.Construct (Key_Raw);
+   Key_Raw : constant Bytes_32 := (others => 0);
+   Key     : constant AES256_Key := AES256.Construct (Key_Raw);
 
    procedure Report;
 
