@@ -18,6 +18,7 @@
 **/b__*.ads
 **/b__*.adb
 **/undefined.ciu
+*.ksh
 gnatinspect.db
 obj/
 lib/
