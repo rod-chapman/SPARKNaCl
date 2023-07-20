@@ -1,5 +1,4 @@
 with SPARKNaCl.Hashing.SHA512;
-with SPARKNaCl.Stream;
 package body SPARKNaCl.Hashing.RFSB509
   with SPARK_Mode => On
 is
@@ -29,8 +28,9 @@ is
 
    procedure Calculate_Column (Column  :    out Matrix_Column;
                                Word    : in     Byte;
-                               Key     : in     ChaCha20_Key)
+                               Key     : in     AES256_Key)
      with Global => null,
+          Pre    => Column'First = 0,
           Post   => (Column (Column'Last) and Three_MSB_Mask) = 0;
 
    procedure Mul128 (A : in out Matrix_Column)
@@ -47,14 +47,14 @@ is
 
    procedure Compress (Chain_Value  : in out Digest;
                        Block        : in     Data_Block;
-                       Key          : in     ChaCha20_Key)
+                       Key          : in     AES256_Key)
      with Global => null,
           Pre    => (Chain_Value (Chain_Value'Last) and Three_MSB_Mask) = 0,
           Post   => (Chain_Value (Chain_Value'Last) and Three_MSB_Mask) = 0;
 
    procedure Hash_Local (Output :    out Digest;
                          Input  : in     Byte_Seq;
-                         Key    : in     ChaCha20_Key)
+                         Key    : in     AES256_Key)
      with Global => null;
 
    --------------------------------------------------------
@@ -63,20 +63,30 @@ is
 
    procedure Calculate_Column (Column  :    out Matrix_Column;
                                Word    : in     Byte;
-                               Key     : in     ChaCha20_Key)
+                               Key     : in     AES256_Key)
    is
-      Nonce : constant ChaCha20_Nonce := (others => 0);
+      Input_String : Bytes_16 := (others => 0);
+      Result       : Bytes_64 with Relaxed_Initialization;
 
-      First_Byte : Byte;
-      Last_Byte  : Byte;
+      First_Byte, Last_Byte  : Byte;
    begin
-      Stream.ChaCha20 (Column, Nonce, Key, U64 (Word));
+      Input_String (Input_String'Last - 1) := Word;
 
-      First_Byte := Column (Column'First);
-      Last_Byte  := Column (Column'Last);
+      for I in Index_4 loop
+         Input_String (Input_String'Last) := Byte (I);
+         ECB_Encrypt (Result (I * 16 ..  I * 16 + 15), Input_String, Key);
 
-      Column (Column'First) := First_Byte xor Shift_Right (Last_Byte, 5);
-      Column (Column'Last)  := Last_Byte and (not Three_MSB_Mask);
+         pragma Loop_Invariant (
+           (Result (Result'First .. I * 16 + 15)'Initialized));
+      end loop;
+
+      First_Byte := Result (Result'First);
+      Last_Byte  := Result (Result'Last);
+
+      Result (Result'First) := First_Byte xor Shift_Right (Last_Byte, 5);
+      Result (Result'Last)  := Last_Byte and (not Three_MSB_Mask);
+
+      Column := Result;
 
       pragma Assert ((Column (Column'Last) and Three_MSB_Mask) = 0);
    end Calculate_Column;
@@ -150,7 +160,7 @@ is
 
    procedure Compress (Chain_Value  : in out Digest;
                        Block        : in     Data_Block;
-                       Key          : in     ChaCha20_Key)
+                       Key          : in     AES256_Key)
    is
       Sum    : Matrix_Column;
       Column : Matrix_Column;
@@ -178,7 +188,7 @@ is
 
    procedure Hash_Local (Output :    out Digest;
                          Input  : in     Byte_Seq;
-                         Key    : in     ChaCha20_Key)
+                         Key    : in     AES256_Key)
    is
       IV             : constant Digest := (others => 0);
       Padding_Marker : constant Byte := 2#1000_0000#;
@@ -248,14 +258,14 @@ is
 
    procedure Hash (Output :    out Digest;
                    Input  : in     Byte_Seq;
-                   Key    : in     ChaCha20_Key)
+                   Key    : in     AES256_Key)
    is
    begin
       Hash_Local (Output, Input, Key);
    end Hash;
 
    function Hash (Input : in Byte_Seq;
-                  Key   : in ChaCha20_Key) return Digest
+                  Key   : in AES256_Key) return Digest
    is
       Output : Digest;
    begin
