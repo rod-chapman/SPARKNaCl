@@ -5,6 +5,7 @@ AES256 ECB KAT - iteration 3: OK Encryption | OK Decryption
 AES256 ECB KAT - iteration 4: OK Encryption | OK Decryption
 AES256 ECB KAT - iteration 5: OK Encryption | OK Decryption
 AES256 ECB KAT - iteration 6: OK Encryption | OK Decryption
+AES256 ECB KAT - iteration 7: OK Encryption | OK Decryption
 AES256 ECB Composition
 Testing 1000 AES256 ECB compositions: Done
 Hash
