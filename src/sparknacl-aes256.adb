@@ -269,15 +269,14 @@ is
          P, Q, Return_Value : U32;
       begin
          P := U and V;
-         P := Shift_Right (P, Half_Nyp_Shift) xor P;
-         P := P and Lower_Nyp_Half_Mask;
+         P := Shift_Right (P and Upper_Nyp_Half_Mask, Half_Nyp_Shift) xor P;
 
-         Q := Shift_Right (U and Upper_Nyp_Half_Mask, 1) or
-           Shift_Left (U and Lower_Nyp_Half_Mask, 1);
-         Q := (V and (U xor Q)) xor Shift_Left (Q and V, Half_Nyp_Shift);
-         Q := Q and Upper_Nyp_Half_Mask;
+         Q := Shift_Right (U and Upper_Nyp_Half_Mask, Half_Nyp_Shift) or
+           Shift_Left (U and Lower_Nyp_Half_Mask, Half_Nyp_Shift);
+         Q := Q and V;
+         Q := (Shift_Left (Q, Half_Nyp_Shift) xor Q) and Upper_Nyp_Half_Mask;
 
-         Return_Value := P or Q;
+         Return_Value := P xor Q;
 
          return Return_Value;
       end GF2p2_Multiply;
