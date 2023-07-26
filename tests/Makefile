@@ -18,20 +18,20 @@ ftestall: *.adb ../src/*.adb ../src/*.ads
 	gprclean -r -Ptestall
 	rm -f fntr
 	rm -f ftestall
-	gprbuild -Ptestall -XSPARKNACL_RUNTIME_CHECKS=disabled -XSPARKNACL_CONTRACTS=disabled -XSPARKNACL_BUILD_MODE=O3
+	gprbuild -j4 -Ptestall -XSPARKNACL_RUNTIME_CHECKS=disabled -XSPARKNACL_CONTRACTS=disabled -XSPARKNACL_BUILD_MODE=O3
 	mv testall ftestall
 
 stestall: *.adb ../src/*.adb ../src/*.ads
 	gprclean -r -Ptestall
 	rm -f sntr
 	rm -f stestall
-	gprbuild -Ptestall -XSPARKNACL_RUNTIME_CHECKS=enabled -XSPARKNACL_CONTRACTS=enabled -XSPARKNACL_BUILD_MODE=debug
+	gprbuild -j4 -Ptestall -XSPARKNACL_RUNTIME_CHECKS=enabled -XSPARKNACL_CONTRACTS=enabled -XSPARKNACL_BUILD_MODE=debug
 	mv testall stestall
 
 scalarspeed: scalarspeed.adb ../src/*.adb ../src/*.ads
 	gprclean -r -Pscalarspeed
 	rm -f scalarspeed
-	gprbuild -Pscalarspeed -XSPARKNACL_RUNTIME_CHECKS=disabled -XSPARKNACL_CONTRACTS=disabled -XSPARKNACL_BUILD_MODE=O3
+	gprbuild -j4 -Pscalarspeed -XSPARKNACL_RUNTIME_CHECKS=disabled -XSPARKNACL_CONTRACTS=disabled -XSPARKNACL_BUILD_MODE=O3
 
 clean:
 	gprclean -r -Ptestall
