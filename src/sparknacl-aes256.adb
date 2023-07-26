@@ -11,74 +11,6 @@ is
 
    pragma Assert (AES256_Key_Array'Length = Words_Per_Key);
 
-   SBox : constant Bytes_256 := (
-     16#63#, 16#7c#, 16#77#, 16#7b#, 16#f2#, 16#6b#, 16#6f#, 16#c5#,
-     16#30#, 16#01#, 16#67#, 16#2b#, 16#fe#, 16#d7#, 16#ab#, 16#76#, -- 0x0Y
-     16#ca#, 16#82#, 16#c9#, 16#7d#, 16#fa#, 16#59#, 16#47#, 16#f0#,
-     16#ad#, 16#d4#, 16#a2#, 16#af#, 16#9c#, 16#a4#, 16#72#, 16#c0#, -- 0x1Y
-     16#b7#, 16#fd#, 16#93#, 16#26#, 16#36#, 16#3f#, 16#f7#, 16#cc#,
-     16#34#, 16#a5#, 16#e5#, 16#f1#, 16#71#, 16#d8#, 16#31#, 16#15#, -- 0x2Y
-     16#04#, 16#c7#, 16#23#, 16#c3#, 16#18#, 16#96#, 16#05#, 16#9a#,
-     16#07#, 16#12#, 16#80#, 16#e2#, 16#eb#, 16#27#, 16#b2#, 16#75#, -- 0x3Y
-     16#09#, 16#83#, 16#2c#, 16#1a#, 16#1b#, 16#6e#, 16#5a#, 16#a0#,
-     16#52#, 16#3b#, 16#d6#, 16#b3#, 16#29#, 16#e3#, 16#2f#, 16#84#, -- 0x4Y
-     16#53#, 16#d1#, 16#00#, 16#ed#, 16#20#, 16#fc#, 16#b1#, 16#5b#,
-     16#6a#, 16#cb#, 16#be#, 16#39#, 16#4a#, 16#4c#, 16#58#, 16#cf#, -- 0x5Y
-     16#d0#, 16#ef#, 16#aa#, 16#fb#, 16#43#, 16#4d#, 16#33#, 16#85#,
-     16#45#, 16#f9#, 16#02#, 16#7f#, 16#50#, 16#3c#, 16#9f#, 16#a8#, -- 0x6Y
-     16#51#, 16#a3#, 16#40#, 16#8f#, 16#92#, 16#9d#, 16#38#, 16#f5#,
-     16#bc#, 16#b6#, 16#da#, 16#21#, 16#10#, 16#ff#, 16#f3#, 16#d2#, -- 0x7Y
-     16#cd#, 16#0c#, 16#13#, 16#ec#, 16#5f#, 16#97#, 16#44#, 16#17#,
-     16#c4#, 16#a7#, 16#7e#, 16#3d#, 16#64#, 16#5d#, 16#19#, 16#73#, -- 0x8Y
-     16#60#, 16#81#, 16#4f#, 16#dc#, 16#22#, 16#2a#, 16#90#, 16#88#,
-     16#46#, 16#ee#, 16#b8#, 16#14#, 16#de#, 16#5e#, 16#0b#, 16#db#, -- 0x9Y
-     16#e0#, 16#32#, 16#3a#, 16#0a#, 16#49#, 16#06#, 16#24#, 16#5c#,
-     16#c2#, 16#d3#, 16#ac#, 16#62#, 16#91#, 16#95#, 16#e4#, 16#79#, -- 0xaY
-     16#e7#, 16#c8#, 16#37#, 16#6d#, 16#8d#, 16#d5#, 16#4e#, 16#a9#,
-     16#6c#, 16#56#, 16#f4#, 16#ea#, 16#65#, 16#7a#, 16#ae#, 16#08#, -- 0xbY
-     16#ba#, 16#78#, 16#25#, 16#2e#, 16#1c#, 16#a6#, 16#b4#, 16#c6#,
-     16#e8#, 16#dd#, 16#74#, 16#1f#, 16#4b#, 16#bd#, 16#8b#, 16#8a#, -- 0xcY
-     16#70#, 16#3e#, 16#b5#, 16#66#, 16#48#, 16#03#, 16#f6#, 16#0e#,
-     16#61#, 16#35#, 16#57#, 16#b9#, 16#86#, 16#c1#, 16#1d#, 16#9e#, -- 0xdY
-     16#e1#, 16#f8#, 16#98#, 16#11#, 16#69#, 16#d9#, 16#8e#, 16#94#,
-     16#9b#, 16#1e#, 16#87#, 16#e9#, 16#ce#, 16#55#, 16#28#, 16#df#, -- 0xeY
-     16#8c#, 16#a1#, 16#89#, 16#0d#, 16#bf#, 16#e6#, 16#42#, 16#68#,
-     16#41#, 16#99#, 16#2d#, 16#0f#, 16#b0#, 16#54#, 16#bb#, 16#16#); -- 0xfY
-
-   Inv_SBox : constant Bytes_256 := (
-     16#52#, 16#09#, 16#6a#, 16#d5#, 16#30#, 16#36#, 16#a5#, 16#38#,
-     16#bf#, 16#40#, 16#a3#, 16#9e#, 16#81#, 16#f3#, 16#d7#, 16#fb#, -- 0x0Y
-     16#7c#, 16#e3#, 16#39#, 16#82#, 16#9b#, 16#2f#, 16#ff#, 16#87#,
-     16#34#, 16#8e#, 16#43#, 16#44#, 16#c4#, 16#de#, 16#e9#, 16#cb#, -- 0x1Y
-     16#54#, 16#7b#, 16#94#, 16#32#, 16#a6#, 16#c2#, 16#23#, 16#3d#,
-     16#ee#, 16#4c#, 16#95#, 16#0b#, 16#42#, 16#fa#, 16#c3#, 16#4e#, -- 0x2Y
-     16#08#, 16#2e#, 16#a1#, 16#66#, 16#28#, 16#d9#, 16#24#, 16#b2#,
-     16#76#, 16#5b#, 16#a2#, 16#49#, 16#6d#, 16#8b#, 16#d1#, 16#25#, -- 0x3Y
-     16#72#, 16#f8#, 16#f6#, 16#64#, 16#86#, 16#68#, 16#98#, 16#16#,
-     16#d4#, 16#a4#, 16#5c#, 16#cc#, 16#5d#, 16#65#, 16#b6#, 16#92#, -- 0x4Y
-     16#6c#, 16#70#, 16#48#, 16#50#, 16#fd#, 16#ed#, 16#b9#, 16#da#,
-     16#5e#, 16#15#, 16#46#, 16#57#, 16#a7#, 16#8d#, 16#9d#, 16#84#, -- 0x5Y
-     16#90#, 16#d8#, 16#ab#, 16#00#, 16#8c#, 16#bc#, 16#d3#, 16#0a#,
-     16#f7#, 16#e4#, 16#58#, 16#05#, 16#b8#, 16#b3#, 16#45#, 16#06#, -- 0x6Y
-     16#d0#, 16#2c#, 16#1e#, 16#8f#, 16#ca#, 16#3f#, 16#0f#, 16#02#,
-     16#c1#, 16#af#, 16#bd#, 16#03#, 16#01#, 16#13#, 16#8a#, 16#6b#, -- 0x7Y
-     16#3a#, 16#91#, 16#11#, 16#41#, 16#4f#, 16#67#, 16#dc#, 16#ea#,
-     16#97#, 16#f2#, 16#cf#, 16#ce#, 16#f0#, 16#b4#, 16#e6#, 16#73#, -- 0x8Y
-     16#96#, 16#ac#, 16#74#, 16#22#, 16#e7#, 16#ad#, 16#35#, 16#85#,
-     16#e2#, 16#f9#, 16#37#, 16#e8#, 16#1c#, 16#75#, 16#df#, 16#6e#, -- 0x9Y
-     16#47#, 16#f1#, 16#1a#, 16#71#, 16#1d#, 16#29#, 16#c5#, 16#89#,
-     16#6f#, 16#b7#, 16#62#, 16#0e#, 16#aa#, 16#18#, 16#be#, 16#1b#, -- 0xaY
-     16#fc#, 16#56#, 16#3e#, 16#4b#, 16#c6#, 16#d2#, 16#79#, 16#20#,
-     16#9a#, 16#db#, 16#c0#, 16#fe#, 16#78#, 16#cd#, 16#5a#, 16#f4#, -- 0xbY
-     16#1f#, 16#dd#, 16#a8#, 16#33#, 16#88#, 16#07#, 16#c7#, 16#31#,
-     16#b1#, 16#12#, 16#10#, 16#59#, 16#27#, 16#80#, 16#ec#, 16#5f#, -- 0xcY
-     16#60#, 16#51#, 16#7f#, 16#a9#, 16#19#, 16#b5#, 16#4a#, 16#0d#,
-     16#2d#, 16#e5#, 16#7a#, 16#9f#, 16#93#, 16#c9#, 16#9c#, 16#ef#, -- 0xdY
-     16#a0#, 16#e0#, 16#3b#, 16#4d#, 16#ae#, 16#2a#, 16#f5#, 16#b0#,
-     16#c8#, 16#eb#, 16#bb#, 16#3c#, 16#83#, 16#53#, 16#99#, 16#61#, -- 0xeY
-     16#17#, 16#2b#, 16#04#, 16#7e#, 16#ba#, 16#77#, 16#d6#, 16#26#,
-     16#e1#, 16#69#, 16#14#, 16#63#, 16#55#, 16#21#, 16#0c#, 16#7d#); -- 0xfY
-
    --------------------------------------------------------
    --  Local type definitions
    --------------------------------------------------------
@@ -116,6 +48,18 @@ is
    procedure Add_Round_Key (State : in out State_Array;
                             Key   : in     Round_Key)
      with Global => null;
+
+   function GF2p2p2p2_Inverse (X : in U32) return U32
+     with Pure_Function,
+          Global => null;
+
+   function Sbox (Input : in U32) return U32
+     with Pure_Function,
+          Global => null;
+
+   function Inv_Sbox (Input : in U32) return U32
+     with Pure_Function,
+          Global => null;
 
    procedure Sub_Bytes (State : in out State_Array)
      with Global => null;
@@ -203,26 +147,8 @@ is
       B : Round_Key :=
         Key.F (Key.F'Last - (Round_Key'Length - 1) .. Key.F'Last);
 
-      function Sub_Word (Word : in U32) return U32
-        with Global => null;
-
       procedure Round_Key_CumSum (X : in out Round_Key)
         with Global => null;
-
-      function Sub_Word (Word : in U32) return U32
-      is
-         Result : U32;
-         Bytes  : Bytes_4;
-      begin
-         Big_Endian_Unpack (Bytes, Word);
-
-         for I in Bytes'Range loop
-            Bytes (I) := SBox (Index_256 (Bytes (I)));
-         end loop;
-
-         Result := Big_Endian_Pack (Bytes);
-         return Result;
-      end Sub_Word;
 
       procedure Round_Key_CumSum (X : in out Round_Key)
       is
@@ -245,7 +171,7 @@ is
            (Round_Keys (Round_Key_Index'First .. Key_Index)'Initialized));
 
          A (A'First) := A (A'First) xor
-           Sub_Word (Rotate_Left (B (B'Last), Byte'Size)) xor Rcon;
+           Sbox (Rotate_Left (B (B'Last), Byte'Size)) xor Rcon;
          Round_Key_CumSum (A);
 
          Rcon := Shift_Left (Rcon, 1);
@@ -254,7 +180,7 @@ is
          Round_Keys (Key_Index) := A;
          exit when Key_Index = Round_Key_Index'Last;
 
-         B (B'First) := B (B'First) xor Sub_Word (A (A'Last));
+         B (B'First) := B (B'First) xor Sbox (A (A'Last));
          Round_Key_CumSum (B);
 
          Key_Index              := Round_Key_Index'Succ (Key_Index);
@@ -303,33 +229,245 @@ is
       end loop;
    end Add_Round_Key;
 
+   function GF2p2p2p2_Inverse (X : in U32) return U32
+   is
+      Half_Byte_Shift   : constant Integer := 4;
+      Half_Nybble_Shift : constant Integer := 2;
+      Half_Nyp_Shift    : constant Integer := 1;
+
+      Lower_Nybble_Mask      : constant U32 := 16#0f_0f_0f_0f#;
+      Lower_Nybble_Half_Mask : constant U32 := 16#33_33_33_33#;
+      Lower_Nyp_Half_Mask    : constant U32 := 16#55_55_55_55#;
+      Upper_Nyp_Half_Mask    : constant U32 := 16#aa_aa_aa_aa#;
+
+      Lambda : constant U32 := 16#c1_c1_c1_c1#;
+      Phi    : constant U32 := 16#99_99_99_99#;
+
+      A, B, Result : U32;
+
+      function GF2p2_Multiply (U : in U32;
+                               V : in U32) return U32
+        with Pure_Function,
+             Global => null;
+
+      function GF2p2_Inverse (U : in U32) return U32
+        with Pure_Function,
+             Global => null;
+
+      function GF2p2p2_Multiply (U : in U32;
+                                 V : in U32) return U32
+        with Pure_Function,
+             Global => null;
+
+      function GF2p2p2_Inverse (U : in U32) return U32
+        with Pure_Function,
+             Global => null;
+
+      function GF2p2_Multiply (U : in U32;
+                               V : in U32) return U32
+      is
+         P, Q, Return_Value : U32;
+      begin
+         P := U and V;
+         P := Shift_Right (P, Half_Nyp_Shift) xor P;
+         P := P and Lower_Nyp_Half_Mask;
+
+         Q := Shift_Right (U and Upper_Nyp_Half_Mask, 1) or
+           Shift_Left (U and Lower_Nyp_Half_Mask, 1);
+         Q := (V and (U xor Q)) xor Shift_Left (Q and V, Half_Nyp_Shift);
+         Q := Q and Upper_Nyp_Half_Mask;
+
+         Return_Value := P or Q;
+
+         return Return_Value;
+      end GF2p2_Multiply;
+
+      function GF2p2_Inverse (U : in U32) return U32
+      is
+         P, Q, Return_Value : U32;
+      begin
+         P := U and Upper_Nyp_Half_Mask;
+
+         Q := Shift_Right (U, Half_Nyp_Shift) xor U;
+         Q := Q and Lower_Nyp_Half_Mask;
+
+         Return_Value := P or Q;
+
+         return Return_Value;
+      end GF2p2_Inverse;
+
+      function GF2p2p2_Multiply (U : in U32;
+                                 V : in U32) return U32
+      is
+         R : constant U32 := U xor Shift_Right (U, Half_Nybble_Shift);
+         S : constant U32 := V xor Shift_Right (V, Half_Nybble_Shift);
+
+         P, Q, Return_Value : U32;
+      begin
+         P := GF2p2_Multiply (U, V);
+
+         Q := GF2p2_Multiply (R, S);
+         P := GF2p2_Multiply (P, Phi);
+
+         Q := P xor Q;
+         P := Shift_Right (P, Half_Nybble_Shift) xor P;
+
+         P := P and Lower_Nybble_Half_Mask;
+         Q := Shift_Left (Q and Lower_Nybble_Half_Mask, Half_Nybble_Shift);
+
+         Return_Value := P or Q;
+
+         return Return_Value;
+      end GF2p2p2_Multiply;
+
+      function GF2p2p2_Inverse (U : in U32) return U32
+      is
+         P, Q, Return_Value : U32;
+      begin
+         P := Shift_Right (U, Half_Nybble_Shift) and Lower_Nybble_Half_Mask;
+         P := P xor U;
+
+         Q := GF2p2_Multiply (P, U);
+         Q := GF2p2_Multiply (Q, Phi);
+
+         Q := Q xor Shift_Right (Q, Half_Nybble_Shift);
+         Q := GF2p2_Inverse (Q);
+
+         Q := Q and Lower_Nybble_Half_Mask;
+         Q := Q or Shift_Left (Q, Half_Nybble_Shift);
+
+         Return_Value := GF2p2_Multiply (P, Q);
+
+         return Return_Value;
+      end GF2p2p2_Inverse;
+   begin
+      A := X xor (Shift_Right (X, Half_Byte_Shift) and Lower_Nybble_Mask);
+
+      B := GF2p2p2_Multiply (A, X);
+      B := GF2p2p2_Multiply (B, Lambda);
+
+      B := B xor (Shift_Right (B, Half_Byte_Shift) and Lower_Nybble_Mask);
+      B := GF2p2p2_Inverse (B);
+
+      B := B and Lower_Nybble_Mask;
+      B := B or Shift_Left (B, Half_Byte_Shift);
+
+      Result := GF2p2p2_Multiply (A, B);
+
+      return Result;
+   end GF2p2p2p2_Inverse;
+
+   function Sbox (Input : in U32) return U32
+   is
+      function Forward_Map (X : in U32) return U32;
+
+      function Backward_Map (X : in U32) return U32;
+
+      function Forward_Map (X : in U32) return U32
+      is
+         --  Least siginificant bit in byte mask
+         Mask : constant U32 := 16#01_01_01_01#;
+
+         Result : U32 := X and Mask;
+      begin
+         Result := Result xor ((Shift_Right (X, 1) and Mask) * 16#5f#);
+         Result := Result xor ((Shift_Right (X, 2) and Mask) * 16#7c#);
+         Result := Result xor ((Shift_Right (X, 3) and Mask) * 16#74#);
+         Result := Result xor ((Shift_Right (X, 4) and Mask) * 16#46#);
+         Result := Result xor ((Shift_Right (X, 5) and Mask) * 16#b0#);
+         Result := Result xor ((Shift_Right (X, 6) and Mask) * 16#4b#);
+         Result := Result xor ((Shift_Right (X, 7) and Mask) * 16#fc#);
+
+         return Result;
+      end Forward_Map;
+
+      function Backward_Map (X : in U32) return U32
+      is
+         --  Least siginificant bit in byte mask
+         Mask : constant U32 := 16#01_01_01_01#;
+
+         Result : U32 := Mask * 16#63#;
+      begin
+         Result := Result xor ((Shift_Right (X, 0) and Mask) * 16#1f#);
+         Result := Result xor ((Shift_Right (X, 1) and Mask) * 16#19#);
+         Result := Result xor ((Shift_Right (X, 2) and Mask) * 16#ad#);
+         Result := Result xor ((Shift_Right (X, 3) and Mask) * 16#84#);
+         Result := Result xor ((Shift_Right (X, 4) and Mask) * 16#54#);
+         Result := Result xor ((Shift_Right (X, 5) and Mask) * 16#44#);
+         Result := Result xor ((Shift_Right (X, 6) and Mask) * 16#45#);
+         Result := Result xor ((Shift_Right (X, 7) and Mask) * 16#f3#);
+
+         return Result;
+      end Backward_Map;
+
+      Result : constant U32 :=
+        Backward_Map (GF2p2p2p2_Inverse (Forward_Map (Input)));
+   begin
+      return Result;
+   end Sbox;
+
+   function Inv_Sbox (Input : in U32) return U32
+   is
+      function Forward_Map (X : in U32) return U32;
+
+      function Backward_Map (X : in U32) return U32;
+
+      function Forward_Map (X : in U32) return U32
+      is
+         --  Least siginificant bit in byte mask
+         Mask : constant U32 := 16#01_01_01_01#;
+
+         Result : U32 := Mask * 16#7d#;
+      begin
+         Result := Result xor ((Shift_Right (X, 0) and Mask) * 16#60#);
+         Result := Result xor ((Shift_Right (X, 1) and Mask) * 16#c6#);
+         Result := Result xor ((Shift_Right (X, 2) and Mask) * 16#c5#);
+         Result := Result xor ((Shift_Right (X, 3) and Mask) * 16#52#);
+         Result := Result xor ((Shift_Right (X, 4) and Mask) * 16#30#);
+         Result := Result xor ((Shift_Right (X, 5) and Mask) * 16#3e#);
+         Result := Result xor ((Shift_Right (X, 6) and Mask) * 16#e5#);
+         Result := Result xor ((Shift_Right (X, 7) and Mask) * 16#cd#);
+
+         return Result;
+      end Forward_Map;
+
+      function Backward_Map (X : in U32) return U32
+      is
+         --  Least siginificant bit in byte mask
+         Mask : constant U32 := 16#01_01_01_01#;
+
+         Result : U32 := X and Mask;
+      begin
+         Result := Result xor ((Shift_Right (X, 1) and Mask) * 16#bc#);
+         Result := Result xor ((Shift_Right (X, 2) and Mask) * 16#5d#);
+         Result := Result xor ((Shift_Right (X, 3) and Mask) * 16#0c#);
+         Result := Result xor ((Shift_Right (X, 4) and Mask) * 16#1f#);
+         Result := Result xor ((Shift_Right (X, 5) and Mask) * 16#bb#);
+         Result := Result xor ((Shift_Right (X, 6) and Mask) * 16#f1#);
+         Result := Result xor ((Shift_Right (X, 7) and Mask) * 16#84#);
+
+         return Result;
+      end Backward_Map;
+
+      Result : constant U32 :=
+        Backward_Map (GF2p2p2p2_Inverse (Forward_Map (Input)));
+   begin
+      return Result;
+   end Inv_Sbox;
+
    procedure Sub_Bytes (State : in out State_Array)
    is
-      Column : Bytes_4;
    begin
       for I in State'Range loop
-         Big_Endian_Unpack (Column, State (I));
-
-         for J in Column'Range loop
-            Column (J) := SBox (Index_256 (Column (J)));
-         end loop;
-
-         State (I) := Big_Endian_Pack (Column);
+         State (I) := Sbox (State (I));
       end loop;
    end Sub_Bytes;
 
    procedure Inv_Sub_Bytes (State : in out State_Array)
    is
-      Column : Bytes_4;
    begin
       for I in State'Range loop
-         Big_Endian_Unpack (Column, State (I));
-
-         for J in Column'Range loop
-            Column (J) := Inv_SBox (Index_256 (Column (J)));
-         end loop;
-
-         State (I) := Big_Endian_Pack (Column);
+         State (I) := Inv_Sbox (State (I));
       end loop;
    end Inv_Sub_Bytes;
 
