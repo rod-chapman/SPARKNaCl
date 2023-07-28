@@ -53,6 +53,13 @@ is
      with Pure_Function,
           Global => null;
 
+   --  Do the following for every Byte in X. Set all bits to the value
+   --  of the bit at position "Index".
+   function Broadcast_Bit_To_Byte (X     : in U32;
+                                   Index : in Index_8) return U32
+     with Pure_Function,
+          Global => null;
+
    function Sbox (Input : in U32) return U32
      with Pure_Function,
           Global => null;
@@ -356,6 +363,22 @@ is
       return Result;
    end GF2p2p2p2_Inverse;
 
+   function Broadcast_Bit_To_Byte (X     : in U32;
+                                   Index : in Index_8) return U32
+   is
+      --  Least Significant Bit in Byte Mask
+      LSBB_Mask : constant U32 := 16#01_01_01_01#;
+
+      P, Q, Return_Value : U32;
+   begin
+      P := Shift_Right (X, Integer (Index)) and LSBB_Mask;
+      Q := Shift_Left (P, Byte'Size - 1);
+
+      Return_Value := Q or (Q - P);
+
+      return Return_Value;
+   end Broadcast_Bit_To_Byte;
+
    function Sbox (Input : in U32) return U32
    is
       function Forward_Map (X : in U32) return U32;
@@ -364,39 +387,45 @@ is
 
       function Forward_Map (X : in U32) return U32
       is
-         --  Least siginificant bit in byte mask
-         Mask : constant U32 := 16#01_01_01_01#;
+         Factor : constant U32 := 16#01_01_01_01#;
 
-         Result : U32 := X and Mask;
+         Column : constant U32_Seq (Index_8) := (
+           Factor * 16#01#, Factor * 16#5f#, Factor * 16#7c#, Factor * 16#74#,
+           Factor * 16#46#, Factor * 16#b0#, Factor * 16#4b#, Factor * 16#fc#);
+
+         R : U32 := X and Column (Column'First);
       begin
-         Result := Result xor ((Shift_Right (X, 1) and Mask) * 16#5f#);
-         Result := Result xor ((Shift_Right (X, 2) and Mask) * 16#7c#);
-         Result := Result xor ((Shift_Right (X, 3) and Mask) * 16#74#);
-         Result := Result xor ((Shift_Right (X, 4) and Mask) * 16#46#);
-         Result := Result xor ((Shift_Right (X, 5) and Mask) * 16#b0#);
-         Result := Result xor ((Shift_Right (X, 6) and Mask) * 16#4b#);
-         Result := Result xor ((Shift_Right (X, 7) and Mask) * 16#fc#);
+         R := R xor (Broadcast_Bit_To_Byte (X, 1) and Column (1));
+         R := R xor (Broadcast_Bit_To_Byte (X, 2) and Column (2));
+         R := R xor (Broadcast_Bit_To_Byte (X, 3) and Column (3));
+         R := R xor (Broadcast_Bit_To_Byte (X, 4) and Column (4));
+         R := R xor (Broadcast_Bit_To_Byte (X, 5) and Column (5));
+         R := R xor (Broadcast_Bit_To_Byte (X, 6) and Column (6));
+         R := R xor (Broadcast_Bit_To_Byte (X, 7) and Column (7));
 
-         return Result;
+         return R;
       end Forward_Map;
 
       function Backward_Map (X : in U32) return U32
       is
-         --  Least siginificant bit in byte mask
-         Mask : constant U32 := 16#01_01_01_01#;
+         Factor : constant U32 := 16#01_01_01_01#;
 
-         Result : U32 := Mask * 16#63#;
+         Column : constant U32_Seq (Index_8) := (
+           Factor * 16#1f#, Factor * 16#19#, Factor * 16#ad#, Factor * 16#84#,
+           Factor * 16#54#, Factor * 16#44#, Factor * 16#45#, Factor * 16#f3#);
+
+         R : U32 := Factor * 16#63#;
       begin
-         Result := Result xor ((Shift_Right (X, 0) and Mask) * 16#1f#);
-         Result := Result xor ((Shift_Right (X, 1) and Mask) * 16#19#);
-         Result := Result xor ((Shift_Right (X, 2) and Mask) * 16#ad#);
-         Result := Result xor ((Shift_Right (X, 3) and Mask) * 16#84#);
-         Result := Result xor ((Shift_Right (X, 4) and Mask) * 16#54#);
-         Result := Result xor ((Shift_Right (X, 5) and Mask) * 16#44#);
-         Result := Result xor ((Shift_Right (X, 6) and Mask) * 16#45#);
-         Result := Result xor ((Shift_Right (X, 7) and Mask) * 16#f3#);
+         R := R xor (Broadcast_Bit_To_Byte (X, 0) and Column (0));
+         R := R xor (Broadcast_Bit_To_Byte (X, 1) and Column (1));
+         R := R xor (Broadcast_Bit_To_Byte (X, 2) and Column (2));
+         R := R xor (Broadcast_Bit_To_Byte (X, 3) and Column (3));
+         R := R xor (Broadcast_Bit_To_Byte (X, 4) and Column (4));
+         R := R xor (Broadcast_Bit_To_Byte (X, 5) and Column (5));
+         R := R xor (Broadcast_Bit_To_Byte (X, 6) and Column (6));
+         R := R xor (Broadcast_Bit_To_Byte (X, 7) and Column (7));
 
-         return Result;
+         return R;
       end Backward_Map;
 
       Result : constant U32 :=
@@ -413,39 +442,45 @@ is
 
       function Forward_Map (X : in U32) return U32
       is
-         --  Least siginificant bit in byte mask
-         Mask : constant U32 := 16#01_01_01_01#;
+         Factor : constant U32 := 16#01_01_01_01#;
 
-         Result : U32 := Mask * 16#7d#;
+         Column : constant U32_Seq (Index_8) := (
+           Factor * 16#60#, Factor * 16#c6#, Factor * 16#c5#, Factor * 16#52#,
+           Factor * 16#30#, Factor * 16#3e#, Factor * 16#e5#, Factor * 16#cd#);
+
+         R : U32 := Factor * 16#7d#;
       begin
-         Result := Result xor ((Shift_Right (X, 0) and Mask) * 16#60#);
-         Result := Result xor ((Shift_Right (X, 1) and Mask) * 16#c6#);
-         Result := Result xor ((Shift_Right (X, 2) and Mask) * 16#c5#);
-         Result := Result xor ((Shift_Right (X, 3) and Mask) * 16#52#);
-         Result := Result xor ((Shift_Right (X, 4) and Mask) * 16#30#);
-         Result := Result xor ((Shift_Right (X, 5) and Mask) * 16#3e#);
-         Result := Result xor ((Shift_Right (X, 6) and Mask) * 16#e5#);
-         Result := Result xor ((Shift_Right (X, 7) and Mask) * 16#cd#);
+         R := R xor (Broadcast_Bit_To_Byte (X, 0) and Column (0));
+         R := R xor (Broadcast_Bit_To_Byte (X, 1) and Column (1));
+         R := R xor (Broadcast_Bit_To_Byte (X, 2) and Column (2));
+         R := R xor (Broadcast_Bit_To_Byte (X, 3) and Column (3));
+         R := R xor (Broadcast_Bit_To_Byte (X, 4) and Column (4));
+         R := R xor (Broadcast_Bit_To_Byte (X, 5) and Column (5));
+         R := R xor (Broadcast_Bit_To_Byte (X, 6) and Column (6));
+         R := R xor (Broadcast_Bit_To_Byte (X, 7) and Column (7));
 
-         return Result;
+         return R;
       end Forward_Map;
 
       function Backward_Map (X : in U32) return U32
       is
-         --  Least siginificant bit in byte mask
-         Mask : constant U32 := 16#01_01_01_01#;
+         Factor : constant U32 := 16#01_01_01_01#;
 
-         Result : U32 := X and Mask;
+         Column : constant U32_Seq (Index_8) := (
+           Factor * 16#01#, Factor * 16#bc#, Factor * 16#5d#, Factor * 16#0c#,
+           Factor * 16#1f#, Factor * 16#bb#, Factor * 16#f1#, Factor * 16#84#);
+
+         R : U32 := X and Column (Column'First);
       begin
-         Result := Result xor ((Shift_Right (X, 1) and Mask) * 16#bc#);
-         Result := Result xor ((Shift_Right (X, 2) and Mask) * 16#5d#);
-         Result := Result xor ((Shift_Right (X, 3) and Mask) * 16#0c#);
-         Result := Result xor ((Shift_Right (X, 4) and Mask) * 16#1f#);
-         Result := Result xor ((Shift_Right (X, 5) and Mask) * 16#bb#);
-         Result := Result xor ((Shift_Right (X, 6) and Mask) * 16#f1#);
-         Result := Result xor ((Shift_Right (X, 7) and Mask) * 16#84#);
+         R := R xor (Broadcast_Bit_To_Byte (X, 1) and Column (1));
+         R := R xor (Broadcast_Bit_To_Byte (X, 2) and Column (2));
+         R := R xor (Broadcast_Bit_To_Byte (X, 3) and Column (3));
+         R := R xor (Broadcast_Bit_To_Byte (X, 4) and Column (4));
+         R := R xor (Broadcast_Bit_To_Byte (X, 5) and Column (5));
+         R := R xor (Broadcast_Bit_To_Byte (X, 6) and Column (6));
+         R := R xor (Broadcast_Bit_To_Byte (X, 7) and Column (7));
 
-         return Result;
+         return R;
       end Backward_Map;
 
       Result : constant U32 :=
