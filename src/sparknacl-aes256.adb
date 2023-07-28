@@ -80,9 +80,13 @@ is
    procedure Inv_Shift_Rows (State : in out State_Array)
      with Global => null;
 
-   function Multiply (X : in Byte;
-                      Y : in Byte) return Byte
-     with Global => null;
+   function X_Times (Input : in U32) return U32
+     with Pure_Function,
+          Global => null;
+
+   function Mix_Columns_Matrix_Multiplication (Input : in U32) return U32
+     with Pure_Function,
+          Global => null;
 
    procedure Mix_Columns (State : in out State_Array)
      with Global => null;
@@ -579,123 +583,77 @@ is
       State (State'First + 3) := Big_Endian_Pack (Column_3);
    end Inv_Shift_Rows;
 
-   function Multiply (X : in Byte;
-                      Y : in Byte) return Byte
+   function X_Times (Input : U32) return U32
    is
-      LSB_Mask : constant Byte := 2#0000_0001#;
-      Product  : Byte := 0;
-      A        : Byte := X;
-      B        : Byte := Y;
+      --  Most Significant Bit in Byte Mask
+      MSBB_Mask            : constant U32 := 16#80_80_80_80#;
+      Polynomial_Remainder : constant U32 := 16#1b_1b_1b_1b#;
 
-      procedure X_Times (Input : in out Byte);
-
-      procedure X_Times (Input : in out Byte)
-      is
-         Flag    : constant Byte := Shift_Right (Input, Byte'Size - 1);
-         Summand : constant Byte := 2#0001_1011#;
-      begin
-         pragma Assert ((Flag = 0) or (Flag = 1));
-
-         Input := Shift_Left (Input, 1);
-         Input := Input xor (Summand * Flag);
-      end X_Times;
+      P, Q, Result : U32;
    begin
-      for I in 1 .. Byte'Size loop
-         Product := Product xor (A * (B and LSB_Mask));
+      P := Input and MSBB_Mask;
+      Q := P xor Input;
 
-         X_Times (A);
-         B := Shift_Right (B, 1);
-      end loop;
+      P := P - Shift_Right (P, Byte'Size - 1);
+      P := P and Polynomial_Remainder;
 
-      return Product;
-   end Multiply;
+      Result := P xor Shift_Left (Q, 1);
+
+      return Result;
+   end X_Times;
+
+   function Mix_Columns_Matrix_Multiplication (Input : in U32) return U32
+   is
+      Upper_Wyde_Half_Mask : constant U32 := 16#ff_00_ff_00#;
+
+      P, Q, X, Result : U32;
+   begin
+      X := Input xor Rotate_Left (Input, Byte'Size);
+
+      P := Shift_Right (Input and Upper_Wyde_Half_Mask, Byte'Size);
+      P := P or (Shift_Left (Input, Byte'Size) and Upper_Wyde_Half_Mask);
+
+      Q := X and Upper_Wyde_Half_Mask;
+      Q := Rotate_Left (Q, Byte'Size) or Rotate_Left (Q, 2 * Byte'Size);
+
+      Result := X_Times (X) xor P xor Q;
+
+      return Result;
+   end Mix_Columns_Matrix_Multiplication;
 
    procedure Mix_Columns (State : in out State_Array)
    is
-      procedure Matrix_Multiplication (Column : in out State_Column);
-
-      procedure Matrix_Multiplication (Column : in out State_Column)
-      is
-         Old_Column_Bytes : Bytes_4;
-         New_Column_Bytes : Bytes_4 with Relaxed_Initialization;
-
-         Sum : Byte;
-      begin
-         Big_Endian_Unpack (Old_Column_Bytes, Column);
-
-         Sum := Multiply (Old_Column_Bytes (0), 16#02#);
-         Sum := Sum xor Multiply (Old_Column_Bytes (1), 16#03#);
-         Sum := Sum xor Multiply (Old_Column_Bytes (2), 16#01#);
-         Sum := Sum xor Multiply (Old_Column_Bytes (3), 16#01#);
-         New_Column_Bytes (0) := Sum;
-
-         Sum := Multiply (Old_Column_Bytes (0), 16#01#);
-         Sum := Sum xor Multiply (Old_Column_Bytes (1), 16#02#);
-         Sum := Sum xor Multiply (Old_Column_Bytes (2), 16#03#);
-         Sum := Sum xor Multiply (Old_Column_Bytes (3), 16#01#);
-         New_Column_Bytes (1) := Sum;
-
-         Sum := Multiply (Old_Column_Bytes (0), 16#01#);
-         Sum := Sum xor Multiply (Old_Column_Bytes (1), 16#01#);
-         Sum := Sum xor Multiply (Old_Column_Bytes (2), 16#02#);
-         Sum := Sum xor Multiply (Old_Column_Bytes (3), 16#03#);
-         New_Column_Bytes (2) := Sum;
-
-         Sum := Multiply (Old_Column_Bytes (0), 16#03#);
-         Sum := Sum xor Multiply (Old_Column_Bytes (1), 16#01#);
-         Sum := Sum xor Multiply (Old_Column_Bytes (2), 16#01#);
-         Sum := Sum xor Multiply (Old_Column_Bytes (3), 16#02#);
-         New_Column_Bytes (3) := Sum;
-
-         Column := Big_Endian_Pack (New_Column_Bytes);
-      end Matrix_Multiplication;
    begin
       for I in State'Range loop
-         Matrix_Multiplication (State (I));
+         pragma Loop_Optimize (No_Unroll);
+         State (I) := Mix_Columns_Matrix_Multiplication (State (I));
       end loop;
    end Mix_Columns;
 
    procedure Inv_Mix_Columns (State : in out State_Array)
    is
-      procedure Matrix_Multiplication (Column : in out State_Column);
+      function Matrix_Multiplication (Column : in U32) return U32
+        with Pure_Function,
+             Global => null;
 
-      procedure Matrix_Multiplication (Column : in out State_Column)
+      function Matrix_Multiplication (Column : in U32) return U32
       is
-         Old_Column_Bytes : Bytes_4;
-         New_Column_Bytes : Bytes_4 with Relaxed_Initialization;
-         Sum : Byte;
+         P, Q, Result : U32;
       begin
-         Big_Endian_Unpack (Old_Column_Bytes, Column);
+         P := Rotate_Right (Column, 2 * Byte'Size) xor Column;
+         P := X_Times (X_Times (P));
 
-         Sum := Multiply (Old_Column_Bytes (0), 16#0e#);
-         Sum := Sum xor Multiply (Old_Column_Bytes (1), 16#0b#);
-         Sum := Sum xor Multiply (Old_Column_Bytes (2), 16#0d#);
-         Sum := Sum xor Multiply (Old_Column_Bytes (3), 16#09#);
-         New_Column_Bytes (0) := Sum;
+         Q := Rotate_Right (P, Byte'Size) xor P;
+         Q := X_Times (Q);
 
-         Sum := Multiply (Old_Column_Bytes (0), 16#09#);
-         Sum := Sum xor Multiply (Old_Column_Bytes (1), 16#0e#);
-         Sum := Sum xor Multiply (Old_Column_Bytes (2), 16#0b#);
-         Sum := Sum xor Multiply (Old_Column_Bytes (3), 16#0d#);
-         New_Column_Bytes (1) := Sum;
+         Result := Mix_Columns_Matrix_Multiplication (Column) xor P xor Q;
 
-         Sum := Multiply (Old_Column_Bytes (0), 16#0d#);
-         Sum := Sum xor Multiply (Old_Column_Bytes (1), 16#09#);
-         Sum := Sum xor Multiply (Old_Column_Bytes (2), 16#0e#);
-         Sum := Sum xor Multiply (Old_Column_Bytes (3), 16#0b#);
-         New_Column_Bytes (2) := Sum;
-
-         Sum := Multiply (Old_Column_Bytes (0), 16#0b#);
-         Sum := Sum xor Multiply (Old_Column_Bytes (1), 16#0d#);
-         Sum := Sum xor Multiply (Old_Column_Bytes (2), 16#09#);
-         Sum := Sum xor Multiply (Old_Column_Bytes (3), 16#0e#);
-         New_Column_Bytes (3) := Sum;
-
-         Column := Big_Endian_Pack (New_Column_Bytes);
+         return Result;
       end Matrix_Multiplication;
    begin
       for I in State'Range loop
-         Matrix_Multiplication (State (I));
+         pragma Loop_Optimize (No_Unroll);
+         State (I) := Matrix_Multiplication (State (I));
       end loop;
    end Inv_Mix_Columns;
 
