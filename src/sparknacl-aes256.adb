@@ -294,15 +294,11 @@ is
 
       function GF2p2_Inverse (U : in U32) return U32
       is
-         P, Q, Return_Value : U32;
+         P, Return_Value : U32;
       begin
-         P := U and Upper_Nyp_Half_Mask;
+         P := Shift_Right (U and Upper_Nyp_Half_Mask, Half_Nyp_Shift);
 
-         Q := Shift_Right (U, Half_Nyp_Shift) xor U;
-         Q := Q and Lower_Nyp_Half_Mask;
-
-         Return_Value := P or Q;
-
+         Return_Value := P xor U;
          return Return_Value;
       end GF2p2_Inverse;
 
