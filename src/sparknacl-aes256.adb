@@ -497,6 +497,7 @@ is
    is
    begin
       for I in State'Range loop
+         pragma Loop_Optimize (No_Unroll);
          State (I) := Sbox (State (I));
       end loop;
    end Sub_Bytes;
@@ -505,6 +506,7 @@ is
    is
    begin
       for I in State'Range loop
+         pragma Loop_Optimize (No_Unroll);
          State (I) := Inv_Sbox (State (I));
       end loop;
    end Inv_Sub_Bytes;
