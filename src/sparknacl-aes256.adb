@@ -15,9 +15,7 @@ is
    --  Local type definitions
    --------------------------------------------------------
 
-   subtype State_Column       is U32;
-   subtype State_Column_Index is Index_4;
-   type State_Array           is array (State_Column_Index) of State_Column;
+   subtype Cipher_State    is U32_Seq (Index_4);
 
    subtype Round_Key       is U32_Seq (Index_4);
    subtype Round_Key_Index is I32 range 0 .. Number_Of_Rounds;
@@ -39,13 +37,13 @@ is
    function Key_Expansion (Key : in AES256_Key) return Round_Key_Array
      with Global => null;
 
-   function Construct_State (Input : in Bytes_16) return State_Array
+   function Construct_State (Input : in Bytes_16) return Cipher_State
      with Global => null;
 
-   function Serialize_State (State : in State_Array) return Bytes_16
+   function Serialize_State (State : in Cipher_State) return Bytes_16
      with Global => null;
 
-   procedure Add_Round_Key (State : in out State_Array;
+   procedure Add_Round_Key (State : in out Cipher_State;
                             Key   : in     Round_Key)
      with Global => null;
 
@@ -68,16 +66,16 @@ is
      with Pure_Function,
           Global => null;
 
-   procedure Sub_Bytes (State : in out State_Array)
+   procedure Sub_Bytes (State : in out Cipher_State)
      with Global => null;
 
-   procedure Inv_Sub_Bytes (State : in out State_Array)
+   procedure Inv_Sub_Bytes (State : in out Cipher_State)
      with Global => null;
 
-   procedure Shift_Rows (State : in out State_Array)
+   procedure Shift_Rows (State : in out Cipher_State)
      with Global => null;
 
-   procedure Inv_Shift_Rows (State : in out State_Array)
+   procedure Inv_Shift_Rows (State : in out Cipher_State)
      with Global => null;
 
    function X_Times (Input : in U32) return U32
@@ -88,10 +86,10 @@ is
      with Pure_Function,
           Global => null;
 
-   procedure Mix_Columns (State : in out State_Array)
+   procedure Mix_Columns (State : in out Cipher_State)
      with Global => null;
 
-   procedure Inv_Mix_Columns (State : in out State_Array)
+   procedure Inv_Mix_Columns (State : in out Cipher_State)
      with Global => null;
 
    procedure Cipher (Output :    out Bytes_16;
@@ -203,25 +201,25 @@ is
       return Round_Keys;
    end Key_Expansion;
 
-   function Construct_State (Input : in Bytes_16) return State_Array
+   function Construct_State (Input : in Bytes_16) return Cipher_State
    is
-      State : State_Array;
+      State : Cipher_State;
    begin
-      for I in State_Array'Range loop
+      for I in Cipher_State'Range loop
          State (I) := Big_Endian_Pack (Input (4 * I .. 4 * I + 3));
       end loop;
 
       return State;
    end Construct_State;
 
-   function Serialize_State (State : in State_Array) return Bytes_16
+   function Serialize_State (State : in Cipher_State) return Bytes_16
    is
       Result : Bytes_16 with Relaxed_Initialization;
    begin
       pragma Assert (Result'First = State'First);
       pragma Assert (Result'First = 0);
 
-      for I in State_Array'Range loop
+      for I in Cipher_State'Range loop
          Big_Endian_Unpack (Result (4 * I .. 4 * I + 3), State (I));
 
          pragma Loop_Invariant (
@@ -231,7 +229,7 @@ is
       return Result;
    end Serialize_State;
 
-   procedure Add_Round_Key (State : in out State_Array;
+   procedure Add_Round_Key (State : in out Cipher_State;
                             Key   : in     Round_Key)
    is
    begin
@@ -489,7 +487,7 @@ is
       return Result;
    end Inv_Sbox;
 
-   procedure Sub_Bytes (State : in out State_Array)
+   procedure Sub_Bytes (State : in out Cipher_State)
    is
    begin
       for I in State'Range loop
@@ -498,7 +496,7 @@ is
       end loop;
    end Sub_Bytes;
 
-   procedure Inv_Sub_Bytes (State : in out State_Array)
+   procedure Inv_Sub_Bytes (State : in out Cipher_State)
    is
    begin
       for I in State'Range loop
@@ -507,7 +505,7 @@ is
       end loop;
    end Inv_Sub_Bytes;
 
-   procedure Shift_Rows (State : in out State_Array)
+   procedure Shift_Rows (State : in out Cipher_State)
    is
       Column_Old : Bytes_4;
 
@@ -544,7 +542,7 @@ is
       State (State'First + 3) := Big_Endian_Pack (Column_3);
    end Shift_Rows;
 
-   procedure Inv_Shift_Rows (State : in out State_Array)
+   procedure Inv_Shift_Rows (State : in out Cipher_State)
    is
       Column_Old : Bytes_4;
 
@@ -619,7 +617,7 @@ is
       return Result;
    end Mix_Columns_Matrix_Multiplication;
 
-   procedure Mix_Columns (State : in out State_Array)
+   procedure Mix_Columns (State : in out Cipher_State)
    is
    begin
       for I in State'Range loop
@@ -628,7 +626,7 @@ is
       end loop;
    end Mix_Columns;
 
-   procedure Inv_Mix_Columns (State : in out State_Array)
+   procedure Inv_Mix_Columns (State : in out Cipher_State)
    is
       function Matrix_Multiplication (Column : in U32) return U32
         with Pure_Function,
@@ -662,7 +660,7 @@ is
       Round_Keys : constant Round_Key_Array := Key_Expansion (Key);
       Key_Index  : Round_Key_Index := Round_Key_Index'First;
 
-      State : State_Array := Construct_State (Input);
+      State : Cipher_State := Construct_State (Input);
    begin
       Add_Round_Key (State, Round_Keys (Key_Index));
       Key_Index := Round_Key_Index'Succ (Key_Index);
@@ -694,7 +692,7 @@ is
       Round_Keys : constant Round_Key_Array := Key_Expansion (Key);
       Key_Index  : Round_Key_Index := Round_Key_Index'Last;
 
-      State : State_Array := Construct_State (Input);
+      State : Cipher_State := Construct_State (Input);
    begin
       Add_Round_Key (State, Round_Keys (Key_Index));
       Key_Index := Round_Key_Index'Pred (Key_Index);
