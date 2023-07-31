@@ -25,8 +25,9 @@ procedure AES256 is
 
    Result : Bytes_16;
 
-   Key_Raw : constant Bytes_32 := (others => 0);
-   Key     : constant AES256_Key := Construct (Key_Raw);
+   Key_Raw    : constant Bytes_32 := (others => 0);
+   Key        : constant AES256_Key := Construct (Key_Raw);
+   Round_Keys : constant AES256_Round_Keys := Key_Expansion (Key);
 
    procedure Report;
 
@@ -81,10 +82,10 @@ begin
    IO.Put_Line ("One second test (CLINT):  ", U64 (T2 - T1));
 
    IO.New_Line;
-   IO.Put_Line ("SPARKNaCl.AES256 ECB_Encrypt test");
+   IO.Put_Line ("SPARKNaCl.AES256 Cipher test");
 
    T1 := Mcycle.Read;
-   SPARKNaCl.AES256.ECB_Encrypt (Result, Plaintext, Key);
+   SPARKNaCl.AES256.Cipher (Result, Plaintext, Round_Keys);
    T2 := Mcycle.Read;
    Total_Time := T2 - T1;
    Report;
