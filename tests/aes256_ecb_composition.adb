@@ -22,10 +22,11 @@ begin
       Random.Random_Bytes (Raw_Key);
 
       declare
-         Key : constant AES256_Key := Construct (Raw_Key);
+         Key        : constant AES256_Key := Construct (Raw_Key);
+         Round_Keys : constant AES256_Round_Keys := Key_Expansion (Key);
       begin
-         ECB_Encrypt (Encryption_Result, Plaintext, Key);
-         ECB_Decrypt (Decryption_Result, Encryption_Result, Key);
+         Cipher (Encryption_Result, Plaintext, Round_Keys);
+         Inv_Cipher (Decryption_Result, Encryption_Result, Round_Keys);
       end;
 
       if not Equal (Decryption_Result, Plaintext) then

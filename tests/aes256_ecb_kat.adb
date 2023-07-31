@@ -127,12 +127,14 @@ begin
 
       declare
          Key        : constant AES256_Key := Construct (Keys (I));
+         Round_Keys : constant AES256_Round_Keys := Key_Expansion (Key);
+
          Plaintext  : constant Bytes_16 := Plaintexts (I);
          Ciphertext : constant Bytes_16 := Ciphertexts (I);
 
          Result : Bytes_16;
       begin
-         ECB_Encrypt (Result, Plaintext, Key);
+         Cipher (Result, Plaintext, Round_Keys);
 
          if Equal (Result, Ciphertext) then
             Put ("OK");
@@ -142,7 +144,7 @@ begin
 
          Put (" Encryption | ");
 
-         ECB_Decrypt (Result, Ciphertext, Key);
+         Inv_Cipher (Result, Ciphertext, Round_Keys);
 
          if Equal (Result, Plaintext) then
             Put ("OK");
