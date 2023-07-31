@@ -26,9 +26,9 @@ is
    --  Local subprogram declarations
    --------------------------------------------------------
 
-   procedure Calculate_Column (Column  :    out Matrix_Column;
-                               Word    : in     Byte;
-                               Key     : in     AES256_Key)
+   procedure Calculate_Column (Column     :    out Matrix_Column;
+                               Word       : in     Byte;
+                               Round_Keys : in     AES256_Round_Keys)
      with Global => null,
           Pre    => Column'First = 0,
           Post   => (Column (Column'Last) and Three_MSB_Mask) = 0;
@@ -47,7 +47,7 @@ is
 
    procedure Compress (Chain_Value  : in out Digest;
                        Block        : in     Data_Block;
-                       Key          : in     AES256_Key)
+                       Round_Keys   : in     AES256_Round_Keys)
      with Global => null,
           Pre    => (Chain_Value (Chain_Value'Last) and Three_MSB_Mask) = 0,
           Post   => (Chain_Value (Chain_Value'Last) and Three_MSB_Mask) = 0;
@@ -61,9 +61,9 @@ is
    --  Local subprogram bodies
    --------------------------------------------------------
 
-   procedure Calculate_Column (Column  :    out Matrix_Column;
-                               Word    : in     Byte;
-                               Key     : in     AES256_Key)
+   procedure Calculate_Column (Column     :    out Matrix_Column;
+                               Word       : in     Byte;
+                               Round_Keys : in     AES256_Round_Keys)
    is
       Input_String : Bytes_16 := (others => 0);
       Result       : Bytes_64 with Relaxed_Initialization;
@@ -74,7 +74,7 @@ is
 
       for I in Index_4 loop
          Input_String (Input_String'Last) := Byte (I);
-         ECB_Encrypt (Result (I * 16 ..  I * 16 + 15), Input_String, Key);
+         Cipher (Result (I * 16 ..  I * 16 + 15), Input_String, Round_Keys);
 
          pragma Loop_Invariant (
            (Result (Result'First .. I * 16 + 15)'Initialized));
@@ -160,17 +160,17 @@ is
 
    procedure Compress (Chain_Value  : in out Digest;
                        Block        : in     Data_Block;
-                       Key          : in     AES256_Key)
+                       Round_Keys   : in     AES256_Round_Keys)
    is
       Sum    : Matrix_Column;
       Column : Matrix_Column;
    begin
-      Calculate_Column (Sum, Chain_Value (Digest'First), Key);
+      Calculate_Column (Sum, Chain_Value (Digest'First), Round_Keys);
 
       for I in Digest'First + 1 .. Digest'Last loop
          pragma Loop_Invariant ((Sum (Sum'Last) and Three_MSB_Mask) = 0);
 
-         Calculate_Column (Column, Chain_Value (I), Key);
+         Calculate_Column (Column, Chain_Value (I), Round_Keys);
          Mul128 (Sum);
          Add (Sum, Column);
       end loop;
@@ -178,7 +178,7 @@ is
       for I in Block'Range loop
          pragma Loop_Invariant ((Sum (Sum'Last) and Three_MSB_Mask) = 0);
 
-         Calculate_Column (Column, Block (I), Key);
+         Calculate_Column (Column, Block (I), Round_Keys);
          Mul128 (Sum);
          Add (Sum, Column);
       end loop;
@@ -190,6 +190,7 @@ is
                          Input  : in     Byte_Seq;
                          Key    : in     AES256_Key)
    is
+      Round_Keys     : constant AES256_Round_Keys := Key_Expansion (Key);
       IV             : constant Digest := (others => 0);
       Padding_Marker : constant Byte := 2#1000_0000#;
 
@@ -213,7 +214,7 @@ is
              (Current_Byte in Input'First .. (Input'Last - Block'Length + 1)));
 
          Block := Input (Current_Byte .. Current_Byte + (Block'Length - 1));
-         Compress (Hash, Block, Key);
+         Compress (Hash, Block, Round_Keys);
 
          pragma Assert (Input_Length >= Block'Length);
          Input_Length := Input_Length - Block'Length;
@@ -239,7 +240,7 @@ is
          Block (I32 (Final_Block_Index) .. Block'Last) :=
            (others => 0);
 
-         Compress (Hash, Block, Key);
+         Compress (Hash, Block, Round_Keys);
          Final_Block_Index := Index_48'First;
       else
          Final_Block_Index := Index_48'Succ (Final_Block_Index);
@@ -248,7 +249,7 @@ is
       Block (Final_Block_Index .. Block'Last - 8) := (others => 0);
       Block (Block'Last - 7 .. Block'Last) := TS64 (U64 (Input'Length));
 
-      Compress (Hash, Block, Key);
+      Compress (Hash, Block, Round_Keys);
       Hashing.SHA512.Hash (Output, Hash);
    end Hash_Local;
 
