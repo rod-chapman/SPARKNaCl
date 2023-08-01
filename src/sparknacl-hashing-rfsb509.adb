@@ -2,8 +2,9 @@ with SPARKNaCl.Hashing.SHA256;
 package body SPARKNaCl.Hashing.RFSB509
   with SPARK_Mode => On
 is
-   --  Three most significant bits
-   Three_MSB_Mask : constant Byte := 2#1110_0000#;
+   --------------------------------------------------------
+   --  Local constant definition(s)
+   --------------------------------------------------------
 
    --  The RFSB-509 compression function is defined by three numbers:
    --    w: number of input chunks i.e weight of the sum (positive integer)
@@ -19,38 +20,36 @@ is
 
    pragma Assert (RFSB509_S > RFSB509_R);
 
-   subtype Matrix_Column is Bytes_64;
+   --------------------------------------------------------
+   --  Local type definition(s)
+   --------------------------------------------------------
+
+   subtype Matrix_Column is Bytes_64
+     with Dynamic_Predicate =>
+       (Matrix_Column (Matrix_Column'Last) and 2#1110_0000#) = 0;
    subtype Data_Block    is Bytes_48;
 
    --------------------------------------------------------
-   --  Local subprogram declarations
+   --  Local subprogram declaration(s)
    --------------------------------------------------------
 
    procedure Calculate_Column (Column     :    out Matrix_Column;
                                Word       : in     Byte;
                                Round_Keys : in     AES256_Round_Keys)
      with Global => null,
-          Pre    => Column'First = 0,
-          Post   => (Column (Column'Last) and Three_MSB_Mask) = 0;
+          Pre    => Column'First = 0;
 
    procedure Mul128 (A : in out Matrix_Column)
-     with Global => null,
-          Pre    => (A (A'Last) and Three_MSB_Mask) = 0,
-          Post   => (A (A'Last) and Three_MSB_Mask) = 0;
+     with Global => null;
 
    procedure Add (Sum     : in out Matrix_Column;
                   Summand : in     Matrix_Column)
-     with Global => null,
-          Pre    => (Sum (Sum'Last) and Three_MSB_Mask) = 0 and
-                    (Summand (Summand'Last) and Three_MSB_Mask) = 0,
-          Post   => (Sum (Sum'Last) and Three_MSB_Mask) = 0;
+     with Global => null;
 
    procedure Compress (Chain_Value  : in out Matrix_Column;
                        Block        : in     Data_Block;
                        Round_Keys   : in     AES256_Round_Keys)
-     with Global => null,
-          Pre    => (Chain_Value (Chain_Value'Last) and Three_MSB_Mask) = 0,
-          Post   => (Chain_Value (Chain_Value'Last) and Three_MSB_Mask) = 0;
+     with Global => null;
 
    procedure Hash_Local (Output :    out Digest;
                          Input  : in     Byte_Seq;
@@ -65,38 +64,40 @@ is
                                Word       : in     Byte;
                                Round_Keys : in     AES256_Round_Keys)
    is
-      Input_String : Bytes_16 := (others => 0);
-      Result       : Bytes_64 with Relaxed_Initialization;
+      Five_LSB_Mask : constant Byte := 2#0001_1111#;
+
+      Cipher_Input : Bytes_16 := (others => 0);
+      Vector       : Bytes_64 with Relaxed_Initialization;
 
       First_Byte, Last_Byte  : Byte;
    begin
-      Input_String (Input_String'Last - 1) := Word;
+      Cipher_Input (Cipher_Input'Last - 1) := Word;
 
       for I in Index_4 loop
-         Input_String (Input_String'Last) := Byte (I);
-         Cipher (Result (I * 16 ..  I * 16 + 15), Input_String, Round_Keys);
+         Cipher_Input (Cipher_Input'Last) := Byte (I);
+         Cipher (Vector (I * 16 ..  I * 16 + 15), Cipher_Input, Round_Keys);
 
          pragma Loop_Invariant (
-           (Result (Result'First .. I * 16 + 15)'Initialized));
+           (Vector (Vector'First .. I * 16 + 15)'Initialized));
       end loop;
 
-      First_Byte := Result (Result'First);
-      Last_Byte  := Result (Result'Last);
+      First_Byte := Vector (Vector'First);
+      Last_Byte  := Vector (Vector'Last);
 
-      Result (Result'First) := First_Byte xor Shift_Right (Last_Byte, 5);
-      Result (Result'Last)  := Last_Byte and (not Three_MSB_Mask);
+      Vector (Vector'First) := First_Byte xor Shift_Right (Last_Byte, 5);
+      Vector (Vector'Last)  := Last_Byte and Five_LSB_Mask;
 
-      Column := Result;
-
-      pragma Assert ((Column (Column'Last) and Three_MSB_Mask) = 0);
+      Column := Vector;
    end Calculate_Column;
 
    procedure Mul128 (A : in out Matrix_Column)
    is
-      Product : Matrix_Column with Relaxed_Initialization;
+      Three_MSB_Mask : constant Byte := 2#1110_0000#;
 
       Exponent     : constant Index_64 := (128 / Byte'Size);
       Shift_Amount : constant Integer := 5;
+
+      Product : Bytes_64 with Relaxed_Initialization;
 
       Factor_Pivot  : constant Index_64 := A'Last - Exponent;
       Product_Pivot : constant Index_64 := Product'First + Exponent;
@@ -168,16 +169,12 @@ is
       Calculate_Column (Sum, Chain_Value (Digest'First), Round_Keys);
 
       for I in Digest'First + 1 .. Digest'Last loop
-         pragma Loop_Invariant ((Sum (Sum'Last) and Three_MSB_Mask) = 0);
-
          Calculate_Column (Column, Chain_Value (I), Round_Keys);
          Mul128 (Sum);
          Add (Sum, Column);
       end loop;
 
       for I in Block'Range loop
-         pragma Loop_Invariant ((Sum (Sum'Last) and Three_MSB_Mask) = 0);
-
          Calculate_Column (Column, Block (I), Round_Keys);
          Mul128 (Sum);
          Add (Sum, Column);
@@ -208,8 +205,7 @@ is
          pragma Loop_Variant
            (Increases => Current_Byte, Decreases => Input_Length);
          pragma Loop_Invariant
-           (((Hash (Hash'Last) and Three_MSB_Mask) = 0) and
-             (Input_Length + I64 (Current_Byte) = I64 (Input'Last) + 1) and
+           ((Input_Length + I64 (Current_Byte) = I64 (Input'Last) + 1) and
              (Input_Length in Block'Length .. Input'Length) and
              (Current_Byte in Input'First .. (Input'Last - Block'Length + 1)));
 
