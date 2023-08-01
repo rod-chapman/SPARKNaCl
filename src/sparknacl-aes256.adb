@@ -2,6 +2,8 @@ package body SPARKNaCl.AES256
   with Pure,
        SPARK_Mode => On
 is
+   pragma Warnings (GNATProve, Off, "pragma * ignored (not yet supported)");
+
    --------------------------------------------------------
    --  Local type definition(s)
    --------------------------------------------------------
