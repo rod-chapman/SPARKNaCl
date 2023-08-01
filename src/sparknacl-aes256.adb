@@ -103,18 +103,14 @@ is
 
    function Big_Endian_Pack (Input : in Bytes_4) return U32
    is
-      A, B, C, D : U32;
-      Result     : U32;
+      Shift_Amount : Integer;
+      Result       : U32 := 0;
    begin
-      A := Shift_Left (U32 (Input (0)), 3 * Byte'Size);
-      B := Shift_Left (U32 (Input (1)), 2 * Byte'Size);
-      C := Shift_Left (U32 (Input (2)), 1 * Byte'Size);
-      D := Shift_Left (U32 (Input (3)), 0 * Byte'Size);
+      for I in Input'Range loop
+         Shift_Amount := Integer ((Input'Last - I) * Byte'Size);
+         Result := Result or Shift_Left (U32 (Input (I)), Shift_Amount);
+      end loop;
 
-      A := A or B;
-      C := C or D;
-
-      Result := A or C;
       return Result;
    end Big_Endian_Pack;
 
