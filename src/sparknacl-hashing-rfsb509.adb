@@ -1,4 +1,4 @@
-with SPARKNaCl.Hashing.SHA512;
+with SPARKNaCl.Hashing.SHA256;
 package body SPARKNaCl.Hashing.RFSB509
   with SPARK_Mode => On
 is
@@ -45,7 +45,7 @@ is
                     (Summand (Summand'Last) and Three_MSB_Mask) = 0,
           Post   => (Sum (Sum'Last) and Three_MSB_Mask) = 0;
 
-   procedure Compress (Chain_Value  : in out Digest;
+   procedure Compress (Chain_Value  : in out Matrix_Column;
                        Block        : in     Data_Block;
                        Round_Keys   : in     AES256_Round_Keys)
      with Global => null,
@@ -158,7 +158,7 @@ is
       end loop;
    end Add;
 
-   procedure Compress (Chain_Value  : in out Digest;
+   procedure Compress (Chain_Value  : in out Matrix_Column;
                        Block        : in     Data_Block;
                        Round_Keys   : in     AES256_Round_Keys)
    is
@@ -191,13 +191,13 @@ is
                          Key    : in     AES256_Key)
    is
       Round_Keys     : constant AES256_Round_Keys := Key_Expansion (Key);
-      IV             : constant Digest := (others => 0);
+      IV             : constant Matrix_Column := (others => 0);
       Padding_Marker : constant Byte := 2#1000_0000#;
 
       Input_Length : I64 := Input'Length;
       Current_Byte : I32 := Input'First;
 
-      Hash  : Digest := IV;
+      Hash  : Matrix_Column := IV;
       Block : Data_Block with Relaxed_Initialization;
 
       Final_Block_Index : Index_48;
@@ -250,7 +250,7 @@ is
       Block (Block'Last - 7 .. Block'Last) := TS64 (U64 (Input'Length));
 
       Compress (Hash, Block, Round_Keys);
-      Hashing.SHA512.Hash (Output, Hash);
+      Hashing.SHA256.Hash (Output, Hash);
    end Hash_Local;
 
    --------------------------------------------------------

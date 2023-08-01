@@ -3,7 +3,7 @@ package SPARKNaCl.Hashing.RFSB509
   with Pure,
        SPARK_Mode => On
 is
-   subtype Digest is Bytes_64;
+   subtype Digest is Bytes_32;
 
    --------------------------------------------------------
    --  Procedural interface. Faster assuming Output is
