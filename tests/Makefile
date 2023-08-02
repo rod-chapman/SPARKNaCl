@@ -1,7 +1,5 @@
 all: fntr sntr ftestdiff stestdiff
 
-fall: ftestdiff
-
 ftestdiff: expected_test_results fntr
 	diff $^
 
@@ -41,7 +39,7 @@ scalarspeed: src/ada/scalarspeed.adb ../src/*.adb ../src/*.ads
 				-XSPARKNACL_BUILD_MODE=O3
 	mv obj/$@ $@
 
-.PHONY: all fall clean_build clean_stest clean_ftest clean_scalarspeed clean
+.PHONY: all clean_build clean_stest clean_ftest clean_scalarspeed clean
 clean_build:
 	gprclean -r -Ptestall
 	gprclean -r -Pscalarspeed
