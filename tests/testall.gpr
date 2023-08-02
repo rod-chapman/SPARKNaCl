@@ -2,8 +2,8 @@ with "../sparknacl.gpr";
 project Testall is
 
    for Create_Missing_Dirs use "True";
-   for Object_Dir use ".";
-   for Source_Dirs use (".");
+   for Object_Dir use "obj";
+   for Source_Dirs use ("src/ada", "src/c");
    for Main use ("testall.adb");
 
 end Testall;
