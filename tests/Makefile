@@ -1,3 +1,5 @@
+GPR_WORKERS:=-j1
+
 all: fntr sntr ftestdiff stestdiff
 
 ftestdiff: expected_test_results fntr
@@ -15,7 +17,8 @@ sntr: stestall
 ftestall: src/ada/*.adb ../src/*.adb ../src/*.ads
 	$(MAKE) clean_build
 	$(MAKE) clean_ftest
-	gprbuild -Ptestall -j4 \
+	gprbuild -Ptestall \
+				$(GPR_WORKERS) \
 		      -XSPARKNACL_RUNTIME_CHECKS=disabled \
 				-XSPARKNACL_CONTRACTS=disabled \
 				-XSPARKNACL_BUILD_MODE=O3
@@ -24,7 +27,8 @@ ftestall: src/ada/*.adb ../src/*.adb ../src/*.ads
 stestall: src/ada/*.adb ../src/*.adb ../src/*.ads
 	$(MAKE) clean_build
 	$(MAKE) clean_stest
-	gprbuild -Ptestall -j4 \
+	gprbuild -Ptestall \
+				$(GPR_WORKERS) \
 		      -XSPARKNACL_RUNTIME_CHECKS=enabled \
 				-XSPARKNACL_CONTRACTS=enabled \
 				-XSPARKNACL_BUILD_MODE=debug
@@ -33,7 +37,8 @@ stestall: src/ada/*.adb ../src/*.adb ../src/*.ads
 scalarspeed: src/ada/scalarspeed.adb ../src/*.adb ../src/*.ads
 	$(MAKE) clean_build
 	$(MAKE) clean_scalar_build
-	gprbuild -Pscalarspeed -j4 \
+	gprbuild -Pscalarspeed \
+				$(GPR_WORKERS) \
 		      -XSPARKNACL_RUNTIME_CHECKS=disabled \
 	         -XSPARKNACL_CONTRACTS=disabled \
 				-XSPARKNACL_BUILD_MODE=O3
