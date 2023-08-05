@@ -14,7 +14,7 @@ fntr: ftestall
 sntr: stestall
 	./stestall > $@
 
-ftestall: src/ada/*.adb ../src/*.adb ../src/*.ads
+ftestall: src/ada/*.adb ../src/*.adb ../src/*.ads testall.gpr
 	$(MAKE) clean_build
 	$(MAKE) clean_ftest
 	gprbuild -Ptestall \
@@ -24,7 +24,7 @@ ftestall: src/ada/*.adb ../src/*.adb ../src/*.ads
 				-XSPARKNACL_BUILD_MODE=O3
 	mv obj/testall $@
 
-stestall: src/ada/*.adb ../src/*.adb ../src/*.ads
+stestall: src/ada/*.adb ../src/*.adb ../src/*.ads testall.gpr
 	$(MAKE) clean_build
 	$(MAKE) clean_stest
 	gprbuild -Ptestall \
