@@ -1,3 +1,4 @@
+with SPARKNaCl.Utils;          use SPARKNaCl.Utils;
 with SPARKNaCl.Hashing.SHA256;
 package body SPARKNaCl.Hashing.RFSB509
   with SPARK_Mode => On
@@ -35,7 +36,7 @@ is
 
    procedure Calculate_Column (Column     :    out Matrix_Column;
                                Word       : in     Byte;
-                               Round_Keys : in     AES256_Round_Keys)
+                               Round_Keys : in     AES128_Round_Keys)
      with Global => null,
           Pre    => Column'First = 0;
 
@@ -48,12 +49,19 @@ is
 
    procedure Compress (Chain_Value  : in out Matrix_Column;
                        Block        : in     Data_Block;
-                       Round_Keys   : in     AES256_Round_Keys)
+                       Round_Keys   : in     AES128_Round_Keys)
      with Global => null;
+
+   procedure Hash_Blocks (Output          : in out Matrix_Column;
+                          Bytes_Remaining :    out Index_48;
+                          Input           : in     Byte_Seq;
+                          Round_Keys      : in     AES128_Round_Keys)
+     with Global => null,
+          Post   => I64 (Bytes_Remaining) <= Input'Length;
 
    procedure Hash_Local (Output :    out Digest;
                          Input  : in     Byte_Seq;
-                         Key    : in     AES256_Key)
+                         Key    : in     AES128_Key)
      with Global => null;
 
    --------------------------------------------------------
@@ -62,7 +70,7 @@ is
 
    procedure Calculate_Column (Column     :    out Matrix_Column;
                                Word       : in     Byte;
-                               Round_Keys : in     AES256_Round_Keys)
+                               Round_Keys : in     AES128_Round_Keys)
    is
       Five_LSB_Mask : constant Byte := 2#0001_1111#;
 
@@ -71,10 +79,12 @@ is
 
       First_Byte, Last_Byte  : Byte;
    begin
-      Cipher_Input (Cipher_Input'Last - 1) := Word;
+      --  Cipher_Input (Cipher_Input'Last - 1) := Word;
+      Cipher_Input (Cipher_Input'First + 1) := Word;
 
       for I in Index_4 loop
-         Cipher_Input (Cipher_Input'Last) := Byte (I);
+         --  Cipher_Input (Cipher_Input'Last) := Byte (I);
+         Cipher_Input (Cipher_Input'First) := Byte (I);
          Cipher (Vector (I * 16 ..  I * 16 + 15), Cipher_Input, Round_Keys);
 
          pragma Loop_Invariant (
@@ -161,89 +171,92 @@ is
 
    procedure Compress (Chain_Value  : in out Matrix_Column;
                        Block        : in     Data_Block;
-                       Round_Keys   : in     AES256_Round_Keys)
+                       Round_Keys   : in     AES128_Round_Keys)
    is
       Sum    : Matrix_Column;
       Column : Matrix_Column;
    begin
       Calculate_Column (Sum, Chain_Value (Digest'First), Round_Keys);
 
-      for I in Digest'First + 1 .. Digest'Last loop
-         Calculate_Column (Column, Chain_Value (I), Round_Keys);
+      for I in Chain_Value'First + 1 .. Chain_Value'Last loop
          Mul128 (Sum);
+         Calculate_Column (Column, Chain_Value (I), Round_Keys);
          Add (Sum, Column);
       end loop;
 
       for I in Block'Range loop
-         Calculate_Column (Column, Block (I), Round_Keys);
          Mul128 (Sum);
+         Calculate_Column (Column, Block (I), Round_Keys);
          Add (Sum, Column);
       end loop;
 
       Chain_Value := Sum;
    end Compress;
 
-   procedure Hash_Local (Output :    out Digest;
-                         Input  : in     Byte_Seq;
-                         Key    : in     AES256_Key)
+   procedure Hash_Blocks (Output          : in out Matrix_Column;
+                          Bytes_Remaining :    out Index_48;
+                          Input           : in     Byte_Seq;
+                          Round_Keys      : in     AES128_Round_Keys)
    is
-      Round_Keys     : constant AES256_Round_Keys := Key_Expansion (Key);
-      IV             : constant Matrix_Column := (others => 0);
-      Padding_Marker : constant Byte := 2#1000_0000#;
-
-      Input_Length : I64 := Input'Length;
+      Remainder    : I64 := Input'Length;
       Current_Byte : I32 := Input'First;
 
-      Hash  : Matrix_Column := IV;
-      Block : Data_Block with Relaxed_Initialization;
-
-      Final_Block_Index : Index_48;
+      Block : Data_Block;
    begin
       pragma Assert (Block'Length = (RFSB509_S - RFSB509_R) / RFSB509_B);
 
-      while (Input_Length >= Block'Length) loop
+      while Remainder >= Block'Length loop
          pragma Loop_Variant
-           (Increases => Current_Byte, Decreases => Input_Length);
+           (Increases => Current_Byte, Decreases => Remainder);
          pragma Loop_Invariant
-           ((Input_Length + I64 (Current_Byte) = I64 (Input'Last) + 1) and
-             (Input_Length in Block'Length .. Input'Length) and
+           ((Remainder + I64 (Current_Byte) = I64 (Input'Last) + 1) and
+             (Remainder in Block'Length .. Input'Length) and
              (Current_Byte in Input'First .. (Input'Last - Block'Length + 1)));
 
          Block := Input (Current_Byte .. Current_Byte + (Block'Length - 1));
-         Compress (Hash, Block, Round_Keys);
+         Compress (Output, Block, Round_Keys);
 
-         pragma Assert (Input_Length >= Block'Length);
-         Input_Length := Input_Length - Block'Length;
+         pragma Assert (Remainder >= Block'Length);
+         Remainder := Remainder - Block'Length;
 
-         exit when Input_Length < Block'Length;
+         exit when Remainder < Block'Length;
          Current_Byte := Current_Byte + Block'Length;
       end loop;
 
-      if Input_Length > 0 then
-         Final_Block_Index := Index_48 (Input_Length) - 1;
+      Bytes_Remaining := Index_48 (Remainder);
+   end Hash_Blocks;
 
-         Block (Block'First .. Block'First + Final_Block_Index) :=
-           Input (Input'Last - I32 (Final_Block_Index) .. Input'Last);
+   procedure Hash_Local (Output :    out Digest;
+                         Input  : in     Byte_Seq;
+                         Key    : in     AES128_Key)
+   is
+      Round_Keys     : constant AES128_Round_Keys := Key_Expansion (Key);
 
-         Final_Block_Index := Index_48'Succ (Final_Block_Index);
-      else
-         Final_Block_Index := Index_48'First;
+      Hash  : Matrix_Column := (others => 0);
+      Block : Data_Block with Relaxed_Initialization;
+
+      Bytes_Remaining, Block_Index : Index_48;
+   begin
+      pragma Assert (Block'Length = (RFSB509_S - RFSB509_R) / RFSB509_B);
+
+      Hash_Blocks (Hash, Bytes_Remaining, Input, Round_Keys);
+      Block_Index := Block'First + Bytes_Remaining;
+
+      if Bytes_Remaining > 0 then
+         Block (Block'First .. Block_Index - 1) :=
+           Input (Input'Last - I32 (Bytes_Remaining) + 1 .. Input'Last);
+
+         if Block_Index > (Block'Last - 7) then
+            Block (Block_Index .. Block'Last) := (others => 0);
+            Compress (Hash, Block, Round_Keys);
+
+            Block_Index := Block'First;
+         end if;
       end if;
 
-      Block (Final_Block_Index) := Padding_Marker;
-
-      if I32 (Final_Block_Index) > (Block'Last - 8) then
-         Block (I32 (Final_Block_Index) .. Block'Last) :=
-           (others => 0);
-
-         Compress (Hash, Block, Round_Keys);
-         Final_Block_Index := Index_48'First;
-      else
-         Final_Block_Index := Index_48'Succ (Final_Block_Index);
-      end if;
-
-      Block (Final_Block_Index .. Block'Last - 8) := (others => 0);
-      Block (Block'Last - 7 .. Block'Last) := TS64 (U64 (Input'Length));
+      Block (Block_Index .. Block'Last - 8) := (others => 0);
+      Little_Endian_Unpack (
+        Block (Block'Last - 7 .. Block'Last), U64 (Input'Length));
 
       Compress (Hash, Block, Round_Keys);
       Hashing.SHA256.Hash (Output, Hash);
@@ -255,14 +268,14 @@ is
 
    procedure Hash (Output :    out Digest;
                    Input  : in     Byte_Seq;
-                   Key    : in     AES256_Key)
+                   Key    : in     AES128_Key)
    is
    begin
       Hash_Local (Output, Input, Key);
    end Hash;
 
    function Hash (Input : in Byte_Seq;
-                  Key   : in AES256_Key) return Digest
+                  Key   : in AES128_Key) return Digest
    is
       Output : Digest;
    begin

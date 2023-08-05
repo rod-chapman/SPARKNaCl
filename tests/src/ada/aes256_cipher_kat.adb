@@ -1,9 +1,9 @@
-with SPARKNaCl;        use SPARKNaCl;
-with SPARKNaCl.AES256; use SPARKNaCl.AES256;
+with SPARKNaCl;     use SPARKNaCl;
+with SPARKNaCl.AES; use SPARKNaCl.AES;
 
 with Ada.Text_IO; use Ada.Text_IO;
 
-procedure AES256_ECB_KAT
+procedure AES256_Cipher_KAT
 is
    Test_Case_Count : constant I32 := 12;
 
@@ -123,7 +123,7 @@ is
 
 begin
    for I in Keys'Range loop
-      Put ("AES256 ECB KAT - iteration" & I'Img & ": ");
+      Put ("AES256 Cipher KAT - iteration" & I'Img & ": ");
 
       declare
          Key        : constant AES256_Key := Construct (Keys (I));
@@ -155,4 +155,4 @@ begin
          Put_Line (" Decryption");
       end;
    end loop; 
-end AES256_ECB_KAT;
+end AES256_Cipher_KAT;

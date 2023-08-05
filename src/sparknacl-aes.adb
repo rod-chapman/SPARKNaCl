@@ -1,4 +1,4 @@
-package body SPARKNaCl.AES256
+package body SPARKNaCl.AES
   with Pure,
        SPARK_Mode => On
 is
@@ -82,6 +82,9 @@ is
      with Global => null;
 
    procedure Inv_Mix_Columns (State : in out Cipher_State)
+     with Global => null;
+
+   procedure Round_Key_CumSum (Key : in out Round_Key)
      with Global => null;
 
    --------------------------------------------------------
@@ -581,6 +584,14 @@ is
       end loop;
    end Inv_Mix_Columns;
 
+   procedure Round_Key_CumSum (Key : in out Round_Key)
+   is
+   begin
+      for I in Key'First + 1 .. Key'Last loop
+         Key (I) := Key (I) xor Key (I - 1);
+      end loop;
+   end Round_Key_CumSum;
+
    --------------------------------------------------------
    --  Global subprogram bodies
    --------------------------------------------------------
@@ -596,8 +607,28 @@ is
       return AES256_Key'(F => Key);
    end Construct;
 
+   function Construct (Raw_Key : in Bytes_16) return AES128_Key
+   is
+      Key : U32_Seq (Index_4);
+   begin
+      for I in Key'Range loop
+         Key (I) := Big_Endian_Pack (Raw_Key (4 * I .. 4 * I + 3));
+      end loop;
+
+      return AES128_Key'(F => Key);
+   end Construct;
+
    procedure Construct (Key     :    out AES256_Key;
                         Raw_Key : in     Bytes_32)
+   is
+   begin
+      for I in Key.F'Range loop
+         Key.F (I) := Big_Endian_Pack (Raw_Key (4 * I .. 4 * I + 3));
+      end loop;
+   end Construct;
+
+   procedure Construct (Key     :    out AES128_Key;
+                        Raw_Key : in     Bytes_16)
    is
    begin
       for I in Key.F'Range loop
@@ -622,7 +653,30 @@ is
       return Result;
    end Serialize;
 
+   function Serialize (Key : in AES128_Key) return Bytes_16
+   is
+      Result : Bytes_16 with Relaxed_Initialization;
+   begin
+      pragma Assert (Result'First = Key.F'First);
+      pragma Assert (Result'First = 0);
+
+      for I in Key.F'Range loop
+         Big_Endian_Unpack (Result (4 * I .. 4 * I + 3), Key.F (I));
+
+         pragma Loop_Invariant (
+           Result (Result'First .. Result'First + 4 * I + 3)'Initialized);
+      end loop;
+
+      return Result;
+   end Serialize;
+
    procedure Sanitize (Key : out AES256_Key)
+   is
+   begin
+      Sanitize_U32_Seq (Key.F);
+   end Sanitize;
+
+   procedure Sanitize (Key : out AES128_Key)
    is
    begin
       Sanitize_U32_Seq (Key.F);
@@ -631,15 +685,23 @@ is
    procedure Sanitize (Round_Keys : out AES256_Round_Keys)
    is
    begin
-      for I in Round_Key_Array'Range loop
+      for I in AES256_Round_Key_Array'Range loop
+         Sanitize_U32_Seq (Round_Keys.F (I));
+      end loop;
+   end Sanitize;
+
+   procedure Sanitize (Round_Keys : out AES128_Round_Keys)
+   is
+   begin
+      for I in AES128_Round_Key_Index'Range loop
          Sanitize_U32_Seq (Round_Keys.F (I));
       end loop;
    end Sanitize;
 
    function Key_Expansion (Key : in AES256_Key) return AES256_Round_Keys
    is
-      Round_Keys : Round_Key_Array with Relaxed_Initialization;
-      Key_Index  : Round_Key_Index := Round_Keys'First;
+      Round_Keys : AES256_Round_Key_Array with Relaxed_Initialization;
+      Key_Index  : AES256_Round_Key_Index := Round_Keys'First;
 
       Rcon : U32 := 16#01_00_00_00#;
 
@@ -647,62 +709,84 @@ is
         Key.F (Key.F'First .. Key.F'First + Round_Key'Length - 1);
       B : Round_Key :=
         Key.F (Key.F'Last - (Round_Key'Length - 1) .. Key.F'Last);
-
-      procedure Round_Key_CumSum (X : in out Round_Key)
-        with Global => null;
-
-      procedure Round_Key_CumSum (X : in out Round_Key)
-      is
-         subtype Index is I32 range 1 .. 3;
-      begin
-         for I in Index loop
-            X (X'First + I) := X (X'First + I) xor X (X'First + (I - 1));
-         end loop;
-      end Round_Key_CumSum;
    begin
       Round_Keys (Key_Index) := A;
 
-      Key_Index              := Round_Key_Index'Succ (Key_Index);
+      Key_Index              := AES256_Round_Key_Index'Succ (Key_Index);
       Round_Keys (Key_Index) := B;
 
       loop
          pragma Loop_Variant (Increases => Key_Index);
          pragma Loop_Invariant (
-           (Key_Index < Round_Key_Index'Last) and
-           (((Round_Key_Index'Last - Key_Index) mod 2) = 1) and
-           (Round_Keys (Round_Key_Index'First .. Key_Index)'Initialized));
+           (Key_Index < Round_Keys'Last) and
+           (((AES256_Round_Key_Index'Last - Key_Index) mod 2) = 1) and
+           (Round_Keys (Round_Keys'First .. Key_Index)'Initialized));
 
+         A (A'First) := A (A'First) xor Rcon;
          A (A'First) := A (A'First) xor
-           Sbox (Rotate_Left (B (B'Last), Byte'Size)) xor Rcon;
+           Sbox (Rotate_Left (B (B'Last), Byte'Size));
+
          Round_Key_CumSum (A);
+         Rcon := X_Times (Rcon);
 
-         Rcon := Shift_Left (Rcon, 1);
-
-         Key_Index              := Round_Key_Index'Succ (Key_Index);
+         Key_Index              := AES256_Round_Key_Index'Succ (Key_Index);
          Round_Keys (Key_Index) := A;
-         exit when Key_Index = Round_Key_Index'Last;
+         exit when Key_Index = AES256_Round_Key_Index'Last;
 
          B (B'First) := B (B'First) xor Sbox (A (A'Last));
          Round_Key_CumSum (B);
 
-         Key_Index              := Round_Key_Index'Succ (Key_Index);
+         Key_Index              := AES256_Round_Key_Index'Succ (Key_Index);
          Round_Keys (Key_Index) := B;
       end loop;
 
-      pragma Assert (Key_Index = Round_Key_Index'Last);
+      pragma Assert (Key_Index = AES256_Round_Key_Index'Last);
 
       return AES256_Round_Keys'(F => Round_Keys);
+   end Key_Expansion;
+
+   function Key_Expansion (Key : in AES128_Key) return AES128_Round_Keys
+   is
+      Round_Keys : AES128_Round_Key_Array with Relaxed_Initialization;
+      Key_Index  : AES128_Round_Key_Index := Round_Keys'First;
+
+      Rcon : U32 := 16#01_00_00_00#;
+
+      State : Round_Key :=
+         Key.F (Key.F'First .. Key.F'First + Round_Key'Length - 1);
+   begin
+      Round_Keys (Key_Index) := State;
+
+      while Key_Index < Round_Keys'Last loop
+         pragma Loop_Variant (Increases => Key_Index);
+         pragma Loop_Invariant (
+            (Round_Keys (Round_Keys'First .. Key_Index)'Initialized));
+
+         State (State'First) := State (State'First) xor Rcon;
+         State (State'First) := State (State'First) xor
+           Sbox (Rotate_Left (State (State'Last), Byte'Size));
+
+         Round_Key_CumSum (State);
+         Rcon := X_Times (Rcon);
+
+         Key_Index              := AES128_Round_Key_Index'Succ (Key_Index);
+         Round_Keys (Key_Index) := State;
+      end loop;
+
+      pragma Assert (Key_Index = AES128_Round_Key_Index'Last);
+
+      return AES128_Round_Keys'(F => Round_Keys);
    end Key_Expansion;
 
    procedure Cipher (Output     :    out Bytes_16;
                      Input      : in     Bytes_16;
                      Round_Keys : in     AES256_Round_Keys)
    is
-      Key_Index : Round_Key_Index := Round_Keys.F'First;
+      Key_Index : AES256_Round_Key_Index := Round_Keys.F'First;
       State     : Cipher_State := Construct_State (Input);
    begin
       Add_Round_Key (State, Round_Keys.F (Key_Index));
-      Key_Index := Round_Key_Index'Succ (Key_Index);
+      Key_Index := AES256_Round_Key_Index'Succ (Key_Index);
 
       while Key_Index < Round_Keys.F'Last loop
          Sub_Bytes (State);
@@ -710,7 +794,35 @@ is
          Mix_Columns (State);
 
          Add_Round_Key (State, Round_Keys.F (Key_Index));
-         Key_Index := Round_Key_Index'Succ (Key_Index);
+         Key_Index := AES256_Round_Key_Index'Succ (Key_Index);
+      end loop;
+
+      Sub_Bytes (State);
+      Shift_Rows (State);
+
+      pragma Assert (Key_Index = Round_Keys.F'Last);
+      Add_Round_Key (State, Round_Keys.F (Key_Index));
+
+      Output := Serialize_State (State);
+   end Cipher;
+
+   procedure Cipher (Output     :    out Bytes_16;
+                     Input      : in     Bytes_16;
+                     Round_Keys : in     AES128_Round_Keys)
+   is
+      Key_Index : AES128_Round_Key_Index := Round_Keys.F'First;
+      State     : Cipher_State := Construct_State (Input);
+   begin
+      Add_Round_Key (State, Round_Keys.F (Key_Index));
+      Key_Index := AES128_Round_Key_Index'Succ (Key_Index);
+
+      while Key_Index < Round_Keys.F'Last loop
+         Sub_Bytes (State);
+         Shift_Rows (State);
+         Mix_Columns (State);
+
+         Add_Round_Key (State, Round_Keys.F (Key_Index));
+         Key_Index := AES128_Round_Key_Index'Succ (Key_Index);
       end loop;
 
       Sub_Bytes (State);
@@ -726,18 +838,18 @@ is
                          Input      : in     Bytes_16;
                          Round_Keys : in     AES256_Round_Keys)
    is
-      Key_Index : Round_Key_Index := Round_Keys.F'Last;
+      Key_Index : AES256_Round_Key_Index := Round_Keys.F'Last;
       State     : Cipher_State := Construct_State (Input);
    begin
       Add_Round_Key (State, Round_Keys.F (Key_Index));
-      Key_Index := Round_Key_Index'Pred (Key_Index);
+      Key_Index := AES256_Round_Key_Index'Pred (Key_Index);
 
       while Key_Index > Round_Keys.F'First loop
          Inv_Shift_Rows (State);
          Inv_Sub_Bytes (State);
 
          Add_Round_Key (State, Round_Keys.F (Key_Index));
-         Key_Index := Round_Key_Index'Pred (Key_Index);
+         Key_Index := AES256_Round_Key_Index'Pred (Key_Index);
 
          Inv_Mix_Columns (State);
       end loop;
@@ -751,4 +863,33 @@ is
       Output := Serialize_State (State);
    end Inv_Cipher;
 
-end SPARKNaCl.AES256;
+   procedure Inv_Cipher (Output     :    out Bytes_16;
+                         Input      : in     Bytes_16;
+                         Round_Keys : in     AES128_Round_Keys)
+   is
+      Key_Index : AES128_Round_Key_Index := Round_Keys.F'Last;
+      State     : Cipher_State := Construct_State (Input);
+   begin
+      Add_Round_Key (State, Round_Keys.F (Key_Index));
+      Key_Index := AES128_Round_Key_Index'Pred (Key_Index);
+
+      while Key_Index > Round_Keys.F'First loop
+         Inv_Shift_Rows (State);
+         Inv_Sub_Bytes (State);
+
+         Add_Round_Key (State, Round_Keys.F (Key_Index));
+         Key_Index := AES128_Round_Key_Index'Pred (Key_Index);
+
+         Inv_Mix_Columns (State);
+      end loop;
+
+      Inv_Shift_Rows (State);
+      Inv_Sub_Bytes (State);
+
+      pragma Assert (Key_Index = Round_Keys.F'First);
+      Add_Round_Key (State, Round_Keys.F (Key_Index));
+
+      Output := Serialize_State (State);
+   end Inv_Cipher;
+
+end SPARKNaCl.AES;

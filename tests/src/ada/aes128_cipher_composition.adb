@@ -1,29 +1,29 @@
-with SPARKNaCl;        use SPARKNaCl;
-with SPARKNaCl.AES256; use SPARKNaCl.AES256;
+with SPARKNaCl;     use SPARKNaCl;
+with SPARKNaCl.AES; use SPARKNaCl.AES;
 
 with Ada.Text_IO; use Ada.Text_IO;
 with Interfaces;  use Interfaces;
 
 with Random;
 
-procedure AES256_ECB_Composition
+procedure AES128_Cipher_Composition
 is
    Iteration_Count : constant I32 := 1_000;
 
    Plaintext : Bytes_16;
-   Raw_Key   : Bytes_32;
+   Raw_Key   : Bytes_16;
 
    Encryption_Result, Decryption_Result : Bytes_16;
 begin
-   Put ("Testing" & Iteration_Count'Img & " AES256 ECB compositions: "); 
+   Put ("Testing" & Iteration_Count'Img & " AES128 Cipher compositions: "); 
 
    for I in 1 .. Iteration_Count loop
       Random.Random_Bytes (Plaintext);
       Random.Random_Bytes (Raw_Key);
 
       declare
-         Key        : constant AES256_Key := Construct (Raw_Key);
-         Round_Keys : constant AES256_Round_Keys := Key_Expansion (Key);
+         Key        : constant AES128_Key := Construct (Raw_Key);
+         Round_Keys : constant AES128_Round_Keys := Key_Expansion (Key);
       begin
          Cipher (Encryption_Result, Plaintext, Round_Keys);
          Inv_Cipher (Decryption_Result, Encryption_Result, Round_Keys);
@@ -54,4 +54,4 @@ begin
    end loop; 
 
    Put_Line ("Done");
-end AES256_ECB_Composition;
+end AES128_Cipher_Composition;

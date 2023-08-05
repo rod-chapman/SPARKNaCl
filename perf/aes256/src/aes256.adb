@@ -7,8 +7,8 @@ with FE310.Performance_Monitor; use FE310.Performance_Monitor;
 
 with RISCV.CSR; use RISCV.CSR;
 
-with SPARKNaCl;        use SPARKNaCl;
-with SPARKNaCl.AES256; use SPARKNaCl.AES256;
+with SPARKNaCl;     use SPARKNaCl;
+with SPARKNaCl.AES; use SPARKNaCl.AES;
 
 with IO;
 
@@ -85,7 +85,7 @@ begin
    IO.Put_Line ("SPARKNaCl.AES256 Cipher test");
 
    T1 := Mcycle.Read;
-   SPARKNaCl.AES256.Cipher (Result, Plaintext, Round_Keys);
+   SPARKNaCl.AES.Cipher (Result, Plaintext, Round_Keys);
    T2 := Mcycle.Read;
    Total_Time := T2 - T1;
    Report;

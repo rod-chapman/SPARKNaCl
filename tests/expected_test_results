@@ -1,18 +1,28 @@
-AES256 ECB KAT
-AES256 ECB KAT - iteration 1: OK Encryption | OK Decryption
-AES256 ECB KAT - iteration 2: OK Encryption | OK Decryption
-AES256 ECB KAT - iteration 3: OK Encryption | OK Decryption
-AES256 ECB KAT - iteration 4: OK Encryption | OK Decryption
-AES256 ECB KAT - iteration 5: OK Encryption | OK Decryption
-AES256 ECB KAT - iteration 6: OK Encryption | OK Decryption
-AES256 ECB KAT - iteration 7: OK Encryption | OK Decryption
-AES256 ECB KAT - iteration 8: OK Encryption | OK Decryption
-AES256 ECB KAT - iteration 9: OK Encryption | OK Decryption
-AES256 ECB KAT - iteration 10: OK Encryption | OK Decryption
-AES256 ECB KAT - iteration 11: OK Encryption | OK Decryption
-AES256 ECB KAT - iteration 12: OK Encryption | OK Decryption
-AES256 ECB Composition
-Testing 1000 AES256 ECB compositions: Done
+AES128 Cipher Composition
+Testing 1000 AES128 Cipher compositions: Done
+AES128 Cipher KAT
+AES128 Cipher KAT - iteration 1: OK Encryption | OK Decryption
+AES128 Cipher KAT - iteration 2: OK Encryption | OK Decryption
+AES128 Cipher KAT - iteration 3: OK Encryption | OK Decryption
+AES128 Cipher KAT - iteration 4: OK Encryption | OK Decryption
+AES256 Cipher Composition
+Testing 1000 AES256 Cipher compositions: Done
+AES256 Cipher KAT
+AES256 Cipher KAT - iteration 1: OK Encryption | OK Decryption
+AES256 Cipher KAT - iteration 2: OK Encryption | OK Decryption
+AES256 Cipher KAT - iteration 3: OK Encryption | OK Decryption
+AES256 Cipher KAT - iteration 4: OK Encryption | OK Decryption
+AES256 Cipher KAT - iteration 5: OK Encryption | OK Decryption
+AES256 Cipher KAT - iteration 6: OK Encryption | OK Decryption
+AES256 Cipher KAT - iteration 7: OK Encryption | OK Decryption
+AES256 Cipher KAT - iteration 8: OK Encryption | OK Decryption
+AES256 Cipher KAT - iteration 9: OK Encryption | OK Decryption
+AES256 Cipher KAT - iteration 10: OK Encryption | OK Decryption
+AES256 Cipher KAT - iteration 11: OK Encryption | OK Decryption
+AES256 Cipher KAT - iteration 12: OK Encryption | OK Decryption
+RFSB509 SUPERCOP Regression
+Regression testing RFSB509 with random inputs of size
+ 0 to  512 in bytes: Done
 Hash
 Case 1 - Hash is
 16#24# 16#F9# 16#50# 16#AA# 16#C7# 16#B9# 16#EA# 16#9B# 

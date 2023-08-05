@@ -9,7 +9,7 @@ with RISCV.CSR; use RISCV.CSR;
 
 with SPARKNaCl;                 use SPARKNaCl;
 with SPARKNaCl.Hashing.RFSB509; use SPARKNaCl.Hashing.RFSB509;
-with SPARKNaCl.AES256;          use SPARKNaCl.AES256;
+with SPARKNaCl.AES;             use SPARKNaCl.AES;
 
 with IO;
 
@@ -22,8 +22,8 @@ procedure RFSB509 is
    Output : Digest;
    Input  : constant Byte_Seq (0 .. 1023) := (others => 77);
 
-   Key_Raw : constant Bytes_32 := (others => 0);
-   Key     : constant AES256_Key := AES256.Construct (Key_Raw);
+   Key_Raw : constant Bytes_16 := (others => 0);
+   Key     : constant AES128_Key := AES.Construct (Key_Raw);
 
    procedure Report;
 

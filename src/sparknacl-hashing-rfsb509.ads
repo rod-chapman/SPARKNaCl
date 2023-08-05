@@ -1,4 +1,4 @@
-with SPARKNaCl.AES256; use SPARKNaCl.AES256;
+with SPARKNaCl.AES; use SPARKNaCl.AES;
 package SPARKNaCl.Hashing.RFSB509
   with Pure,
        SPARK_Mode => On
@@ -12,7 +12,7 @@ is
 
    procedure Hash (Output :    out Digest;
                    Input  : in     Byte_Seq;
-                   Key    : in     AES256_Key)
+                   Key    : in     AES128_Key)
      with Global => null;
 
    --------------------------------------------------------
@@ -20,7 +20,7 @@ is
    --------------------------------------------------------
 
    function Hash (Input : in Byte_Seq;
-                  Key   : in AES256_Key) return Digest
+                  Key   : in AES128_Key) return Digest
      with Global => null;
 
 end SPARKNaCl.Hashing.RFSB509;
