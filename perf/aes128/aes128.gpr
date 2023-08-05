@@ -1,0 +1,69 @@
+with "../../../AdaCore/Ada_Drivers_Library/boards/HiFive1_rev_B/hifive1_rev_b_zfp.gpr";
+with "../../sparknacl.gpr";
+
+project AES128 is
+
+  for Runtime ("ada") use HiFive1_rev_B_ZFP'Runtime ("Ada");
+  for Target use "riscv64-elf";
+  for Languages use ("Ada");
+  for Source_Dirs use ("src");
+  for Object_Dir use "obj";
+  for Create_Missing_Dirs use "True";
+
+  for Main use ("aes128.adb");
+
+  Callgraph_Switch := ("-fcallgraph-info=su,da");
+
+  type Build_Kind is ("debug", "O1", "O2", "O3", "Os", "Og");
+  Build_Mode : Build_Kind := External ("SPARKNACL_BUILD_MODE", "O2");
+
+  Opt_Switch := ("");
+  case Build_Mode is
+     when "debug" =>
+        Opt_Switch := ("-g",   -- Debug info
+                       "-O0"); -- No optimization
+     when "O1" =>
+        Opt_Switch := ("-O1");
+     when "O2" =>
+        Opt_Switch := ("-O2");
+     when "O3" =>
+        Opt_Switch := ("-O3");
+     when "Os" =>
+        Opt_Switch := ("-Os");
+     when "Og" =>
+        Opt_Switch := ("-g",
+                       "-Og");
+  end case;
+
+
+  package Compiler is
+
+    for Default_Switches ("Ada") use
+        Compiler'Default_Switches ("Ada") &
+        Callgraph_Switch &
+        Opt_Switch &
+        ("-g",       -- Debug info
+         "-gnatp",   -- Suppress all runtime checks
+         "-gnaty",   -- Style checking on
+         "-gnatwae", -- All warnings and treat them as errors
+         "-gnatw_A", -- Turn off warnings for anonymous allocators
+         "-gnatRms", -- Output representation info for subprograms
+         "-gnatQ",   -- Don't quit. Generate ALI and tree files even if illegalities
+         "-gnatw.X", -- Disable warnings for No_Exception_Propagation
+         "-march=rv32im",  -- No compressed instructions please
+         "-misa-spec=2.2", -- Use the 2.2 RISC-V ISA spec 
+         "-ffunction-sections", -- Create a linker section for each function
+         "-fdata-sections");    -- Create a linker section for each data
+  end Compiler;
+
+  package Linker is
+     Local_Linker_Switches := ("-T", "aes128.ld");
+     for Default_Switches ("Ada") use
+       Local_Linker_Switches &
+       HiFive1_rev_B_ZFP.Linker_Switches &
+       ("-Wl,--print-memory-usage",
+        "-Wl,-Map=aes128.map",
+        "-Wl,--gc-sections");
+  end Linker;
+
+end AES128;
