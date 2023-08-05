@@ -4,6 +4,19 @@ package body SPARKNaCl.Utils
 is
    pragma Warnings (GNATProve, Off, "pragma * ignored (not yet supported)");
 
+   procedure Little_Endian_Unpack (Output :    out Bytes_8;
+                                   Input  : in     U64)
+   is
+      X : U64 := Input;
+   begin
+      for I in Output'Range loop
+         pragma Loop_Optimize (No_Unroll);
+
+         Output (I) := Byte (X and 16#ff#);
+         X          := Shift_Right (X, Byte'Size);
+      end loop;
+   end Little_Endian_Unpack;
+
    function To_U32 is new Ada.Unchecked_Conversion (I32, U32);
    function To_I32 is new Ada.Unchecked_Conversion (U32, I32);
 

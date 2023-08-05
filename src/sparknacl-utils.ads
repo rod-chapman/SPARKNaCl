@@ -12,6 +12,10 @@ is
    --  public children of SPARKNaCl.
    --===================================================
 
+   procedure Little_Endian_Unpack (Output :    out Bytes_8;
+                                   Input  : in     U64)
+     with Global => null;
+
    --  Constant time conditional swap of P and Q. Note that
    --  if a Normal_GF is passed in, this property is retained
    --  on swapping (or not...)  This is required Pack_25519.
