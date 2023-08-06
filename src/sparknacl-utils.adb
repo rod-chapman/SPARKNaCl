@@ -49,32 +49,11 @@ is
       return Output;
    end Big_Endian_Pack;
 
-   function Broadcast_U16 (Input : in U16) return U32
-   is
-      X      : constant U32 := U32 (Input);
-      Output : U32;
-   begin
-      Output := X or Shift_Left (X, 2 * Byte'Size);
-
-      return Output;
-   end Broadcast_U16;
-
-   function Broadcast_Byte (Input : in Byte) return U32
-   is
-      X      : U32 := U32 (Input);
-      Output : U32;
-   begin
-      X      := X or Shift_Left (X, Byte'Size);
-      Output := X or Shift_Left (X, 2 * Byte'Size);
-
-      return Output;
-   end Broadcast_Byte;
-
    function Broadcast_Bit_To_Byte (Input : in U32;
                                    Index : in Index_8) return U32
    is
       --  Least Significant Bit in Byte Mask
-      LSBB_Mask : constant U32 := Broadcast_Byte (16#01#);
+      LSBB_Mask : constant U32 := 16#01_01_01_01#;
 
       P, Q, Output : U32;
    begin

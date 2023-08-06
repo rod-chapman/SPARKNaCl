@@ -113,13 +113,13 @@ is
       Half_Nybble_Shift : constant Integer := 2;
       Half_Nyp_Shift    : constant Integer := 1;
 
-      Lower_Nybble_Mask      : constant U32 := Broadcast_Byte (16#0f#);
-      Lower_Nybble_Half_Mask : constant U32 := Broadcast_Byte (16#33#);
-      Lower_Nyp_Half_Mask    : constant U32 := Broadcast_Byte (16#55#);
-      Upper_Nyp_Half_Mask    : constant U32 := Broadcast_Byte (16#aa#);
+      Lower_Nybble_Mask      : constant U32 := 16#0f_0f_0f_0f#;
+      Lower_Nybble_Half_Mask : constant U32 := 16#33_33_33_33#;
+      Lower_Nyp_Half_Mask    : constant U32 := 16#55_55_55_55#;
+      Upper_Nyp_Half_Mask    : constant U32 := 16#aa_aa_aa_aa#;
 
-      Lambda : constant U32 := Broadcast_Byte (16#c1#);
-      Phi    : constant U32 := Broadcast_Byte (16#99#);
+      Lambda : constant U32 := 16#c1_c1_c1_c1#;
+      Phi    : constant U32 := 16#99_99_99_99#;
 
       A, B, Result : U32;
 
@@ -239,10 +239,8 @@ is
       function Forward_Map (X : in U32) return U32
       is
          Column : constant U32_Seq (Index_8) := (
-           Broadcast_Byte (16#01#), Broadcast_Byte (16#5f#),
-           Broadcast_Byte (16#7c#), Broadcast_Byte (16#74#),
-           Broadcast_Byte (16#46#), Broadcast_Byte (16#b0#),
-           Broadcast_Byte (16#4b#), Broadcast_Byte (16#fc#));
+           16#01_01_01_01#, 16#5f_5f_5f_5f#, 16#7c_7c_7c_7c#, 16#74_74_74_74#,
+           16#46_46_46_46#, 16#b0_b0_b0_b0#, 16#4b_4b_4b_4b#, 16#fc_fc_fc_fc#);
 
          R : U32 := X and Column (Column'First);
       begin
@@ -260,12 +258,10 @@ is
       function Backward_Map (X : in U32) return U32
       is
          Column : constant U32_Seq (Index_8) := (
-           Broadcast_Byte (16#1f#), Broadcast_Byte (16#19#),
-           Broadcast_Byte (16#ad#), Broadcast_Byte (16#84#),
-           Broadcast_Byte (16#54#), Broadcast_Byte (16#44#),
-           Broadcast_Byte (16#45#), Broadcast_Byte (16#f3#));
+           16#1f_1f_1f_1f#, 16#19_19_19_19#, 16#ad_ad_ad_ad#, 16#84_84_84_84#,
+           16#54_54_54_54#, 16#44_44_44_44#, 16#45_45_45_45#, 16#f3_f3_f3_f3#);
 
-         R : U32 := Broadcast_Byte (16#63#);
+         R : U32 := 16#63_63_63_63#;
       begin
          R := R xor (Broadcast_Bit_To_Byte (X, 0) and Column (0));
          R := R xor (Broadcast_Bit_To_Byte (X, 1) and Column (1));
@@ -294,12 +290,10 @@ is
       function Forward_Map (X : in U32) return U32
       is
          Column : constant U32_Seq (Index_8) := (
-           Broadcast_Byte (16#60#), Broadcast_Byte (16#c6#),
-           Broadcast_Byte (16#c5#), Broadcast_Byte (16#52#),
-           Broadcast_Byte (16#30#), Broadcast_Byte (16#3e#),
-           Broadcast_Byte (16#e5#), Broadcast_Byte (16#cd#));
+           16#60_60_60_60#, 16#c6_c6_c6_c6#, 16#c5_c5_c5_c5#, 16#52_52_52_52#,
+           16#30_30_30_30#, 16#3e_3e_3e_3e#, 16#e5_e5_e5_e5#, 16#cd_cd_cd_cd#);
 
-         R : U32 := Broadcast_Byte (16#7d#);
+         R : U32 := 16#7d_7d_7d_7d#;
       begin
          R := R xor (Broadcast_Bit_To_Byte (X, 0) and Column (0));
          R := R xor (Broadcast_Bit_To_Byte (X, 1) and Column (1));
@@ -316,10 +310,8 @@ is
       function Backward_Map (X : in U32) return U32
       is
          Column : constant U32_Seq (Index_8) := (
-           Broadcast_Byte (16#01#), Broadcast_Byte (16#bc#),
-           Broadcast_Byte (16#5d#), Broadcast_Byte (16#0c#),
-           Broadcast_Byte (16#1f#), Broadcast_Byte (16#bb#),
-           Broadcast_Byte (16#f1#), Broadcast_Byte (16#84#));
+           16#01_01_01_01#, 16#bc_bc_bc_bc#, 16#5d_5d_5d_5d#, 16#0c_0c_0c_0c#,
+           16#1f_1f_1f_1f#, 16#bb_bb_bb_bb#, 16#f1_f1_f1_f1#, 16#84_84_84_84#);
 
          R : U32 := X and Column (Column'First);
       begin
@@ -435,8 +427,8 @@ is
    function X_Times (Input : U32) return U32
    is
       --  Most Significant Bit in Byte Mask
-      MSBB_Mask            : constant U32 := Broadcast_Byte (16#80#);
-      Polynomial_Remainder : constant U32 := Broadcast_Byte (16#1b#);
+      MSBB_Mask            : constant U32 := 16#80_80_80_80#;
+      Polynomial_Remainder : constant U32 := 16#1b_1b_1b_1b#;
 
       P, Q, Result : U32;
    begin
@@ -453,7 +445,7 @@ is
 
    function Mix_Columns_Matrix_Multiplication (Input : in U32) return U32
    is
-      Upper_Wyde_Half_Mask : constant U32 := Broadcast_U16 (16#ff_00#);
+      Upper_Wyde_Half_Mask : constant U32 := 16#ff_00_ff_00#;
 
       P, Q, X, Result : U32;
    begin

@@ -25,18 +25,6 @@ is
    function Big_Endian_Pack (Input : in Bytes_4) return U32
      with Global => null;
 
-   function Broadcast_U16 (Input : in U16) return U32
-     with Pure_Function,
-          Global => null,
-          Post   => (for all I in 0 .. 1 => (Input =
-            U16 (Shift_Right (Broadcast_U16'Result, I * 2 * 8) and 16#ffff#)));
-
-   function Broadcast_Byte (Input : in Byte) return U32
-     with Pure_Function,
-          Global => null,
-          Post   => (for all I in 0 .. 3 => (Input =
-            Byte (Shift_Right (Broadcast_Byte'Result, I * 8) and 16#ff#)));
-
    --  Do the following for every Byte in Input. Set all bits of the byte to
    --  the value of the bit at position "Index" in the given byte.
    function Broadcast_Bit_To_Byte (Input : in U32;
