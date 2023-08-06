@@ -49,6 +49,27 @@ is
       return Output;
    end Big_Endian_Pack;
 
+   function Broadcast_U16 (Input : in U16) return U32
+   is
+      X      : constant U32 := U32 (Input);
+      Output : U32;
+   begin
+      Output := X or Shift_Left (X, 2 * Byte'Size);
+
+      return Output;
+   end Broadcast_U16;
+
+   function Broadcast_Byte (Input : in Byte) return U32
+   is
+      X      : U32 := U32 (Input);
+      Output : U32;
+   begin
+      X      := X or Shift_Left (X, Byte'Size);
+      Output := X or Shift_Left (X, 2 * Byte'Size);
+
+      return Output;
+   end Broadcast_Byte;
+
    function To_U32 is new Ada.Unchecked_Conversion (I32, U32);
    function To_I32 is new Ada.Unchecked_Conversion (U32, I32);
 

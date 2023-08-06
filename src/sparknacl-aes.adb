@@ -25,12 +25,6 @@ is
                             Key   : in     Round_Key)
      with Global => null;
 
-   function Broadcast (Input : in Byte) return U32
-     with Pure_Function,
-          Global => null,
-          Post   => (for all I in 0 .. 3 => (Input =
-            Byte (Shift_Right (Broadcast'Result, I * Byte'Size) and 16#ff#)));
-
    function GF2p2p2p2_Inverse (X : in U32) return U32
      with Pure_Function,
           Global => null;
@@ -120,30 +114,19 @@ is
       end loop;
    end Add_Round_Key;
 
-   function Broadcast (Input : in Byte) return U32
-   is
-      X : U32 := U32 (Input);
-      Result : U32;
-   begin
-      X      := X or Shift_Left (X, Byte'Size);
-      Result := X or Shift_Left (X, 2 * Byte'Size);
-
-      return Result;
-   end Broadcast;
-
    function GF2p2p2p2_Inverse (X : in U32) return U32
    is
       Half_Byte_Shift   : constant Integer := 4;
       Half_Nybble_Shift : constant Integer := 2;
       Half_Nyp_Shift    : constant Integer := 1;
 
-      Lower_Nybble_Mask      : constant U32 := Broadcast (16#0f#);
-      Lower_Nybble_Half_Mask : constant U32 := Broadcast (16#33#);
-      Lower_Nyp_Half_Mask    : constant U32 := Broadcast (16#55#);
-      Upper_Nyp_Half_Mask    : constant U32 := Broadcast (16#aa#);
+      Lower_Nybble_Mask      : constant U32 := Broadcast_Byte (16#0f#);
+      Lower_Nybble_Half_Mask : constant U32 := Broadcast_Byte (16#33#);
+      Lower_Nyp_Half_Mask    : constant U32 := Broadcast_Byte (16#55#);
+      Upper_Nyp_Half_Mask    : constant U32 := Broadcast_Byte (16#aa#);
 
-      Lambda : constant U32 := Broadcast (16#c1#);
-      Phi    : constant U32 := Broadcast (16#99#);
+      Lambda : constant U32 := Broadcast_Byte (16#c1#);
+      Phi    : constant U32 := Broadcast_Byte (16#99#);
 
       A, B, Result : U32;
 
@@ -258,7 +241,7 @@ is
                                    Index : in Index_8) return U32
    is
       --  Least Significant Bit in Byte Mask
-      LSBB_Mask : constant U32 := Broadcast (16#01#);
+      LSBB_Mask : constant U32 := Broadcast_Byte (16#01#);
 
       P, Q, Return_Value : U32;
    begin
@@ -279,9 +262,10 @@ is
       function Forward_Map (X : in U32) return U32
       is
          Column : constant U32_Seq (Index_8) := (
-           Broadcast (16#01#), Broadcast (16#5f#), Broadcast (16#7c#),
-           Broadcast (16#74#), Broadcast (16#46#), Broadcast (16#b0#),
-           Broadcast (16#4b#), Broadcast (16#fc#));
+           Broadcast_Byte (16#01#), Broadcast_Byte (16#5f#),
+           Broadcast_Byte (16#7c#), Broadcast_Byte (16#74#),
+           Broadcast_Byte (16#46#), Broadcast_Byte (16#b0#),
+           Broadcast_Byte (16#4b#), Broadcast_Byte (16#fc#));
 
          R : U32 := X and Column (Column'First);
       begin
@@ -299,11 +283,12 @@ is
       function Backward_Map (X : in U32) return U32
       is
          Column : constant U32_Seq (Index_8) := (
-           Broadcast (16#1f#), Broadcast (16#19#), Broadcast (16#ad#),
-           Broadcast (16#84#), Broadcast (16#54#), Broadcast (16#44#),
-           Broadcast (16#45#), Broadcast (16#f3#));
+           Broadcast_Byte (16#1f#), Broadcast_Byte (16#19#),
+           Broadcast_Byte (16#ad#), Broadcast_Byte (16#84#),
+           Broadcast_Byte (16#54#), Broadcast_Byte (16#44#),
+           Broadcast_Byte (16#45#), Broadcast_Byte (16#f3#));
 
-         R : U32 := Broadcast (16#63#);
+         R : U32 := Broadcast_Byte (16#63#);
       begin
          R := R xor (Broadcast_Bit_To_Byte (X, 0) and Column (0));
          R := R xor (Broadcast_Bit_To_Byte (X, 1) and Column (1));
@@ -332,11 +317,12 @@ is
       function Forward_Map (X : in U32) return U32
       is
          Column : constant U32_Seq (Index_8) := (
-           Broadcast (16#60#), Broadcast (16#c6#), Broadcast (16#c5#),
-           Broadcast (16#52#), Broadcast (16#30#), Broadcast (16#3e#),
-           Broadcast (16#e5#), Broadcast (16#cd#));
+           Broadcast_Byte (16#60#), Broadcast_Byte (16#c6#),
+           Broadcast_Byte (16#c5#), Broadcast_Byte (16#52#),
+           Broadcast_Byte (16#30#), Broadcast_Byte (16#3e#),
+           Broadcast_Byte (16#e5#), Broadcast_Byte (16#cd#));
 
-         R : U32 := Broadcast (16#7d#);
+         R : U32 := Broadcast_Byte (16#7d#);
       begin
          R := R xor (Broadcast_Bit_To_Byte (X, 0) and Column (0));
          R := R xor (Broadcast_Bit_To_Byte (X, 1) and Column (1));
@@ -353,9 +339,10 @@ is
       function Backward_Map (X : in U32) return U32
       is
          Column : constant U32_Seq (Index_8) := (
-           Broadcast (16#01#), Broadcast (16#bc#), Broadcast (16#5d#),
-           Broadcast (16#0c#), Broadcast (16#1f#), Broadcast (16#bb#),
-           Broadcast (16#f1#), Broadcast (16#84#));
+           Broadcast_Byte (16#01#), Broadcast_Byte (16#bc#),
+           Broadcast_Byte (16#5d#), Broadcast_Byte (16#0c#),
+           Broadcast_Byte (16#1f#), Broadcast_Byte (16#bb#),
+           Broadcast_Byte (16#f1#), Broadcast_Byte (16#84#));
 
          R : U32 := X and Column (Column'First);
       begin
@@ -471,8 +458,8 @@ is
    function X_Times (Input : U32) return U32
    is
       --  Most Significant Bit in Byte Mask
-      MSBB_Mask            : constant U32 := Broadcast (16#80#);
-      Polynomial_Remainder : constant U32 := Broadcast (16#1b#);
+      MSBB_Mask            : constant U32 := Broadcast_Byte (16#80#);
+      Polynomial_Remainder : constant U32 := Broadcast_Byte (16#1b#);
 
       P, Q, Result : U32;
    begin
@@ -489,7 +476,7 @@ is
 
    function Mix_Columns_Matrix_Multiplication (Input : in U32) return U32
    is
-      Upper_Wyde_Half_Mask : constant U32 := 16#ff_00_ff_00#;
+      Upper_Wyde_Half_Mask : constant U32 := Broadcast_U16 (16#ff_00#);
 
       P, Q, X, Result : U32;
    begin
