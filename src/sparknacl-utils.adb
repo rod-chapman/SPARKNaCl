@@ -17,6 +17,38 @@ is
       end loop;
    end Little_Endian_Unpack;
 
+   procedure Big_Endian_Unpack (Output :    out Bytes_4;
+                                Input  : in     U32)
+   is
+      X : U32 := Input;
+   begin
+      Output (Output'Last) := Byte (X and 16#ff#);
+      pragma Assert (Output (Output'Last)'Initialized);
+
+      for I in reverse Output'First .. Output'Last - 1 loop
+         pragma Loop_Optimize (No_Unroll);
+
+         X          := Shift_Right (X, Byte'Size);
+         Output (I) := Byte (X and 16#ff#);
+
+         pragma Loop_Invariant (Output (I .. Output'Last)'Initialized);
+      end loop;
+   end Big_Endian_Unpack;
+
+   function Big_Endian_Pack (Input : in Bytes_4) return U32
+   is
+      Output : U32 := U32 (Input (Input'First));
+   begin
+      for I in Input'First + 1 .. Input'Last loop
+         pragma Loop_Optimize (No_Unroll);
+
+         Output := Shift_Left (Output, Byte'Size);
+         Output := Output or U32 (Input (I));
+      end loop;
+
+      return Output;
+   end Big_Endian_Pack;
+
    function To_U32 is new Ada.Unchecked_Conversion (I32, U32);
    function To_I32 is new Ada.Unchecked_Conversion (U32, I32);
 

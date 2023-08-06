@@ -1,3 +1,4 @@
+with SPARKNaCl.Utils; use SPARKNaCl.Utils;
 package body SPARKNaCl.AES
   with Pure,
        SPARK_Mode => On
@@ -8,20 +9,11 @@ is
    --  Local type definition(s)
    --------------------------------------------------------
 
-   subtype Cipher_State    is U32_Seq (Index_4);
+   subtype Cipher_State is U32_Seq (Index_4);
 
    --------------------------------------------------------
    --  Local subprogram declaration(s)
    --------------------------------------------------------
-
-   procedure Big_Endian_Unpack (Output :    out Bytes_4;
-                                Input  : in     U32)
-     with Global => null,
-          Pre    => (Output'First = 0) and (Output'Last = 3);
-
-   function Big_Endian_Pack (Input : in Bytes_4) return U32
-     with Global => null,
-          Pre    => (Input'First = 0) and (Input'Last = 3);
 
    function Construct_State (Input : in Bytes_16) return Cipher_State
      with Global => null;
@@ -90,40 +82,6 @@ is
    --------------------------------------------------------
    --  Local subprogram bodies
    --------------------------------------------------------
-
-   procedure Big_Endian_Unpack (Output :    out Bytes_4;
-                                Input  : in     U32)
-   is
-      LSByte_Mask : constant U32 := 16#00_00_00_ff#;
-
-      Result : Bytes_4 with Relaxed_Initialization;
-
-      Shift_Amount  : Integer;
-      Shifted_Input : U32;
-   begin
-      for I in Result'Range loop
-         Shift_Amount  := Integer ((Output'Last - I) * Byte'Size);
-         Shifted_Input := Shift_Right (Input, Shift_Amount);
-         Result (I)    := Byte (Shifted_Input and LSByte_Mask);
-
-         pragma Loop_Invariant (Result (Result'First .. I)'Initialized);
-      end loop;
-
-      Output := Result;
-   end Big_Endian_Unpack;
-
-   function Big_Endian_Pack (Input : in Bytes_4) return U32
-   is
-      Shift_Amount : Integer;
-      Result       : U32 := 0;
-   begin
-      for I in Input'Range loop
-         Shift_Amount := Integer ((Input'Last - I) * Byte'Size);
-         Result := Result or Shift_Left (U32 (Input (I)), Shift_Amount);
-      end loop;
-
-      return Result;
-   end Big_Endian_Pack;
 
    function Construct_State (Input : in Bytes_16) return Cipher_State
    is
