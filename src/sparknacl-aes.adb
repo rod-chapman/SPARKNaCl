@@ -29,13 +29,6 @@ is
      with Pure_Function,
           Global => null;
 
-   --  Do the following for every Byte in X. Set all bits of the byte to the
-   --  value of the bit at position "Index" in the given byte.
-   function Broadcast_Bit_To_Byte (X     : in U32;
-                                   Index : in Index_8) return U32
-     with Pure_Function,
-          Global => null;
-
    function Sbox (Input : in U32) return U32
      with Pure_Function,
           Global => null;
@@ -236,22 +229,6 @@ is
 
       return Result;
    end GF2p2p2p2_Inverse;
-
-   function Broadcast_Bit_To_Byte (X     : in U32;
-                                   Index : in Index_8) return U32
-   is
-      --  Least Significant Bit in Byte Mask
-      LSBB_Mask : constant U32 := Broadcast_Byte (16#01#);
-
-      P, Q, Return_Value : U32;
-   begin
-      P := Shift_Right (X, Integer (Index)) and LSBB_Mask;
-      Q := Shift_Left (P, Byte'Size - 1);
-
-      Return_Value := Q or (Q - P);
-
-      return Return_Value;
-   end Broadcast_Bit_To_Byte;
 
    function Sbox (Input : in U32) return U32
    is

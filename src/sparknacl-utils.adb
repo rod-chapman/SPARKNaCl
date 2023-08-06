@@ -70,6 +70,22 @@ is
       return Output;
    end Broadcast_Byte;
 
+   function Broadcast_Bit_To_Byte (Input : in U32;
+                                   Index : in Index_8) return U32
+   is
+      --  Least Significant Bit in Byte Mask
+      LSBB_Mask : constant U32 := Broadcast_Byte (16#01#);
+
+      P, Q, Output : U32;
+   begin
+      P := Shift_Right (Input, Integer (Index)) and LSBB_Mask;
+      Q := Shift_Left (P, Byte'Size - 1);
+
+      Output := Q or (Q - P);
+
+      return Output;
+   end Broadcast_Bit_To_Byte;
+
    function To_U32 is new Ada.Unchecked_Conversion (I32, U32);
    function To_I32 is new Ada.Unchecked_Conversion (U32, I32);
 

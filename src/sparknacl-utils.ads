@@ -37,6 +37,14 @@ is
           Post   => (for all I in 0 .. 3 => (Input =
             Byte (Shift_Right (Broadcast_Byte'Result, I * 8) and 16#ff#)));
 
+   --  Do the following for every Byte in Input. Set all bits of the byte to
+   --  the value of the bit at position "Index" in the given byte.
+   function Broadcast_Bit_To_Byte (Input : in U32;
+                                   Index : in Index_8) return U32
+     with Pure_Function,
+          Global => null;
+
+
    --  Constant time conditional swap of P and Q. Note that
    --  if a Normal_GF is passed in, this property is retained
    --  on swapping (or not...)  This is required Pack_25519.
