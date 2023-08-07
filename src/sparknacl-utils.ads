@@ -14,24 +14,27 @@ is
 
    procedure Little_Endian_Unpack (Output :    out Bytes_8;
                                    Input  : in     U64)
-     with Global => null;
+     with Inline_Always,
+          Global => null;
 
    procedure Big_Endian_Unpack (Output :    out Bytes_4;
                                 Input  : in     U32)
      with Relaxed_Initialization => Output,
+          Inline_Always,
           Global => null,
           Post   => Output'Initialized;
 
    function Big_Endian_Pack (Input : in Bytes_4) return U32
-     with Global => null;
+     with Inline_Always,
+          Global => null;
 
    --  Do the following for every Byte in Input. Set all bits of the byte to
    --  the value of the bit at position "Index" in the given byte.
    function Broadcast_Bit_To_Byte (Input : in U32;
                                    Index : in Index_8) return U32
      with Pure_Function,
+          Inline_Always,
           Global => null;
-
 
    --  Constant time conditional swap of P and Q. Note that
    --  if a Normal_GF is passed in, this property is retained
