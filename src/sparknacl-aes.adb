@@ -18,8 +18,12 @@ is
    function Construct_State (Input : in Bytes_16) return Cipher_State
      with Global => null;
 
-   function Serialize_State (State : in Cipher_State) return Bytes_16
-     with Global => null;
+   procedure Serialize_State (Output :    out Bytes_16;
+                              State  : in     Cipher_State)
+     with Relaxed_Initialization => Output,
+          Global => null,
+          Pre    => (Output'First = State'First) and (State'First = 0),
+          Post   => Output'Initialized;
 
    procedure Add_Round_Key (State : in out Cipher_State;
                             Key   : in     Round_Key)
@@ -82,21 +86,15 @@ is
       return State;
    end Construct_State;
 
-   function Serialize_State (State : in Cipher_State) return Bytes_16
+   procedure Serialize_State (Output :    out Bytes_16;
+                              State  : in     Cipher_State)
    is
-      Result : Bytes_16 with Relaxed_Initialization;
    begin
-      pragma Assert (Result'First = State'First);
-      pragma Assert (Result'First = 0);
-
       for I in Cipher_State'Range loop
-         Big_Endian_Unpack (Result (4 * I .. 4 * I + 3), State (I));
+         Big_Endian_Unpack (Output (4 * I .. 4 * I + 3), State (I));
 
-         pragma Loop_Invariant (
-           Result (Result'First .. Result'First + 4 * I + 3)'Initialized);
+         pragma Loop_Invariant (Output (0 .. 4 * I + 3)'Initialized);
       end loop;
-
-      return Result;
    end Serialize_State;
 
    procedure Add_Round_Key (State : in out Cipher_State;
@@ -727,7 +725,7 @@ is
       pragma Assert (Key_Index = Round_Keys.F'Last);
       Add_Round_Key (State, Round_Keys.F (Key_Index));
 
-      Output := Serialize_State (State);
+      Serialize_State (Output, State);
    end Cipher;
 
    procedure Cipher (Output     :    out Bytes_16;
@@ -755,7 +753,7 @@ is
       pragma Assert (Key_Index = Round_Keys.F'Last);
       Add_Round_Key (State, Round_Keys.F (Key_Index));
 
-      Output := Serialize_State (State);
+      Serialize_State (Output, State);
    end Cipher;
 
    procedure Inv_Cipher (Output     :    out Bytes_16;
@@ -784,7 +782,7 @@ is
       pragma Assert (Key_Index = Round_Keys.F'First);
       Add_Round_Key (State, Round_Keys.F (Key_Index));
 
-      Output := Serialize_State (State);
+      Serialize_State (Output, State);
    end Inv_Cipher;
 
    procedure Inv_Cipher (Output     :    out Bytes_16;
@@ -813,7 +811,7 @@ is
       pragma Assert (Key_Index = Round_Keys.F'First);
       Add_Round_Key (State, Round_Keys.F (Key_Index));
 
-      Output := Serialize_State (State);
+      Serialize_State (Output, State);
    end Inv_Cipher;
 
 end SPARKNaCl.AES;
