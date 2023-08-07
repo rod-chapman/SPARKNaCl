@@ -55,6 +55,7 @@ is
 
    function Mix_Columns_Matrix_Multiplication (Input : in U32) return U32
      with Pure_Function,
+          Inline_Always,
           Global => null;
 
    procedure Mix_Columns (State : in out Cipher_State)
@@ -126,19 +127,23 @@ is
       function GF2p2_Multiply (U : in U32;
                                V : in U32) return U32
         with Pure_Function,
+             Inline_Always,
              Global => null;
 
       function GF2p2_Inverse (U : in U32) return U32
         with Pure_Function,
+             Inline_Always,
              Global => null;
 
       function GF2p2p2_Multiply (U : in U32;
                                  V : in U32) return U32
         with Pure_Function,
+             Inline_Always,
              Global => null;
 
       function GF2p2p2_Inverse (U : in U32) return U32
         with Pure_Function,
+             Inline_Always,
              Global => null;
 
       function GF2p2_Multiply (U : in U32;
@@ -232,9 +237,11 @@ is
 
    function Sbox (Input : in U32) return U32
    is
-      function Forward_Map (X : in U32) return U32;
+      function Forward_Map (X : in U32) return U32
+        with Global => null;
 
-      function Backward_Map (X : in U32) return U32;
+      function Backward_Map (X : in U32) return U32
+        with Global => null;
 
       function Forward_Map (X : in U32) return U32
       is
@@ -283,9 +290,11 @@ is
 
    function Inv_Sbox (Input : in U32) return U32
    is
-      function Forward_Map (X : in U32) return U32;
+      function Forward_Map (X : in U32) return U32
+        with Global => null;
 
-      function Backward_Map (X : in U32) return U32;
+      function Backward_Map (X : in U32) return U32
+        with Global => null;
 
       function Forward_Map (X : in U32) return U32
       is
@@ -475,6 +484,7 @@ is
    is
       function Matrix_Multiplication (Column : in U32) return U32
         with Pure_Function,
+             Inline_Always,
              Global => null;
 
       function Matrix_Multiplication (Column : in U32) return U32
