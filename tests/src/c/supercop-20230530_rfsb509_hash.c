@@ -14,7 +14,7 @@ static const char sha256_iv[32] = {
   0x5b,0xe0,0xcd,0x19,
 } ;
 
-int _rfsb509_crypto_hash(
+int rfsb509_crypto_hash(
   unsigned char *out,
   const unsigned char *in,
   unsigned long long inlen
