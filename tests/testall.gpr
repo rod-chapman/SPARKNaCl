@@ -20,8 +20,17 @@ project Testall is
   end case;
 
   package Compiler is
-    for Default_Switches ("C") use Compiler'Default_Switches ("C") &
-        Opt_Switch;
+    for Default_Switches ("C") use
+        Compiler'Default_Switches ("C") &
+        Opt_Switch &
+        ("-ffunction-sections", -- Create a linker section for each function
+         "-fdata-sections");    -- Create a linker section for each data
+
+    for Default_Switches ("Ada") use
+        Compiler'Default_Switches ("Ada") &
+        Opt_Switch &
+        ("-ffunction-sections", -- Create a linker section for each function
+         "-fdata-sections");    -- Create a linker section for each data
   end Compiler;
 
 end Testall;
