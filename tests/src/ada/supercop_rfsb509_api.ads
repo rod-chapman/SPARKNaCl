@@ -9,6 +9,6 @@ is
       Input_Length : in     Unsigned_64) return Interfaces.C.Int
      with Import,
           Convention => C,
-          Link_Name  => "rfsb509_crypto_hash";
+          Link_Name  => "_rfsb509_crypto_hash";
 
 end SUPERCOP_RFSB509_API;
