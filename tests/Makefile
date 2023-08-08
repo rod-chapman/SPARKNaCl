@@ -1,4 +1,5 @@
 GPR_WORKERS:=-j1
+SOURCES:= src/ada/*.adb src/c/*.c src/c/*.h ../src/*.adb ../src/*.ads testall.gpr
 
 all: fntr sntr ftestdiff stestdiff
 
@@ -14,7 +15,7 @@ fntr: ftestall
 sntr: stestall
 	./stestall > $@
 
-ftestall: src/ada/*.adb ../src/*.adb ../src/*.ads testall.gpr
+ftestall: $(SOURCES)
 	$(MAKE) clean_build
 	$(MAKE) clean_ftest
 	gprbuild -Ptestall \
@@ -24,7 +25,7 @@ ftestall: src/ada/*.adb ../src/*.adb ../src/*.ads testall.gpr
 				-XSPARKNACL_BUILD_MODE=O3
 	mv obj/testall $@
 
-stestall: src/ada/*.adb ../src/*.adb ../src/*.ads testall.gpr
+stestall: $(SOURCES)
 	$(MAKE) clean_build
 	$(MAKE) clean_stest
 	gprbuild -Ptestall \
