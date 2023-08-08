@@ -34,11 +34,14 @@ is
    --  Local subprogram declaration(s)
    --------------------------------------------------------
 
-   procedure Calculate_Column (Column     :    out Matrix_Column;
+   procedure Calculate_Column (Column     :    out Bytes_64;
                                Word       : in     Byte;
                                Round_Keys : in     AES128_Round_Keys)
-     with Global => null,
-          Pre    => Column'First = 0;
+     with Relaxed_Initialization => Column,
+          Global => null,
+          Pre    => Column'First = 0,
+          Post   => Column'Initialized and
+            ((Column (Column'Last) and 2#1110_00_00#) = 0);
 
    procedure Mul128 (A : in out Matrix_Column)
      with Global => null;
@@ -68,36 +71,30 @@ is
    --  Local subprogram bodies
    --------------------------------------------------------
 
-   procedure Calculate_Column (Column     :    out Matrix_Column;
+   procedure Calculate_Column (Column     :    out Bytes_64;
                                Word       : in     Byte;
                                Round_Keys : in     AES128_Round_Keys)
    is
       Five_LSB_Mask : constant Byte := 2#0001_1111#;
 
-      Cipher_Input : Bytes_16 := (others => 0);
-      Vector       : Bytes_64 with Relaxed_Initialization;
-
-      First_Byte, Last_Byte  : Byte;
+      First_Byte, Last_Byte : Byte;
+      Cipher_Input          : Bytes_16 := (others => 0);
    begin
-      --  Cipher_Input (Cipher_Input'Last - 1) := Word;
       Cipher_Input (Cipher_Input'First + 1) := Word;
 
       for I in Index_4 loop
-         --  Cipher_Input (Cipher_Input'Last) := Byte (I);
          Cipher_Input (Cipher_Input'First) := Byte (I);
-         Cipher (Vector (I * 16 ..  I * 16 + 15), Cipher_Input, Round_Keys);
+         Cipher (Column (I * 16 ..  I * 16 + 15), Cipher_Input, Round_Keys);
 
          pragma Loop_Invariant (
-           (Vector (Vector'First .. I * 16 + 15)'Initialized));
+           (Column (Column'First .. I * 16 + 15)'Initialized));
       end loop;
 
-      First_Byte := Vector (Vector'First);
-      Last_Byte  := Vector (Vector'Last);
+      First_Byte := Column (Column'First);
+      Last_Byte  := Column (Column'Last);
 
-      Vector (Vector'First) := First_Byte xor Shift_Right (Last_Byte, 5);
-      Vector (Vector'Last)  := Last_Byte and Five_LSB_Mask;
-
-      Column := Vector;
+      Column (Column'First) := First_Byte xor Shift_Right (Last_Byte, 5);
+      Column (Column'Last)  := Last_Byte and Five_LSB_Mask;
    end Calculate_Column;
 
    procedure Mul128 (A : in out Matrix_Column)
