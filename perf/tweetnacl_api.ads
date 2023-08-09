@@ -1,10 +1,10 @@
-with SPARKNaCl;           use SPARKNaCl;
-with SPARKNaCl.Sign;      use SPARKNaCl.Sign;
-with SPARKNaCl.Cryptobox; use SPARKNaCl.Cryptobox;
-with SPARKNaCl.Hashing;   use SPARKNaCl.Hashing;
-with SPARKNaCl.Stream;    use SPARKNaCl.Stream;
-with SPARKNaCl.Core;      use SPARKNaCl.Core;
-with Interfaces;          use Interfaces;
+with SPARKNaCl;                use SPARKNaCl;
+with SPARKNaCl.Sign;           use SPARKNaCl.Sign;
+with SPARKNaCl.Cryptobox;      use SPARKNaCl.Cryptobox;
+with SPARKNaCl.Hashing.SHA512; use SPARKNaCl.Hashing.SHA512;
+with SPARKNaCl.Stream;         use SPARKNaCl.Stream;
+with SPARKNaCl.Core;           use SPARKNaCl.Core;
+with Interfaces;               use Interfaces;
 with Interfaces.C;
 package TweetNaCl_API
 is
