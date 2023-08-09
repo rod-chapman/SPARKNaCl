@@ -43,6 +43,10 @@ abstract project Perf is
          "-ffunction-sections", -- Create a linker section for each function
          "-fdata-sections");    -- Create a linker section for each data
 
+    for Default_Switches ("Asm") use
+        Compiler'Default_Switches ("Asm") &
+        ("-misa-spec=2.2");
+
     for Default_Switches ("Ada") use
         Compiler'Default_Switches ("Ada") &
         Callgraph_Switch &
@@ -55,6 +59,7 @@ abstract project Perf is
          "-gnatRms", -- Output representation info for subprograms
          "-gnatQ",   -- Don't quit. Generate ALI and tree files even if illegalities
          "-gnatw.X", -- Disable warnings for No_Exception_Propagation
+         "-misa-spec=2.2",
          "-march=rv32im", -- No compressed instructions please
          "-ffunction-sections", -- Create a linker section for each function
          "-fdata-sections");    -- Create a linker section for each data
