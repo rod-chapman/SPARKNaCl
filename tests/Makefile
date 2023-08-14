@@ -19,30 +19,30 @@ ftestall: $(SOURCES)
 	$(MAKE) clean_build
 	$(MAKE) clean_ftest
 	gprbuild -Ptestall \
-				$(GPR_WORKERS) \
-		      -XSPARKNACL_RUNTIME_CHECKS=disabled \
-				-XSPARKNACL_CONTRACTS=disabled \
-				-XSPARKNACL_BUILD_MODE=O3
+	$(GPR_WORKERS) \
+	-XSPARKNACL_RUNTIME_CHECKS=disabled \
+	-XSPARKNACL_CONTRACTS=disabled \
+	-XSPARKNACL_BUILD_MODE=O3
 	mv obj/testall $@
 
 stestall: $(SOURCES)
 	$(MAKE) clean_build
 	$(MAKE) clean_stest
 	gprbuild -Ptestall \
-				$(GPR_WORKERS) \
-		      -XSPARKNACL_RUNTIME_CHECKS=enabled \
-				-XSPARKNACL_CONTRACTS=enabled \
-				-XSPARKNACL_BUILD_MODE=debug
+	$(GPR_WORKERS) \
+	-XSPARKNACL_RUNTIME_CHECKS=enabled \
+	-XSPARKNACL_CONTRACTS=enabled \
+	-XSPARKNACL_BUILD_MODE=debug
 	mv obj/testall $@
 
 scalarspeed: src/ada/scalarspeed.adb ../src/*.adb ../src/*.ads
 	$(MAKE) clean_build
 	$(MAKE) clean_scalar_build
 	gprbuild -Pscalarspeed \
-				$(GPR_WORKERS) \
-		      -XSPARKNACL_RUNTIME_CHECKS=disabled \
-	         -XSPARKNACL_CONTRACTS=disabled \
-				-XSPARKNACL_BUILD_MODE=O3
+	$(GPR_WORKERS) \
+	-XSPARKNACL_RUNTIME_CHECKS=disabled \
+	-XSPARKNACL_CONTRACTS=disabled \
+	-XSPARKNACL_BUILD_MODE=O3
 	mv obj/$@ $@
 
 .PHONY: all clean_build clean_stest clean_ftest clean_scalarspeed clean
