@@ -7,6 +7,10 @@ procedure AES256_Cipher_KAT
 is
    Test_Case_Count : constant I32 := 12;
 
+   --  All tests vectors, that are used here, come from NISTs AES Algorithm
+   --  Validation Suite (AESAVS). The actual files, where vectors can be found,
+   --  are part of the ZIP archive pointed to by the following link:
+   --  https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-Validation-Program/documents/aes/KAT_AES.zip
    Keys : constant array (1 .. Test_Case_Count) of Bytes_32 := (
      -- ECB VarKey 256 count 0
      1 => (16#80#, 16#00#, 16#00#, 16#00#, 16#00#, 16#00#, 16#00#, 16#00#,
