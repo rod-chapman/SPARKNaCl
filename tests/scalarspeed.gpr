@@ -2,8 +2,8 @@ with "../sparknacl.gpr";
 project Scalarspeed is
 
    for Create_Missing_Dirs use "True";
-   for Object_Dir use ".";
-   for Source_Dirs use (".");
+   for Object_Dir use "obj";
+   for Source_Dirs use ("src/c", "src/ada");
    for Main use ("scalarspeed.adb");
 
 end Scalarspeed;

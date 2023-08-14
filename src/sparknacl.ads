@@ -155,12 +155,14 @@ private
    --==============================================
 
 
-   subtype Index_15 is I32 range 0 .. 14;
-   subtype Index_20 is I32 range 0 .. 19;
-   subtype Index_31 is I32 range 0 .. 30;
+   subtype Index_15  is I32 range 0 .. 14;
+   subtype Index_20  is I32 range 0 .. 19;
+   subtype Index_31  is I32 range 0 .. 30;
+   subtype Index_48  is I32 range 0 .. 47;
    subtype Index_128 is I32 range 0 .. 127;
    subtype Index_256 is I32 range 0 .. 255;
 
+   subtype Bytes_48  is Byte_Seq (Index_48);
    subtype Bytes_128 is Byte_Seq (Index_128);
    subtype Bytes_256 is Byte_Seq (Index_256);
 

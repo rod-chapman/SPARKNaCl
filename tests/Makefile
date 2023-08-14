@@ -1,42 +1,62 @@
+GPR_WORKERS:=-j1
+SOURCES:= src/ada/*.adb src/c/*.c src/c/*.h ../src/*.adb ../src/*.ads testall.gpr
+
 all: fntr sntr ftestdiff stestdiff
 
-fall: fntr ftestdiff
+ftestdiff: expected_test_results fntr
+	diff $^
 
-ftestdiff: fntr
-	diff expected_test_results fntr
-
-stestdiff: sntr
-	diff expected_test_results sntr
+stestdiff: expected_test_results sntr
+	diff $^
 
 fntr: ftestall
-	./ftestall >fntr
+	./ftestall > $@
 
 sntr: stestall
-	./stestall >sntr
+	./stestall > $@
 
-ftestall: *.adb ../src/*.adb ../src/*.ads
+ftestall: $(SOURCES)
+	$(MAKE) clean_build
+	$(MAKE) clean_ftest
+	gprbuild -Ptestall \
+	$(GPR_WORKERS) \
+	-XSPARKNACL_RUNTIME_CHECKS=disabled \
+	-XSPARKNACL_CONTRACTS=disabled \
+	-XSPARKNACL_BUILD_MODE=O3
+	mv obj/testall $@
+
+stestall: $(SOURCES)
+	$(MAKE) clean_build
+	$(MAKE) clean_stest
+	gprbuild -Ptestall \
+	$(GPR_WORKERS) \
+	-XSPARKNACL_RUNTIME_CHECKS=enabled \
+	-XSPARKNACL_CONTRACTS=enabled \
+	-XSPARKNACL_BUILD_MODE=debug
+	mv obj/testall $@
+
+scalarspeed: src/ada/scalarspeed.adb ../src/*.adb ../src/*.ads
+	$(MAKE) clean_build
+	$(MAKE) clean_scalar_build
+	gprbuild -Pscalarspeed \
+	$(GPR_WORKERS) \
+	-XSPARKNACL_RUNTIME_CHECKS=disabled \
+	-XSPARKNACL_CONTRACTS=disabled \
+	-XSPARKNACL_BUILD_MODE=O3
+	mv obj/$@ $@
+
+.PHONY: all clean_build clean_stest clean_ftest clean_scalarspeed clean
+clean_build:
 	gprclean -r -Ptestall
-	rm -f fntr
-	rm -f ftestall
-	gprbuild -Ptestall -XSPARKNACL_RUNTIME_CHECKS=disabled -XSPARKNACL_CONTRACTS=disabled -XSPARKNACL_BUILD_MODE=O3
-	mv testall ftestall
-
-stestall: *.adb ../src/*.adb ../src/*.ads
-	gprclean -r -Ptestall
-	rm -f sntr
-	rm -f stestall
-	gprbuild -Ptestall -XSPARKNACL_RUNTIME_CHECKS=enabled -XSPARKNACL_CONTRACTS=enabled -XSPARKNACL_BUILD_MODE=debug
-	mv testall stestall
-
-scalarspeed: scalarspeed.adb ../src/*.adb ../src/*.ads
 	gprclean -r -Pscalarspeed
+clean_stest:
+	rm -f sntr stestall
+clean_ftest:
+	rm -f fntr ftestall
+clean_scalarspeed:
 	rm -f scalarspeed
-	gprbuild -Pscalarspeed -XSPARKNACL_RUNTIME_CHECKS=disabled -XSPARKNACL_CONTRACTS=disabled -XSPARKNACL_BUILD_MODE=O3
-
 clean:
-	gprclean -r -Ptestall
-	rm -f ftestall
-	rm -f stestall
-	rm -f scalarspeed
-	rm -f fntr
-	rm -f sntr
+	$(MAKE) clean_build
+	$(MAKE) clean_stest
+	$(MAKE) clean_ftest
+	$(MAKE) clean_scalarspeed
