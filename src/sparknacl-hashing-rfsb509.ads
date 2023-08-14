@@ -5,6 +5,11 @@ package SPARKNaCl.Hashing.RFSB509
 is
    subtype Digest is Bytes_32;
 
+   --  This package implements the keyed variant of the RFSB509 hash function.
+   --  Thus, both of the following subprograms take the "Key" parameter. In
+   --  order to have the subprograms behave like the reference implementation
+   --  use an all 0 key i.e (others => 0).
+
    --------------------------------------------------------
    --  Procedural interface. Faster assuming Output is
    --  passed by reference
