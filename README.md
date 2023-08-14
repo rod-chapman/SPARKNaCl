@@ -33,6 +33,10 @@ This library is a compact reference implementation of the NaCl crypto library. I
 
 ## Latest news
 
+### 14th August 2023
+
+As part of his Summer of Code project, [Max A. Scheven](https://github.com/MxAR) has contributed an implementation of the Really Fast Syndrome Based hash function RFSB509, in package SPARKNaCl.Hashing.RFSB509. All proofs complete successfully with GNATProve 12.1.1, and Max has also added regression tests that show the new SPARK Code is consistent with the reference C implementation from SUPERCOP. As part of this work, the "tests" subdirectory has been reorganized to separate sources and objects code files into distinct subdirectories.
+
 ### 22nd June 2022
 
 A bunch of updates have been merged to the master branch recently. Specifically:
