@@ -5,6 +5,7 @@ with AES256_Cipher_KAT;
 with RFSB509_SUPERCOP_Regression;
 with Hash;
 with Hash1;
+with Hash2;
 with Box;
 with Box7;
 with Box8;
@@ -57,6 +58,8 @@ begin
    Hash;
    Put_Line ("Hash1");
    Hash1;
+   Put_Line ("Hash2");
+   Hash2;
    Put_Line ("Box");
    Box;
    Put_Line ("Box7");

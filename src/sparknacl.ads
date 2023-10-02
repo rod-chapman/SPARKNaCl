@@ -62,6 +62,7 @@ is
    subtype Index_16 is I32 range 0 .. 15;
    subtype Index_24 is I32 range 0 .. 23;
    subtype Index_32 is I32 range 0 .. 31;
+   subtype Index_48 is I32 range 0 .. 47;
    subtype Index_64 is I32 range 0 .. 63;
 
    subtype Bytes_4  is Byte_Seq (Index_4);
@@ -70,6 +71,7 @@ is
    subtype Bytes_16 is Byte_Seq (Index_16);
    subtype Bytes_24 is Byte_Seq (Index_24);
    subtype Bytes_32 is Byte_Seq (Index_32);
+   subtype Bytes_48 is Byte_Seq (Index_48);
    subtype Bytes_64 is Byte_Seq (Index_64);
 
    Zero_Bytes_16 : constant Bytes_16 := (others => 0);
@@ -158,11 +160,9 @@ private
    subtype Index_15  is I32 range 0 .. 14;
    subtype Index_20  is I32 range 0 .. 19;
    subtype Index_31  is I32 range 0 .. 30;
-   subtype Index_48  is I32 range 0 .. 47;
    subtype Index_128 is I32 range 0 .. 127;
    subtype Index_256 is I32 range 0 .. 255;
 
-   subtype Bytes_48  is Byte_Seq (Index_48);
    subtype Bytes_128 is Byte_Seq (Index_128);
    subtype Bytes_256 is Byte_Seq (Index_256);
 
