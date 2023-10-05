@@ -107,10 +107,6 @@ is
       LN : I64;
       CB : I32;
 
-      function RR32 (X : in U32;
-                     C : in Natural) return U32
-        renames Rotate_Right;
-
       function Ch (X, Y, Z : in U32) return U32
       is ((X and Y) xor ((not X) and Z))
         with Global => null;
@@ -121,22 +117,30 @@ is
 
       --  Sigma0 with an upper-case S!
       function UC_Sigma0 (X : in U32) return U32
-      is (RR32 (X, 2) xor RR32 (X, 13) xor RR32 (X, 22))
+      is (Rotate_Right (X,  2) xor
+          Rotate_Right (X, 13) xor
+          Rotate_Right (X, 22))
         with Global => null;
 
       --  Sigma1 with an upper-case S!
       function UC_Sigma1 (X : in U32) return U32
-      is (RR32 (X, 6) xor RR32 (X, 11) xor RR32 (X, 25))
+      is (Rotate_Right (X,  6) xor
+          Rotate_Right (X, 11) xor
+          Rotate_Right (X, 25))
         with Global => null;
 
       --  sigma0 with a lower-case s!
       function LC_Sigma0 (X : in U32) return U32
-      is (RR32 (X, 7) xor RR32 (X, 18) xor Shift_Right (X, 3))
+      is (Rotate_Right (X,  7) xor
+          Rotate_Right (X, 18) xor
+          Shift_Right (X, 3))
         with Global => null;
 
       --  sigma1 with a lower-case s!
       function LC_Sigma1 (X : in U32) return U32
-      is (RR32 (X, 17) xor RR32 (X, 19) xor Shift_Right (X, 10))
+      is (Rotate_Right (X, 17) xor
+          Rotate_Right (X, 19) xor
+          Shift_Right (X, 10))
         with Global => null;
 
    begin
