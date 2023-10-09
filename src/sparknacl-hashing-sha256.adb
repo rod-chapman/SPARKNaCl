@@ -256,7 +256,7 @@ is
    is
       subtype Final_Block_Length is N32 range 0 .. 63;
       H     : Bytes_32;
-      X     : Bytes_128;            --  padding block(s).
+      X     : Bytes_128; --  padding block(s).
       B     : Final_Block_Length;
       Final_Block_First : I32;
    begin
@@ -280,12 +280,12 @@ is
       --  Final 8 bytes are the length of M in bits
       if B < 56 then
          --  fill end of message's final 512-bit block, and hash only that.
-         X (56 .. 63) := TS64 (U64 (M'Length * 8));
+         X (56 .. 63) := Big_Endian_Unpack (U64 (M'Length * 8));
          Hashblocks_256 (H, X (0 .. 63));
       else
          --  add an additional 512-bit block and hash both it and the end of
          --  the message's final block.
-         X (120 .. 127) := TS64 (U64 (M'Length * 8));
+         X (120 .. 127) := Big_Endian_Unpack (U64 (M'Length * 8));
          Hashblocks_256 (H, X);
       end if;
 
@@ -299,7 +299,5 @@ is
       Hash (R, M);
       return R;
    end Hash;
-
-
 
 end SPARKNaCl.Hashing.SHA256;
