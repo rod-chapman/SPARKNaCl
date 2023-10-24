@@ -111,10 +111,6 @@ is
       LN      : I64;
       CB      : I32;
 
-      function RR64 (X : in U64;
-                     C : in Natural) return U64
-        renames Rotate_Right;
-
       function Ch (X, Y, Z : in U64) return U64
       is ((X and Y) xor ((not X) and Z))
         with Global => null;
@@ -125,22 +121,30 @@ is
 
       --  Sigma0 with an upper-case S!
       function UC_Sigma0 (X : in U64) return U64
-      is (RR64 (X, 28) xor RR64 (X, 34) xor RR64 (X, 39))
+      is (Rotate_Right (X, 28) xor
+          Rotate_Right (X, 34) xor
+          Rotate_Right (X, 39))
         with Global => null;
 
       --  Sigma1 with an upper-case S!
       function UC_Sigma1 (X : in U64) return U64
-      is (RR64 (X, 14) xor RR64 (X, 18) xor RR64 (X, 41))
+      is (Rotate_Right (X, 14) xor
+          Rotate_Right (X, 18) xor
+          Rotate_Right (X, 41))
         with Global => null;
 
       --  sigma0 with a lower-case s!
       function LC_Sigma0 (X : in U64) return U64
-      is (RR64 (X, 1) xor RR64 (X, 8) xor Shift_Right (X, 7))
+      is (Rotate_Right (X, 1) xor
+          Rotate_Right (X, 8) xor
+          Shift_Right (X, 7))
         with Global => null;
 
       --  sigma1 with a lower-case s!
       function LC_Sigma1 (X : in U64) return U64
-      is (RR64 (X, 19) xor RR64 (X, 61) xor Shift_Right (X, 6))
+      is (Rotate_Right (X, 19) xor
+          Rotate_Right (X, 61) xor
+          Shift_Right (X, 6))
         with Global => null;
 
    begin
@@ -232,7 +236,7 @@ is
 
       for I in Index_8 loop
          pragma Loop_Optimize (No_Unroll);
-         X (8 * I .. (8 * I + 7)) := TS64 (Z (I));
+         X (8 * I .. 8 * I + 7) := Big_Endian_Unpack (Z (I));
       end loop;
 
    end Hashblocks_512;
@@ -266,11 +270,11 @@ is
       ML_LSBs := U64 (M'Length) * 8;
       if B < 112 then
          X (119) := ML_MSB;
-         X (120 .. 127) := TS64 (ML_LSBs);
+         X (120 .. 127) := Big_Endian_Unpack (ML_LSBs);
          Hashblocks_512 (H, X (0 .. 127));
       else
          X (247) := ML_MSB;
-         X (248 .. 255) := TS64 (ML_LSBs);
+         X (248 .. 255) := Big_Endian_Unpack (ML_LSBs);
          Hashblocks_512 (H, X);
       end if;
 
