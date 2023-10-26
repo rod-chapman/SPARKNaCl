@@ -16,4 +16,7 @@ private
           Post   => Big_Endian_Get_Byte'Result = Byte (
             Shift_Right (Input, Integer (Index_8'Last - Index) * 8) mod 256);
 
+   procedure Hash_512_Core (Output :    out Bytes_64;
+                            IV     : in     Bytes_64;
+                            M      : in     Byte_Seq);
 end SPARKNaCl.Hashing;
