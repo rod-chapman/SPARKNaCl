@@ -144,19 +144,17 @@ library project Sparknacl is
    end Binder;
 
    package Prove is
-      for Proof_Switches ("Ada") use ("--proof=per_path",
-                                      "-j6",
+      for Proof_Switches ("Ada") use ("--proof=progressive:all",
+                                      "-j12",
                                       "--no-global-generation",
                                       "--no-inlining",
                                       "--no-loop-unrolling",
-                                      "--level=1",
-                                      "--prover=z3,cvc4,altergo",
+                                      "--level=4",
+                                      "--prover=z3,cvc5,altergo",
                                       "--timeout=60",
                                       "--memlimit=0",
-                                      "--steps=200000",
+                                      "--steps=2000000",
                                       "--report=statistics");
-      for Proof_Switches ("sparknacl-car.adb") use ("--prover=altergo,z3,cvc4");
-      for Proof_Switches ("sparknacl-utils.adb") use ("--prover=altergo,z3,cvc4"); -- ok with CE 2021
    end Prove;
 
 
