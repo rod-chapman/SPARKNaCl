@@ -2,6 +2,8 @@ package body SPARKNaCl.Hashing
   with SPARK_Mode => On
 is
 
+   pragma Warnings (GNATprove, Off, "Loop_Optimize");
+
    function TS64 (U : in U64) return Bytes_8
    is
       X : Bytes_8;

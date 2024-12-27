@@ -711,6 +711,7 @@ is
       Key_Index := AES256_Round_Key_Index'Succ (Key_Index);
 
       while Key_Index < Round_Keys.F'Last loop
+         pragma Loop_Variant (Increases => Key_Index);
          Sub_Bytes (State);
          Shift_Rows (State);
          Mix_Columns (State);
@@ -739,6 +740,7 @@ is
       Key_Index := AES128_Round_Key_Index'Succ (Key_Index);
 
       while Key_Index < Round_Keys.F'Last loop
+         pragma Loop_Variant (Increases => Key_Index);
          Sub_Bytes (State);
          Shift_Rows (State);
          Mix_Columns (State);

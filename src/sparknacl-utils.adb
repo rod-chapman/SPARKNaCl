@@ -45,7 +45,6 @@ is
          Output := Shift_Left (Output, Byte'Size);
          Output := Output or U32 (Input (I));
       end loop;
-
       return Output;
    end Big_Endian_Pack;
 

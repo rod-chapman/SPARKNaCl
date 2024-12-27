@@ -11,7 +11,8 @@ is
 
    procedure Hash (Output :    out Digest;
                    M      : in     Byte_Seq)
-     with Global => null;
+     with Global => null,
+          Always_Terminates;
 
    --------------------------------------------------------
    --  Functional interfaces

@@ -64,11 +64,13 @@ is
    procedure Hashblocks_512
      (X : in out Digest;
       M : in     Byte_Seq)
-     with Global => null;
+     with Global => null,
+          Always_Terminates;
 
    procedure Hash_512 (Output :    out Digest;
                        M      : in     Byte_Seq)
-     with Global => null;
+     with Global => null,
+          Always_Terminates;
 
    --  Big-Endian 8 bytes to U64. The input bytes are in
    --  X (I) (the MSB) through X (I + 8) (the LSB)
@@ -161,6 +163,7 @@ is
          pragma Loop_Optimize (No_Unroll);
 
          pragma Warnings (Off, "lower bound test*");
+         pragma Loop_Variant (Decreases => LN);
          pragma Loop_Invariant
            ((LN + I64 (CB) = I64 (M'Last) + 1) and
               (LN in 128 .. M'Length) and
