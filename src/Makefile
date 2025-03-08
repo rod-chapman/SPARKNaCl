@@ -5,10 +5,10 @@ Non_SPARK_Bodies := sparknacl-debug.adb sparknacl-pdebug.adb random.adb sparknac
 all: build
 
 build: $(SPARK_Bodies) $(Non_SPARK_Bodies) *.ads
-	gprbuild
+	gprbuild -j0
 
 zfp: $(SPARK_Bodies) $(Non_SPARK_Bodies) *.ads
-	gprbuild -Xbuild=zfp
+	gprbuild -j0 -Xbuild=zfp
 
 flow: $(SPARK_Bodies)
 	gnatprove -Psparknacl --mode=flow --report=fail -u $(SPARK_Bodies)

@@ -1,4 +1,4 @@
-GPR_WORKERS:=-j1
+GPR_WORKERS:=-j0
 SOURCES:= src/ada/*.adb src/c/*.c src/c/*.h ../src/*.adb ../src/*.ads testall.gpr
 
 all: fntr sntr ftestdiff stestdiff

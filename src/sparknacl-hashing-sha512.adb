@@ -1,3 +1,5 @@
+with SPARKNaCl.Hashing.SHA2_Common; use SPARKNaCl.Hashing.SHA2_Common;
+
 package body SPARKNaCl.Hashing.SHA512
   with SPARK_Mode => On
 is
