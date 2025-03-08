@@ -39,6 +39,7 @@ is
                                Round_Keys : in     AES128_Round_Keys)
      with Relaxed_Initialization => Column,
           Global => null,
+          Always_Terminates,
           Pre    => Column'First = 0,
           Post   => Column'Initialized and
             ((Column (Column'Last) and 2#1110_00_00#) = 0);
@@ -53,19 +54,22 @@ is
    procedure Compress (Chain_Value  : in out Matrix_Column;
                        Block        : in     Data_Block;
                        Round_Keys   : in     AES128_Round_Keys)
-     with Global => null;
+     with Global => null,
+          Always_Terminates;
 
    procedure Hash_Blocks (Output          : in out Matrix_Column;
                           Bytes_Remaining :    out Index_48;
                           Input           : in     Byte_Seq;
                           Round_Keys      : in     AES128_Round_Keys)
      with Global => null,
+          Always_Terminates,
           Post   => I64 (Bytes_Remaining) <= Input'Length;
 
    procedure Hash_Local (Output :    out Digest;
                          Input  : in     Byte_Seq;
                          Key    : in     AES128_Key)
-     with Global => null;
+     with Global => null,
+          Always_Terminates;
 
    --------------------------------------------------------
    --  Local subprogram bodies

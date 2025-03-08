@@ -7,30 +7,44 @@ project Testall is
    for Source_Dirs use ("src/ada", "src/c");
    for Main use ("testall.adb");
 
+   type Host_OS_Kind is ("Darwin", "Linux", "Windows", "generic");
+   Host_OS : Host_OS_Kind := external("SPARKNACL_HOSTOS", "generic");
+
    type Build_Kind is ("debug", "O3");
    Build_Mode : Build_Kind := External ("SPARKNACL_BUILD_MODE", "debug");
 
    Opt_Switch := ();
    case Build_Mode is
       when "debug" =>
-        Opt_Switch := ("-g",
-                       "-O0");
+         Opt_Switch := ("-g",
+                        "-O0");
       when "O3" =>
-        Opt_Switch := ("-O3");
-  end case;
+         Opt_Switch := ("-O3");
+   end case;
 
-  package Compiler is
-    for Default_Switches ("C") use
-        Compiler'Default_Switches ("C") &
-        Opt_Switch &
-        ("-ffunction-sections", -- Create a linker section for each function
-         "-fdata-sections");    -- Create a linker section for each data
+   package Compiler is
+      for Default_Switches ("C") use
+         Compiler'Default_Switches ("C") &
+         Opt_Switch &
+         ("-ffunction-sections", -- Create a linker section for each function
+          "-fdata-sections");    -- Create a linker section for each data
 
-    for Default_Switches ("Ada") use
-        Compiler'Default_Switches ("Ada") &
-        Opt_Switch &
-        ("-ffunction-sections", -- Create a linker section for each function
-         "-fdata-sections");    -- Create a linker section for each data
-  end Compiler;
+      for Default_Switches ("Ada") use
+         Compiler'Default_Switches ("Ada") &
+         Opt_Switch &
+         ("-ffunction-sections", -- Create a linker section for each function
+          "-fdata-sections");    -- Create a linker section for each data
+   end Compiler;
+
+   package Linker is
+      case Host_OS is
+         when "Darwin" =>
+            --  Deal with unusual linker on macOS/Darwin
+            for Default_Switches ("Ada") use ("-Wl,-ld_classic");
+         when others =>
+            null;
+      end case;
+  end Linker;
+
 
 end Testall;

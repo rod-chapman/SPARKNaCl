@@ -913,7 +913,7 @@ is
              Post => (X = Zero_Bytes_32 & D (32 .. 63) & M) and
                      X'Initialized,
              Relaxed_Initialization => X,
-             Inline;
+             No_Inline;
 
       procedure Initialize_SM (X : out Byte_Seq)
       is
