@@ -1,5 +1,6 @@
 GPR_WORKERS:=-j1
 SOURCES:= src/ada/*.adb src/c/*.c src/c/*.h ../src/*.adb ../src/*.ads testall.gpr
+HOSTOS := $(shell uname -s)
 
 all: fntr sntr ftestdiff stestdiff
 
@@ -22,6 +23,7 @@ ftestall: $(SOURCES)
 	$(GPR_WORKERS) \
 	-XSPARKNACL_RUNTIME_CHECKS=disabled \
 	-XSPARKNACL_CONTRACTS=disabled \
+	-XSPARKNACL_HOSTOS=$(HOSTOS) \
 	-XSPARKNACL_BUILD_MODE=O3
 	mv obj/testall $@
 
@@ -32,6 +34,7 @@ stestall: $(SOURCES)
 	$(GPR_WORKERS) \
 	-XSPARKNACL_RUNTIME_CHECKS=enabled \
 	-XSPARKNACL_CONTRACTS=enabled \
+	-XSPARKNACL_HOSTOS=$(HOSTOS) \
 	-XSPARKNACL_BUILD_MODE=debug
 	mv obj/testall $@
 
@@ -42,6 +45,7 @@ scalarspeed: src/ada/scalarspeed.adb ../src/*.adb ../src/*.ads
 	$(GPR_WORKERS) \
 	-XSPARKNACL_RUNTIME_CHECKS=disabled \
 	-XSPARKNACL_CONTRACTS=disabled \
+	-XSPARKNACL_HOSTOS=$(HOSTOS) \
 	-XSPARKNACL_BUILD_MODE=O3
 	mv obj/$@ $@
 

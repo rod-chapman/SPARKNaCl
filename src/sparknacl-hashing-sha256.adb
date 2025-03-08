@@ -64,7 +64,8 @@ is
    procedure Hashblocks_256
      (X : in out Digest;
       M : in     Byte_Seq)
-     with Global => null;
+     with Global => null,
+          Always_Terminates;
 
    function TS32 (U : in U32) return Bytes_4
    is
@@ -162,6 +163,7 @@ is
          pragma Loop_Optimize (No_Unroll);
 
          pragma Warnings (Off, "lower bound test*");
+         pragma Loop_Variant (Decreases => LN);
          pragma Loop_Invariant
            ((LN + I64 (CB) = I64 (M'Last) + 1) and
               (LN in 64 .. M'Length) and

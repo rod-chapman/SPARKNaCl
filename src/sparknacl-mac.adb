@@ -93,11 +93,13 @@ is
 
          J := 0;
 
+         pragma Loop_Variant (Decreases => N);
          pragma Loop_Invariant
            (N + I64 (M_Offset) = M'Length);
 
          while  ((J < 16) and (I64 (J) < N)) loop
             pragma Loop_Optimize (No_Unroll);
+            pragma Loop_Variant (Increases => J);
             pragma Loop_Invariant
               (N + I64 (M_Offset) = M'Length and
                  M_Offset + J in M'Range);

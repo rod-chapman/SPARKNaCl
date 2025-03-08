@@ -2,6 +2,8 @@ with SPARKNaCl.MAC;
 package body SPARKNaCl.Secretbox
   with SPARK_Mode => On
 is
+   pragma Warnings (GNATprove, Off, "Loop_Optimize");
+
    --------------------------------------------------------
    --  Secret Key Authenticated Encryption - "SecretBox" --
    --------------------------------------------------------

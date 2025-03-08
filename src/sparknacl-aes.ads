@@ -61,12 +61,14 @@ is
    procedure Cipher (Output     :    out Bytes_16;
                      Input      : in     Bytes_16;
                      Round_Keys : in     AES256_Round_Keys)
-     with Global => null;
+     with Global => null,
+          Always_Terminates;
 
    procedure Cipher (Output     :    out Bytes_16;
                      Input      : in     Bytes_16;
                      Round_Keys : in     AES128_Round_Keys)
-     with Global => null;
+     with Global => null,
+          Always_Terminates;
 
    procedure Inv_Cipher (Output     :    out Bytes_16;
                          Input      : in     Bytes_16;
