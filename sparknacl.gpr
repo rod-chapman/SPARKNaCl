@@ -101,6 +101,9 @@ library project Sparknacl is
            ("-falign-jumps=4") &
            ("-falign-loops=4") &
            ("-falign-labels=4");
+      when "unspecified" =>
+         Build_Switches := Build_Switches &
+           ("-fno-tree-vrp"); -- Workaround for codegen bug in GNAT 14
       when others => null;
    end case;
 

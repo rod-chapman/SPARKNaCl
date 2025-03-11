@@ -3,6 +3,10 @@ package SPARKNaCl.Hashing.SHA2_Common
        SPARK_Mode => On
 is
 
+   --------------------------------------------------------
+   --  Equivalent to TS64 in TweetNaCl
+   --------------------------------------------------------
+
    function Big_Endian_Unpack (Input : in U64) return Bytes_8
      with Global => null,
           Post   => (for all I in Index_8 => Big_Endian_Unpack'Result (I) =
@@ -14,6 +18,10 @@ is
           Global => null,
           Post   => Big_Endian_Get_Byte'Result = Byte (
             Shift_Right (Input, Integer (Index_8'Last - Index) * 8) mod 256);
+
+   --------------------------------------------------------
+   --  Used for both SHA-512 and SHA-384
+   --------------------------------------------------------
 
    procedure Hash_512_Core (Output :    out Bytes_64;
                             IV     : in     Bytes_64;
