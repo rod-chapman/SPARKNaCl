@@ -57,7 +57,8 @@ is
    procedure Hashblocks_512
      (X : in out Bytes_64;
       M : in     Byte_Seq)
-     with Global => null;
+     with Global => null,
+          Always_Terminates;
 
    --------------------------------------------------------
    --  Local Subprogram Bodies
@@ -111,7 +112,11 @@ is
       CB      : I32;
 
       function DL64 (X : in Byte_Seq;
-                     I : in N32) return U64;
+                     I : in N32) return U64
+         with Global => null,
+              Pre => X'Length >= 8 and then
+                     I >= X'First and then
+                     I <= X'Last - 7;
 
       function DL64 (X : in Byte_Seq;
                      I : in N32) return U64

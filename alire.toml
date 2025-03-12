@@ -22,3 +22,6 @@ SPARKNACL_CONTRACTS = ["enabled", "disabled"]
 SPARKNACL_RUNTIME_MODE = ["full", "zfp"]
 SPARKNACL_BUILD_MODE = ["debug", "O1", "O2", "O3", "Os"]
 SPARKNACL_TARGET_ARCH = ["unspecified", "rv32im", "rv32imc", "rv32imc_a4"]
+
+[[depends-on]]
+gnatprove = "^14.1.1"
