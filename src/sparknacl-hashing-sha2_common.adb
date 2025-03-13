@@ -188,8 +188,9 @@ is
 
       while (LN >= 128) loop
          pragma Loop_Optimize (No_Unroll);
-
          pragma Warnings (Off, "lower bound test*");
+
+         pragma Loop_Variant (Decreases => LN);
          pragma Loop_Invariant
            ((LN + I64 (CB) = I64 (M'Last) + 1) and
               (LN in 128 .. M'Length) and
