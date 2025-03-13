@@ -1,3 +1,5 @@
+with SPARKNaCl.Hashing.SHA2_Common; use SPARKNaCl.Hashing.SHA2_Common;
+
 package body SPARKNaCl.Hashing.SHA256
   with SPARK_Mode => On
 is
@@ -108,10 +110,6 @@ is
       LN : I64;
       CB : I32;
 
-      function RR32 (X : in U32;
-                     C : in Natural) return U32
-        renames Rotate_Right;
-
       function Ch (X, Y, Z : in U32) return U32
       is ((X and Y) xor ((not X) and Z))
         with Global => null;
@@ -122,22 +120,30 @@ is
 
       --  Sigma0 with an upper-case S!
       function UC_Sigma0 (X : in U32) return U32
-      is (RR32 (X, 2) xor RR32 (X, 13) xor RR32 (X, 22))
+      is (Rotate_Right (X,  2) xor
+          Rotate_Right (X, 13) xor
+          Rotate_Right (X, 22))
         with Global => null;
 
       --  Sigma1 with an upper-case S!
       function UC_Sigma1 (X : in U32) return U32
-      is (RR32 (X, 6) xor RR32 (X, 11) xor RR32 (X, 25))
+      is (Rotate_Right (X,  6) xor
+          Rotate_Right (X, 11) xor
+          Rotate_Right (X, 25))
         with Global => null;
 
       --  sigma0 with a lower-case s!
       function LC_Sigma0 (X : in U32) return U32
-      is (RR32 (X, 7) xor RR32 (X, 18) xor Shift_Right (X, 3))
+      is (Rotate_Right (X,  7) xor
+          Rotate_Right (X, 18) xor
+          Shift_Right (X, 3))
         with Global => null;
 
       --  sigma1 with a lower-case s!
       function LC_Sigma1 (X : in U32) return U32
-      is (RR32 (X, 17) xor RR32 (X, 19) xor Shift_Right (X, 10))
+      is (Rotate_Right (X, 17) xor
+          Rotate_Right (X, 19) xor
+          Shift_Right (X, 10))
         with Global => null;
 
    begin
@@ -254,7 +260,7 @@ is
    is
       subtype Final_Block_Length is N32 range 0 .. 63;
       H     : Bytes_32;
-      X     : Bytes_128;            --  padding block(s).
+      X     : Bytes_128; --  padding block(s).
       B     : Final_Block_Length;
       Final_Block_First : I32;
    begin
@@ -278,12 +284,12 @@ is
       --  Final 8 bytes are the length of M in bits
       if B < 56 then
          --  fill end of message's final 512-bit block, and hash only that.
-         X (56 .. 63) := TS64 (U64 (M'Length * 8));
+         X (56 .. 63) := Big_Endian_Unpack (U64 (M'Length * 8));
          Hashblocks_256 (H, X (0 .. 63));
       else
          --  add an additional 512-bit block and hash both it and the end of
          --  the message's final block.
-         X (120 .. 127) := TS64 (U64 (M'Length * 8));
+         X (120 .. 127) := Big_Endian_Unpack (U64 (M'Length * 8));
          Hashblocks_256 (H, X);
       end if;
 
@@ -297,7 +303,5 @@ is
       Hash (R, M);
       return R;
    end Hash;
-
-
 
 end SPARKNaCl.Hashing.SHA256;
