@@ -58,7 +58,7 @@ is
    is
       subtype ILT is I32 range -LM .. LMM1;
       T     : ILT;
-      Carry : I32 range -1 .. 0;
+      Carry : I32;
       R     : GF32 with Relaxed_Initialization;
    begin
       Carry := 0;
@@ -70,6 +70,9 @@ is
          T := I32 (Left (I)) - I32 (Right (I)) + Carry;
          R (I) := T mod LM;
          Carry := ASR32_16 (T);
+         pragma Assert (if T >= 0 then Carry = 0);
+         pragma Assert (if T < 0 then Carry = -1);
+         pragma Loop_Invariant (Carry = 0 or Carry = -1);
          pragma Loop_Invariant
            (for all J in Index_16 range 0 .. I => R (J)'Initialized);
          pragma Loop_Invariant
