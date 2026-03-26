@@ -210,8 +210,9 @@ is
    --  2^252 + 0x14def9dea2f79cd65812631a5cf5d3ed
    --
    --  In little-endian radix 2**8 format, this is 256 bits, thus:
-   Max_L : constant := 16#f9#;
-   L31   : constant := 16#10#;
+   Min_Non_Zero_L : constant := 16#12#;
+   Max_L          : constant := 16#f9#;
+   L31            : constant := 16#10#;
    subtype L_Limb is I64_Byte range 0 .. Max_L;
 
    type L_Table is array (Index_32) of L_Limb;
@@ -226,16 +227,15 @@ is
 
    --  The value of 16 * L (I) can be pre-computed in a second table,
    --  giving a small time saving in two inner loops below.
-   subtype L16_Limb is I64 range 0 .. (16 * Max_L);
-   type L16_Table  is array (Index_32) of L16_Limb;
+   --  Only the first 16 elements are ever accessed, so we can declare
+   --  a smaller table, and specify a stronger range constraint on the
+   --  elements, thus:
+   subtype L16_Limb is I64 range (16 * Min_Non_Zero_L) .. (16 * Max_L);
+   type L16_Table  is array (Index_16) of L16_Limb;
    L16 : constant L16_Table := (16#ed0#, 16#d30#, 16#f50#, 16#5c0#,
                                 16#1a0#, 16#630#, 16#120#, 16#580#,
                                 16#d60#, 16#9c0#, 16#f70#, 16#a20#,
-                                16#de0#, 16#f90#, 16#de0#, 16#140#,
-                                16#000#, 16#000#, 16#000#, 16#000#,
-                                16#000#, 16#000#, 16#000#, 16#000#,
-                                16#000#, 16#000#, 16#000#, 16#000#,
-                                16#000#, 16#000#, 16#000#, 16 * L31);
+                                16#de0#, 16#f90#, 16#de0#, 16#140#);
 
    function ModL (X : in I64_Seq_64) return Bytes_32
    is
@@ -355,7 +355,7 @@ is
 
          Carry      : L63_Carry_T;
          Adjustment : L63_Adjustment_T;
-         XL63       : XL_Limb;
+         XL63       : constant XL_Limb := XL (63);
       begin
          Carry := 0;
 
@@ -365,18 +365,25 @@ is
          --  first 16 elements of L first, since these are all non-zero,
          --  and manually unroll the final 4 iterations where L (16)
          --  through L (19) are all zero.
-         XL63 := XL (63);
          for J in I32 range 31 .. 46 loop
             pragma Loop_Optimize (No_Unroll);
             declare
                XLJ : XL_Limb renames XL (J);
+               L16_Factor : constant L16_Limb := L16 (J - 31);
             begin
-               Adjustment := (L16 (J - 31)) * XL63;
+               pragma Assert (L16_Factor >= 288);  -- 16#120#
+               pragma Assert (L16_Factor <= 3984); -- 16#f90#
+               pragma Assert (XL63 >= 0);
+               pragma Assert (XL63 <= XL_Limb'Last);
+               pragma Assert (L16_Factor * XL63 <= 3984 * XL_Limb'Last);
+               Adjustment := L16_Factor * XL63;
                XLJ := XLJ + Carry - Adjustment;
                Carry := ASR_8 (XLJ + 128);
                XLJ := XLJ - (Carry * 256);
             end;
 
+            pragma Loop_Invariant (XL63 >= 0);
+            pragma Loop_Invariant (XL63 <= XL_Limb'Last);
             pragma Loop_Invariant
               ((for all K in Index_64 range 0 .. 30 =>
                   XL (K) = XL'Loop_Entry (K)) and
