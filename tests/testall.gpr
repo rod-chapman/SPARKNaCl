@@ -36,11 +36,13 @@ project Testall is
           "-fdata-sections");    -- Create a linker section for each data
    end Compiler;
 
+   SDKROOT := External ("SDKROOT", "");
+
    package Linker is
       case Host_OS is
          when "Darwin" =>
             --  Deal with unusual linker on macOS/Darwin
-            for Default_Switches ("Ada") use ("-Wl,-ld_classic");
+            for Default_Switches ("Ada") use ("-L" & SDKROOT & "/usr/lib");
          when others =>
             null;
       end case;

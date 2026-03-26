@@ -40,7 +40,6 @@ stestall: $(SOURCES)
 
 scalarspeed: src/ada/scalarspeed.adb ../src/*.adb ../src/*.ads
 	$(MAKE) clean_build
-	$(MAKE) clean_scalar_build
 	gprbuild -Pscalarspeed \
 	$(GPR_WORKERS) \
 	-XSPARKNACL_RUNTIME_CHECKS=disabled \
