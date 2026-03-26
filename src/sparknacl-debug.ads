@@ -6,12 +6,20 @@ is
    function Img (B : in Boolean) return String is
       (if B then "TRUE" else "FALSE");
 
-   procedure DH  (S : in String; D : in Byte_Seq);
-   procedure DH  (S : in String; D : in U32_Seq);
-   procedure DH  (S : in String; D : in Boolean);
+   procedure DH  (S : in String; D : in Byte_Seq)
+     with Global => null;
 
-   procedure DH  (S : in String; D : in I64);
+   procedure DH  (S : in String; D : in U32_Seq)
+     with Global => null;
+
+   procedure DH  (S : in String; D : in Boolean)
+     with Global => null;
+
+   procedure DH  (S : in String; D : in I64)
+     with Global => null;
+
    --  Same but output in hex
-   procedure DHH  (S : in String; D : in I64);
+   procedure DHH  (S : in String; D : in I64)
+     with Global => null;
 
 end SPARKNaCl.Debug;
