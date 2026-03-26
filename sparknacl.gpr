@@ -147,7 +147,7 @@ library project Sparknacl is
    end Binder;
 
    package Prove is
-      for Proof_Switches ("Ada") use ("--proof=progressive:all",
+      for Proof_Switches ("Ada") use ("--proof=per_check",
                                       "-j10",
                                       "--no-global-generation",
                                       "--no-inlining",
@@ -156,6 +156,7 @@ library project Sparknacl is
                                       "--prover=z3,cvc5,altergo",
                                       "--timeout=60",
                                       "--memlimit=0",
+                                      "--counterexamples=off",
                                       "--steps=140000",
                                       "--report=statistics");
    end Prove;
