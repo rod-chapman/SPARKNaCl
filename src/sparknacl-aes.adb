@@ -114,7 +114,6 @@ is
 
       Lower_Nybble_Mask      : constant U32 := 16#0f_0f_0f_0f#;
       Lower_Nybble_Half_Mask : constant U32 := 16#33_33_33_33#;
-      Lower_Nyp_Half_Mask    : constant U32 := 16#55_55_55_55#;
       Upper_Nyp_Half_Mask    : constant U32 := 16#aa_aa_aa_aa#;
 
       Lambda : constant U32 := 16#c1_c1_c1_c1#;
@@ -149,15 +148,14 @@ is
       is
          P, Q, Return_Value : U32;
       begin
-         P := U and V;
-         P := Shift_Right (P and Upper_Nyp_Half_Mask, Half_Nyp_Shift) xor P;
+         P := Shift_Left (V, 1) and Upper_Nyp_Half_Mask;
+         P := (P xor V) and U;
 
-         Q := Shift_Right (U and Upper_Nyp_Half_Mask, Half_Nyp_Shift) or
-           Shift_Left (U and Lower_Nyp_Half_Mask, Half_Nyp_Shift);
-         Q := Q and V;
-         Q := (Shift_Left (Q, Half_Nyp_Shift) xor Q) and Upper_Nyp_Half_Mask;
+         Q := V and Upper_Nyp_Half_Mask;
+         P := Shift_Right (Q and U, 1) xor P;
+         Q := Shift_Right (Q, 1) and U;
 
-         Return_Value := P xor Q;
+         Return_Value := Shift_Left (Q, 1) xor P;
 
          return Return_Value;
       end GF2p2_Multiply;
