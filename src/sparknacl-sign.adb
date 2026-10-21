@@ -1174,6 +1174,37 @@ is
          procedure Lemma_Frame (Old_XL, New_XL : in XL_Table;
                                 I              : in Index_64)
          is null;
+
+         --  The outer loop invariant that every limb is in
+         --  PRL'First .. XL51_T'Last. S is XL at the start of the
+         --  iteration, Mid is XL after the inner loop (which changes only
+         --  limbs I - 32 .. I - 17) and New_XL is XL at the end (the
+         --  unrolled steps change only limbs I - 16 .. I - 12 and I).
+         --  Stated as a lemma because, inline, this check is close to the
+         --  prover time limit and fails when the machine is busy.
+         procedure Lemma_Range (S, Mid, New_XL : in XL_Table;
+                                I              : in Index_64)
+           with Ghost => SPARKlib_Logic,
+                Pre   =>
+                  I in 32 .. 62 and then
+                  (for all K in Index_64 =>
+                     S (K) in PRL'First .. XL51_T'Last) and then
+                  (for all K in Index_64 =>
+                     (if K not in I - 32 .. I - 17 then Mid (K) = S (K)))
+                  and then
+                  (for all K in Index_64 =>
+                     (if K not in I - 16 .. I - 12 and K /= I then
+                        New_XL (K) = Mid (K))) and then
+                  (for all K in Index_64 range I - 32 .. I - 12 =>
+                     New_XL (K) in PRL) and then
+                  New_XL (I) = 0,
+                Post  =>
+                  (for all K in Index_64 =>
+                     New_XL (K) in PRL'First .. XL51_T'Last);
+
+         procedure Lemma_Range (S, Mid, New_XL : in XL_Table;
+                                I              : in Index_64)
+         is null;
       begin
          Lemma_OInv_Init;
          for I in reverse I32 range 32 .. 62 loop
@@ -1208,6 +1239,10 @@ is
                     (XLJ <= XL51_T'Last + Max_Carry - 16 * Max_L * PRL'First);
                   Carry := ASR_8 (XLJ + 128);
                   XLJ := XLJ - (Carry * 256);
+                  --  Rounding to the nearest multiple of 256 leaves the
+                  --  limb fully reduced. Asserted here, where the context is
+                  --  small, to keep the loop invariant below quick to prove.
+                  pragma Assert (XLJ in FRL);
                   Lemma_Inv_Step (XL_Pre, XL, XL_Start, I, J, XLI,
                                   C_Pre, Carry, Adjustment);
                end;
@@ -1232,6 +1267,12 @@ is
                pragma Loop_Invariant
                  (for all K in Index_64 => XL (K) in PRL'First .. XL51_T'Last);
                pragma Loop_Invariant (SPARKlib_Logic => XL (I) = XLI);
+               --  Only limbs I - 32 .. J have changed since the start of
+               --  this iteration of the outer loop
+               pragma Loop_Invariant
+                 (SPARKlib_Logic =>
+                    (for all K in Index_64 =>
+                       (if K not in I - 32 .. J then XL (K) = XL_Start (K))));
                pragma Loop_Invariant (XL (I - 12) in FRL);
                pragma Loop_Invariant
                  (SPARKlib_Logic => Inv (XL, Carry, XL_Start, I, J, XLI));
@@ -1318,6 +1359,7 @@ is
             Lemma_Tail (XL_Pre, XL, XL_Start, I, XLI,
                         C_Pre, C16, C15, C14, C13);
             Lemma_Frame (XL_Pre, XL, I);
+            Lemma_Range (XL_Start, XL_Pre, XL, I);
 
             pragma Loop_Invariant
               (for all K in Index_64 range 0 .. I - 33 =>
