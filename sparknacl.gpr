@@ -1,3 +1,5 @@
+with "sparklib_light";
+
 library project Sparknacl is
 
    for Library_Name use "Sparknacl";
