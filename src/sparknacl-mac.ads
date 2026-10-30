@@ -1,4 +1,5 @@
 with SPARKNaCl.Hashing.SHA256;
+with SPARKNaCl.Hashing.SHA512;
 package SPARKNaCl.MAC
   with Pure,
        SPARK_Mode => On
@@ -47,6 +48,16 @@ is
           Relaxed_Initialization => Output,
           Pre    => M'First = 0 and
                     M'Last <= N32'Last - 64 and
+                    (if K'Length > 0 then K'First = 0),
+          Post   => Output'Initialized;
+
+   procedure HMAC_SHA_512 (Output :    out Hashing.SHA512.Digest;
+                           M      : in     Byte_Seq;
+                           K      : in     Byte_Seq)
+     with Global => null,
+          Relaxed_Initialization => Output,
+          Pre    => M'First = 0 and
+                    M'Last <= N32'Last - 128 and
                     (if K'Length > 0 then K'First = 0),
           Post   => Output'Initialized;
 
