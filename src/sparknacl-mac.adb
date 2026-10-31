@@ -225,9 +225,8 @@ is
       pragma Assert (Output'Initialized);
    end HMAC_SHA_256;
 
-   procedure HMAC_SHA_512 (Output :    out Hashing.SHA512.Digest;
-                           M      : in     Byte_Seq;
-                           K      : in     Byte_Seq)
+   function HMAC_SHA_512 (M : in Byte_Seq;
+                          K : in Byte_Seq) return Hashing.SHA512.Digest
    is
       IPad : Bytes_128 := (others => 16#36#);
       OPad : Bytes_128 := (others => 16#5C#);
@@ -248,9 +247,22 @@ is
          OPad (I) := OPad (I) xor Key (I);
       end loop;
 
-      Output := Hashing.SHA512.Hash (OPad & Hashing.SHA512.Hash (IPad & M));
-
-      pragma Assert (Output'Initialized);
+      return Hashing.SHA512.Hash (OPad & Hashing.SHA512.Hash (IPad & M));
    end HMAC_SHA_512;
+
+   procedure HMAC_SHA_512 (Output :    out Hashing.SHA512.Digest;
+                           M      : in     Byte_Seq;
+                           K      : in     Byte_Seq)
+   is
+   begin
+      Output := HMAC_SHA_512 (M, K);
+   end HMAC_SHA_512;
+
+   function Same (X, Y : Hashing.SHA512.Digest) return Boolean
+     with SPARK_Mode => Off
+   is
+   begin
+      return X = Y;
+   end Same;
 
 end SPARKNaCl.MAC;

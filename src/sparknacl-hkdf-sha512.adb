@@ -1,7 +1,8 @@
-with SPARKNaCl.MAC;
 package body SPARKNaCl.HKDF.SHA512
   with SPARK_Mode => On
 is
+   --  Expand's invariants restate its Post per prefix: quadratic to run
+   pragma Assertion_Policy (Loop_Invariant => Ignore);
 
    --------------------------------------------------------
    --  SHA-512 HKDF-Extract per RFC 5869
@@ -48,6 +49,11 @@ is
 
             OKM (I) := Ti (I mod Hash_Len);
             pragma Loop_Invariant (OKM (0 .. I)'Initialized);
+            pragma Loop_Invariant (N32 (B) = I / Hash_Len + 1);
+            pragma Loop_Invariant (MAC.Same (Ti, T (PRK, Info, N32 (B))));
+            pragma Loop_Invariant
+              (for all J in 0 .. I =>
+                 OKM (J) = T (PRK, Info, J / Hash_Len + 1) (J mod Hash_Len));
          end loop;
       end if;
    end Expand;
