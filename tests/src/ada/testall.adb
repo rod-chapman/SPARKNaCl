@@ -16,7 +16,9 @@ with Onetimeauth;
 with Onetimeauth2;
 with Onetimeauth7;
 with HMAC;
+with HMAC512;
 with HKDF1;
+with HKDF512;
 with Scalarmult;
 with Scalarmult2;
 with Scalarmult5;
@@ -78,6 +80,8 @@ begin
    Onetimeauth7;
    Put_Line ("HMAC");
    HMAC;
+   Put_Line ("HMAC-SHA-512");
+   HMAC512;
    Put_Line ("Scalarmult");
    Scalarmult;
    Put_Line ("Scalarmult2");
@@ -120,6 +124,8 @@ begin
    ECDH;
    Put_Line ("HKDF");
    HKDF1;
+   Put_Line ("HKDF-SHA-512");
+   HKDF512;
 exception
    when E : others =>
       Put_Line (Exception_Message (E));

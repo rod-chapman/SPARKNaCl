@@ -225,4 +225,44 @@ is
       pragma Assert (Output'Initialized);
    end HMAC_SHA_256;
 
+   function HMAC_SHA_512 (M : in Byte_Seq;
+                          K : in Byte_Seq) return Hashing.SHA512.Digest
+   is
+      IPad : Bytes_128 := (others => 16#36#);
+      OPad : Bytes_128 := (others => 16#5C#);
+
+      --  K', pad to the right with zeroes if shorter than the 128-byte
+      --  block size of SHA-512, or hash down to 64 bytes first if longer.
+      Key : Bytes_128 := (others => 0);
+   begin
+      if K'Length > 128 then
+         Key (0 .. 63) := Hashing.SHA512.Hash (K);
+      else
+         pragma Assert (K'Length <= 128);
+         Key (K'Range) := K;
+      end if;
+
+      for I in Index_128'Range loop
+         IPad (I) := IPad (I) xor Key (I);
+         OPad (I) := OPad (I) xor Key (I);
+      end loop;
+
+      return Hashing.SHA512.Hash (OPad & Hashing.SHA512.Hash (IPad & M));
+   end HMAC_SHA_512;
+
+   procedure HMAC_SHA_512 (Output :    out Hashing.SHA512.Digest;
+                           M      : in     Byte_Seq;
+                           K      : in     Byte_Seq)
+   is
+   begin
+      Output := HMAC_SHA_512 (M, K);
+   end HMAC_SHA_512;
+
+   function Same (X, Y : Hashing.SHA512.Digest) return Boolean
+     with SPARK_Mode => Off
+   is
+   begin
+      return X = Y;
+   end Same;
+
 end SPARKNaCl.MAC;

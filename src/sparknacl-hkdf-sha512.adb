@@ -1,0 +1,72 @@
+package body SPARKNaCl.HKDF.SHA512
+  with SPARK_Mode => On
+is
+   --  Expand's invariants restate its Post per prefix: quadratic to run
+   pragma Assertion_Policy (Loop_Invariant => Ignore);
+
+   --------------------------------------------------------
+   --  SHA-512 HKDF-Extract per RFC 5869
+   --------------------------------------------------------
+
+   procedure Extract (PRK  :    out Hashing.SHA512.Digest; -- output key
+                      IKM  : in     Byte_Seq; -- input keying material
+                      Salt : in     Byte_Seq) -- input salt (can be 0 bytes)
+   is
+   begin
+      --  In RFC 5869, the input keying material is used
+      --  as the _message_ parameter to HMAC.
+      MAC.HMAC_SHA_512 (PRK, IKM, Salt);
+   end Extract;
+
+   --------------------------------------------------------
+   --  SHA-512 HKDF-Expand per RFC 5869
+   --------------------------------------------------------
+
+   procedure Expand
+     (OKM  :    out OKM_Seq;
+      PRK  : in     Hashing.SHA512.Digest;
+      Info : in     Byte_Seq)
+   is
+      Ti : Bytes_64;
+      B  : Byte := 1;   -- Output block counter
+   begin
+      MAC.HMAC_SHA_512 (Ti, Info & B, PRK);
+
+      if OKM'Last <= Ti'Last then
+         --  Only need first block Ti to complete OKM
+         OKM := OKM_Seq (Ti (OKM'Range)); -- Slice and Slide
+      else
+         --  OKM larger than hash len, fill the first hash len bytes of OKM
+         OKM (Ti'Range) := OKM_Seq (Ti);
+         pragma Assert (OKM (Ti'Range)'Initialized);
+
+         for I in Hash_Len .. OKM'Last loop
+            if I mod Hash_Len = 0 then
+               --  generate new output block
+               B := B + 1;
+               MAC.HMAC_SHA_512 (Ti, Ti & Info & B, PRK);
+            end if;
+
+            OKM (I) := Ti (I mod Hash_Len);
+            pragma Loop_Invariant (OKM (0 .. I)'Initialized);
+            pragma Loop_Invariant (N32 (B) = I / Hash_Len + 1);
+            pragma Loop_Invariant (MAC.Same (Ti, T (PRK, Info, N32 (B))));
+            pragma Loop_Invariant
+              (for all J in 0 .. I =>
+                 OKM (J) = T (PRK, Info, J / Hash_Len + 1) (J mod Hash_Len));
+         end loop;
+      end if;
+   end Expand;
+
+   procedure KDF (OKM  :    out OKM_Seq;
+                  IKM  : in     Byte_Seq;
+                  Salt : in     Byte_Seq;
+                  Info : in     Byte_Seq)
+   is
+      PRK : Bytes_64;
+   begin
+      Extract (PRK, IKM, Salt);
+      Expand (OKM, PRK, Info);
+   end KDF;
+
+end SPARKNaCl.HKDF.SHA512;
