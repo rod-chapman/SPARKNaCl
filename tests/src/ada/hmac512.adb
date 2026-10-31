@@ -137,6 +137,31 @@ is
       16#67#, 16#6f#, 16#72#, 16#69#, 16#74#, 16#68#, 16#6d#, 16#2e#
    );
 
+   --  Boundary cases beyond RFC 4231, outputs computed with Python's
+   --  hmac/hashlib and agreeing with OpenSSL "dgst -sha512 -mac HMAC":
+   --  a key of exactly the 128-byte SHA-512 block (used as is), a
+   --  key of 129 bytes (hashed down first), and an empty message.
+
+   Key8 : constant Byte_Seq (0 .. 127) := (others => 16#aa#);
+   Data8 : constant Byte_Seq := (
+      16#54#, 16#65#, 16#73#, 16#74#, 16#20#, 16#55#, 16#73#, 16#69#,
+      16#6e#, 16#67#, 16#20#, 16#42#, 16#6c#, 16#6f#, 16#63#, 16#6b#,
+      16#2d#, 16#53#, 16#69#, 16#7a#, 16#65#, 16#20#, 16#4b#, 16#65#,
+      16#79#
+   );
+
+   Key9 : constant Byte_Seq (0 .. 128) := (others => 16#aa#);
+   Data9 : constant Byte_Seq := (
+      16#54#, 16#65#, 16#73#, 16#74#, 16#20#, 16#55#, 16#73#, 16#69#,
+      16#6e#, 16#67#, 16#20#, 16#42#, 16#6c#, 16#6f#, 16#63#, 16#6b#,
+      16#2d#, 16#53#, 16#69#, 16#7a#, 16#65#, 16#20#, 16#4b#, 16#65#,
+      16#79#, 16#20#, 16#50#, 16#6c#, 16#75#, 16#73#, 16#20#, 16#4f#,
+      16#6e#, 16#65#
+   );
+
+   Key10  : constant Byte_Seq (0 .. 19) := (others => 16#0b#);
+   Data10 : constant Byte_Seq (0 .. I32'Pred (0)) := (others => <>);
+
    D : Bytes_64;
 begin
    HMAC_SHA_512 (D, Data1, Key1);
@@ -153,4 +178,10 @@ begin
    DH ("D6 is", D);
    HMAC_SHA_512 (D, Data7, Key7);
    DH ("D7 is", D);
+   HMAC_SHA_512 (D, Data8, Key8);
+   DH ("D8 is", D);
+   HMAC_SHA_512 (D, Data9, Key9);
+   DH ("D9 is", D);
+   HMAC_SHA_512 (D, Data10, Key10);
+   DH ("D10 is", D);
 end HMAC512;
